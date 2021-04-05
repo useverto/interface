@@ -1,5 +1,0 @@
-{
-  "svelteIndentScriptAndStyle": true,
-  "svelteSortOrder": "scripts-markup-styles",
-  "svelteAllowShorthand": true
-}
