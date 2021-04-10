@@ -127,6 +127,13 @@
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.1.tgz#18845205e86ff0038517aab7a18a62a6b9f71275"
   integrity sha512-EaCxbanVeyxDRTQBkdLb3Bvl/HK7PBK6UJjsSixB0iHKoWxE5uu2Q/DgtpOhPIojN0Zl1whvOd7PoHs2P0s5eA==
 
+"@verto/js@^0.0.0-alpha.1":
+  version "0.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.1.tgz#e233ec311420a162dad3ed3a6bb2ec5d6e9bb7ff"
+  integrity sha512-Vb42iiAbbwpjGuJyFrs4ww7fNwzeVNJoKmV2sm02ZC6FW++i13E3HXYFhkvcGW+o0BVqkEzVfsvBnVIEneSRwA==
+  dependencies:
+    axios "^0.21.1"
+
 anser@1.4.9:
   version "1.4.9"
   resolved "https://registry.yarnpkg.com/anser/-/anser-1.4.9.tgz#1f85423a5dcf8da4631a341665ff675b96845760"
