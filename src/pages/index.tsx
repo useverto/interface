@@ -1,15 +1,15 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import styles from "../styles/views/home.module.sass";
 import Typed from "typed.js";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import PSTSwitcher from "../components/PSTSwitcher";
 
 const Home = () => {
   useEffect(() => {
     const options = {
       strings: ["PSTs", "PSCs", "NFTs", "collectibles", "anything"],
       loop: true,
-      loopCount: 1,
+      loopCount: 2,
 
       typeSpeed: 100,
       backSpeed: 50,
@@ -22,42 +22,6 @@ const Home = () => {
     return () => {
       typed.destroy();
     };
-  }, []);
-
-  const [firstLoad, setFirstLoad] = useState(true);
-  const [communities, setCommunities] = useState([]);
-
-  const fetchCommunities = async () => {
-    let firstLoad: boolean;
-    let communities;
-    setFirstLoad((val) => {
-      firstLoad = val;
-      return val;
-    });
-    setCommunities((val) => {
-      communities = val;
-      return val;
-    });
-
-    const { data: res } = await axios.get(
-      "https://v2.cache.verto.exchange/site/communities/random"
-    );
-    if (firstLoad) {
-      setCommunities(res);
-      setFirstLoad(false);
-    } else {
-      const index = Math.floor(Math.random() * 4);
-      communities[index] = res[index];
-      setCommunities(communities);
-    }
-  };
-
-  useEffect(() => {
-    const main = async () => {
-      await fetchCommunities();
-      setTimeout(fetchCommunities, 30000);
-    };
-    main();
   }, []);
 
   return (
@@ -121,7 +85,7 @@ const Home = () => {
           user={{
             avatar: "https://th8ta.org/marton.jpeg",
             usertag: "martonlederer",
-            name: "Marton Lederer"
+            name: "Marton Lederer",
           }}
           timestamp={new Date()}
           price={{ usd: 1204.768548, ar: 300.43256424 }}
@@ -133,7 +97,7 @@ const Home = () => {
           user={{
             avatar: "https://th8ta.org/marton.jpeg",
             usertag: "martonlederer",
-            name: "Marton Lederer"
+            name: "Marton Lederer",
           }}
           timestamp={new Date()}
           price={{ usd: 1204.768548, ar: 300.43256424 }}
@@ -148,36 +112,61 @@ const Home = () => {
         />
       </div>
       <Spacer y={5} />
-      <div className={styles.Section}>
+      <div className={styles.Section + " " + styles.PSTs}>
         <h1 className={styles.Title}>What are PSTs?</h1>
-        <div className={styles.PSTs}>
-          <p className={styles.Description}>
-            Profit-Sharing Tokens, or PSTs, are a new incentivization mechanism for the open web that allow developers to earn a stream of micro-dividends for the duration their application is used. (<a href="https://arweave.medium.com/profit-sharing-tokens-a-new-incentivization-mechanism-for-an-open-web-1f2532411d6e" target="_blank" rel="noopener noreferrer">Source</a>)
-            <br/><br/>
-            In order for PSTs to have value, however, they need to be able to be exchanged for other PSTs or AR. This is where Verto comes in...
-          </p>
-
-        </div>
+        <p className={styles.Description}>
+          Profit-Sharing Tokens, or PSTs, are a new incentivization mechanism
+          for the open web that allow developers to earn a stream of
+          micro-dividends for the duration their application is used. (
+          <a
+            href="https://arweave.medium.com/profit-sharing-tokens-a-new-incentivization-mechanism-for-an-open-web-1f2532411d6e"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Source
+          </a>
+          )
+          <br />
+          <br />
+          In order for PSTs to have value, however, they need to be able to be
+          exchanged for other PSTs or AR. This is where Verto comes in...
+        </p>
+        <PSTSwitcher />
       </div>
       <div className={styles.Section}>
         <h1 className={styles.Title}>Why Verto?</h1>
         <p className={styles.Description}>
-          Verto is a completely decentralized network of trading posts built on top of the blockweave. Anyone can host their own trading post and power the exchange, while also being incentivized to do so. With Verto, you can pick the trading post you'd like to use and exchange your PSTs freely!
-          <br/><br/>
-          Decisions for Verto are made by our very own Profit-Sharing DAO, which means that anyone can have a say in the direction of our platform.
-          <br/><br/>
-          You can also easily host your own Trading Post, while accruing PSTs for doing so. See our Trading Post Repository for documentation.
+          Verto is a completely decentralized network of trading posts built on
+          top of the blockweave. Anyone can host their own trading post and
+          power the exchange, while also being incentivized to do so. With
+          Verto, you can pick the trading post you'd like to use and exchange
+          your PSTs freely!
+          <br />
+          <br />
+          Decisions for Verto are made by our very own Profit-Sharing DAO, which
+          means that anyone can have a say in the direction of our platform.
+          <br />
+          <br />
+          You can also easily host your own Trading Post, while accruing PSTs
+          for doing so. See our Trading Post Repository for documentation.
         </p>
       </div>
       <div className={styles.Section}>
         <h1 className={styles.Title}>VRT - The Verto Protocol Token</h1>
         <p className={styles.Description}>
-          VRT is a way for any person to passively earn a volume-weighted index of all profit sharing tokens being traded on the exchange. 0.5% of any PST transaction made on the exchange is sent straight to a VRT holder.
-          <br/><br/>
-          By holding VRT, a user is also inherently a member of the Verto Profit-Sharing DAO, which means they can choose to stake their tokens to have a say in the various decisions made for the platform.
-          <br/>
+          VRT is a way for any person to passively earn a volume-weighted index
+          of all profit sharing tokens being traded on the exchange. 0.5% of any
+          PST transaction made on the exchange is sent straight to a VRT holder.
+          <br />
+          <br />
+          By holding VRT, a user is also inherently a member of the Verto
+          Profit-Sharing DAO, which means they can choose to stake their tokens
+          to have a say in the various decisions made for the platform.
+          <br />
           <ul>
-            <li>VRT Contract Address: usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A</li>
+            <li>
+              VRT Contract Address: usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A
+            </li>
             <li>Initial Supply: 250,000,000 VRT</li>
           </ul>
         </p>
@@ -185,7 +174,8 @@ const Home = () => {
       <div className={styles.Section}>
         <h1 className={styles.Title}>Get in Touch</h1>
         <p className={styles.Description}>
-          Have a question or are interested in purchasing more VRT than you can find on the exchange? Join our Discord. Let's chat!
+          Have a question or are interested in purchasing more VRT than you can
+          find on the exchange? Join our Discord. Let's chat!
         </p>
       </div>
     </Page>
