@@ -1,7 +1,8 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import styles from "../styles/views/home.module.sass";
 import Typed from "typed.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Home = () => {
   useEffect(() => {
@@ -20,6 +21,42 @@ const Home = () => {
     return () => {
       typed.destroy();
     };
+  }, []);
+
+  const [firstLoad, setFirstLoad] = useState(true);
+  const [communities, setCommunities] = useState([]);
+
+  const fetchCommunities = async () => {
+    let firstLoad: boolean;
+    let communities;
+    setFirstLoad((val) => {
+      firstLoad = val;
+      return val;
+    });
+    setCommunities((val) => {
+      communities = val;
+      return val;
+    });
+
+    const { data: res } = await axios.get(
+      "https://v2.cache.verto.exchange/site/communities/random"
+    );
+    if (firstLoad) {
+      setCommunities(res);
+      setFirstLoad(false);
+    } else {
+      const index = Math.floor(Math.random() * 4);
+      communities[index] = res[index];
+      setCommunities(communities);
+    }
+  };
+
+  useEffect(() => {
+    const main = async () => {
+      await fetchCommunities();
+      setTimeout(fetchCommunities, 30000);
+    };
+    main();
   }, []);
 
   return (
