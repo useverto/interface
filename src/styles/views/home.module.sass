@@ -1,3 +1,5 @@
+$titleSize: 2.7em
+  
 .Landing
   display: flex
   align-items: center
@@ -5,10 +7,14 @@
   
   .Hero
     h1
-      font-size: 2.7em
+      font-size: $titleSize
       font-weight: 400
       line-height: 1.15em
       margin: 0
+
+      [class~=typed-cursor]
+        font-weight: 300
+        color: #666
 
     p
       color: #666
@@ -27,3 +33,33 @@
     display: flex
     align-items: center
     width: 40%
+
+.Section
+  .Title
+    font-weight: 500
+    font-size: $titleSize
+    margin: 0
+      bottom: .55em
+
+  .Description
+    font-size: 1.1em
+    font-weight: 400
+    text-align: justify
+
+    a
+      color: inherit
+      text-decoration: underline
+
+    ul
+      list-style-type: "-"
+
+      li
+        padding-left: .55em
+        
+        &::marker
+          padding-right: .2em
+
+.PSTs
+  display: flex
+  align-items: center
+  justify-content: space-between
