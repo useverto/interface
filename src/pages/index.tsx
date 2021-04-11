@@ -113,24 +113,26 @@ const Home = () => {
       </div>
       <Spacer y={5} />
       <div className={styles.Section + " " + styles.PSTs}>
-        <h1 className={styles.Title}>What are PSTs?</h1>
-        <p className={styles.Description}>
-          Profit-Sharing Tokens, or PSTs, are a new incentivization mechanism
-          for the open web that allow developers to earn a stream of
-          micro-dividends for the duration their application is used. (
-          <a
-            href="https://arweave.medium.com/profit-sharing-tokens-a-new-incentivization-mechanism-for-an-open-web-1f2532411d6e"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Source
-          </a>
-          )
-          <br />
-          <br />
-          In order for PSTs to have value, however, they need to be able to be
-          exchanged for other PSTs or AR. This is where Verto comes in...
-        </p>
+        <div className={styles.Text}>
+          <h1 className={styles.Title}>What are PSTs?</h1>
+          <p className={styles.Description}>
+            Profit-Sharing Tokens, or PSTs, are a new incentivization mechanism
+            for the open web that allow developers to earn a stream of
+            micro-dividends for the duration their application is used. (
+            <a
+              href="https://arweave.medium.com/profit-sharing-tokens-a-new-incentivization-mechanism-for-an-open-web-1f2532411d6e"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Source
+            </a>
+            )
+            <br />
+            <br />
+            In order for PSTs to have value, however, they need to be able to be
+            exchanged for other PSTs or AR. This is where Verto comes in...
+          </p>
+        </div>
         <PSTSwitcher />
       </div>
       <div className={styles.Section}>

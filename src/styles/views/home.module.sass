@@ -1,3 +1,5 @@
+@use "../variables"
+
 $titleSize: 2.7em
   
 .Landing
@@ -14,10 +16,10 @@ $titleSize: 2.7em
 
       [class~=typed-cursor]
         font-weight: 300
-        color: #666
+        color: variables.$light-text
 
     p
-      color: #666
+      color: variables.$light-text
       font-weight: 400
       font-size: 1.13em
       margin: 0
@@ -60,14 +62,7 @@ $titleSize: 2.7em
           padding-right: .2em
 
 .PSTs
-  position: relative
+  display: flex
 
-  svg
-    position: absolute
-    width: 30%
-    top: 0
-    bottom: 0
-    right: 0
-
-  p
-    width: 64%
+  .Text
+    flex: 2
