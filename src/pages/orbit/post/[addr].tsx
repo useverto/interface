@@ -38,7 +38,7 @@ export async function getServerSideProps(context) {
   const { addr } = context.query;
 
   const { data: orders } = await axios.get(
-    `https://v2.cache.verto.exchange/orders?post=${addr}`
+    `https://v2.cache.verto.exchange/posts/${addr}/orders`
   );
 
   return { props: { orders } };
