@@ -1,8 +1,10 @@
 import { Card, Page, Spacer } from "@verto/ui";
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 const Orbit = (props: { posts: any }) => {
+  const router = useRouter();
   const [status, setStatus] = useState({});
 
   useEffect(() => {
@@ -32,6 +34,7 @@ const Orbit = (props: { posts: any }) => {
             balance={post.balance}
             vrtStake={post.stake}
             key={post.address}
+            onClick={() => router.push(`/orbit/post/${post.address}`)}
           />
           <Spacer y={2} />
         </>
