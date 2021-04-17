@@ -1,9 +1,12 @@
+import Verto from "@verto/js";
+import { TradingPostInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer } from "@verto/ui";
-import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
-const Orbit = (props: { posts: any }) => {
+const client = new Verto();
+
+const Orbit = (props: { posts: TradingPostInterface[] }) => {
   const router = useRouter();
   const [status, setStatus] = useState({});
 
@@ -44,11 +47,9 @@ const Orbit = (props: { posts: any }) => {
 };
 
 export async function getServerSideProps() {
-  const { data: posts } = await axios.get(
-    `https://v2.cache.verto.exchange/posts`
-  );
+  const res = await client.getTradingPosts();
 
-  return { props: { posts } };
+  return { props: { posts: res } };
 }
 
 export default Orbit;

@@ -26,6 +26,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const inputUnit = useSelect("AR");
   const outputUnit = useSelect(props.tokens[0].id);
 
+  (async () => {
+    console.time("recommend");
+    console.log(await client.recommendPost());
+    console.timeEnd("recommend");
+  })();
+
   return (
     <Page>
       <Card>
