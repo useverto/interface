@@ -1,8 +1,9 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 
-const Post = (props: { addr: string; orders: any[] }) => {
+const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   const [orders, setOrders] = useState(props.orders);
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +24,68 @@ const Post = (props: { addr: string; orders: any[] }) => {
 
   return (
     <Page>
+      <Bar
+        data={{
+          labels: Object.keys(props.stats).reverse(),
+          datasets: [
+            {
+              label: "Succeeded",
+              backgroundColor: "rgba(0, 212, 110, 0.5)",
+              borderColor: "#00D46E",
+              borderWidth: 0.5,
+              data: Object.values(props.stats)
+                .map((item) => item.succeeded)
+                .reverse(),
+            },
+            {
+              label: "Pending",
+              backgroundColor: "rgba(255, 211, 54, 0.5)",
+              borderColor: "#FFD336",
+              borderWidth: 0.5,
+              data: Object.values(props.stats)
+                .map((item) => item.pending)
+                .reverse(),
+            },
+            {
+              label: "Ended",
+              backgroundColor: "rgba(130, 130, 130, 0.5)",
+              borderColor: "#828282",
+              borderWidth: 0.5,
+              data: Object.values(props.stats)
+                .map((item) => item.neutral + item.errored)
+                .reverse(),
+            },
+          ],
+        }}
+        height={50}
+        options={{
+          tooltips: {
+            mode: "index",
+            intersect: false,
+          },
+          hover: {
+            mode: "nearest",
+            intersect: true,
+          },
+          scales: {
+            xAxes: [
+              {
+                display: false,
+                stacked: true,
+              },
+            ],
+            yAxes: [
+              {
+                display: false,
+                stacked: true,
+              },
+            ],
+          },
+          legend: {
+            display: false,
+          },
+        }}
+      />
       {orders.map((order) => {
         let status = order.status;
         if (status === "success" || status === "pending") {
@@ -63,11 +126,15 @@ const Post = (props: { addr: string; orders: any[] }) => {
 export async function getServerSideProps(context) {
   const { addr } = context.query;
 
+  const { data: stats } = await axios.get(
+    `https://v2.cache.verto.exchange/posts/${addr}/stats`
+  );
+
   const { data: orders } = await axios.get(
     `https://v2.cache.verto.exchange/posts/${addr}/orders?limit=10`
   );
 
-  return { props: { addr, orders } };
+  return { props: { addr, stats, orders } };
 }
 
 export default Post;
