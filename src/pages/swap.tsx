@@ -9,11 +9,16 @@ import {
   Spacer,
   useSelect,
 } from "@verto/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
+  const [post, setPost] = useState("");
+  useEffect(() => {
+    client.recommendPost().then((res) => setPost(res));
+  }, []);
+
   const [inputs, setInputs] = useState([
     {
       id: "AR",
@@ -26,11 +31,28 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const inputUnit = useSelect("AR");
   const outputUnit = useSelect(props.tokens[0].id);
 
-  (async () => {
-    console.time("recommend");
-    console.log(await client.recommendPost());
-    console.timeEnd("recommend");
-  })();
+  const [orders, setOrders] = useState([]);
+  const [ticker, setTicker] = useState("");
+  useEffect(() => {
+    if (post) {
+      const id = inputUnit.state === "AR" ? outputUnit.state : inputUnit.state;
+      if (inputUnit.state === "AR") {
+        setOutputs((val) => {
+          setTicker(val.find((item: any) => item.id === id).ticker);
+
+          return val;
+        });
+      } else {
+        setInputs((val) => {
+          setTicker(val.find((item: any) => item.id === id).ticker);
+
+          return val;
+        });
+      }
+
+      client.getOrderBook(post, id).then((res) => setOrders(res));
+    }
+  }, [post, inputUnit.state, outputUnit.state]);
 
   return (
     <Page>
@@ -63,6 +85,19 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         <Spacer y={1} />
         <Button style={{ width: "100%" }}>Swap</Button>
       </Card>
+      {orders.map((order) => (
+        <Card.SwapSell
+          user={{
+            avatar: "https://th8ta.org/marton.jpeg",
+            usertag: "martonlederer",
+            name: "Marton Lederer",
+          }}
+          selling={{ quantity: order.amnt, ticker }}
+          rate={1 / order.rate}
+          filled={order.received || 0}
+          orderID={order.txID}
+        />
+      ))}
     </Page>
   );
 };
