@@ -2,7 +2,7 @@ import Verto from "@verto/js";
 import { Card, Page } from "@verto/ui";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { fetchAsset } from "../utils/arweave";
+import { fetchAsset } from "../../utils/arweave";
 
 const client = new Verto();
 
