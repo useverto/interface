@@ -2,47 +2,38 @@ import Verto from "@verto/js";
 import { Card, Page } from "@verto/ui";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { fetchAsset } from "../../utils/arweave";
 
 const client = new Verto();
 
-const Space = () => {
-  const [tokens, setTokens] = useState([]);
+const Space = (props: { tokens: any[] }) => {
+  const [prices, setPrices] = useState<{ [id: string]: number }>({});
 
   useEffect(() => {
-    axios
-      .get("https://v2.cache.verto.exchange/site/communities/top")
-      .then(async (res) => {
-        const { data: gecko } = await axios.get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-        );
+    (async () => {
+      const { data: gecko } = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+      );
 
-        for (const token of res.data) {
-          const res = await client.getPrice(token.id);
-          const price = res.price
-            ? (res.price * gecko.arweave.usd).toFixed(2)
-            : " ??";
-          const image = await fetchAsset(token.logo);
+      for (const { id } of props.tokens) {
+        const res = await client.getPrice(id);
 
-          setTokens((val) => [
+        if (res.price)
+          setPrices((val) => ({
             ...val,
-            {
-              ...token,
-              price,
-              image,
-            },
-          ]);
-        }
-      });
+            [id]: (res.price * gecko.arweave.usd).toFixed(2),
+          }));
+      }
+    })();
   }, []);
 
   return (
     <Page>
-      {tokens.map((token) => (
+      {props.tokens.map((token) => (
         <Card.Asset
           name={token.name}
-          price={token.price}
-          image={token.image}
+          // @ts-ignore
+          price={prices[token.id] ?? " ??"}
+          image={`https://arweave.net/${token.logo}`}
           ticker={token.ticker}
           key={token.id}
         />
@@ -50,5 +41,13 @@ const Space = () => {
     </Page>
   );
 };
+
+export async function getServerSideProps() {
+  const { data: tokens } = await axios.get(
+    "https://v2.cache.verto.exchange/site/communities/top"
+  );
+
+  return { props: { tokens } };
+}
 
 export default Space;
