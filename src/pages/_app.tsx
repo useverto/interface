@@ -2,7 +2,7 @@ import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import Progress from "nprogress";
 import { useEffect } from "react";
-import "../styles/progress.css";
+import "../styles/progress.sass";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();

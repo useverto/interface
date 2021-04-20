@@ -4,13 +4,14 @@ import axios from "axios";
 const Order = (props: { order: any }) => {
   return (
     <Page>
-      {props.order.actions.map((action) => (
+      {props.order.actions.map((action, i) => (
         <>
           <Card.OrderStep
             title={action.description}
             id={action.id}
             matchID={action.match}
             link={`https://viewblock.io/arweave/tx/${action.id}`}
+            key={i}
           />
           <Spacer y={2} />
         </>
