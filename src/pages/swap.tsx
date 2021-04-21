@@ -61,8 +61,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           label="You send"
           inlineLabel={
             <Select {...inputUnit.bindings} small filled>
-              {inputs.map((input) => (
-                <option value={input.id}>{input.ticker}</option>
+              {inputs.map((input, i) => (
+                <option value={input.id} key={i}>
+                  {input.ticker}
+                </option>
               ))}
             </Select>
           }
@@ -74,8 +76,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           label="You recieve"
           inlineLabel={
             <Select {...outputUnit.bindings} small filled>
-              {outputs.map((output) => (
-                <option value={output.id}>{output.ticker}</option>
+              {outputs.map((output, i) => (
+                <option value={output.id} key={i}>
+                  {output.ticker}
+                </option>
               ))}
             </Select>
           }
@@ -85,7 +89,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         <Spacer y={1} />
         <Button style={{ width: "100%" }}>Swap</Button>
       </Card>
-      {orders.map((order) => (
+      {orders.map((order, i) => (
         <Card.SwapSell
           user={{
             avatar: "https://th8ta.org/marton.jpeg",
@@ -96,6 +100,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           rate={1 / order.rate}
           filled={order.received || 0}
           orderID={order.txID}
+          key={i}
         />
       ))}
     </Page>

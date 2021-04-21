@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { fetchAsset } from "../utils/arweave";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "../styles/components/PSTSwitcher.module.sass";
+import { useRouter } from "next/router";
 
 const PSTSwitcher = () => {
   const [firstLoad, setFirstLoad] = useState(true);
@@ -24,6 +25,7 @@ const PSTSwitcher = () => {
       src: "",
     },
   });
+  const router = useRouter();
 
   const fetch = async (index: number): Promise<boolean> => {
     const { data: res } = await axios.get(
@@ -101,6 +103,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, rotate: -30 }}
             exit={{ scale: 0, opacity: 0.3, rotate: -30 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
+            onClick={() => router.push(`token/${images.img1.id}`)}
           >
             <img
               src={images.img1.src}
@@ -134,6 +137,7 @@ const PSTSwitcher = () => {
               translateY: "-50%",
             }}
             transition={{ duration: 0.23, ease: "backInOut" }}
+            onClick={() => router.push(`token/${images.img2.id}`)}
           >
             <img
               src={images.img2.src}
@@ -152,6 +156,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, rotate: 15 }}
             exit={{ scale: 0, opacity: 0.3, rotate: 15 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
+            onClick={() => router.push(`token/${images.img3.id}`)}
           >
             <img
               src={images.img3.src}
@@ -175,7 +180,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, translateX: "-50%", rotate: -15 }}
             exit={{ scale: 0, opacity: 0.3, translateX: "-50%", rotate: -15 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
-            draggable={false}
+            onClick={() => router.push(`token/${images.img4.id}`)}
           >
             <img
               src={images.img4.src}
