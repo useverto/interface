@@ -1,11 +1,24 @@
 import Verto from "@verto/js";
-import { UserInterface } from "@verto/js/dist/faces";
-import { Avatar, Page } from "@verto/ui";
+import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
+import { Avatar, Card, Page } from "@verto/ui";
+import { useEffect, useState } from "react";
 
 const client = new Verto();
 
 const User = (props: { user: UserInterface | undefined }) => {
-  console.log(props.user);
+  const [orders, setOrders] = useState<OrderInterface[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      let res: OrderInterface[] = [];
+
+      for (const address of props.user.addresses) {
+        res.push(...(await client.getOrders(address)));
+      }
+
+      setOrders(res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5));
+    })();
+  }, []);
 
   return (
     <Page>
@@ -17,6 +30,41 @@ const User = (props: { user: UserInterface | undefined }) => {
           size="large-inline"
         />
       )}
+      {orders.map((order) => (
+        <Card.Trade
+          type={(() => {
+            let type: any;
+            if (order.input.split(" ")[1] === "AR") {
+              type = "buy";
+            } else {
+              type = "sell";
+            }
+
+            return type;
+          })()}
+          from={{
+            amount: parseFloat(order.input.split(" ")[0]),
+            ticker: order.input.split(" ")[1],
+          }}
+          to={order.output.split(" ")[1]}
+          timestamp={new Date(order.timestamp * 1000)}
+          status={(() => {
+            let status: any = order.status;
+
+            if (status === "success" || status === "pending") {
+              // don't do anything
+            } else if (status === "cancelled" || status === "refunded") {
+              status = "neutral";
+            } else {
+              status = "error";
+            }
+
+            return status;
+          })()}
+          orderID={order.id}
+          cancel={() => {}}
+        />
+      ))}
     </Page>
   );
 };
