@@ -1,8 +1,12 @@
-import { Button, Card, Page, Spacer } from "@verto/ui";
+import { Button, Card, Page, Spacer, useSelect } from "@verto/ui";
 import styles from "../styles/views/home.module.sass";
 import Typed from "typed.js";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import PSTSwitcher from "../components/PSTSwitcher";
+import axios from "axios";
+import Verto from "@verto/js";
+
+const client = new Verto();
 
 const Home = () => {
   useEffect(() => {
@@ -22,6 +26,25 @@ const Home = () => {
     return () => {
       typed.destroy();
     };
+  }, []);
+
+  const [artwork, setArtwork] = useState<any>({});
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(
+        "https://v2.cache.verto.exchange/site/artwork"
+      );
+      const res = await client.getPrice(data.id);
+      const { data: gecko } = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+      );
+
+      setArtwork({
+        ...data,
+        price: (res.price * gecko.arweave.usd).toFixed(2),
+      });
+    })();
   }, []);
 
   return (
@@ -58,16 +81,18 @@ const Home = () => {
           </div>
         </div>
         <div className={styles.FeaturedToken}>
-          <Card.Asset
-            name="Test"
-            userData={{
-              avatar: "https://th8ta.org/marton.jpeg",
-              name: "Marton Lederer",
-              usertag: "martonlederer",
-            }}
-            price={125}
-            image="https://raw.githubusercontent.com/useverto/ui/v2/test/public/art.png"
-          />
+          {Object.keys(artwork).length && (
+            <Card.Asset
+              name={artwork.name}
+              userData={{
+                avatar: `https://arweave.net/${artwork.owner.image}`,
+                name: artwork.owner.name,
+                usertag: artwork.owner.username,
+              }}
+              price={artwork.price}
+              image={`https://arweave.net/${artwork.id}`}
+            />
+          )}
         </div>
       </div>
       <Spacer y={5} />
