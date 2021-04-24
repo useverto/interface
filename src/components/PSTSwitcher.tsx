@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { fetchAsset } from "../utils/arweave";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "../styles/components/PSTSwitcher.module.sass";
 import { useRouter } from "next/router";
@@ -10,19 +9,19 @@ const PSTSwitcher = () => {
   const [images, setImages] = useState({
     img1: {
       id: "",
-      src: "",
+      logo: "",
     },
     img2: {
       id: "",
-      src: "",
+      logo: "",
     },
     img3: {
       id: "",
-      src: "",
+      logo: "",
     },
     img4: {
       id: "",
-      src: "",
+      logo: "",
     },
   });
   const router = useRouter();
@@ -38,22 +37,17 @@ const PSTSwitcher = () => {
       return val;
     });
 
-    console.log(images);
-
     for (const value of Object.values(images)) {
-      console.log(value);
       // @ts-ignore
       if (value.id === res[index].id) return false;
     }
 
     try {
-      const src = await fetchAsset(res[index].logo);
-
       setImages((val) => ({
         ...val,
         [`img${index + 1}`]: {
-          id: res[index].logo,
-          src,
+          id: res[index].id,
+          logo: res[index].logo,
         },
       }));
 
@@ -94,7 +88,7 @@ const PSTSwitcher = () => {
   return (
     <div className={styles.PSTSwitcher}>
       <AnimatePresence>
-        {images.img1.src !== "" && (
+        {images.img1.logo !== "" && (
           <motion.div
             key={images.img1.id}
             className={styles.Logo}
@@ -106,14 +100,14 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`token/${images.img1.id}`)}
           >
             <img
-              src={images.img1.src}
+              src={`https://arweave.net/${images.img1.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "71px" }}
             />
           </motion.div>
         )}
-        {images.img2.src !== "" && (
+        {images.img2.logo !== "" && (
           <motion.div
             key={images.img2.id}
             className={styles.Logo}
@@ -140,14 +134,14 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`token/${images.img2.id}`)}
           >
             <img
-              src={images.img2.src}
+              src={`https://arweave.net/${images.img2.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "61px" }}
             />
           </motion.div>
         )}
-        {images.img3.src !== "" && (
+        {images.img3.logo !== "" && (
           <motion.div
             key={images.img3.id}
             className={styles.Logo}
@@ -159,14 +153,14 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`token/${images.img3.id}`)}
           >
             <img
-              src={images.img3.src}
+              src={`https://arweave.net/${images.img3.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "92px" }}
             />
           </motion.div>
         )}
-        {images.img4.src !== "" && (
+        {images.img4.logo !== "" && (
           <motion.div
             key={images.img4.id}
             className={styles.Logo}
@@ -183,7 +177,7 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`token/${images.img4.id}`)}
           >
             <img
-              src={images.img4.src}
+              src={`https://arweave.net/${images.img4.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "90px" }}
