@@ -97,7 +97,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, rotate: -30 }}
             exit={{ scale: 0, opacity: 0.3, rotate: -30 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
-            onClick={() => router.push(`token/${images.img1.id}`)}
+            onClick={() => router.push(`space/${images.img1.id}`)}
           >
             <img
               src={`https://arweave.net/${images.img1.logo}`}
@@ -131,7 +131,7 @@ const PSTSwitcher = () => {
               translateY: "-50%",
             }}
             transition={{ duration: 0.23, ease: "backInOut" }}
-            onClick={() => router.push(`token/${images.img2.id}`)}
+            onClick={() => router.push(`space/${images.img2.id}`)}
           >
             <img
               src={`https://arweave.net/${images.img2.logo}`}
@@ -150,7 +150,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, rotate: 15 }}
             exit={{ scale: 0, opacity: 0.3, rotate: 15 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
-            onClick={() => router.push(`token/${images.img3.id}`)}
+            onClick={() => router.push(`space/${images.img3.id}`)}
           >
             <img
               src={`https://arweave.net/${images.img3.logo}`}
@@ -174,7 +174,7 @@ const PSTSwitcher = () => {
             animate={{ scale: 1, opacity: 1, translateX: "-50%", rotate: -15 }}
             exit={{ scale: 0, opacity: 0.3, translateX: "-50%", rotate: -15 }}
             transition={{ duration: 0.23, ease: "backInOut" }}
-            onClick={() => router.push(`token/${images.img4.id}`)}
+            onClick={() => router.push(`space/${images.img4.id}`)}
           >
             <img
               src={`https://arweave.net/${images.img4.logo}`}

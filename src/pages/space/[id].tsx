@@ -1,7 +1,8 @@
 import Verto from "@verto/js";
 import axios from "axios";
-import { Page } from "@verto/ui";
+import { Page, useInput } from "@verto/ui";
 import { PriceInterface } from "@verto/js/dist/faces";
+import { useEffect, useState } from "react";
 
 const client = new Verto();
 
@@ -11,9 +12,31 @@ interface PropTypes extends PriceInterface {
 
 const Token = (props: PropTypes) => {
   const type = props.type || "community";
-  console.log(type);
 
-  return <Page></Page>;
+  // === Community ===
+  const [history, setHistory] = useState<{ [date: string]: number }>({});
+
+  useEffect(() => {
+    client.getPriceHistory(props.id).then((res) => setHistory(res));
+  }, []);
+
+  const amount = useInput();
+  const target = useInput();
+
+  const transfer = async () => {
+    const id = await client.transfer(
+      amount.state as number,
+      props.id,
+      target.state as string
+    );
+    console.log(id);
+  };
+
+  return (
+    <Page>
+      {type === "art" && <img src={`https://arweave.net/${props.id}`} />}
+    </Page>
+  );
 };
 
 export async function getServerSideProps(context) {
