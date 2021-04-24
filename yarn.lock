@@ -345,6 +345,13 @@ anymatch@~3.1.1:
   dependencies:
     sylvester ">= 0.0.8"
 
+ardb@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/ardb/-/ardb-1.0.8.tgz#a4dba461a913274c086c06cf55215ebb0453d09d"
+  integrity sha512-/T1Yt1FJL6UgVr6becBEia163Dd2rBZSireoWZ/cvqVNnEoim9Qv94+b48kHaqytf048mloZt/2xsI8n9ixyzQ==
+  dependencies:
+    arweave "^1.10.11"
+
 array-filter@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/array-filter/-/array-filter-1.0.0.tgz#baf79e62e6ef4c2a4c0b831232daffec251f9d83"
@@ -1711,7 +1718,7 @@ minimist@^1.2.0:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
   integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
-moment@^2.10.2:
+moment@^2.10.2, moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
