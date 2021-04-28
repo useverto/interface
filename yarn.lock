@@ -276,11 +276,12 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^0.0.0-alpha.7":
-  version "0.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.7.tgz#f7c961ad31cd91feaf69d0bd16728116990ae35e"
-  integrity sha512-hjvuizl0M23uCX6S71nrwmtYkdXhT1NGQCFx/9nb7Qd60Eu9kGUu0JdBPRyRbBVbqgZ8LKTNiozhxTw/Hq9F6w==
+"@verto/js@^0.0.0-alpha.9":
+  version "0.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.9.tgz#01f3bac1de3a81bd06c8010fd750d7e657d020b4"
+  integrity sha512-6wJUrReOaQK8GCVuYQThiu9fKJZbALBlMq8+cML4huVTG9gvlJOQStv4sj5X0PDUGqH2QDI00sp8THpZ4IcVqg==
   dependencies:
+    ardb "^1.0.8"
     arweave "^1.10.13"
     axios "^0.21.1"
     smartweave "^0.4.29"

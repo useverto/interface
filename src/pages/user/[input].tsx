@@ -1,5 +1,9 @@
 import Verto from "@verto/js";
-import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
+import {
+  OrderInterface,
+  TransactionInterface,
+  UserInterface,
+} from "@verto/js/dist/faces";
 import { Avatar, Card, Page } from "@verto/ui";
 import { useEffect, useState } from "react";
 
@@ -7,6 +11,7 @@ const client = new Verto();
 
 const User = (props: { user: UserInterface | undefined }) => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
+  const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -19,6 +24,22 @@ const User = (props: { user: UserInterface | undefined }) => {
       setOrders(res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5));
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      let res: TransactionInterface[] = [];
+
+      for (const address of props.user.addresses) {
+        res.push(...(await client.getTransactions(address)));
+      }
+
+      setTransactions(
+        res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
+      );
+    })();
+  }, []);
+
+  console.log(transactions);
 
   return (
     <Page>

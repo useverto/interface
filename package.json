@@ -10,7 +10,7 @@
     "pre-commit": "prettier --write . && git add -A"
   },
   "dependencies": {
-    "@verto/js": "^0.0.0-alpha.7",
+    "@verto/js": "^0.0.0-alpha.9",
     "@verto/ui": "^2.0.0-alpha",
     "ardb": "^1.0.8",
     "arweave": "^1.10.13",
