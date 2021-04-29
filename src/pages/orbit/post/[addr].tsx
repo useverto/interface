@@ -1,7 +1,9 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import axios from "axios";
+import Head from "next/head";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import Metas from "../../../components/Metas";
 
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   const [orders, setOrders] = useState(props.orders);
@@ -24,6 +26,10 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - Post {props.addr}</title>
+        <Metas title={`Post ${props.addr}`} />
+      </Head>
       <Bar
         data={{
           labels: Object.keys(props.stats).reverse(),

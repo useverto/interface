@@ -3,6 +3,8 @@ import axios from "axios";
 import { Page, useInput } from "@verto/ui";
 import { PriceInterface } from "@verto/js/dist/faces";
 import { useEffect, useState } from "react";
+import Head from "next/head";
+import Metas from "../../components/Metas";
 
 const client = new Verto();
 
@@ -77,6 +79,14 @@ const Token = (props: PropTypes) => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - ARTNAME HERE</title>
+        {/** TODO: get image of community and put it in the metas OG */}
+        <Metas
+          title="ARTNAME HERE"
+          image={type === "art" ? `https://arweave.net/${props.id}` : undefined}
+        />
+      </Head>
       {type === "art" && <img src={`https://arweave.net/${props.id}`} />}
       {type === "community" && metrics && (
         <>

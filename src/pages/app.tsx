@@ -10,6 +10,8 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
+import Head from "next/head";
+import Metas from "../components/Metas";
 import styles from "../styles/views/app.module.sass";
 
 const client = new Verto();
@@ -30,6 +32,10 @@ const App = () => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - Home</title>
+        <Metas title="Home" />
+      </Head>
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />

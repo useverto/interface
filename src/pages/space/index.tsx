@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Balance from "../../components/Balance";
 import Verto from "@verto/js";
+import Head from "next/head";
+import Metas from "../../components/Metas";
 
 const client = new Verto();
 
@@ -29,6 +31,10 @@ const Space = (props: { tokens: any[] }) => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - Space</title>
+        <Metas title="Space" />
+      </Head>
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />

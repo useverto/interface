@@ -3,6 +3,8 @@ import { TradingPostInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Metas from "../../components/Metas";
+import Head from "next/head";
 
 const client = new Verto();
 
@@ -29,6 +31,10 @@ const Orbit = (props: { posts: TradingPostInterface[] }) => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - Orbit</title>
+        <Metas title="Orbit" />
+      </Head>
       {props.posts.map((post) => (
         <>
           <Card.TradingPost

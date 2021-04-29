@@ -1,14 +1,17 @@
 import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
+import Head from "next/head";
 import "../styles/global.sass";
 import "../styles/progress.sass";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const [scheme, setScheme] = useState<"dark" | "light">("light");
+
   Progress.configure({ showSpinner: false });
 
   useEffect(() => {
@@ -23,8 +26,28 @@ export default function App({ Component, pageProps }) {
     };
   });
 
+  useEffect(() => {
+    if (!window) return;
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    const updateScheme = (val) => setScheme(val.matches ? "dark" : "light");
+
+    updateScheme(query);
+    query.addEventListener("change", updateScheme);
+
+    return () => {
+      query.removeEventListener("change", updateScheme);
+    };
+  }, []);
+
   return (
     <VertoProvider theme={"Light"}>
+      <Head>
+        <link
+          rel="shortcut icon"
+          href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+          type="image/svg"
+        />
+      </Head>
       <Nav />
       <Component {...pageProps} />
       <Footer />

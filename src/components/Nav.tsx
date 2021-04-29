@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
-import logoLight from "../assets/logo_light.svg";
 import styles from "../styles/components/Nav.module.sass";
 
 const Nav = () => {
@@ -67,7 +66,7 @@ const Nav = () => {
     >
       <Link href="/">
         <a className={styles.Logo}>
-          <img src={logoLight} alt="V" draggable={false} />
+          <img src="/logo_light.svg" alt="V" draggable={false} />
         </a>
       </Link>
       <AnimatePresence>

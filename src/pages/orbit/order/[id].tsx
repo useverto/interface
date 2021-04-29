@@ -1,9 +1,18 @@
 import { Card, Page, Spacer } from "@verto/ui";
+import { useRouter } from "next/router";
 import axios from "axios";
+import Head from "next/head";
+import Metas from "../../../components/Metas";
 
 const Order = (props: { order: any }) => {
+  const router = useRouter();
+
   return (
     <Page>
+      <Head>
+        <title>Verto - Order {router.query.id}</title>
+        <Metas title={`Order ${router.query.id}`} />
+      </Head>
       {props.order.actions.map((action, i) => (
         <>
           <Card.OrderStep

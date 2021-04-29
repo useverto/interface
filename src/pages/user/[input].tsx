@@ -5,7 +5,9 @@ import {
   UserInterface,
 } from "@verto/js/dist/faces";
 import { Avatar, Card, Page } from "@verto/ui";
+import Head from "next/head";
 import { useEffect, useState } from "react";
+import Metas from "../../components/Metas";
 
 const client = new Verto();
 
@@ -43,6 +45,14 @@ const User = (props: { user: UserInterface | undefined }) => {
 
   return (
     <Page>
+      <Head>
+        <title>@{props.user.username} on Verto</title>
+        <Metas
+          title={`@${props.user.username} on Verto`}
+          image={`https://arweave.net/${props.user.image}`}
+        />
+        <meta property="profile:username" content={props.user.username} />
+      </Head>
       {props.user && (
         <Avatar
           avatar={`https://arweave.net/${props.user.image}`}

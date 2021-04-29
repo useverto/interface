@@ -11,6 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
+import Head from "next/head";
+import Metas from "../components/Metas";
 
 const client = new Verto();
 
@@ -57,6 +59,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   return (
     <Page>
+      <Head>
+        <title>Verto - Swap</title>
+        <Metas title="Swap" />
+      </Head>
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />
