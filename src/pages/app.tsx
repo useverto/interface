@@ -1,15 +1,23 @@
 import { BalanceInterface } from "@verto/js/dist/faces";
-import { Card, Page, Spacer } from "@verto/ui";
+import { Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { useAddress } from "../utils/arconnect";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  PlusIcon,
+} from "@primer/octicons-react";
+import { AnimatePresence, motion } from "framer-motion";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
+import styles from "../styles/views/app.module.sass";
 
 const client = new Verto();
 
 const App = () => {
   const [balances, setBalances] = useState<BalanceInterface[]>([]);
   const { address } = useAddress();
+  const [showMorePsts, setShowMorePsts] = useState(false);
 
   useEffect(() => {
     if (!address) return;
@@ -25,23 +33,68 @@ const App = () => {
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />
-      {balances.map((item) => (
-        <>
-          <Card.Balance
-            id={item.id}
-            name={item.name}
-            // @ts-ignore
-            ticker={item.ticker ?? ""}
-            balance={item.balance}
-            logo={{
-              light: item.logo
-                ? `https://arweave.net/${item.logo}`
-                : "/arweave.png",
-            }}
-          />
-          <Spacer y={1} />
-        </>
-      ))}
+      <h1 className="Title">
+        Balances
+        {/** TODO @martonlederer */}
+        <div className="ActionSheet">
+          <Tooltip text="List new">
+            <button className="Btn">
+              <PlusIcon />
+            </button>
+          </Tooltip>
+        </div>
+      </h1>
+      <Spacer y={2} />
+      <AnimatePresence>
+        {balances.map(
+          (item, i) =>
+            (showMorePsts || i < 5) && (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.83 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.83 }}
+                transition={{
+                  duration: 0.23,
+                  ease: "easeInOut",
+                  delay: i * 0.023,
+                }}
+              >
+                <Card.Balance
+                  id={item.id}
+                  name={item.name}
+                  // @ts-ignore
+                  ticker={item.ticker ?? ""}
+                  balance={item.balance}
+                  logo={{
+                    light: item.logo
+                      ? `https://arweave.net/${item.logo}`
+                      : "/arweave.png",
+                  }}
+                />
+                <Spacer y={1} />
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+      <Spacer y={1} />
+      <span
+        className={styles.ShowMore}
+        onClick={() => setShowMorePsts((val) => !val)}
+      >
+        Show{" "}
+        {(showMorePsts && (
+          <>
+            less
+            <ChevronUpIcon />
+          </>
+        )) || (
+          <>
+            all
+            <ChevronDownIcon />
+          </>
+        )}
+      </span>
     </Page>
   );
 };

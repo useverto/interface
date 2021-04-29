@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
+import "../styles/global.sass";
 import "../styles/progress.sass";
 
 export default function App({ Component, pageProps }) {

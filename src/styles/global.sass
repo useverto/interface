@@ -1,0 +1,34 @@
+@use "./variables"
+  
+.Title
+  display: flex
+  align-items: center
+  justify-content: space-between
+  font-size: variables.$title-font-size
+  font-weight: 500
+  line-height: 1.1em
+  margin: 0
+
+  .Btn
+    color: variables.$light-text
+    cursor: pointer
+    font-size: 1em
+    +variables.resetButton
+    transition: all .23s ease-in-out
+
+    svg
+      +variables.sameSizeSvg
+
+    &:hover
+      opacity: .8
+
+  .ActionSheet
+    display: flex
+    align-items: center
+    justify-content: space-between
+    font-size: .5em
+
+    .VertoTooltip
+      line-height: 1.1em
+      font-size: .75em
+      border-radius: 10px
