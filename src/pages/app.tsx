@@ -13,6 +13,7 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import styles from "../styles/views/app.module.sass";
+import { cardListAnimation } from "../utils/animations";
 
 const client = new Verto();
 
@@ -55,17 +56,7 @@ const App = () => {
         {balances.map(
           (item, i) =>
             (showMorePsts || i < 5) && (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.83 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.83 }}
-                transition={{
-                  duration: 0.23,
-                  ease: "easeInOut",
-                  delay: i * 0.023,
-                }}
-              >
+              <motion.div key={i} {...cardListAnimation(i)}>
                 <Card.Balance
                   id={item.id}
                   name={item.name}

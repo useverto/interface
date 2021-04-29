@@ -14,16 +14,15 @@ const Order = (props: { order: any }) => {
         <Metas title={`Order ${router.query.id}`} />
       </Head>
       {props.order.actions.map((action, i) => (
-        <>
+        <div key={i}>
           <Card.OrderStep
             title={action.description}
             id={action.id}
             matchID={action.match}
             link={`https://viewblock.io/arweave/tx/${action.id}`}
-            key={i}
           />
           <Spacer y={2} />
-        </>
+        </div>
       ))}
     </Page>
   );
