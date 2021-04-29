@@ -5,8 +5,6 @@ import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
-import Nav from "../components/Nav";
-import Footer from "../components/Footer";
 import styles from "../styles/views/home.module.sass";
 
 const client = new Verto();
@@ -55,7 +53,6 @@ const Home = () => {
       <Head>
         <title>Verto - Home</title>
       </Head>
-      <Nav />
       <Page>
         <Spacer y={5} />
         <div className={styles.Landing}>
@@ -217,7 +214,6 @@ const Home = () => {
           </p>
         </div>
       </Page>
-      <Footer />
     </>
   );
 };

@@ -33,7 +33,6 @@ export const balanceHistory = async (
     client.ar.winstonToAr(await client.wallets.getBalance(address))
   );
 
-  console.log(txs, balance);
   const res = {};
 
   for (const { node } of txs) {

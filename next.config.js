@@ -9,8 +9,21 @@ module.exports = {
     return [
       {
         source: "/u/:user",
-        destination: "/user/:user",
+        destination: "/@:user",
         permanent: true,
+      },
+      {
+        source: "/user/:user",
+        destination: "/@:user",
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/(@):user",
+        destination: "/user/:user",
       },
     ];
   },
