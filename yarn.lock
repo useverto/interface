@@ -298,10 +298,10 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@2.0.2-alpha":
-  version "2.0.2-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.2-alpha.tgz#f51332e72e9ec222872b9a4a57c7f5501bbc217c"
-  integrity sha512-q9KSQPMYlvQT6h5yhRYwdyEYrHcEjUw4CjYN6anlLRKELeEDqVjsCIWtmNYb+9SQqbsndMA+IGb/fUaTX7QHIw==
+"@verto/ui@2.0.3-alpha":
+  version "2.0.3-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.3-alpha.tgz#62db41f90051affa3845936e7b26d3e2f8cbd347"
+  integrity sha512-xE5Iv2j/PYBbyrfU53uNlYCc2WLkFUML+rIXmSv/uxfTGNlsWgp5e0f0c+4ZBmHCZuHh3PGG1c3imnnKCE/wkQ==
   dependencies:
     "@primer/octicons-react" "^12.1.0"
     framer-motion "^3.1.1"
