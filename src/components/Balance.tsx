@@ -36,7 +36,7 @@ const Balance = () => {
       <div className={styles.Data}>
         <p>Total balance</p>
         <h1>
-          {(balance && <CountUp end={balance} decimals={8} duration={2} />) ||
+          {(balance && <CountUp end={balance} decimals={8} duration={1.5} />) ||
             "0"}
           <b>AR</b>
         </h1>
@@ -53,9 +53,9 @@ const Balance = () => {
         {history && (
           <motion.div
             className={styles.Graph}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, scaleY: 0 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.23, ease: "easeInOut" }}
           >
             <Line

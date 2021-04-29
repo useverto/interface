@@ -1,10 +1,13 @@
 import { Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
+import { cardAnimation } from "../../utils/animations";
+import { motion } from "framer-motion";
 import axios from "axios";
 import Balance from "../../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
+import styles from "../../styles/views/space.module.sass";
 
 const client = new Verto();
 
@@ -38,16 +41,21 @@ const Space = (props: { tokens: any[] }) => {
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />
-      {props.tokens.map((token) => (
-        <Card.Asset
-          name={token.name}
-          // @ts-ignore
-          price={prices[token.id] ?? " ??"}
-          image={`https://arweave.net/${token.logo}`}
-          ticker={token.ticker}
-          key={token.id}
-        />
-      ))}
+      <h1 className="Title">Art {"&"} Collectibles</h1>
+      <Spacer y={2} />
+      <div className={styles.CardWrapper}>
+        {props.tokens.map((token, i) => (
+          <motion.div key={i} {...cardAnimation(i)}>
+            <Card.Asset
+              name={token.name}
+              // @ts-ignore
+              price={prices[token.id] ?? " ??"}
+              image={`https://arweave.net/${token.logo}`}
+              ticker={token.ticker}
+            />
+          </motion.div>
+        ))}
+      </div>
     </Page>
   );
 };

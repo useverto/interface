@@ -15,3 +15,21 @@ export const cardListAnimation = (i: number) => ({
     delay: i * 0.023,
   },
 });
+
+/**
+ * Animation standard for normal cards
+ *
+ * @param i Card key
+ *
+ * @returns Animation bindings for framer-motion
+ */
+export const cardAnimation = (i: number) => ({
+  initial: { opacity: 0, translateY: 5 },
+  animate: { opacity: 1, translateY: 0 },
+  exit: { opacity: 0, translateY: 5 },
+  transition: {
+    duration: 0.25,
+    ease: "easeInOut",
+    delay: i * 0.058,
+  },
+});
