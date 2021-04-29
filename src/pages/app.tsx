@@ -4,6 +4,7 @@ import { Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { balanceHistory } from "../utils/arweave";
+import { GraphDataConfig, GraphOptions } from "../utils/graph";
 
 const client = new Verto();
 
@@ -50,9 +51,13 @@ const App = () => {
           datasets: [
             {
               data: Object.values(history).reverse(),
+              ...GraphDataConfig,
             },
           ],
         }}
+        options={GraphOptions({
+          tooltipText: ({ value }) => `${value} AR`,
+        })}
       />
     </Page>
   );
