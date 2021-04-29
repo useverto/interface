@@ -1,0 +1,22 @@
+@use "../variables"
+  
+.Nav
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 1em 4em
+
+  .Logo
+    cursor: pointer
+    box-shadow: 0px 10px 20px variables.$standard-shadow
+    transition: all .23s ease-in-out
+
+    img
+      display: block
+      height: 2.4em
+
+    &:hover
+      opacity: .82
+
+    &:active
+      transform: scale(.89)
