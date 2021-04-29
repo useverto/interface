@@ -6,6 +6,7 @@ import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Nav from "../components/Nav";
+import Footer from "../components/Footer";
 import styles from "../styles/views/home.module.sass";
 
 const client = new Verto();
@@ -216,6 +217,7 @@ const Home = () => {
           </p>
         </div>
       </Page>
+      <Footer />
     </>
   );
 };

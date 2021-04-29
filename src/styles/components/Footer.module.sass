@@ -1,0 +1,39 @@
+@use "../variables"
+  
+.Footer
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: 1.32em variables.$nav-side-padding
+  border-top: 1px solid #eaeaea
+
+  a
+    text-decoration: none
+    color: variables.$light-text
+    transition: all .23s ease-in-out
+
+    &:hover
+      color: #000
+
+  .Title
+    display: flex
+    font-size: 1.29em
+    color: variables.$light-text
+    font-weight: 400
+    margin: 0
+
+    span
+      color: variables.$foreground-color
+
+    a
+      font-size: 1em
+
+  .Links
+    display: flex
+
+    a
+      font-size: .95em
+      margin: 0 .8em
+
+      &:last-child
+        margin-right: 0
