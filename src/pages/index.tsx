@@ -1,5 +1,7 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
+import { permissions, useAddress } from "../utils/arconnect";
+import { useRouter } from "next/router";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -10,6 +12,9 @@ import styles from "../styles/views/home.module.sass";
 const client = new Verto();
 
 const Home = () => {
+  const { address, updateAddress } = useAddress();
+  const router = useRouter();
+
   useEffect(() => {
     const options = {
       strings: ["PSTs", "PSCs", "NFTs", "collectibles", "anything"],
@@ -48,6 +53,11 @@ const Home = () => {
     })();
   }, []);
 
+  async function login() {
+    await window.arweaveWallet.connect(permissions);
+    await updateAddress();
+  }
+
   return (
     <>
       <Head>
@@ -78,11 +88,23 @@ const Home = () => {
             </p>
             <Spacer y={1.35} />
             <div className={styles.HeroBtns}>
-              <Button type="outlined" small>
+              <Button
+                type="outlined"
+                small
+                onClick={() => router.push("/space")}
+              >
                 Explore tokens
               </Button>
               <Spacer x={1} />
-              <Button small>Trade now</Button>
+              <Button
+                small
+                onClick={() => {
+                  if (!address) login();
+                  else router.push("/swap");
+                }}
+              >
+                Trade now
+              </Button>
             </div>
           </div>
           <div className={styles.FeaturedToken}>

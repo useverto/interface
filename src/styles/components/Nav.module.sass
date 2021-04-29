@@ -1,6 +1,7 @@
 @use "../variables"
   
 .Nav
+  position: relative
   display: flex
   align-items: center
   justify-content: space-between
@@ -21,3 +22,38 @@
 
     &:active
       transform: scale(.89)
+
+  .Menu
+    $menuItemFontSize: 1em
+    position: absolute
+    display: flex
+    align-items: center
+    top: 50%
+    left: 50%
+    width: max-content
+    transform: translate(-50%, -50%)
+
+    a
+      font-size: $menuItemFontSize
+      color: variables.$foreground-color
+      font-weight: 500
+      margin: 0 1.15em
+      cursor: pointer
+      z-index: 10
+      text-decoration: none
+      transition: all .13s ease-in-out
+
+      &.Selected
+        color: variables.$foreground-reverse-color
+
+    .Selection
+      position: absolute
+      background-color: variables.$foreground-color
+      border-radius: 8px
+      box-shadow: variables.$standard-shadow
+      height: $menuItemFontSize * 2.23
+      min-width: $menuItemFontSize * 2
+      z-index: 1
+      top: 50%
+      transform: translateY(-50%)
+      transition: all .17s ease-in-out
