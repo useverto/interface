@@ -1,4 +1,3 @@
-import Verto from "@verto/js";
 import { TokenInterface } from "@verto/js/dist/faces";
 import {
   Button,
@@ -10,6 +9,8 @@ import {
   useSelect,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
+import Balance from "../components/Balance";
+import Verto from "@verto/js";
 
 const client = new Verto();
 
@@ -56,6 +57,9 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   return (
     <Page>
+      <Spacer y={3} />
+      <Balance />
+      <Spacer y={4} />
       <Card>
         <Input
           label="You send"

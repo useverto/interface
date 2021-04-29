@@ -8,7 +8,7 @@ import Link from "next/link";
 import logoLight from "../assets/logo_light.svg";
 import styles from "../styles/components/Nav.module.sass";
 
-export default function Nav() {
+const Nav = () => {
   const { address, updateAddress } = useAddress();
   const arconnect = useArConnect();
   const router = useRouter();
@@ -151,6 +151,8 @@ export default function Nav() {
         )}
     </motion.div>
   );
-}
+};
 
 type Item = "app" | "space" | "swap" | "orbit";
+
+export default Nav;

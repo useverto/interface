@@ -39,7 +39,7 @@ export function GraphOptions({
     elements: {
       point: { radius: 0 },
       line: {
-        borderWidth: 5,
+        borderWidth: 4,
         borderCapStyle: "round",
       },
     },

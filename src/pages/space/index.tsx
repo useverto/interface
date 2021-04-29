@@ -1,7 +1,8 @@
-import Verto from "@verto/js";
-import { Card, Page } from "@verto/ui";
-import axios from "axios";
+import { Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
+import axios from "axios";
+import Balance from "../../components/Balance";
+import Verto from "@verto/js";
 
 const client = new Verto();
 
@@ -28,6 +29,9 @@ const Space = (props: { tokens: any[] }) => {
 
   return (
     <Page>
+      <Spacer y={3} />
+      <Balance />
+      <Spacer y={4} />
       {props.tokens.map((token) => (
         <Card.Asset
           name={token.name}

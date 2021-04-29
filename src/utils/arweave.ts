@@ -3,7 +3,7 @@ import { GQLEdgeTransactionInterface } from "ardb/lib/faces/gql";
 import Arweave from "arweave";
 import moment from "moment";
 
-const client = new Arweave({
+export const client = new Arweave({
   host: "arweave.net",
   port: 443,
   protocol: "https",
