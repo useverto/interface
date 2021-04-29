@@ -6,6 +6,10 @@ import { useRouter } from "next/router";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import styles from "../styles/components/Nav.module.sass";
+import Verto from "@verto/js";
+import { UserInterface } from "@verto/js/dist/faces";
+
+const client = new Verto();
 
 const Nav = () => {
   const { address, updateAddress } = useAddress();
@@ -56,6 +60,13 @@ const Nav = () => {
         x: el.offsetLeft,
       });
   }
+
+  const [user, setUser] = useState<UserInterface>(null);
+  useEffect(() => {
+    if (address) {
+      client.getUser(address).then((res) => setUser(res));
+    }
+  }, [address]);
 
   return (
     <motion.div
@@ -129,15 +140,23 @@ const Nav = () => {
         )}
       </AnimatePresence>
       {(arconnect && address && (
-        <Avatar
-          size="small"
-          usertag="testusertag"
-          name="John"
-          avatar="https://th8ta.org/john.jpeg"
-          left
-          notification={true}
-          style={{ cursor: "pointer" }}
-        />
+        <>
+          {user ? (
+            <Avatar
+              size="small"
+              usertag={user.username}
+              name={user.name}
+              avatar={`https://arweave.net/${user.image}`}
+              left
+              notification={true}
+              style={{ cursor: "pointer" }}
+            />
+          ) : (
+            <Button small disabled>
+              Disconnect
+            </Button>
+          )}
+        </>
       )) ||
         (arconnect && (
           <Button small onClick={login}>
