@@ -1,28 +1,24 @@
-import { Button, Card, Page, Spacer } from "@verto/ui";
-import axios from "axios";
-import Head from "next/head";
-import { useEffect, useState } from "react";
+import { Card, Loading, Page, Spacer } from "@verto/ui";
+import { AnimatePresence, motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
+import { cardListAnimation } from "../../../utils/animations";
 import Metas from "../../../components/Metas";
+import Head from "next/head";
+import axios from "axios";
+import useInfiniteScroll from "../../../utils/infinite_scroll";
 
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
-  const [orders, setOrders] = useState(props.orders);
-  const [loading, setLoading] = useState(false);
+  const { loading, data } = useInfiniteScroll<any>(loadMore, props.orders);
 
-  useEffect(() => {
-    if (loading && props.orders.length) {
-      axios
-        .get(
-          `https://v2.cache.verto.exchange/posts/${
-            props.addr
-          }/orders?limit=10&after=${props.orders[props.orders.length - 1].id}`
-        )
-        .then((res) => {
-          setOrders((val) => [...val, ...res.data]);
-          setLoading(false);
-        });
-    }
-  }, [loading]);
+  async function loadMore() {
+    const { data: moreOrders } = await axios.get(
+      `https://v2.cache.verto.exchange/posts/${
+        props.addr
+      }/orders?limit=10&after=${data[data.length - 1].id}`
+    );
+
+    return moreOrders;
+  }
 
   return (
     <Page>
@@ -92,7 +88,8 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
           },
         }}
       />
-      {orders.map((order) => {
+      <Spacer y={2} />
+      {data.map((order, i) => {
         let status = order.status;
         if (status === "success" || status === "pending") {
           // don't do anything
@@ -110,21 +107,30 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         }
 
         return (
-          <>
+          <motion.div key={i} {...cardListAnimation(i)}>
             <Card.Order
               type={type}
               orderID={order.id}
               status={status}
               timestamp={new Date(order.timestamp * 1000)}
-              key={order.id}
             />
-            <Spacer y={1} />
-          </>
+            <Spacer y={2} />
+          </motion.div>
         );
       })}
-      <Button loading={loading} onClick={() => setLoading(true)}>
-        Load More
-      </Button>
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ ease: "easeInOut", duration: 0.22 }}
+          >
+            <Spacer y={1} />
+            <Loading.Spinner style={{ margin: "0 auto" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Page>
   );
 };
