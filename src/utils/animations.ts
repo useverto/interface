@@ -33,3 +33,21 @@ export const cardAnimation = (i: number) => ({
     delay: i * 0.058,
   },
 });
+
+/**
+ * Opacity animations
+ *
+ * @param i Optional item key
+ *
+ * @returns Animation bindings for framer-motion
+ */
+export const opacityAnimation = (i = 0) => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: {
+    duration: 0.23,
+    ease: "easeInOut",
+    delay: i * 0.058,
+  },
+});

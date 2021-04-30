@@ -3,11 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { permissions, useAddress } from "../utils/arconnect";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { UserInterface } from "@verto/js/dist/faces";
+import { formatAddress } from "../utils/format";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import styles from "../styles/components/Nav.module.sass";
 import Verto from "@verto/js";
-import { UserInterface } from "@verto/js/dist/faces";
 
 const client = new Verto();
 
@@ -24,6 +25,11 @@ const Nav = () => {
     x: 0,
     width: 0,
   });
+  const [user, setUser] = useState<UserInterface>(null);
+  const [noIDUser, setNoIDUser] = useState({
+    avatar: "",
+    name: "",
+  });
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -36,6 +42,26 @@ const Nav = () => {
   });
 
   useEffect(syncSelected, [router.asPath]);
+
+  // random user avatar for users without an ID
+  // and get current wallet name
+  useEffect(() => {
+    if (!address || user) return;
+    const emojis = ["😂", "🥺", "😊", "🥰", "😃", "🤩", "🤔", "😏", "😷"];
+    setNoIDUser((val) => ({
+      ...val,
+      avatar: emojis[Math.floor(Math.random() * emojis.length)],
+    }));
+
+    (async () => {
+      const walletNames = await window.arweaveWallet.getWalletNames();
+
+      setNoIDUser((val) => ({
+        ...val,
+        name: walletNames[address],
+      }));
+    })();
+  }, [user, address]);
 
   async function login() {
     await window.arweaveWallet.connect(permissions);
@@ -61,7 +87,6 @@ const Nav = () => {
       });
   }
 
-  const [user, setUser] = useState<UserInterface>(null);
   useEffect(() => {
     if (address) {
       client.getUser(address).then((res) => setUser(res));
@@ -141,6 +166,7 @@ const Nav = () => {
       </AnimatePresence>
       {(arconnect && address && (
         <>
+          {/** TODO: notifications */}
           {user ? (
             <Avatar
               size="small"
@@ -152,9 +178,15 @@ const Nav = () => {
               style={{ cursor: "pointer" }}
             />
           ) : (
-            <Button small disabled>
-              Disconnect
-            </Button>
+            <Avatar
+              size="small"
+              usertag={formatAddress(address)}
+              name={noIDUser.name}
+              avatar={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%221em%22 font-size=%2280%22>${noIDUser.avatar}</text></svg>`}
+              left
+              notification={true}
+              style={{ cursor: "pointer" }}
+            />
           )}
         </>
       )) ||

@@ -55,7 +55,7 @@ const App = () => {
       <AnimatePresence>
         {balances.map(
           (item, i) =>
-            (showMorePsts || i < 5) && (
+            (showMorePsts || i < 4) && (
               <motion.div key={i} {...cardListAnimation(i)}>
                 <Card.Balance
                   id={item.id}

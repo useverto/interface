@@ -27,7 +27,9 @@ export function useAddress() {
     if (e) return setAddress(e.detail.address);
     try {
       setAddress(await window.arweaveWallet.getActiveAddress());
-    } catch {}
+    } catch {
+      setAddress(undefined);
+    }
   }
 
   return { address, updateAddress };
