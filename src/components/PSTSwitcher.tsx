@@ -31,16 +31,17 @@ const PSTSwitcher = () => {
       "https://v2.cache.verto.exchange/site/communities/random"
     );
 
-    let images: any;
+    let imgs: typeof images;
     setImages((val) => {
-      images = val;
+      imgs = val;
       return val;
     });
 
-    for (const value of Object.values(images)) {
-      // @ts-ignore
-      if (value.id === res[index].id) return false;
-    }
+    if (imgs)
+      for (const value of Object.values(imgs)) {
+        // @ts-ignore
+        if (value.id === res[index].id) return false;
+      }
 
     try {
       setImages((val) => ({
@@ -90,7 +91,7 @@ const PSTSwitcher = () => {
       <AnimatePresence>
         {images.img1.logo !== "" && (
           <motion.div
-            key={images.img1.id}
+            key={images.img1.id + "_1"}
             className={styles.Logo}
             style={{ top: "2em", left: "2.8em" }}
             initial={{ scale: 0, opacity: 0.3, rotate: -30 }}
@@ -109,7 +110,7 @@ const PSTSwitcher = () => {
         )}
         {images.img2.logo !== "" && (
           <motion.div
-            key={images.img2.id}
+            key={images.img2.id + "_2"}
             className={styles.Logo}
             style={{ top: "50%", left: "50%" }}
             initial={{
@@ -143,7 +144,7 @@ const PSTSwitcher = () => {
         )}
         {images.img3.logo !== "" && (
           <motion.div
-            key={images.img3.id}
+            key={images.img3.id + "_3"}
             className={styles.Logo}
             style={{ top: "4.5em", right: 0 }}
             initial={{ scale: 0, opacity: 0.3, rotate: 15 }}
@@ -162,7 +163,7 @@ const PSTSwitcher = () => {
         )}
         {images.img4.logo !== "" && (
           <motion.div
-            key={images.img4.id}
+            key={images.img4.id + "_4"}
             className={styles.Logo}
             style={{ bottom: -10, left: "40%" }}
             initial={{
