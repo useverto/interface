@@ -75,7 +75,7 @@ const Nav = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.44, ease: "easeInOut" }}
     >
-      <Link href="/">
+      <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
         <a className={styles.Logo}>
           <img src="/logo_light.svg" alt="V" draggable={false} />
         </a>
