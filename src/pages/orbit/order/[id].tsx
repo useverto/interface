@@ -1,8 +1,13 @@
-import { Card, Page, Spacer } from "@verto/ui";
+import { Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useRouter } from "next/router";
+import { cardListAnimation } from "../../../utils/animations";
+import { motion } from "framer-motion";
+import { getStatus, getType } from "../../../utils/order";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
+import Link from "next/link";
+import styles from "../../../styles/views/orbit.module.sass";
 
 const Order = (props: { order: any }) => {
   const router = useRouter();
@@ -13,8 +18,33 @@ const Order = (props: { order: any }) => {
         <title>Verto - Order {router.query.id}</title>
         <Metas title={`Order ${router.query.id}`} />
       </Head>
+      <Spacer y={3} />
+      <div className={styles.OrbitTitle}>
+        <h1>
+          Order
+          <span className={styles.Type}>{getType(props.order.input)}</span>
+        </h1>
+        <p>
+          {props.order.id}
+          <Spacer x={0.44} />
+          <Tooltip text={getStatus(props.order.status)} position="right">
+            <span
+              className={
+                styles.Status +
+                " " +
+                styles[`Status_${getStatus(props.order.status)}`]
+              }
+            />
+          </Tooltip>
+        </p>
+        <p>
+          Owner:
+          <Link href={`/@${props.order.sender}`}>{props.order.sender}</Link>
+        </p>
+      </div>
+      <Spacer y={3} />
       {props.order.actions.map((action, i) => (
-        <div key={i}>
+        <motion.div key={i} {...cardListAnimation(i)}>
           <Card.OrderStep
             title={action.description}
             id={action.id}
@@ -22,7 +52,7 @@ const Order = (props: { order: any }) => {
             link={`https://viewblock.io/arweave/tx/${action.id}`}
           />
           <Spacer y={2} />
-        </div>
+        </motion.div>
       ))}
     </Page>
   );

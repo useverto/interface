@@ -1,0 +1,62 @@
+@use "../variables"
+  
+.OrbitTitle
+  h1
+    display: flex
+    align-items: center
+    font-size: variables.$title-font-size
+    color: variables.$light-text
+    font-weight: 500
+    line-height: 1.1em
+    margin: 0
+      bottom: .2em
+
+    .Type
+      font-size: .6em
+      text-transform: uppercase
+      color: variables.$foreground-reverse-color
+      background-color: variables.$foreground-color
+      margin-left: .6em
+      padding: .30em .55em
+      line-height: 1em
+      border-radius: 8px
+      box-shadow: variables.$standard-shadow
+
+  p
+    display: flex
+    align-items: center
+    color: variables.$foreground-color
+    font-size: .9em
+    font-weight: 500
+    margin: 0
+
+    .Status
+      $size: 8px
+      display: block
+      width: $size
+      height: $size
+      border-radius: 100%
+
+      &.Status_error
+        background-color: variables.$error
+
+      &.Status_pending
+        background-color: variables.$warning
+
+      &.Status_success
+        background-color: variables.$success
+
+      &.Status_neutral
+        background-color: variables.$foreground-color
+        opacity: .6
+
+    div[class~=VertoTooltip]
+      text-transform: capitalize
+
+    a
+      color: variables.$light-text
+      margin-left: .3em
+      text-decoration: none
+
+      &:hover
+        text-decoration: underline

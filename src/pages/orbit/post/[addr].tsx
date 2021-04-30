@@ -1,14 +1,32 @@
-import { Card, Loading, Page, Spacer } from "@verto/ui";
+import { Card, Loading, Page, Spacer, Tooltip } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
 import { cardListAnimation } from "../../../utils/animations";
+import { getStatus, getType } from "../../../utils/order";
+import { useEffect, useState } from "react";
 import Metas from "../../../components/Metas";
 import Head from "next/head";
 import axios from "axios";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
+import styles from "../../../styles/views/orbit.module.sass";
 
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   const { loading, data } = useInfiniteScroll<any>(loadMore, props.orders);
+  const [status, setStatus] = useState<"online" | "offline">();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data: post } = await axios.get(
+          `https://v2.cache.verto.exchange/posts/${props.addr}`
+        );
+        await axios.get(post.endpoint);
+        setStatus("online");
+      } catch {
+        setStatus("offline");
+      }
+    })();
+  }, []);
 
   async function loadMore() {
     const { data: moreOrders } = await axios.get(
@@ -26,6 +44,30 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         <title>Verto - Post {props.addr}</title>
         <Metas title={`Post ${props.addr}`} />
       </Head>
+      <Spacer y={3} />
+      <div className={styles.OrbitTitle}>
+        <h1>Trading Post</h1>
+        <p>
+          {props.addr}
+          {status && (
+            <>
+              <Spacer x={0.44} />
+              <Tooltip text={status} position="right">
+                <span
+                  className={
+                    styles.Status +
+                    " " +
+                    styles[
+                      `Status_${status === "offline" ? "error" : "success"}`
+                    ]
+                  }
+                />
+              </Tooltip>
+            </>
+          )}
+        </p>
+      </div>
+      <Spacer y={3} />
       <Bar
         data={{
           labels: Object.keys(props.stats).reverse(),
@@ -88,36 +130,18 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
           },
         }}
       />
-      <Spacer y={2} />
-      {data.map((order, i) => {
-        let status = order.status;
-        if (status === "success" || status === "pending") {
-          // don't do anything
-        } else if (status === "cancelled" || status === "refunded") {
-          status = "neutral";
-        } else {
-          status = "error";
-        }
-
-        let type;
-        if (order.input.split(" ")[1] === "AR") {
-          type = "buy";
-        } else {
-          type = "sell";
-        }
-
-        return (
-          <motion.div key={i} {...cardListAnimation(i)}>
-            <Card.Order
-              type={type}
-              orderID={order.id}
-              status={status}
-              timestamp={new Date(order.timestamp * 1000)}
-            />
-            <Spacer y={2} />
-          </motion.div>
-        );
-      })}
+      <Spacer y={3} />
+      {data.map((order, i) => (
+        <motion.div key={i} {...cardListAnimation(i)}>
+          <Card.Order
+            type={getType(order.input)}
+            orderID={order.id}
+            status={getStatus(order.status)}
+            timestamp={new Date(order.timestamp * 1000)}
+          />
+          <Spacer y={2} />
+        </motion.div>
+      ))}
       <AnimatePresence>
         {loading && (
           <motion.div

@@ -3,6 +3,8 @@ import { TradingPostInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { cardListAnimation } from "../../utils/animations";
 import Metas from "../../components/Metas";
 import Head from "next/head";
 
@@ -35,19 +37,21 @@ const Orbit = (props: { posts: TradingPostInterface[] }) => {
         <title>Verto - Orbit</title>
         <Metas title="Orbit" />
       </Head>
-      {props.posts.map((post) => (
-        <>
-          <Card.TradingPost
-            status={status[post.address] || "neutral"}
-            address={post.address}
-            balance={post.balance}
-            vrtStake={post.stake}
-            key={post.address}
-            onClick={() => router.push(`/orbit/post/${post.address}`)}
-          />
-          <Spacer y={2} />
-        </>
-      ))}
+      <Spacer y={3} />
+      {props.posts
+        .sort((a, b) => b.stake - a.stake)
+        .map((post, i) => (
+          <motion.div key={i} {...cardListAnimation(i)}>
+            <Card.TradingPost
+              status={status[post.address] || "neutral"}
+              address={post.address}
+              balance={post.balance}
+              vrtStake={post.stake}
+              onClick={() => router.push(`/orbit/post/${post.address}`)}
+            />
+            <Spacer y={2} />
+          </motion.div>
+        ))}
     </Page>
   );
 };

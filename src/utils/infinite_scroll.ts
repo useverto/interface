@@ -6,6 +6,7 @@ export default function useInfiniteScroll<T>(
 ) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T[]>(initialData ?? []);
+  const [noMore, setNoMore] = useState(false);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -18,7 +19,7 @@ export default function useInfiniteScroll<T>(
   }, []);
 
   useEffect(() => {
-    if (!loading) return;
+    if (!loading || noMore) return;
     load();
   }, [loading]);
 
@@ -33,8 +34,13 @@ export default function useInfiniteScroll<T>(
     const lastScrollY = window.scrollY;
     const addData = await loadMore();
 
+    if (addData.length === 0) {
+      setLoading(false);
+      return setNoMore(true);
+    }
+
     setData((val) => [...val, ...addData]);
-    setLoading(false);
+    setTimeout(() => setLoading(false), 350);
     window.scrollTo(window.scrollX, lastScrollY);
   }
 

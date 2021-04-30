@@ -44,7 +44,7 @@ const Nav = () => {
 
   function syncSelected() {
     const route = router.asPath.toLowerCase().replace(/^\//, "") as Item;
-    if (!items.includes(route)) return;
+    if (!items.includes(route)) return setSelectedItem(undefined);
     setSelectedItem(route);
   }
 
