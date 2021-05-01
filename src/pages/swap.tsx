@@ -13,6 +13,7 @@ import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
+import { randomEmoji } from "../utils/user";
 
 const client = new Verto();
 
@@ -56,6 +57,33 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       client.getOrderBook(post, id).then((res) => setOrders(res));
     }
   }, [post, inputUnit.state, outputUnit.state]);
+
+  const [users, setUsers] = useState<{ [address: string]: string }>({});
+
+  useEffect(() => {
+    (async () => {
+      let users: { [address: string]: string } = {};
+      setUsers((val) => {
+        users = val;
+        return val;
+      });
+
+      for (const order of orders) {
+        if (order.addr in users) {
+          // Do nothing ...
+        } else {
+          const user = await client.getUser(order.addr);
+
+          if (user) {
+            setUsers({
+              ...users,
+              [order.addr]: `https://arweave.net/${user.image}`,
+            });
+          }
+        }
+      }
+    })();
+  }, [orders]);
 
   return (
     <Page>
@@ -102,9 +130,9 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       {orders.map((order, i) => (
         <Card.SwapSell
           user={{
-            avatar: "https://th8ta.org/marton.jpeg",
-            usertag: "martonlederer",
-            name: "Marton Lederer",
+            avatar: users[order.addr] || randomEmoji(),
+            usertag: "",
+            name: "",
           }}
           selling={{ quantity: order.amnt, ticker }}
           rate={1 / order.rate}
