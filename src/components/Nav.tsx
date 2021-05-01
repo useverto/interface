@@ -69,7 +69,7 @@ const Nav = () => {
   }
 
   function syncSelected() {
-    const route = router.asPath.toLowerCase().replace(/^\//, "") as Item;
+    const route = router.asPath.toLowerCase().split("/")[1] as Item;
     if (!items.includes(route)) return setSelectedItem(undefined);
     setSelectedItem(route);
   }

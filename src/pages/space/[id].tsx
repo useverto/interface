@@ -80,10 +80,10 @@ const Token = (props: PropTypes) => {
   return (
     <Page>
       <Head>
-        <title>Verto - ARTNAME HERE</title>
+        <title>Verto - {props.name}</title>
         {/** TODO: get image of community and put it in the metas OG */}
         <Metas
-          title="ARTNAME HERE"
+          title={props.name}
           image={type === "art" ? `https://arweave.net/${props.id}` : undefined}
         />
       </Head>
