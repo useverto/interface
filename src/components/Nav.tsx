@@ -182,7 +182,9 @@ const Nav = () => {
               size="small"
               usertag={formatAddress(address)}
               name={noIDUser.name}
-              avatar={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%221em%22 font-size=%2280%22>${noIDUser.avatar}</text></svg>`}
+              avatar={`https://twemoji.maxcdn.com/v/latest/svg/${
+                noIDUser.avatar && noIDUser.avatar.codePointAt(0).toString(16)
+              }.svg`}
               left
               notification={true}
               style={{ cursor: "pointer" }}
