@@ -4,8 +4,6 @@ import useArconnect from "use-arconnect";
 
 export const permissions: PermissionType[] = [
   "ACCESS_ADDRESS",
-  // @ts-ignore
-  "ACCESS_PUBLIC_KEY",
   "ACCESS_ALL_ADDRESSES",
   "SIGN_TRANSACTION",
 ];
@@ -29,8 +27,6 @@ export function useAddress() {
     if (e) return setAddress(e.detail.address);
     try {
       setAddress(await window.arweaveWallet.getActiveAddress());
-      // @ts-ignore
-      console.log(await window.arweaveWallet.getActivePublicKey());
     } catch {
       setAddress(undefined);
     }
