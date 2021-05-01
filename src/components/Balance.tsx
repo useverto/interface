@@ -32,50 +32,57 @@ const Balance = () => {
   }
 
   return (
-    <div className={styles.Balance}>
-      <div className={styles.Data}>
-        <p>Total balance</p>
-        <h1>
-          {(balance && <CountUp end={balance} decimals={8} duration={1.5} />) ||
-            "0"}
-          <b>AR</b>
-        </h1>
-        <p className={styles.Address}>
-          Wallet: {formatAddress(address ?? "...")}
-          <Tooltip text="Copy address">
-            <button onClick={() => copy(address)}>
-              <ClippyIcon />
-            </button>
-          </Tooltip>
-        </p>
-      </div>
-      <AnimatePresence>
-        {history && (
-          <motion.div
-            className={styles.Graph}
-            initial={{ opacity: 0, scaleY: 0 }}
-            animate={{ opacity: 1, scaleY: 1 }}
-            exit={{ opacity: 0, scaleY: 0 }}
-            transition={{ duration: 0.23, ease: "easeInOut" }}
-          >
-            <Line
-              data={{
-                labels: Object.keys(history).reverse(),
-                datasets: [
-                  {
-                    data: Object.values(history).reverse(),
-                    ...GraphDataConfig,
-                  },
-                ],
-              }}
-              options={GraphOptions({
-                tooltipText: ({ value }) => `${Number(value).toFixed(2)} AR`,
-              })}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+    <>
+      {address && (
+        <div className={styles.Balance}>
+          <div className={styles.Data}>
+            <p>Total balance</p>
+            <h1>
+              {(balance && (
+                <CountUp end={balance} decimals={8} duration={1.5} />
+              )) ||
+                "0"}
+              <b>AR</b>
+            </h1>
+            <p className={styles.Address}>
+              Wallet: {formatAddress(address ?? "...")}
+              <Tooltip text="Copy address">
+                <button onClick={() => copy(address)}>
+                  <ClippyIcon />
+                </button>
+              </Tooltip>
+            </p>
+          </div>
+          <AnimatePresence>
+            {history && (
+              <motion.div
+                className={styles.Graph}
+                initial={{ opacity: 0, scaleY: 0 }}
+                animate={{ opacity: 1, scaleY: 1 }}
+                exit={{ opacity: 0, scaleY: 0 }}
+                transition={{ duration: 0.23, ease: "easeInOut" }}
+              >
+                <Line
+                  data={{
+                    labels: Object.keys(history).reverse(),
+                    datasets: [
+                      {
+                        data: Object.values(history).reverse(),
+                        ...GraphDataConfig,
+                      },
+                    ],
+                  }}
+                  options={GraphOptions({
+                    tooltipText: ({ value }) =>
+                      `${Number(value).toFixed(2)} AR`,
+                  })}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+    </>
   );
 };
 
