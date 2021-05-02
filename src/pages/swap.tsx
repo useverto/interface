@@ -19,8 +19,12 @@ const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
   const [post, setPost] = useState("");
+  const [posts, setPosts] = useState([]);
   useEffect(() => {
-    client.recommendPost().then((res) => setPost(res));
+    (async () => {
+      setPosts((await client.getTradingPosts()).map((item) => item.address));
+      setPost(await client.recommendPost());
+    })();
   }, []);
 
   const [inputs, setInputs] = useState([
@@ -127,6 +131,17 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         <Spacer y={1} />
         <Button style={{ width: "100%" }}>Swap</Button>
       </Card>
+      <Select
+        label="Trading Post"
+        small
+        onChange={(ev) => setPost(ev.target.value)}
+        // @ts-ignore
+        value={post}
+      >
+        {posts.map((post) => (
+          <option value={post}>{post.substr(0, 6) + "..."}</option>
+        ))}
+      </Select>
       {orders.map((order, i) => (
         <Card.SwapSell
           user={{
