@@ -25,7 +25,10 @@ const Metas = ({ title, image, subtitle }: MetaProps) => (
       content="A decentralized trading protocol on Arweave."
     />
 
-    <meta property="twitter:card" content="summary" />
+    <meta
+      property="twitter:card"
+      content={image ? "summary" : "summary_large_image"}
+    />
     <meta property="twitter:url" content="https://verto.exchange/" />
     <meta
       property="twitter:title"

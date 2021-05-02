@@ -37,6 +37,6 @@ export default function OG(req: NextApiRequest, res: NextApiResponse) {
     </svg>
   `;
 
-  res.setHeader("Content-Type", "image/svg");
+  res.setHeader("Content-Type", "image/svg+xml");
   res.status(200).send(OGImage);
 }
