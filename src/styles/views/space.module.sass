@@ -1,6 +1,97 @@
 @use "../variables"
 
-.CardWrapper
+.Featured
+  $sidePadding: 3em
+  $topPadding: 2.8em
+  $bottomPadding: 3.2em
+  position: relative
+  background-color: variables.$foreground-color
+  color: variables.$foreground-reverse-color
+  border-radius: 15px
+  box-shadow: variables.$standard-shadow
+  height: 250px
+  overflow: hidden
+
+  .Paginator
+    position: absolute
+    display: flex
+    bottom: .6em
+    left: 50%
+    transform: translateX(-50%)
+
+    span
+      margin: 0 .5em
+      border: 1px solid variables.$foreground-reverse-color
+      border-radius: 100%
+      width: 6px
+      height: 6px
+      cursor: pointer
+      transition: all .23s ease-in-out
+
+      &.ActivePage
+        background-color: variables.$foreground-reverse-color
+
+      &:hover
+        opacity: .8
+
+      &:active
+        transform: scale(.9)
+
+  .FeaturedItem
+    position: absolute
+    display: flex
+    align-items: center
+    justify-content: space-between
+    cursor: pointer
+    width: calc(100% - #{$sidePadding * 2})
+    padding: $topPadding $sidePadding $bottomPadding
+
+    .TokenInfo
+      display: flex
+      align-items: center
+
+      img
+        height: 110px
+        user-select: none
+        margin-right: $sidePadding
+        border-radius: 11px
+
+      h1
+        font-size: variables.$title-font-size
+        font-weight: 500
+        margin: 0
+        line-height: 1em
+
+      h2
+        font-size: 1.5em
+        text-transform: uppercase
+        color: variables.$cec
+        font-weight: 500
+        line-height: 1.1em
+        margin: 0
+          bottom: .35em
+
+      p
+        font-size: 1em
+        color: variables.$cec
+        max-width: 300px
+        text-align: justify
+        margin: 0
+
+    .PriceData
+      h2
+        font-size: 1.45em
+        margin: 0
+          bottom: .3em
+        font-weight: 500
+        text-align: right
+        line-height: 1em
+        color: variables.$cec
+
+      .GraphData
+        max-width: 200px
+
+.Cards
   display: grid
   justify-content: space-between
   grid-template-columns: auto auto auto auto

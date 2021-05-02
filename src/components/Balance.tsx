@@ -7,7 +7,7 @@ import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
 import { ClippyIcon } from "@primer/octicons-react";
-import { Tooltip } from "@verto/ui";
+import { Tooltip, useToasts } from "@verto/ui";
 import CountUp from "react-countup";
 import copy from "copy-to-clipboard";
 import styles from "../styles/components/Balance.module.sass";
@@ -16,6 +16,7 @@ const Balance = () => {
   const { address } = useAddress();
   const [history, setHistory] = useState<{ [date: string]: number }>();
   const [balance, setBalance] = useState(undefined);
+  const { setToast } = useToasts();
 
   useEffect(() => {
     if (!address) return;
@@ -43,7 +44,16 @@ const Balance = () => {
         <p className={styles.Address}>
           Wallet: {formatAddress(address ?? "...")}
           <Tooltip text="Copy address">
-            <button onClick={() => copy(address)}>
+            <button
+              onClick={() => {
+                copy(address);
+                setToast({
+                  title: "Copied",
+                  description: "Address copied to clipboard",
+                  duration: 2400,
+                });
+              }}
+            >
               <ClippyIcon />
             </button>
           </Tooltip>

@@ -5,11 +5,11 @@
  *
  * @returns Formatted address
  */
-export function formatAddress(address: string) {
+export function formatAddress(address: string, length = 26) {
   return (
-    address.substring(0, 13) +
+    address.substring(0, length / 2) +
     "..." +
-    address.substring(address.length - 13, address.length)
+    address.substring(address.length - length / 2, address.length)
   );
 }
 
