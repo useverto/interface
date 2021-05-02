@@ -303,13 +303,14 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@2.0.3-alpha":
-  version "2.0.3-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.3-alpha.tgz#62db41f90051affa3845936e7b26d3e2f8cbd347"
-  integrity sha512-xE5Iv2j/PYBbyrfU53uNlYCc2WLkFUML+rIXmSv/uxfTGNlsWgp5e0f0c+4ZBmHCZuHh3PGG1c3imnnKCE/wkQ==
+"@verto/ui@2.0.5-alpha":
+  version "2.0.5-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.5-alpha.tgz#a7e95a730c7fe558dfb57bb28700deaa2ced960c"
+  integrity sha512-GyOiGd/fRSqEIA4ZQCcSvoJ1VTOIexv6DQlyYmxpdOIYw6/ELbnGpC7pYtSpcIud2zR/ovf2E4MNuDs1ptnFLw==
   dependencies:
     "@primer/octicons-react" "^12.1.0"
     framer-motion "^3.1.1"
+    nanoid "^3.1.22"
     styled-components "^5.2.1"
 
 "@weavery/clarity@^0.1.5":
@@ -1839,7 +1840,7 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nanoid@^3.1.16:
+nanoid@^3.1.16, nanoid@^3.1.22:
   version "3.1.22"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.22.tgz#b35f8fb7d151990a8aebd5aa5015c03cf726f844"
   integrity sha512-/2ZUaJX2ANuLtTvqTlgqBQNJoQO398KyJgZloL0PZkC0dpysjncRUPsFe3DUPzz/y3h+u7C46np8RMuvF3jsSQ==
