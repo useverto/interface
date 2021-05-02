@@ -14,6 +14,9 @@ const client = new Verto();
 
 const Space = (props: { tokens: any[]; featured: any[] }) => {
   const [prices, setPrices] = useState<{ [id: string]: number }>({});
+  const [history, setHistory] = useState<{
+    [id: string]: { [date: string]: number };
+  }>({});
   const [currentPage, setCurrentPage] = useState<1 | 2 | 3 | 4>(1);
   const [currentTokenData, setCurrentTokenData] = useState(props.featured[0]);
 
@@ -39,7 +42,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
 
-      for (const { id } of props.tokens) {
+      for (const { id } of [...props.tokens, ...props.featured]) {
         const res = await client.getPrice(id);
 
         if (res.price)
@@ -47,6 +50,21 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
             ...val,
             [id]: (res.price * gecko.arweave.usd).toFixed(2),
           }));
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      for (const { id } of props.featured) {
+        const res = await client.getPriceHistory(id);
+
+        if (Object.keys(res).length) {
+          setHistory((val) => ({
+            ...val,
+            [id]: res,
+          }));
+        }
       }
     })();
   }, []);
@@ -80,40 +98,37 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
               <div>
                 <h1>{currentTokenData.name}</h1>
                 <h2>{currentTokenData.ticker}</h2>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Tempora cumque...
-                </p>
+                <p>{currentTokenData.description}</p>
               </div>
             </div>
             <div className={styles.PriceData}>
-              <h2>$19.27</h2>
-              <div className={styles.GraphData}>
-                <Line
-                  data={{
-                    labels: [
-                      "2021-05-10",
-                      "2021-05-11",
-                      "2021-05-12",
-                      "2021-05-13",
-                      "2021-05-14",
-                      "2021-05-15",
-                      "2021-05-16",
-                    ],
-                    datasets: [
-                      {
-                        data: [3, 5, 6, 2, 4, 8, 4],
-                        ...GraphDataConfig,
-                        borderColor: "#ffffff",
-                      },
-                    ],
-                  }}
-                  options={GraphOptions({
-                    tooltipText: ({ value }) =>
-                      `${Number(value).toFixed(2)} AR`,
-                  })}
-                />
-              </div>
+              {prices[currentTokenData.id] && (
+                <h2>${prices[currentTokenData.id]}</h2>
+              )}
+              {history[currentTokenData.id] && (
+                <div className={styles.GraphData}>
+                  <Line
+                    data={{
+                      labels: Object.keys(
+                        history[currentTokenData.id]
+                      ).reverse(),
+                      datasets: [
+                        {
+                          data: Object.values(
+                            history[currentTokenData.id]
+                          ).reverse(),
+                          ...GraphDataConfig,
+                          borderColor: "#ffffff",
+                        },
+                      ],
+                    }}
+                    options={GraphOptions({
+                      tooltipText: ({ value }) =>
+                        `${Number(value).toFixed(2)} AR`,
+                    })}
+                  />
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>
