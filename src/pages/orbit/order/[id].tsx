@@ -16,7 +16,7 @@ const Order = (props: { order: any }) => {
     <Page>
       <Head>
         <title>Verto - Order {router.query.id}</title>
-        <Metas title={`Order ${router.query.id}`} />
+        <Metas title="Order" subtitle={router.query.id.toString()} />
       </Head>
       <Spacer y={3} />
       <div className={styles.OrbitTitle}>

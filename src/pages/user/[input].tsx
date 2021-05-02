@@ -61,7 +61,8 @@ const User = (props: { user: UserInterface | null }) => {
       <Head>
         <title>@{props.user?.username || input} on Verto</title>
         <Metas
-          title={`@${props.user?.username || input} on Verto`}
+          title="User"
+          subtitle={`@${props.user?.username || input}`}
           image={
             (props.user?.image && `https://arweave.net/${props.user.image}`) ||
             undefined

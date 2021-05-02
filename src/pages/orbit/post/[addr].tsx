@@ -42,7 +42,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     <Page>
       <Head>
         <title>Verto - Post {props.addr}</title>
-        <Metas title={`Post ${props.addr}`} />
+        <Metas title="Trading Post" subtitle={props.addr} />
       </Head>
       <Spacer y={3} />
       <div className={styles.OrbitTitle}>
