@@ -109,7 +109,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     (async () => {
       setGraphData({
         price: await client.getPriceHistory(selectedPST.id),
-        volume: {},
+        volume: await client.getVolumeHistory(selectedPST.id),
       });
     })();
   }, [selectedPST]);

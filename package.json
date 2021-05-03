@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@primer/octicons-react": "^13.0.0",
-    "@verto/js": "^0.0.0-alpha.9",
-    "@verto/ui": "2.0.6-alpha",
+    "@verto/js": "^0.0.0-alpha.10",
+    "@verto/ui": "^2.0.6-alpha",
     "arconnect": "^0.2.8",
     "ardb": "^1.0.8",
     "arweave": "^1.10.13",

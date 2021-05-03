@@ -286,17 +286,17 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^0.0.0-alpha.9":
-  version "0.0.0-alpha.9"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.9.tgz#01f3bac1de3a81bd06c8010fd750d7e657d020b4"
-  integrity sha512-6wJUrReOaQK8GCVuYQThiu9fKJZbALBlMq8+cML4huVTG9gvlJOQStv4sj5X0PDUGqH2QDI00sp8THpZ4IcVqg==
+"@verto/js@^0.0.0-alpha.10":
+  version "0.0.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.10.tgz#32c992e3bd858b7554cde96a1936f5ce04633731"
+  integrity sha512-tai41O/p76aiKgSSOCXy7eNtg5CmpHx9noBpHKFoPiIgoatnEMX/cIJpTE7A3M0O+v7Je7jxjJAIKiQfVZVnXQ==
   dependencies:
     ardb "^1.0.8"
     arweave "^1.10.13"
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@2.0.6-alpha":
+"@verto/ui@^2.0.6-alpha":
   version "2.0.6-alpha"
   resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.6-alpha.tgz#e45cecc6ed649b1dc781a4fbe349a141697cc55b"
   integrity sha512-FTtD4gYi2ONZUxv5zPuDwtybzhRdCo0Ai1uhVSgmjyBmnzA+9I6bjcnglQ9xKXuGz5Uho0fRh5FyPDb82ER/5A==
