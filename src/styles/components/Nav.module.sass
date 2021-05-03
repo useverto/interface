@@ -56,4 +56,45 @@
       z-index: 1
       top: 50%
       transform: translateY(-50%)
-      transition: all .17s ease-in-out
+      transition: all .17s ease-in-out    
+
+.UserPopover
+  padding: .4em .5em !important
+  right: 0
+  margin-top: .65em
+
+  .MenuItem
+    display: flex
+    align-items: center
+    justify-content: left
+    text-align: left
+    padding: .7em .88em
+    border-radius: 6px
+    cursor: pointer
+    font-size: 1.1em
+    color: variables.$foreground-color
+    font-weight: 500
+    text-decoration: none
+    transition: all .23s ease-in-out
+
+    svg
+      font-size: 1.2em
+      width: 1em
+      height: 1em
+      margin-right: .55em
+
+    // TODO: make this color work with Dark Theme
+    &:hover
+      background-color: rgba(0, 0, 0, .07)
+
+    &:active
+      transform: scale(.94)
+
+.SignOutAlert
+  color: variables.$light-text
+  font-size: 1.1em
+  text-align: center
+  padding-bottom: 0
+
+.SignOutBtn
+  margin: 0 auto

@@ -139,22 +139,14 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
           </motion.div>
         </AnimatePresence>
         <div className={styles.Paginator}>
-          <span
-            className={currentPage === 1 ? styles.ActivePage : ""}
-            onClick={() => setCurrentPage(1)}
-          />
-          <span
-            className={currentPage === 2 ? styles.ActivePage : ""}
-            onClick={() => setCurrentPage(2)}
-          />
-          <span
-            className={currentPage === 3 ? styles.ActivePage : ""}
-            onClick={() => setCurrentPage(3)}
-          />
-          <span
-            className={currentPage === 4 ? styles.ActivePage : ""}
-            onClick={() => setCurrentPage(4)}
-          />
+          {new Array(4).fill("_").map((_, i) => (
+            <span
+              className={currentPage === i + 1 ? styles.ActivePage : ""}
+              // @ts-ignore
+              onClick={() => setCurrentPage(i + 1)}
+              key={i}
+            />
+          ))}
         </div>
       </div>
       <Spacer y={4} />

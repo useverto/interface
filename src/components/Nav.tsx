@@ -1,6 +1,11 @@
-import { Avatar, Button } from "@verto/ui";
+import { Avatar, Button, Modal, Popover, Spacer, useModal } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions, useAddress } from "../utils/arconnect";
+import {
+  ListUnorderedIcon,
+  PersonIcon,
+  SignOutIcon,
+} from "@primer/octicons-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
@@ -30,6 +35,7 @@ const Nav = () => {
     avatar: "",
     name: "",
   });
+  const signOutModal = useModal();
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -93,113 +99,155 @@ const Nav = () => {
     }
   }, [address]);
 
+  async function signOut() {
+    await window.arweaveWallet.disconnect();
+    await updateAddress();
+    signOutModal.setState(false);
+  }
+
   return (
-    <motion.div
-      className={styles.Nav}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.44, ease: "easeInOut" }}
-    >
-      <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
-        <a className={styles.Logo}>
-          <img src="/logo_light.svg" alt="V" draggable={false} />
-        </a>
-      </Link>
-      <AnimatePresence>
-        {arconnect && address && (
-          <motion.div
-            className={styles.Menu}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.21, ease: "easeInOut" }}
-          >
-            <Link href="/app">
-              <a
-                className={selectedItem === "app" ? styles.Selected : ""}
-                ref={(el) => updateSelectionPos(el, "app")}
-              >
-                Home
-              </a>
-            </Link>
-            <Link href="/space">
-              <a
-                className={selectedItem === "space" ? styles.Selected : ""}
-                ref={(el) => updateSelectionPos(el, "space")}
-              >
-                Space
-              </a>
-            </Link>
-            <Link href="/swap">
-              <a
-                className={selectedItem === "swap" ? styles.Selected : ""}
-                ref={(el) => updateSelectionPos(el, "swap")}
-              >
-                Swap
-              </a>
-            </Link>
-            <Link href="/orbit">
-              <a
-                className={selectedItem === "orbit" ? styles.Selected : ""}
-                ref={(el) => updateSelectionPos(el, "orbit")}
-              >
-                Orbit
-              </a>
-            </Link>
-            <AnimatePresence>
-              {selectedItem && selectionPos.width !== 0 && (
-                <motion.div
-                  className={styles.Selection}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.21, ease: "easeInOut" }}
-                  style={{
-                    width: selectionPos.width + 26,
-                    left: selectionPos.x - 13,
-                  }}
-                />
-              )}
-            </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {(arconnect && address && (
-        <>
-          {/** TODO: notifications */}
-          {user ? (
-            <Avatar
-              size="small"
-              usertag={user.username}
-              name={user.name}
-              avatar={`https://arweave.net/${user.image}`}
-              left
-              notification={true}
-              style={{ cursor: "pointer" }}
-            />
-          ) : (
-            <Avatar
-              size="small"
-              usertag={formatAddress(address, 20)}
-              name={noIDUser.name}
-              avatar={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%22 y=%2260%22 alignment-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2270%22>${noIDUser.avatar}</text></svg>`}
-              left
-              notification={true}
-              style={{ cursor: "pointer" }}
-            />
+    <>
+      <motion.div
+        className={styles.Nav}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.44, ease: "easeInOut" }}
+      >
+        <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
+          <a className={styles.Logo}>
+            <img src="/logo_light.svg" alt="V" draggable={false} />
+          </a>
+        </Link>
+        <AnimatePresence>
+          {arconnect && address && (
+            <motion.div
+              className={styles.Menu}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.21, ease: "easeInOut" }}
+            >
+              <Link href="/app">
+                <a
+                  className={selectedItem === "app" ? styles.Selected : ""}
+                  ref={(el) => updateSelectionPos(el, "app")}
+                >
+                  Home
+                </a>
+              </Link>
+              <Link href="/space">
+                <a
+                  className={selectedItem === "space" ? styles.Selected : ""}
+                  ref={(el) => updateSelectionPos(el, "space")}
+                >
+                  Space
+                </a>
+              </Link>
+              <Link href="/swap">
+                <a
+                  className={selectedItem === "swap" ? styles.Selected : ""}
+                  ref={(el) => updateSelectionPos(el, "swap")}
+                >
+                  Swap
+                </a>
+              </Link>
+              <Link href="/orbit">
+                <a
+                  className={selectedItem === "orbit" ? styles.Selected : ""}
+                  ref={(el) => updateSelectionPos(el, "orbit")}
+                >
+                  Orbit
+                </a>
+              </Link>
+              <AnimatePresence>
+                {selectedItem && selectionPos.width !== 0 && (
+                  <motion.div
+                    className={styles.Selection}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.21, ease: "easeInOut" }}
+                    style={{
+                      width: selectionPos.width + 26,
+                      left: selectionPos.x - 13,
+                    }}
+                  />
+                )}
+              </AnimatePresence>
+            </motion.div>
           )}
-        </>
-      )) ||
-        (arconnect && (
-          <Button small onClick={login}>
-            Connect
+        </AnimatePresence>
+        {(arconnect && address && (
+          <Popover
+            position="bottom"
+            className={styles.UserPopover}
+            content={
+              <>
+                <Link href={`/@${user ? user.username : address}`}>
+                  <a className={styles.MenuItem}>
+                    <PersonIcon />
+                    View profile
+                  </a>
+                </Link>
+                <div className={styles.MenuItem}>
+                  <ListUnorderedIcon />
+                  Notifications
+                </div>
+                <div
+                  className={styles.MenuItem}
+                  onClick={() => signOutModal.setState(true)}
+                >
+                  <SignOutIcon />
+                  Sign out
+                </div>
+              </>
+            }
+          >
+            {/** TODO: notifications */}
+            {user ? (
+              <Avatar
+                size="small"
+                usertag={user.username}
+                name={user.name}
+                avatar={`https://arweave.net/${user.image}`}
+                left
+                notification={true}
+                style={{ cursor: "pointer" }}
+              />
+            ) : (
+              <Avatar
+                size="small"
+                usertag={formatAddress(address, 20)}
+                name={noIDUser.name}
+                avatar={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%22 y=%2260%22 alignment-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2270%22>${noIDUser.avatar}</text></svg>`}
+                left
+                notification={true}
+                style={{ cursor: "pointer" }}
+              />
+            )}
+          </Popover>
+        )) ||
+          (arconnect && (
+            <Button small onClick={login}>
+              Connect
+            </Button>
+          )) || (
+            <Button small onClick={() => window.open("https://arconnect.io")}>
+              Install ArConnect
+            </Button>
+          )}
+      </motion.div>
+      <Modal {...signOutModal.bindings}>
+        <Modal.Title>Are you sure?</Modal.Title>
+        <Modal.Content>
+          <p className={styles.SignOutAlert}>Do you really want to sign out?</p>
+          <Spacer y={2.5} />
+          <Button small onClick={signOut} className={styles.SignOutBtn}>
+            Sign Out
           </Button>
-        )) || (
-          <Button small onClick={() => window.open("https://arconnect.io")}>
-            Install ArConnect
-          </Button>
-        )}
-    </motion.div>
+        </Modal.Content>
+      </Modal>
+    </>
   );
 };
 
