@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../utils/format";
+import { randomEmoji } from "../utils/user";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import styles from "../styles/components/Nav.module.sass";
@@ -53,10 +54,9 @@ const Nav = () => {
   // and get current wallet name
   useEffect(() => {
     if (!address || user) return;
-    const emojis = ["😂", "🥺", "😊", "🥰", "😃", "🤩", "🤔", "😏", "😷"];
     setNoIDUser((val) => ({
       ...val,
-      avatar: emojis[Math.floor(Math.random() * emojis.length)],
+      avatar: randomEmoji(),
     }));
 
     (async () => {
@@ -219,7 +219,7 @@ const Nav = () => {
                 size="small"
                 usertag={formatAddress(address, 20)}
                 name={noIDUser.name}
-                avatar={`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%22 y=%2260%22 alignment-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2270%22>${noIDUser.avatar}</text></svg>`}
+                avatar={noIDUser.avatar}
                 left
                 notification={true}
                 style={{ cursor: "pointer" }}

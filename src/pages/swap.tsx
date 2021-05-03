@@ -93,6 +93,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, [orders]);
 
+  const [graphMode, setGraphMode] = useState<"price" | "volume">("price");
+
   return (
     <Page>
       <Head>
@@ -103,7 +105,19 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       <Balance />
       <Spacer y={4} />
       <div className={styles.SwapContent}>
-        <div className={styles.Graph}></div>
+        <div className={styles.Graph}>
+          <Select
+            small
+            //@ts-ignore
+            onChange={(ev) => setGraphMode(ev.target.value)}
+            // @ts-ignore
+            value={graphMode}
+            className={styles.GraphMode}
+          >
+            <option value="price">Price</option>
+            <option value="volume">Volume</option>
+          </Select>
+        </div>
         <Card className={styles.SwapForm}>
           <Input
             label="You send"
@@ -166,7 +180,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
           return (
             (showAllOrders || i < 5) && (
-              <motion.div key={i} {...cardListAnimation(i)}>
+              <motion.div key={order.txID} {...cardListAnimation(i)}>
                 <Card.SwapSell
                   user={{
                     avatar:
