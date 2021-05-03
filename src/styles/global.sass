@@ -32,3 +32,20 @@
       line-height: 1.1em
       font-size: .75em
       border-radius: 10px
+
+.ShowMore
+  display: flex
+  align-items: center
+  justify-content: center
+  text-align: center
+  color: variables.$light-text
+  font-size: 1.08em
+  cursor: pointer
+  transition: all .23s ease-in-out
+
+  svg
+    margin-left: .3em
+    +variables.sameSizeSvg
+
+  &:hover
+    opacity: .8

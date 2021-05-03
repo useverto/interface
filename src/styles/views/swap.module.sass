@@ -1,0 +1,28 @@
+@use "../variables"
+
+.SwapContent
+  display: flex
+  align-items: stretch
+  justify-content: space-between
+
+  .Graph
+    width: 50%
+
+  .SwapForm
+    width: 39%
+    padding: 1.5em
+
+    .SwapLogo
+      text-align: right
+      padding-right: 2em
+
+      svg
+        color: variables.$foreground-color
+        font-size: 1.6em
+        width: 1em
+        height: 1em
+        transform: rotate(90deg)
+
+.TradingPostSelect
+  font-size: #{1em / variables.$title-font-size}em
+  line-height: 1em

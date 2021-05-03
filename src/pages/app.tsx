@@ -13,7 +13,7 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import styles from "../styles/views/app.module.sass";
-import { cardListAnimation } from "../utils/animations";
+import { cardListAnimation, opacityAnimation } from "../utils/animations";
 
 const client = new Verto();
 
@@ -74,24 +74,30 @@ const App = () => {
             )
         )}
       </AnimatePresence>
-      <Spacer y={1} />
-      <span
-        className={styles.ShowMore}
-        onClick={() => setShowMorePsts((val) => !val)}
-      >
-        Show{" "}
-        {(showMorePsts && (
-          <>
-            less
-            <ChevronUpIcon />
-          </>
-        )) || (
-          <>
-            all
-            <ChevronDownIcon />
-          </>
+      <AnimatePresence>
+        {balances.length > 4 && (
+          <motion.div {...opacityAnimation()}>
+            <Spacer y={1} />
+            <span
+              className="ShowMore"
+              onClick={() => setShowMorePsts((val) => !val)}
+            >
+              Show{" "}
+              {(showMorePsts && (
+                <>
+                  less
+                  <ChevronUpIcon />
+                </>
+              )) || (
+                <>
+                  all
+                  <ChevronDownIcon />
+                </>
+              )}
+            </span>
+          </motion.div>
         )}
-      </span>
+      </AnimatePresence>
     </Page>
   );
 };
