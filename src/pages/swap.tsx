@@ -23,6 +23,8 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import styles from "../styles/views/swap.module.sass";
+import { Line } from "react-chartjs-2";
+import { GraphDataConfig, GraphOptions } from "../utils/graph";
 
 const client = new Verto();
 
@@ -50,7 +52,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const outputUnit = useSelect(props.tokens[0].id);
 
   const [orders, setOrders] = useState([]);
-  const [ticker, setTicker] = useState("");
+  const [selectedPST, setSelectedPST] = useState<TokenInterface>();
   const [showAllOrders, setShowAllOrders] = useState(false);
 
   useEffect(() => {
@@ -58,13 +60,13 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       const id = inputUnit.state === "AR" ? outputUnit.state : inputUnit.state;
       if (inputUnit.state === "AR") {
         setOutputs((val) => {
-          setTicker(val.find((item: any) => item.id === id).ticker);
+          setSelectedPST(val.find((item: any) => item.id === id));
 
           return val;
         });
       } else {
         setInputs((val) => {
-          setTicker(val.find((item: any) => item.id === id).ticker);
+          setSelectedPST(val.find((item: any) => item.id === id));
 
           return val;
         });
@@ -93,7 +95,24 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, [orders]);
 
-  const [graphMode, setGraphMode] = useState<"price" | "volume">("price");
+  type GraphMode = "price" | "volume";
+  const [graphMode, setGraphMode] = useState<GraphMode>("price");
+  const [graphData, setGraphData] = useState<
+    Record<GraphMode, { [date: string]: number }>
+  >({
+    price: {},
+    volume: {},
+  });
+
+  useEffect(() => {
+    if (!selectedPST) return;
+    (async () => {
+      setGraphData({
+        price: await client.getPriceHistory(selectedPST.id),
+        volume: {},
+      });
+    })();
+  }, [selectedPST]);
 
   return (
     <Page>
@@ -117,6 +136,22 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             <option value="price">Price</option>
             <option value="volume">Volume</option>
           </Select>
+          <Line
+            data={{
+              labels: Object.keys(graphData[graphMode]).reverse(),
+              datasets: [
+                {
+                  data: Object.values(graphData[graphMode]).reverse(),
+                  ...GraphDataConfig,
+                },
+              ],
+            }}
+            options={GraphOptions({
+              // TODO: volume
+              tooltipText: ({ value }) =>
+                `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`,
+            })}
+          />
         </div>
         <Card className={styles.SwapForm}>
           <Input
@@ -189,7 +224,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                     usertag: user?.username || formatAddress(order.addr, 10),
                     name: user?.name || undefined,
                   }}
-                  selling={{ quantity: order.amnt, ticker }}
+                  selling={{
+                    quantity: order.amnt,
+                    ticker: selectedPST?.ticker ?? "...",
+                  }}
                   rate={1 / order.rate}
                   filled={order.received || 0}
                   orderID={order.txID}
