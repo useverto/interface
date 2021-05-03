@@ -1,4 +1,4 @@
-import { TokenInterface } from "@verto/js/dist/faces";
+import { TokenInterface, UserInterface } from "@verto/js/dist/faces";
 import {
   Button,
   Card,
@@ -14,6 +14,7 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import { randomEmoji } from "../utils/user";
+import { formatAddress } from "../utils/format";
 
 const client = new Verto();
 
@@ -41,6 +42,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   const [orders, setOrders] = useState([]);
   const [ticker, setTicker] = useState("");
+
   useEffect(() => {
     if (post) {
       const id = inputUnit.state === "AR" ? outputUnit.state : inputUnit.state;
@@ -62,29 +64,21 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     }
   }, [post, inputUnit.state, outputUnit.state]);
 
-  const [users, setUsers] = useState<{ [address: string]: string }>({});
+  type ExtendedUserInterface = UserInterface & { baseAddress: string };
+  const [users, setUsers] = useState<ExtendedUserInterface[]>([]);
 
   useEffect(() => {
     (async () => {
-      let users: { [address: string]: string } = {};
-      setUsers((val) => {
-        users = val;
-        return val;
-      });
+      setUsers([]);
 
       for (const order of orders) {
-        if (order.addr in users) {
-          // Do nothing ...
-        } else {
-          const user = await client.getUser(order.addr);
+        const user = await client.getUser(order.addr);
 
-          if (user) {
-            setUsers({
-              ...users,
-              [order.addr]: `https://arweave.net/${user.image}`,
-            });
-          }
-        }
+        if (user)
+          setUsers((val) => [
+            ...val.filter(({ baseAddress }) => baseAddress !== order.addr),
+            { ...user, baseAddress: order.addr },
+          ]);
       }
     })();
   }, [orders]);
@@ -142,20 +136,26 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <option value={post}>{post.substr(0, 6) + "..."}</option>
         ))}
       </Select>
-      {orders.map((order, i) => (
-        <Card.SwapSell
-          user={{
-            avatar: users[order.addr] || randomEmoji(),
-            usertag: "",
-            name: "",
-          }}
-          selling={{ quantity: order.amnt, ticker }}
-          rate={1 / order.rate}
-          filled={order.received || 0}
-          orderID={order.txID}
-          key={i}
-        />
-      ))}
+      {orders.map((order, i) => {
+        const user = users.find((user) => user.addresses.includes(order.addr));
+
+        return (
+          <Card.SwapSell
+            user={{
+              avatar:
+                (user?.image && `https://arweave.net/${user.image}`) ||
+                randomEmoji(),
+              usertag: user?.username || formatAddress(order.addr, 10),
+              name: user?.name || undefined,
+            }}
+            selling={{ quantity: order.amnt, ticker }}
+            rate={1 / order.rate}
+            filled={order.received || 0}
+            orderID={order.txID}
+            key={i}
+          />
+        );
+      })}
     </Page>
   );
 };

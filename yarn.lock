@@ -225,13 +225,6 @@
   resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-13.0.0.tgz#a7f2288fd9cf9cabc1e75553a0dd9f00d74b68c1"
   integrity sha512-j5XppNRCvgaMZLPsVvvmp6GSh7P5pq6PUbsfLNBWi2Kz3KYDeoGDWbPr5MjoxFOGUn6Hjnt6qjHPRxahd11vLQ==
 
-"@types/arconnect@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/arconnect/-/arconnect-1.0.0.tgz#ee1a4c3fcad1408badd68ac96228af926193b5ec"
-  integrity sha512-F1gpHwpfTfN7WsETspgF/Z3YRHgSICPMRwNYzhk8VS1XJpko2fndI3V5JpEALdy26vljM2/jD0W8rYJakc0tIw==
-  dependencies:
-    arweave "^1.10.13"
-
 "@types/cli-color@*":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/cli-color/-/cli-color-2.0.0.tgz#dc64e32da0fb9ea1814300fb468a58e833ce71a6"
@@ -378,6 +371,13 @@ anymatch@~3.1.1:
   integrity sha512-KLy/ugo33KZA7nugtQ7O0E1c8kQ52N3IvD/XgIh4w/Nr28ypfkwDfA67F1ev4N1m5D+BOk1+b2dEJDfpj/VvZg==
   dependencies:
     sylvester ">= 0.0.8"
+
+arconnect@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/arconnect/-/arconnect-0.2.8.tgz#46d86d4e52be1ed69b801ac54e949426fb12ef80"
+  integrity sha512-BGc4em7vMgZyNOI2SlkqFNNosPW0wN2CPs5mImVNWQfjv/WK7XAH6R23ngVCArh2r7NTIAtQYdnVRAID8eXzNw==
+  dependencies:
+    arweave "^1.10.13"
 
 ardb@^1.0.8:
   version "1.0.8"
