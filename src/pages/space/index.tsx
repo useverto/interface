@@ -4,6 +4,7 @@ import { cardAnimation } from "../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
+import { useRouter } from "next/router";
 import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -19,6 +20,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
   }>({});
   const [currentPage, setCurrentPage] = useState<1 | 2 | 3 | 4>(1);
   const [currentTokenData, setCurrentTokenData] = useState(props.featured[0]);
+  const router = useRouter();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -81,13 +83,14 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
           <motion.div
             className={styles.FeaturedItem}
             key={currentPage}
-            initial={{ x: 1000, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -1000, opacity: 0 }}
+            initial={{ x: 1000, opacity: 0, translateY: "-50%" }}
+            animate={{ x: 0, opacity: 1, translateY: "-50%" }}
+            exit={{ x: -1000, opacity: 0, translateY: "-50%" }}
             transition={{
               x: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 },
             }}
+            onClick={() => router.push(`/space/${currentTokenData.id}`)}
           >
             <div className={styles.TokenInfo}>
               <img
@@ -98,15 +101,18 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
               <div>
                 <h1>{currentTokenData.name}</h1>
                 <h2>{currentTokenData.ticker}</h2>
-                <p>{currentTokenData.description}</p>
+                <p>
+                  {currentTokenData.description?.slice(0, 70)}
+                  {currentTokenData.description?.length > 70 && "..."}
+                </p>
               </div>
             </div>
             <div className={styles.PriceData}>
-              {prices[currentTokenData.id] && (
+              {(prices[currentTokenData.id] && (
                 <h2>${prices[currentTokenData.id]}</h2>
-              )}
-              {history[currentTokenData.id] && (
-                <div className={styles.GraphData}>
+              )) || <h2>$--</h2>}
+              <div className={styles.GraphData}>
+                {history[currentTokenData.id] && (
                   <Line
                     data={{
                       labels: Object.keys(
@@ -127,8 +133,8 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
                         `${Number(value).toFixed(2)} AR`,
                     })}
                   />
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
