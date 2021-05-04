@@ -7,6 +7,7 @@ import {
   Select,
   Spacer,
   useSelect,
+  Loading,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { randomEmoji } from "../utils/user";
@@ -103,14 +104,17 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     price: {},
     volume: {},
   });
+  const [loadingGraph, setLoadingGraph] = useState(true);
 
   useEffect(() => {
     if (!selectedPST) return;
     (async () => {
+      setLoadingGraph(true);
       setGraphData({
         price: await client.getPriceHistory(selectedPST.id),
         volume: await client.getVolumeHistory(selectedPST.id),
       });
+      setLoadingGraph(false);
     })();
   }, [selectedPST]);
 
@@ -125,17 +129,26 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       <Spacer y={4} />
       <div className={styles.SwapContent}>
         <div className={styles.Graph}>
-          <Select
-            small
-            //@ts-ignore
-            onChange={(ev) => setGraphMode(ev.target.value)}
-            // @ts-ignore
-            value={graphMode}
-            className={styles.GraphMode}
-          >
-            <option value="price">Price</option>
-            <option value="volume">Volume</option>
-          </Select>
+          <AnimatePresence>
+            <motion.div
+              className={styles.GraphMode}
+              {...opacityAnimation()}
+              key={loadingGraph.toString()}
+            >
+              {(loadingGraph && <Loading.Spinner />) || (
+                <Select
+                  small
+                  //@ts-ignore
+                  onChange={(ev) => setGraphMode(ev.target.value)}
+                  // @ts-ignore
+                  value={graphMode}
+                >
+                  <option value="price">Price</option>
+                  <option value="volume">Volume</option>
+                </Select>
+              )}
+            </motion.div>
+          </AnimatePresence>
           <Line
             data={{
               labels: Object.keys(graphData[graphMode]).reverse(),
@@ -146,11 +159,14 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                 },
               ],
             }}
-            options={GraphOptions({
-              // TODO: volume
-              tooltipText: ({ value }) =>
-                `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`,
-            })}
+            options={{
+              ...GraphOptions({
+                // TODO: volume
+                tooltipText: ({ value }) =>
+                  `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`,
+              }),
+              maintainAspectRatio: false,
+            }}
           />
         </div>
         <Card className={styles.SwapForm}>
