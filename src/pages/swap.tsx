@@ -178,9 +178,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             }}
             options={{
               ...GraphOptions({
-                // TODO: volume
                 tooltipText: ({ value }) =>
-                  `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`,
+                  graphMode === "price"
+                    ? `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`
+                    : `${value} ${selectedPST.ticker}`,
               }),
               maintainAspectRatio: false,
             }}
