@@ -8,6 +8,7 @@ import {
   Spacer,
   useSelect,
   Loading,
+  useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { randomEmoji } from "../utils/user";
@@ -19,19 +20,20 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@primer/octicons-react";
+import { Line } from "react-chartjs-2";
+import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import styles from "../styles/views/swap.module.sass";
-import { Line } from "react-chartjs-2";
-import { GraphDataConfig, GraphOptions } from "../utils/graph";
 
 const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
   const [post, setPost] = useState("");
   const [posts, setPosts] = useState([]);
+  const { setToast } = useToasts();
 
   useEffect(() => {
     (async () => {
@@ -49,7 +51,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   ]);
   const [outputs, setOutputs] = useState(props.tokens);
 
-  const inputUnit = useSelect("AR");
+  const inputUnit = useSelect<string>("AR");
   const outputUnit = useSelect(props.tokens[0].id);
 
   const [orders, setOrders] = useState([]);
@@ -118,6 +120,21 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, [selectedPST]);
 
+  function switchTokens() {
+    const inputVal = { val: inputUnit.state, items: inputs },
+      outputVal = { val: outputUnit.state, items: outputs };
+
+    inputUnit.setState(outputVal.val);
+    outputUnit.setState(inputVal.val);
+    setInputs(outputVal.items);
+    setOutputs(inputVal.items);
+    setToast({
+      title: "Switched",
+      description: "Switched tokens",
+      duration: 3000,
+    });
+  }
+
   return (
     <Page>
       <Head>
@@ -185,7 +202,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             style={{ width: "calc(100% - 6px)" }}
           />
           <Spacer y={1} />
-          <div className={styles.SwapLogo}>
+          <div className={styles.SwapLogo} onClick={switchTokens}>
             <ArrowSwitchIcon />
           </div>
           <Input
@@ -212,7 +229,14 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         <Select
           label="Trading Post"
           small
-          onChange={(ev) => setPost(ev.target.value)}
+          onChange={(ev) => {
+            setPost(ev.target.value);
+            setToast({
+              title: "Switched post",
+              description: "Switched trading post",
+              duration: 3000,
+            });
+          }}
           // @ts-ignore
           value={post}
           className={styles.TradingPostSelect}

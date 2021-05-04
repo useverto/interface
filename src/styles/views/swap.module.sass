@@ -19,8 +19,15 @@
     padding: 1.5em
 
     .SwapLogo
-      text-align: right
-      padding-right: 2em
+      cursor: pointer
+      width: max-content
+      margin:
+        left: auto
+        right: 2em
+      transition: all .23s ease-in-out
+
+      &:hover
+        opacity: .7
 
       svg
         color: variables.$foreground-color

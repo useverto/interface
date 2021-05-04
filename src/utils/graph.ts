@@ -55,6 +55,8 @@ export function GraphOptions({
       bodyFontColor: "#d4d4d4",
       bodyFontFamily: fontFamily,
       padding: 9,
+      displayColors: false,
+      backgroundColor: "#000000",
       callbacks: {
         label: tooltipText ?? (({ value }: any) => value),
       },
