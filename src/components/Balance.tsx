@@ -8,15 +8,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
 import { ClipboardIcon } from "@iconicicons/react";
 import { Tooltip, useToasts } from "@verto/ui";
-import CountUp from "react-countup";
 import copy from "copy-to-clipboard";
 import styles from "../styles/components/Balance.module.sass";
+import { useCountUp } from "../utils/animations";
 
 const Balance = () => {
   const { address } = useAddress();
   const [history, setHistory] = useState<{ [date: string]: number }>();
-  const [balance, setBalance] = useState(undefined);
+  const [balance, setBalance] = useState(0);
+  const [historicalBalance, setHistorycalBalance] = useState<{
+    date: string;
+    val: number;
+  }>();
   const { setToast } = useToasts();
+  const decimals = 8;
+  const animatedBalance = useCountUp({ end: balance, decimals });
 
   useEffect(() => {
     if (!address) return;
@@ -35,10 +41,9 @@ const Balance = () => {
   return (
     <div className={styles.Balance}>
       <div className={styles.Data}>
-        <p>Total balance</p>
+        <p>{historicalBalance?.date || "Total balance"}</p>
         <h1>
-          {(balance && <CountUp end={balance} decimals={8} duration={1.5} />) ||
-            "0"}
+          {historicalBalance?.val || animatedBalance}
           <b>AR</b>
         </h1>
         <p className={styles.Address}>
@@ -67,6 +72,7 @@ const Balance = () => {
             animate={{ opacity: 1, scaleY: 1 }}
             exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.23, ease: "easeInOut" }}
+            onMouseLeave={() => setHistorycalBalance(undefined)}
           >
             <Line
               data={{
@@ -79,7 +85,23 @@ const Balance = () => {
                 ],
               }}
               options={GraphOptions({
-                tooltipText: ({ value }) => `${Number(value).toFixed(2)} AR`,
+                tooltips: false,
+                tooltipText({ value, label }) {
+                  const formattedBal =
+                    Math.round(Number(value) * Math.pow(10, decimals)) /
+                    Math.pow(10, decimals);
+                  if (
+                    !historicalBalance ||
+                    historicalBalance.date !== label ||
+                    historicalBalance.val !== formattedBal
+                  )
+                    setHistorycalBalance({
+                      date: label,
+                      val: formattedBal,
+                    });
+
+                  return `${Number(value).toFixed(2)} AR`;
+                },
               })}
             />
           </motion.div>
