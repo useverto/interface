@@ -1,4 +1,8 @@
-import { TokenInterface, UserInterface } from "@verto/js/dist/faces";
+import {
+  SwapInterface,
+  TokenInterface,
+  UserInterface,
+} from "@verto/js/dist/faces";
 import {
   Button,
   Card,
@@ -9,6 +13,7 @@ import {
   useSelect,
   Loading,
   useToasts,
+  useInput,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { randomEmoji } from "../utils/user";
@@ -48,6 +53,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   ]);
   const [outputs, setOutputs] = useState(props.tokens);
 
+  const input = useInput();
+  const output = useInput();
   const inputUnit = useSelect<string>("AR");
   const outputUnit = useSelect(props.tokens[0].id);
 
@@ -132,6 +139,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     });
   }
 
+  const [swap, setSwap] = useState<SwapInterface>(null);
+  const [creatingSwap, setCreatingSwap] = useState(false);
+  console.log(swap);
+
   return (
     <Page>
       <Head>
@@ -198,6 +209,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             }
             type="number"
             style={{ width: "calc(100% - 6px)" }}
+            {...input.bindings}
           />
           <Spacer y={1} />
           <div className={styles.SwapLogo} onClick={switchTokens}>
@@ -216,9 +228,28 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             }
             type="number"
             style={{ width: "calc(100% - 6px)" }}
+            {...output.bindings}
           />
           <Spacer y={2} />
-          <Button style={{ width: "100%" }}>Swap</Button>
+          <Button
+            style={{ width: "100%" }}
+            loading={creatingSwap}
+            onClick={async () => {
+              setCreatingSwap(true);
+
+              setSwap(
+                await client.createSwap(
+                  { amount: Number(input.state), unit: inputUnit.state },
+                  { amount: Number(output.state), unit: outputUnit.state },
+                  post
+                )
+              );
+
+              setCreatingSwap(false);
+            }}
+          >
+            Swap
+          </Button>
         </Card>
       </div>
       <Spacer y={4} />
