@@ -6,7 +6,7 @@ import { formatAddress } from "../utils/format";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
-import { ClippyIcon } from "@primer/octicons-react";
+import { ClipboardIcon } from "@iconicicons/react";
 import { Tooltip, useToasts } from "@verto/ui";
 import CountUp from "react-countup";
 import copy from "copy-to-clipboard";
@@ -54,7 +54,7 @@ const Balance = () => {
                 });
               }}
             >
-              <ClippyIcon />
+              <ClipboardIcon />
             </button>
           </Tooltip>
         </p>

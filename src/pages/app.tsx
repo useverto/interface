@@ -2,18 +2,14 @@ import { BalanceInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { useAddress } from "../utils/arconnect";
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  PlusIcon,
-} from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { cardListAnimation, opacityAnimation } from "../utils/animations";
+import { PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import styles from "../styles/views/app.module.sass";
-import { cardListAnimation, opacityAnimation } from "../utils/animations";
 
 const client = new Verto();
 

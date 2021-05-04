@@ -15,11 +15,8 @@ import { randomEmoji } from "../utils/user";
 import { formatAddress } from "../utils/format";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
-import {
-  ArrowSwitchIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from "@primer/octicons-react";
+import { ArrowSwitchIcon } from "@primer/octicons-react";
+import { ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import Balance from "../components/Balance";

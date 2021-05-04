@@ -1,11 +1,7 @@
 import { Avatar, Button, Modal, Popover, Spacer, useModal } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions, useAddress } from "../utils/arconnect";
-import {
-  ListUnorderedIcon,
-  PersonIcon,
-  SignOutIcon,
-} from "@primer/octicons-react";
+import { BellIcon, LogOutIcon, UserIcon } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
@@ -186,19 +182,19 @@ const Nav = () => {
               <>
                 <Link href={`/@${user ? user.username : address}`}>
                   <a className={styles.MenuItem}>
-                    <PersonIcon />
+                    <UserIcon />
                     View profile
                   </a>
                 </Link>
                 <div className={styles.MenuItem}>
-                  <ListUnorderedIcon />
+                  <BellIcon />
                   Notifications
                 </div>
                 <div
                   className={styles.MenuItem}
                   onClick={() => signOutModal.setState(true)}
                 >
-                  <SignOutIcon />
+                  <LogOutIcon />
                   Sign out
                 </div>
               </>
