@@ -181,6 +181,7 @@ const Nav = () => {
           <Popover
             position="bottom"
             className={styles.UserPopover}
+            closeOnClick
             content={
               <>
                 <Link href={`/@${user ? user.username : address}`}>
