@@ -52,4 +52,17 @@
         font-weight: 500
 
   .Graph
+    position: relative
     max-width: 250px
+
+    .Cursor
+      position: absolute
+      top: 0
+      bottom: 0
+      width: 1px
+      opacity: 0
+      border-left: 1px dashed variables.$foreground-color
+      transition: opacity .13s ease-in-out
+
+    &:hover .Cursor
+      opacity: 1
