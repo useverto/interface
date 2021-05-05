@@ -2,6 +2,8 @@ import { Button, Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions, useAddress } from "../utils/arconnect";
 import { useRouter } from "next/router";
+import { AnimatePresence, motion } from "framer-motion";
+import { opacityAnimation } from "../utils/animations";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -110,18 +112,22 @@ const Home = () => {
             </div>
           </div>
           <div className={styles.FeaturedToken}>
-            {Object.keys(artwork).length && (
-              <Card.Asset
-                name={artwork.name}
-                userData={{
-                  avatar: `https://arweave.net/${artwork.owner.image}`,
-                  name: artwork.owner.name,
-                  usertag: artwork.owner.username,
-                }}
-                price={artwork.price}
-                image={`https://arweave.net/${artwork.id}`}
-              />
-            )}
+            <AnimatePresence>
+              {Object.keys(artwork).length > 0 && (
+                <motion.div {...opacityAnimation()}>
+                  <Card.Asset
+                    name={artwork.name}
+                    userData={{
+                      avatar: `https://arweave.net/${artwork.owner.image}`,
+                      name: artwork.owner.name,
+                      usertag: artwork.owner.username,
+                    }}
+                    price={artwork.price}
+                    image={`https://arweave.net/${artwork.id}`}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
         <Spacer y={5} />

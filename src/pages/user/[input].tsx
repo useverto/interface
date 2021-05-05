@@ -4,7 +4,6 @@ import {
   UserInterface,
 } from "@verto/js/dist/faces";
 import { Avatar, Card, Page, Spacer } from "@verto/ui";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
@@ -14,13 +13,9 @@ import Verto from "@verto/js";
 
 const client = new Verto();
 
-const User = (props: { user: UserInterface | null }) => {
+const User = (props: { user: UserInterface | null; input: string }) => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
-  const router = useRouter();
-  const [input, setInput] = useState<string>("");
-
-  useEffect(() => setInput(router.query.input.toString()), [input]);
 
   // load orders
   useEffect(() => {
@@ -31,11 +26,11 @@ const User = (props: { user: UserInterface | null }) => {
         for (const address of props.user.addresses) {
           res.push(...(await client.getOrders(address)));
         }
-      } else res.push(...(await client.getOrders(input)));
+      } else res.push(...(await client.getOrders(props.input)));
 
       setOrders(res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5));
     })();
-  }, [input]);
+  }, []);
 
   // load transactions
   useEffect(() => {
@@ -46,23 +41,23 @@ const User = (props: { user: UserInterface | null }) => {
         for (const address of props.user.addresses) {
           res.push(...(await client.getTransactions(address)));
         }
-      } else res.push(...(await client.getTransactions(input)));
+      } else res.push(...(await client.getTransactions(props.input)));
 
       setTransactions(
         res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
       );
     })();
-  }, [input]);
+  }, []);
 
   console.log(transactions);
 
   return (
     <Page>
       <Head>
-        <title>@{props.user?.username || input} on Verto</title>
+        <title>@{props.user?.username || props.input} on Verto</title>
         <Metas
           title="User"
-          subtitle={`@${props.user?.username || input}`}
+          subtitle={`@${props.user?.username || props.input}`}
           image={
             (props.user?.image && `https://arweave.net/${props.user.image}`) ||
             undefined
@@ -70,7 +65,7 @@ const User = (props: { user: UserInterface | null }) => {
         />
         <meta
           property="profile:username"
-          content={props.user?.username || input}
+          content={props.user?.username || props.input}
         />
       </Head>
       {props.user && (
@@ -128,7 +123,7 @@ export async function getServerSideProps(context) {
   const { input } = context.query;
   const user = (await client.getUser(input)) ?? null;
 
-  return { props: { user } };
+  return { props: { user, input } };
 }
 
 export default User;
