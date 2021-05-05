@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
+import { BellIcon } from "@iconicicons/react";
 
 const client = new Verto();
 
@@ -76,6 +77,31 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           size="large-inline"
         />
       )}
+      {props.user.bio && <p>{props.user.bio}</p>}
+      {props.user.links &&
+        Object.entries(props.user.links).map(([identifier, value]) => (
+          <>
+            {identifier === "twitter" && (
+              <a href={`https://twitter.com/${value}`} target="_blank">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M9.31 18.25C14.7819 18.25 17.7744 13.4403 17.7744 9.26994C17.7744 9.03682 17.9396 8.83015 18.152 8.73398C18.8803 8.40413 19.8249 7.49943 18.8494 5.97828C18.2031 6.32576 17.6719 6.51562 16.9603 6.74448C15.834 5.47393 13.9495 5.41269 12.7514 6.60761C11.9785 7.37819 11.651 8.52686 11.8907 9.62304C9.49851 9.49618 7.27005 8.2975 5.75967 6.32575C4.97031 7.76816 5.37324 9.61305 6.68039 10.5399C6.20677 10.5249 5.74376 10.3892 5.33024 10.1449V10.1849C5.33024 11.6873 6.32871 12.981 7.71657 13.2784C7.27888 13.4053 6.81941 13.4241 6.37348 13.3328C6.76345 14.6184 7.87974 15.4989 9.15272 15.5245C8.09887 16.4026 6.79761 16.8795 5.45806 16.8782C5.22126 16.8776 4.98504 16.8626 4.75 16.8326C6.11076 17.7588 7.69359 18.25 9.31 18.2475V18.25Z"
+                    stroke="#141414"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </a>
+            )}
+          </>
+        ))}
       {orders.map((order, i) => (
         <motion.div key={i} {...cardListAnimation(i)}>
           <Card.Trade
