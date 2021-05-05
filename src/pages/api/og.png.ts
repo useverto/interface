@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import svg2img from "svg2img";
 
-export default function OG(req: NextApiRequest, res: NextApiResponse) {
+export default async function OG(req: NextApiRequest, res: NextApiResponse) {
   const { title, subtitle } = req.query;
 
   if (!title) return res.status(400).send("Missing title");
@@ -37,6 +38,20 @@ export default function OG(req: NextApiRequest, res: NextApiResponse) {
     </svg>
   `;
 
-  res.setHeader("Content-Type", "image/svg+xml");
-  res.status(200).send(OGImage);
+  try {
+    const img = await svg2Png(OGImage);
+
+    res.setHeader("Content-Type", "image/png");
+    res.status(200).send(img);
+  } catch {
+    res.status(500).send("Error creating OG image");
+  }
 }
+
+const svg2Png = (img: string) =>
+  new Promise((resolve, reject) =>
+    svg2img(img, (err, buff) => {
+      if (err) reject(err);
+      else resolve(buff);
+    })
+  );
