@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "next dev",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "now-build": "yum install libuuid-devel libmount-devel && cp /lib64/{libuuid,libmount,libblkid}.so.1 node_modules/canvas/build/Release/ && npm run build"
   },
   "gitHooks": {
     "pre-commit": "prettier --write . && git add -A"
