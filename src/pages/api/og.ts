@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { svg2png } from "svg-png-converter";
 
-export default function OG(req: NextApiRequest, res: NextApiResponse) {
+export default async function OG(req: NextApiRequest, res: NextApiResponse) {
   const { title, subtitle } = req.query;
 
   if (!title) return res.status(400).send("Missing title");
@@ -37,6 +38,12 @@ export default function OG(req: NextApiRequest, res: NextApiResponse) {
     </svg>
   `;
 
-  res.setHeader("Content-Type", "image/svg+xml");
-  res.status(200).send(OGImage);
+  const data = await svg2png({
+    input: OGImage,
+    encoding: "buffer",
+    format: "png",
+  });
+
+  res.setHeader("Content-Type", "image/png");
+  res.status(200).send(data);
 }

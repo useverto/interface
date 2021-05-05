@@ -15,7 +15,7 @@ const Metas = ({ title, image, subtitle }: MetaProps) => (
       property="og:image"
       content={
         image ??
-        `${OGApiUrl}/api/og.svg?title=${
+        `${OGApiUrl}/api/og?title=${
           title + ((subtitle && "&subtitle=" + subtitle) || "")
         }`
       }
@@ -38,7 +38,7 @@ const Metas = ({ title, image, subtitle }: MetaProps) => (
       property="twitter:image"
       content={
         image ??
-        `${OGApiUrl}/api/og.svg?title=${
+        `${OGApiUrl}/api/og?title=${
           title + ((subtitle && "&subtitle=" + subtitle) || "")
         }`
       }
