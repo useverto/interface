@@ -26,7 +26,6 @@ export function GraphOptions({
   ticks = false,
   tooltipText,
   tickText,
-  tooltips = true,
 }: IGraphOptions) {
   const fontFamily = '"Poppins", sans-serif',
     fontStyle = {
@@ -52,13 +51,12 @@ export function GraphOptions({
     tooltips: {
       mode: "index",
       intersect: false,
-      titleFontColor: tooltips ? "#ffffff" : "transparent",
       titleFontFamily: fontFamily,
-      bodyFontColor: tooltips ? "#d4d4d4" : "transparent",
+      bodyFontColor: "#d4d4d4",
       bodyFontFamily: fontFamily,
       padding: 9,
       displayColors: false,
-      backgroundColor: tooltips ? "#000000" : "transparent",
+      backgroundColor: "#000000",
       callbacks: {
         label: tooltipText ?? (({ value }: any) => value),
       },
@@ -94,5 +92,4 @@ interface IGraphOptions {
   ticks?: boolean;
   tooltipText?: (tooltipItem?: any) => string;
   tickText?: (value: string, index: number) => string;
-  tooltips?: boolean;
 }

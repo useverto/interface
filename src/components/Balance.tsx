@@ -23,29 +23,11 @@ const Balance = () => {
   const { setToast } = useToasts();
   const decimals = 8;
   const animatedBalance = useCountUp({ end: balance, decimals });
-  const graphWrapper = useRef<HTMLDivElement>();
-  const [cursorPos, setCursorPos] = useState(0);
 
   useEffect(() => {
     if (!address) return;
     loadData();
   }, [address]);
-
-  useEffect(() => {
-    if (!graphWrapper.current) return;
-
-    const handleMove = (e: MouseEvent) => {
-      const newPos = e.pageX - graphWrapper.current.offsetLeft;
-
-      if (newPos < 0) return;
-      setCursorPos(newPos);
-    };
-    window.addEventListener("mousemove", handleMove);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMove);
-    };
-  }, [graphWrapper]);
 
   async function loadData() {
     setBalance(
@@ -91,7 +73,6 @@ const Balance = () => {
             exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.23, ease: "easeInOut" }}
             onMouseLeave={() => setHistorycalBalance(undefined)}
-            ref={graphWrapper}
           >
             <Line
               data={{
@@ -104,7 +85,6 @@ const Balance = () => {
                 ],
               }}
               options={GraphOptions({
-                tooltips: false,
                 tooltipText({ value, label }) {
                   const formattedBal =
                     Math.round(Number(value) * Math.pow(10, decimals)) /
@@ -123,7 +103,6 @@ const Balance = () => {
                 },
               })}
             />
-            <div className={styles.Cursor} style={{ left: cursorPos }} />
           </motion.div>
         )}
       </AnimatePresence>
