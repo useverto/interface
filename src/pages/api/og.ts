@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import captureWebsite from "capture-website";
+import chrome from "chrome-aws-lambda";
 
 export default async function OG(req: NextApiRequest, res: NextApiResponse) {
   const { title, subtitle } = req.query;
@@ -40,9 +41,15 @@ export default async function OG(req: NextApiRequest, res: NextApiResponse) {
       </defs>
     </svg>
   `;
+  const dev = process.env.NODE_ENV === "development";
   const data = await captureWebsite.buffer(OGImage, {
     inputType: "html",
     type: "png",
+    launchOptions: {
+      headless: dev ? true : chrome.headless,
+      executablePath: dev ? undefined : await chrome.executablePath,
+      args: dev ? [] : chrome.args,
+    },
     ...size,
   });
 
