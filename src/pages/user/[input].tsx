@@ -123,6 +123,14 @@ export async function getServerSideProps(context) {
   const { input } = context.query;
   const user = (await client.getUser(input)) ?? null;
 
+  if (user && input !== user.username)
+    return {
+      redirect: {
+        destination: `/@${user.username}`,
+        permanent: false,
+      },
+    };
+
   return { props: { user, input } };
 }
 
