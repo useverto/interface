@@ -1,13 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { svg2png } from "svg-png-converter";
+import captureWebsite from "capture-website";
 
 export default async function OG(req: NextApiRequest, res: NextApiResponse) {
   const { title, subtitle } = req.query;
 
   if (!title) return res.status(400).send("Missing title");
 
+  const size = { width: 1200, height: 630 };
   const OGImage = `
-    <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="${size.width}" height="${size.height}" viewBox="0 0 ${
+    size.width
+  } ${size.height}" fill="none" xmlns="http://www.w3.org/2000/svg">
       <style type="text/css">
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600");
 
@@ -24,7 +27,7 @@ export default async function OG(req: NextApiRequest, res: NextApiResponse) {
       </text>
       ${
         (subtitle &&
-          '<text x="50%" y="490" fill="#333" font-weight="500" font-size="25" text-anchor="middle">' +
+          '<text x="50%" y="490" fill="#333" font-weight="500" font-size="27" text-anchor="middle">' +
             subtitle +
             "</text>") ||
         ""
@@ -37,13 +40,16 @@ export default async function OG(req: NextApiRequest, res: NextApiResponse) {
       </defs>
     </svg>
   `;
-
-  const data = await svg2png({
-    input: OGImage,
-    encoding: "buffer",
-    format: "png",
+  const data = await captureWebsite.buffer(OGImage, {
+    inputType: "html",
+    type: "png",
+    ...size,
   });
 
   res.setHeader("Content-Type", "image/png");
+  res.setHeader(
+    "Cache-Control",
+    "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
+  );
   res.status(200).send(data);
 }
