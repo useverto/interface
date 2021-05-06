@@ -176,6 +176,11 @@
   resolved "https://registry.yarnpkg.com/@iconicicons/react/-/react-1.0.3.tgz#70d0e175a4f860d8da97d3ff364ca1e8fd2a001c"
   integrity sha512-YMrMQkqfaj6vIjckkxvlTOLGW50qFRodA2eNq+LeQqU1gv8Aag+Lyac9iMThkE0Y90n/Vh+k/fKjJgxUdvB/cw==
 
+"@iconicicons/react@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@iconicicons/react/-/react-1.1.1.tgz#8d2f94457f26d064fae813540fe47e9c499f7351"
+  integrity sha512-o0Zlt0E8aoRenVxot+bo04XodYXVj0x3Muh/H+BXbANVC8usQvCWSyLvsrRJoyrAWgF2tAV7crgYZ7MEe7sTzw==
+
 "@next/env@10.1.3":
   version "10.1.3"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-10.1.3.tgz#29e5d62919b4a7b1859f8d36169848dc3f5ddebe"
@@ -219,11 +224,6 @@
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/context-base/-/context-base-0.14.0.tgz#c67fc20a4d891447ca1a855d7d70fa79a3533001"
   integrity sha512-sDOAZcYwynHFTbLo6n8kIbLiVF3a3BLkrmehJUyEbT9F+Smbi47kLGS2gG2g0fjBLR/Lr1InPD7kXL7FaTqEkw==
-
-"@primer/octicons-react@^12.1.0":
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-12.1.0.tgz#7556450199e0c10e72e99dd02c59f1ac33544767"
-  integrity sha512-eb/5Obsp6/pVkyzzGhobK6aPAkKqx6VleF/7HYeihGTYm3rGZc+prL/jhxD5Mo1P6U343YEkHjc2gKuvtENn1g==
 
 "@primer/octicons-react@^13.0.0":
   version "13.0.0"
@@ -315,12 +315,12 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@^2.0.7-alpha":
-  version "2.0.7-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.7-alpha.tgz#cd7b11b6ba65189ea5b6af6183beb443bb0feb84"
-  integrity sha512-9iMrytOjbBtSEUZCTo6Ofo7Op/OffMa1r/wfIoq06QlbazuN//w2KuCuKMzXw9E3/p03JG27byCpb4eK19AXEA==
+"@verto/ui@^2.0.8-alpha":
+  version "2.0.8-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.0.8-alpha.tgz#2cc827c69056538f9c02cc4b9537da6cc0651507"
+  integrity sha512-DtH7+iCouKZz0EU9FUlNfa7k+9NIHwEI6VFqGdJ0qunOQmrVJs64d+BXodeBTbFJnTzXaURCIAWQJZM3zAo93w==
   dependencies:
-    "@primer/octicons-react" "^12.1.0"
+    "@iconicicons/react" "^1.1.1"
     framer-motion "^3.1.1"
     nanoid "^3.1.22"
     styled-components "^5.2.1"
