@@ -3,15 +3,20 @@ import {
   TransactionInterface,
   UserInterface,
 } from "@verto/js/dist/faces";
-import { Avatar, Card, Page, Spacer } from "@verto/ui";
+import { Avatar, Button, Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
+import { useAddress } from "../../utils/arconnect";
+import { randomEmoji } from "../../utils/user";
+import { formatAddress } from "../../utils/format";
+import { ArrowRightIcon } from "@iconicicons/react";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
-import { BellIcon } from "@iconicicons/react";
-import { useAddress } from "../../utils/arconnect";
+import useArConnect from "use-arconnect";
+import Link from "next/link";
+import styles from "../../styles/views/user.module.sass";
 
 const client = new Verto();
 
@@ -19,6 +24,29 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
   const { address: currentAddress } = useAddress();
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const arconnect = useArConnect();
+  const [walletName, setWalletName] = useState("");
+
+  // set if the profile is owned by the logged in user
+  useEffect(() => {
+    if (
+      !props.user?.addresses.includes(currentAddress) &&
+      props.input !== currentAddress
+    )
+      return;
+    setIsCurrentUser(true);
+  }, [currentAddress]);
+
+  // set current wallet name from arconnect
+  useEffect(() => {
+    (async () => {
+      if (!arconnect) return;
+      setWalletName(
+        (await arconnect.getWalletNames())[currentAddress] ?? "No name"
+      );
+    })();
+  }, [arconnect, currentAddress]);
 
   // load orders
   useEffect(() => {
@@ -73,14 +101,19 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           content={props.user?.username || props.input}
         />
       </Head>
-      {props.user && (
+      <Spacer y={3} />
+      {(props.user && (
         <>
-          <Avatar
-            avatar={`https://arweave.net/${props.user.image}`}
-            usertag={props.user.username}
-            name={props.user.name}
-            size="large-inline"
-          />
+          <div className={styles.AvatarSection}>
+            <Avatar
+              avatar={`https://arweave.net/${props.user.image}`}
+              usertag={props.user.username}
+              name={props.user.name}
+              size="large-inline"
+              className={styles.Avatar}
+            />
+            {isCurrentUser && <Button>Edit profile</Button>}
+          </div>
           {props.user.bio && <p>{props.user.bio}</p>}
           {props.user.links &&
             Object.entries(props.user.links).map(([identifier, value]) => (
@@ -107,11 +140,24 @@ const User = (props: { user: UserInterface | null; input: string }) => {
               </>
             ))}
         </>
+      )) || (
+        <div className={styles.AvatarSection}>
+          <Avatar
+            avatar={randomEmoji()}
+            usertag={formatAddress(props.input, 14)}
+            name={walletName}
+            size="large-inline"
+            className={styles.Avatar}
+          />
+          {isCurrentUser && <Button>Edit profile</Button>}
+        </div>
       )}
+      <Spacer y={5} />
+      <h1 className="Title">Trades</h1>
+      <Spacer y={2} />
       {orders.map((order, i) => (
         <motion.div key={i} {...cardListAnimation(i)}>
           <Card.Trade
-            style={{ cursor: "pointer" }}
             type={(() => {
               let type: any;
               if (order.input.split(" ")[1] === "AR") {
@@ -130,20 +176,19 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             timestamp={new Date(order.timestamp * 1000)}
             status={(() => {
               let status: any = order.status;
-
-              if (status === "success" || status === "pending") {
-                // don't do anything
-              } else if (status === "cancelled" || status === "refunded") {
-                status = "neutral";
-              } else {
-                status = "error";
-              }
+              const acceptedStatuses = [
+                "success",
+                "pending",
+                "cancelled",
+                "refunded",
+              ];
+              if (!acceptedStatuses.includes(order.status)) status = "error";
 
               return status;
             })()}
             orderID={order.id}
             cancel={
-              (currentAddress === order.sender &&
+              (isCurrentUser &&
                 order.status === "pending" &&
                 (() => cancelOrder(order.id))) ||
               undefined
@@ -152,6 +197,43 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <Spacer y={1} />
         </motion.div>
       ))}
+      {(orders.length > 0 && (
+        <>
+          <Spacer y={2} />
+          <Link href={`/@${props.input}/trades`}>
+            <a className="ShowMore">
+              View all
+              <ArrowRightIcon />
+            </a>
+          </Link>
+        </>
+      )) || <span className="Show more">No trades</span>}
+      <Spacer y={4} />
+      <h1 className="Title">Transactions</h1>
+      <Spacer y={1} />
+      <table className={styles.Transactions}>
+        {transactions.map((transaction, i) => (
+          <motion.tr key={i} {...cardListAnimation(i)}>
+            <td className={styles.TxType}>{transaction.type}</td>
+            <td className={styles.TxID}>
+              {transaction.id}
+              {transaction.status}
+            </td>
+            <td className={styles.TxAmount}>{transaction.amount}</td>
+          </motion.tr>
+        ))}
+      </table>
+      {(transactions.length > 0 && (
+        <>
+          <Spacer y={1} />
+          <Link href={`/@${props.input}/transactions`}>
+            <a className="ShowMore">
+              View all
+              <ArrowRightIcon />
+            </a>
+          </Link>
+        </>
+      )) || <span className="Show more">No transactions</span>}
     </Page>
   );
 };

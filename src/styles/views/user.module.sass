@@ -1,0 +1,34 @@
+@use "../variables"
+
+.AvatarSection
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+  .Avatar
+    font-size: 1.5em
+
+.Transactions
+  width: 100%
+  color: variables.$light-text
+  font-size: 1.1em
+  border-collapse: separate
+  border-spacing: 0 1em
+
+  .TxType
+    background-color: variables.$foreground-color
+    color: variables.$foreground-reverse-color
+    padding: .13em .44em
+    border-radius: 8px
+    box-shadow: variables.$standard-shadow
+    text-transform: uppercase
+    font-weight: 500
+    width: 42px
+    text-align: center
+
+  .TxID
+    padding-left: 1em
+
+  .TxAmount
+    text-align: right
+      
