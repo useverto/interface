@@ -11,11 +11,16 @@ import { useAddress } from "../../utils/arconnect";
 import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
 import { ArrowRightIcon } from "@iconicicons/react";
+import { UsernametoURL as usernameToURL } from "social-username-url";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
+import Instagram from "../../components/icons/Instagram";
+import Twitter from "../../components/icons/Twitter";
+import Github from "../../components/icons/Github";
+import Facebook from "../../components/icons/Facebook";
 import styles from "../../styles/views/user.module.sass";
 
 const client = new Verto();
@@ -114,31 +119,17 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             />
             {isCurrentUser && <Button>Edit profile</Button>}
           </div>
-          {props.user.bio && <p>{props.user.bio}</p>}
-          {props.user.links &&
-            Object.entries(props.user.links).map(([identifier, value]) => (
-              <>
-                {identifier === "twitter" && (
-                  <a href={`https://twitter.com/${value}`} target="_blank">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M9.31 18.25C14.7819 18.25 17.7744 13.4403 17.7744 9.26994C17.7744 9.03682 17.9396 8.83015 18.152 8.73398C18.8803 8.40413 19.8249 7.49943 18.8494 5.97828C18.2031 6.32576 17.6719 6.51562 16.9603 6.74448C15.834 5.47393 13.9495 5.41269 12.7514 6.60761C11.9785 7.37819 11.651 8.52686 11.8907 9.62304C9.49851 9.49618 7.27005 8.2975 5.75967 6.32575C4.97031 7.76816 5.37324 9.61305 6.68039 10.5399C6.20677 10.5249 5.74376 10.3892 5.33024 10.1449V10.1849C5.33024 11.6873 6.32871 12.981 7.71657 13.2784C7.27888 13.4053 6.81941 13.4241 6.37348 13.3328C6.76345 14.6184 7.87974 15.4989 9.15272 15.5245C8.09887 16.4026 6.79761 16.8795 5.45806 16.8782C5.22126 16.8776 4.98504 16.8626 4.75 16.8326C6.11076 17.7588 7.69359 18.25 9.31 18.2475V18.25Z"
-                        stroke="#141414"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </svg>
-                  </a>
-                )}
-              </>
-            ))}
+          <Spacer y={2} />
+          {props.user.bio && <p className={styles.Bio}>{props.user.bio}</p>}
+          {props.user.links && Object.keys(props.user.links).length > 0 && (
+            <div className={styles.Links}>
+              {Object.entries(props.user.links).map(
+                ([identifier, value], i) => (
+                  <SocialIcon identifier={identifier} value={value} />
+                )
+              )}
+            </div>
+          )}
         </>
       )) || (
         <div className={styles.AvatarSection}>
@@ -250,9 +241,36 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           </Link>
         </>
       )) || <span className="ShowMore">No transactions</span>}
+      <Spacer y={1} />
     </Page>
   );
 };
+
+const SocialIcon = ({ identifier, value }) => (
+  <a
+    href={usernameToURL(value, identifier)}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    {(() => {
+      switch (identifier) {
+        case "facebook":
+          return <Facebook />;
+
+        case "instagram":
+          return <Instagram />;
+
+        case "github":
+          return <Github />;
+
+        case "twitter":
+          return <Twitter />;
+      }
+
+      return "";
+    })()}
+  </a>
+);
 
 export async function getServerSideProps(context) {
   const { input } = context.query;

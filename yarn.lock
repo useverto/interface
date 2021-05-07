@@ -2777,6 +2777,11 @@ smartweave@^0.4.29:
     sentencer "^0.2.1"
     yargs "^16.2.0"
 
+social-username-url@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/social-username-url/-/social-username-url-0.0.3.tgz#fc593f763cc8fc761f3af82e5502798de5d13082"
+  integrity sha512-ka09tZzdKE9JmBux2vB+cMBVRGtybhlPoHllML71fAQwKV+yP5LmThiEJvxUc7iexQ1ZELZUtCHjr+rkG9OYEg==
+
 source-map@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.7.3.tgz#5302f8169031735226544092e64981f751750383"

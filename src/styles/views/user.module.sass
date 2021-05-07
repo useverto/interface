@@ -6,7 +6,35 @@
   justify-content: space-between
 
   .Avatar
-    font-size: 1.5em
+    font-size: 1.3em
+
+    h1
+      margin-bottom: 0 !important
+      font-size: 2em !important
+
+.Bio
+  font-size: 1.1em
+  color: variables.$light-text
+  text-align: justify
+  width: 60%
+  margin-bottom: 2em
+
+.Links a
+  color: variables.$light-text
+  margin: 0 .75em
+  font-size: 1.2em
+  transition: all .23s ease-in-out
+
+  &:hover
+    opacity: .8
+
+  svg
+    font-size: 1em
+    width: 1em
+    height: 1em
+
+  &:first-child
+    margin-left: 0
 
 .Transactions
   width: 100%
@@ -69,4 +97,3 @@
 
   .TxAmount
     text-align: right
-      

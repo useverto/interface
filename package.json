@@ -29,6 +29,7 @@
     "react": "^17.0.2",
     "react-chartjs-2": "^2.11.1",
     "react-dom": "^17.0.2",
+    "social-username-url": "^0.0.3",
     "typed.js": "^2.0.12",
     "use-arconnect": "^1.0.1"
   },
