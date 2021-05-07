@@ -2,7 +2,7 @@ import { Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useRouter } from "next/router";
 import { cardListAnimation } from "../../../utils/animations";
 import { motion } from "framer-motion";
-import { getStatus, getType } from "../../../utils/order";
+import { getType } from "../../../utils/order";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
@@ -27,12 +27,10 @@ const Order = (props: { order: any }) => {
         <p>
           {props.order.id}
           <Spacer x={0.44} />
-          <Tooltip text={getStatus(props.order.status)} position="right">
+          <Tooltip text={props.order.status} position="right">
             <span
               className={
-                styles.Status +
-                " " +
-                styles[`Status_${getStatus(props.order.status)}`]
+                styles.Status + " " + styles[`Status_${props.order.status}`]
               }
             />
           </Tooltip>

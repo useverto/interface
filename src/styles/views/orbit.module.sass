@@ -36,19 +36,20 @@
       width: $size
       height: $size
       border-radius: 100%
+      background-color: variables.$foreground-color
+      opacity: .6
 
       &.Status_error
+        opacity: 1
         background-color: variables.$error
 
       &.Status_pending
+        opacity: 1
         background-color: variables.$warning
 
       &.Status_success
+        opacity: 1
         background-color: variables.$success
-
-      &.Status_neutral
-        background-color: variables.$foreground-color
-        opacity: .6
 
     div[class~=VertoTooltip]
       text-transform: capitalize
@@ -57,6 +58,9 @@
       color: variables.$light-text
       margin-left: .3em
       text-decoration: none
+
+      &.TradingPostAddress
+        color: variables.$foreground-color
 
       &:hover
         text-decoration: underline

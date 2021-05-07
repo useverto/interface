@@ -2,7 +2,7 @@ import { Card, Loading, Page, Spacer, Tooltip } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
 import { cardListAnimation } from "../../../utils/animations";
-import { getStatus, getType } from "../../../utils/order";
+import { getType } from "../../../utils/order";
 import { useEffect, useState } from "react";
 import Metas from "../../../components/Metas";
 import Head from "next/head";
@@ -48,7 +48,14 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
       <div className={styles.OrbitTitle}>
         <h1>Trading Post</h1>
         <p>
-          {props.addr}
+          <a
+            href={`https://viewblock.io/arweave/address/${props.addr}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.TradingPostAddress}
+          >
+            {props.addr}
+          </a>
           {status && (
             <>
               <Spacer x={0.44} />
@@ -136,7 +143,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
           <Card.Order
             type={getType(order.input)}
             orderID={order.id}
-            status={getStatus(order.status)}
+            status={order.status}
             timestamp={new Date(order.timestamp * 1000)}
           />
           <Spacer y={2} />

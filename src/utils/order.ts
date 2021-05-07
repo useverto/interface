@@ -1,20 +1,3 @@
-import { Status } from "@verto/ui/dist/components/Card";
-
-/**
- * Convert a status string to UI-friendly status
- *
- * @param statusString String to convert
- *
- * @returns status
- */
-export const getStatus = (statusString: string): Status => {
-  if (statusString === "success" || statusString === "pending")
-    return statusString;
-  else if (statusString === "cancelled" || statusString === "refunded")
-    return "neutral";
-  return "error";
-};
-
 /**
  * Get the type of an order
  *
