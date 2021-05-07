@@ -3,7 +3,7 @@ import {
   TransactionInterface,
   UserInterface,
 } from "@verto/js/dist/faces";
-import { Avatar, Button, Card, Page, Spacer } from "@verto/ui";
+import { Avatar, Button, Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
@@ -207,7 +207,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="Show more">No trades</span>}
+      )) || <span className="ShowMore">No trades</span>}
       <Spacer y={4} />
       <h1 className="Title">Transactions</h1>
       <Spacer y={1} />
@@ -216,8 +216,24 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <motion.tr key={i} {...cardListAnimation(i)}>
             <td className={styles.TxType}>{transaction.type}</td>
             <td className={styles.TxID}>
-              {transaction.id}
-              {transaction.status}
+              <a
+                href={`https://viewblock.io/arweave/tx/${transaction.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {transaction.id}
+              </a>
+              <Tooltip
+                text={transaction.status}
+                position="right"
+                className={styles.StatusTooltip}
+              >
+                <span
+                  className={
+                    styles.Status + " " + styles[`Status_${transaction.status}`]
+                  }
+                />
+              </Tooltip>
             </td>
             <td className={styles.TxAmount}>{transaction.amount}</td>
           </motion.tr>
@@ -233,7 +249,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="Show more">No transactions</span>}
+      )) || <span className="ShowMore">No transactions</span>}
     </Page>
   );
 };

@@ -27,7 +27,45 @@
     text-align: center
 
   .TxID
+    display: flex
+    align-items: center
     padding-left: 1em
+
+    a
+      text-decoration: none
+      color: variables.$light-text
+      transition: all .23s ease-in-out
+
+      &:hover
+        opacity: .8
+
+    .Status
+      $statusSize: 8px
+      display: block
+      margin-left: $statusSize
+      width: $statusSize
+      height: $statusSize
+      border-radius: 100%
+      background-color: variables.$background-color
+      opacity: .6
+
+      &.Status_error
+        opacity: 1
+        background-color: variables.$error
+
+      &.Status_pending
+        opacity: 1
+        background-color: variables.$warning
+
+      &.Status_success
+        opacity: 1
+        background-color: variables.$success
+
+    .StatusTooltip
+      text-transform: capitalize
+      font-size: .8em
+      padding: .2em .6em
+      border-radius: 10px
 
   .TxAmount
     text-align: right
