@@ -15,7 +15,7 @@ import styles from "../styles/views/home.module.sass";
 const client = new Verto();
 
 const Home = () => {
-  const { address, updateAddress } = useAddress();
+  const [address, updateAddress] = useAddress();
   const router = useRouter();
 
   useEffect(() => {

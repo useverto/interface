@@ -13,7 +13,7 @@ import styles from "../styles/components/Balance.module.sass";
 import { useCountUp } from "../utils/animations";
 
 const Balance = () => {
-  const { address } = useAddress();
+  const [address] = useAddress();
   const [history, setHistory] = useState<{ [date: string]: number }>();
   const [balance, setBalance] = useState(0);
   const [historicalBalance, setHistorycalBalance] = useState<{

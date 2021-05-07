@@ -28,7 +28,7 @@ const client = new Verto();
 const User = (props: { user: UserInterface | null; input: string }) => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
-  const { address: currentAddress } = useAddress();
+  const [currentAddress] = useAddress();
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const arconnect = useArConnect();
   const [walletName, setWalletName] = useState("");

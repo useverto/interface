@@ -1,6 +1,7 @@
 import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAddress } from "../utils/arconnect";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
@@ -11,6 +12,7 @@ import "../styles/progress.sass";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const [scheme, setScheme] = useState<"dark" | "light">("light");
+  const [address] = useAddress();
 
   Progress.configure({ showSpinner: false });
 
@@ -38,6 +40,14 @@ export default function App({ Component, pageProps }) {
       query.removeEventListener("change", updateScheme);
     };
   }, []);
+
+  useEffect(() => console.log(address), [address]);
+
+  useEffect(() => {
+    const protectedRoutes = /\/(app|swap)/;
+
+    if (router.asPath.match(protectedRoutes) && !address) router.push("/");
+  }, [router.asPath, address]);
 
   return (
     <VertoProvider theme={"Light"}>

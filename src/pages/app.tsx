@@ -15,7 +15,7 @@ const client = new Verto();
 
 const App = () => {
   const [balances, setBalances] = useState<BalanceInterface[]>([]);
-  const { address } = useAddress();
+  const [address] = useAddress();
   const [showMorePsts, setShowMorePsts] = useState(false);
 
   useEffect(() => {

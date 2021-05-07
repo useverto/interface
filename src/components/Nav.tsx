@@ -15,7 +15,7 @@ import Verto from "@verto/js";
 const client = new Verto();
 
 const Nav = () => {
-  const { address, updateAddress } = useAddress();
+  const [address, updateAddress] = useAddress();
   const arconnect = useArConnect();
   const router = useRouter();
   const items: Item[] = ["app", "space", "swap", "orbit"];
@@ -99,6 +99,7 @@ const Nav = () => {
     await window.arweaveWallet.disconnect();
     await updateAddress();
     signOutModal.setState(false);
+    router.push("/");
   }
 
   return (

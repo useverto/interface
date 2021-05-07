@@ -8,7 +8,7 @@ export const permissions: PermissionType[] = [
   "SIGN_TRANSACTION",
 ];
 
-export function useAddress() {
+export function useAddress(): [string, () => void] {
   const [address, setAddress] = useState<string>();
   const arconnect = useArconnect();
 
@@ -32,5 +32,5 @@ export function useAddress() {
     }
   }
 
-  return { address, updateAddress };
+  return [address, updateAddress];
 }
