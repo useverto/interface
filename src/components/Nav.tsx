@@ -99,7 +99,7 @@ const Nav = () => {
     await window.arweaveWallet.disconnect();
     await updateAddress();
     signOutModal.setState(false);
-    // router.push("/");
+    router.push("/");
   }
 
   return (
