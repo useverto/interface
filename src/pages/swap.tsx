@@ -14,6 +14,8 @@ import {
   Loading,
   useToasts,
   useInput,
+  useModal,
+  Modal,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { randomEmoji } from "../utils/user";
@@ -141,7 +143,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   const [swap, setSwap] = useState<SwapInterface>(null);
   const [creatingSwap, setCreatingSwap] = useState(false);
-  console.log(swap);
+  const confirmationModal = useModal();
 
   return (
     <Page>
@@ -246,6 +248,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
               );
 
               setCreatingSwap(false);
+              confirmationModal.setState(true);
             }}
           >
             Swap
@@ -331,6 +334,27 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           </motion.div>
         )}
       </AnimatePresence>
+      {swap && (
+        <Modal {...confirmationModal.bindings}>
+          <Modal.Title>Confirm Order</Modal.Title>
+          <Modal.Content>
+            You are sending:
+            <ul>
+              <li>{swap.cost.ar} AR</li>
+              {swap.cost.token ? (
+                <li>
+                  {swap.cost.ar} {selectedPST?.ticker}
+                </li>
+              ) : (
+                <></>
+              )}
+            </ul>
+            <Button small disabled>
+              Make Trade
+            </Button>
+          </Modal.Content>
+        </Modal>
+      )}
     </Page>
   );
 };
