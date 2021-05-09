@@ -1,7 +1,10 @@
 import { Button, Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { permissions, useAddress } from "../utils/arconnect";
+import { permissions } from "../utils/arconnect";
 import { useRouter } from "next/router";
+import { RootState } from "../store/reducers";
+import { useSelector, useDispatch } from "react-redux";
+import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import Typed from "typed.js";
@@ -15,8 +18,9 @@ import styles from "../styles/views/home.module.sass";
 const client = new Verto();
 
 const Home = () => {
-  const [address, updateAddress] = useAddress();
+  const address = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const options = {
@@ -58,7 +62,7 @@ const Home = () => {
 
   async function login() {
     await window.arweaveWallet.connect(permissions);
-    await updateAddress();
+    dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
   }
 
   return (

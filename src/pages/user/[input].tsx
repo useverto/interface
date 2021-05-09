@@ -7,11 +7,12 @@ import { Avatar, Button, Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
-import { useAddress } from "../../utils/arconnect";
 import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
 import { ArrowRightIcon } from "@iconicicons/react";
 import { UsernametoURL as usernameToURL } from "social-username-url";
+import { RootState } from "../../store/reducers";
+import { useSelector } from "react-redux";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
@@ -28,7 +29,9 @@ const client = new Verto();
 const User = (props: { user: UserInterface | null; input: string }) => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
-  const [currentAddress] = useAddress();
+  const currentAddress = useSelector(
+    (state: RootState) => state.addressReducer
+  );
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const arconnect = useArConnect();
   const [walletName, setWalletName] = useState("");

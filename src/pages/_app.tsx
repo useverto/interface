@@ -1,7 +1,8 @@
 import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useAddress } from "../utils/arconnect";
+import { Provider as ReduxProvider } from "react-redux";
+import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
@@ -12,7 +13,6 @@ import "../styles/progress.sass";
 export default function App({ Component, pageProps }) {
   const router = useRouter();
   const [scheme, setScheme] = useState<"dark" | "light">("light");
-  const [address] = useAddress();
 
   Progress.configure({ showSpinner: false });
 
@@ -41,26 +41,27 @@ export default function App({ Component, pageProps }) {
     };
   }, []);
 
-  useEffect(() => console.log(address), [address]);
-
   useEffect(() => {
     const protectedRoutes = /\/(app|swap)/;
+    const address = store.getState().addressReducer;
 
     if (router.asPath.match(protectedRoutes) && !address) router.push("/");
-  }, [router.asPath, address]);
+  }, [router.asPath]);
 
   return (
-    <VertoProvider theme={"Light"}>
-      <Head>
-        <link
-          rel="shortcut icon"
-          href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
-          type="image/svg"
-        />
-      </Head>
-      <Nav />
-      <Component {...pageProps} />
-      <Footer />
-    </VertoProvider>
+    <ReduxProvider store={store}>
+      <VertoProvider theme={"Light"}>
+        <Head>
+          <link
+            rel="shortcut icon"
+            href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+            type="image/svg"
+          />
+        </Head>
+        <Nav />
+        <Component {...pageProps} />
+        <Footer />
+      </VertoProvider>
+    </ReduxProvider>
   );
 }

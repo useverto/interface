@@ -1,7 +1,8 @@
 import { BalanceInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer, Tooltip } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { useAddress } from "../utils/arconnect";
+import { RootState } from "../store/reducers";
+import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
@@ -15,7 +16,7 @@ const client = new Verto();
 
 const App = () => {
   const [balances, setBalances] = useState<BalanceInterface[]>([]);
-  const [address] = useAddress();
+  const address = useSelector((state: RootState) => state.addressReducer);
   const [showMorePsts, setShowMorePsts] = useState(false);
 
   useEffect(() => {

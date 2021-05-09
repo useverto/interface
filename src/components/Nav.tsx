@@ -1,21 +1,24 @@
 import { Avatar, Button, Modal, Popover, Spacer, useModal } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
-import { permissions, useAddress } from "../utils/arconnect";
+import { permissions } from "../utils/arconnect";
 import { BellIcon, LogOutIcon, UserIcon } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../utils/format";
 import { randomEmoji } from "../utils/user";
+import { RootState } from "../store/reducers";
+import { useSelector, useDispatch } from "react-redux";
+import { updateAddress } from "../store/actions";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
-import styles from "../styles/components/Nav.module.sass";
 import Verto from "@verto/js";
+import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
 
 const Nav = () => {
-  const [address, updateAddress] = useAddress();
+  const address = useSelector((state: RootState) => state.addressReducer);
   const arconnect = useArConnect();
   const router = useRouter();
   const items: Item[] = ["app", "space", "swap", "orbit"];
@@ -33,6 +36,7 @@ const Nav = () => {
     name: "",
   });
   const signOutModal = useModal();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -65,11 +69,6 @@ const Nav = () => {
     })();
   }, [user, address]);
 
-  async function login() {
-    await window.arweaveWallet.connect(permissions);
-    await updateAddress();
-  }
-
   function syncSelected() {
     const route = router.asPath.toLowerCase().split("/")[1] as Item;
     if (!items.includes(route)) return setSelectedItem(undefined);
@@ -92,14 +91,33 @@ const Nav = () => {
   useEffect(() => {
     if (address) {
       client.getUser(address).then((res) => setUser(res));
+      window.addEventListener("walletSwitch", syncAddress);
     }
+
+    return () => {
+      window.removeEventListener("walletSwitch", syncAddress);
+    };
   }, [address]);
+
+  async function login() {
+    await window.arweaveWallet.connect(permissions);
+    await syncAddress();
+  }
 
   async function signOut() {
     await window.arweaveWallet.disconnect();
-    await updateAddress();
+    dispatch(updateAddress(null));
     signOutModal.setState(false);
     router.push("/");
+  }
+
+  async function syncAddress(e?: CustomEvent<{ address: string }>) {
+    if (e) return dispatch(updateAddress(e.detail.address));
+    try {
+      dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
+    } catch {
+      dispatch(updateAddress(null));
+    }
   }
 
   return (

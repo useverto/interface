@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { balanceHistory } from "../utils/arweave";
 import { Line } from "react-chartjs-2";
-import { useAddress } from "../utils/arconnect";
 import { formatAddress } from "../utils/format";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
 import { ClipboardIcon } from "@iconicicons/react";
 import { Tooltip, useToasts } from "@verto/ui";
+import { useCountUp } from "../utils/animations";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
 import copy from "copy-to-clipboard";
 import styles from "../styles/components/Balance.module.sass";
-import { useCountUp } from "../utils/animations";
 
 const Balance = () => {
-  const [address] = useAddress();
   const [history, setHistory] = useState<{ [date: string]: number }>();
   const [balance, setBalance] = useState(0);
   const [historicalBalance, setHistorycalBalance] = useState<{
@@ -23,6 +23,7 @@ const Balance = () => {
   const { setToast } = useToasts();
   const decimals = 8;
   const animatedBalance = useCountUp({ end: balance, decimals });
+  const address = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
     if (!address) return;
