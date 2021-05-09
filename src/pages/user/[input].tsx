@@ -23,10 +23,12 @@ import Twitter from "../../components/icons/Twitter";
 import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
 import styles from "../../styles/views/user.module.sass";
+import axios from "axios";
 
 const client = new Verto();
 
 const User = (props: { user: UserInterface | null; input: string }) => {
+  const [creations, setCreations] = useState<string[]>([]);
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
   const currentAddress = useSelector(
@@ -55,6 +57,13 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       );
     })();
   }, [arconnect, currentAddress]);
+
+  // load creations
+  useEffect(() => {
+    axios
+      .get(`https://v2.cache.verto.exchange/user/${props.input}/creations`)
+      .then(({ data }) => setCreations(data));
+  });
 
   // load orders
   useEffect(() => {
@@ -147,6 +156,14 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         </div>
       )}
       <Spacer y={5} />
+      <h1 className="Title">Creations</h1>
+      <Spacer y={2} />
+      <div className={styles.Creations}>
+        {creations.map((id) => (
+          <Card.AssetClear image={`https://arweave.net/${id}`} />
+        ))}
+      </div>
+      <Spacer y={2} />
       <h1 className="Title">Trades</h1>
       <Spacer y={2} />
       {orders.map((order, i) => (
