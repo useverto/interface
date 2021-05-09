@@ -346,10 +346,10 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^0.0.0-alpha.12":
-  version "0.0.0-alpha.12"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.12.tgz#731f8e8bbaa129644cd1a6007a36cb5eefadf2fe"
-  integrity sha512-qrkLwtlLJI45hIzY8iKir2LKWn+0no3keQx8v8VyenJhPsD79+cAkQ1cAwwXqi8bMQ67vR4Cdz2b8eKraNeVOQ==
+"@verto/js@^0.0.0-alpha.13":
+  version "0.0.0-alpha.13"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.13.tgz#1a3f7afdecbe8f1f6e6a36f618984ab5bc5dbc18"
+  integrity sha512-4/VgvvvVdF9U64w7by/1v271mE+PESb786wup3ULCiSxm9Mqf7C4MwexASOZEUaAe2W24BSy+rwexCBc1GXGRA==
   dependencies:
     ardb "^1.0.8"
     arweave "^1.10.13"
