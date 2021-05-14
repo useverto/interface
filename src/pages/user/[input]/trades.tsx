@@ -1,4 +1,4 @@
-import { Card, Page, Spacer } from "@verto/ui";
+import { Button, Card, Modal, Page, Spacer, useModal } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
 import { motion } from "framer-motion";
@@ -17,6 +17,8 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   const currentAddress = useSelector(
     (state: RootState) => state.addressReducer
   );
+  const cancelModal = useModal();
+  const [cancelID, setCancelID] = useState("");
 
   // load orders
   useEffect(() => {
@@ -102,13 +104,33 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
             cancel={
               (isCurrentUser &&
                 order.status === "pending" &&
-                (() => cancelOrder(order.id))) ||
+                (() => {
+                  setCancelID(order.id);
+                  cancelModal.setState(true);
+                })) ||
               undefined
             }
           />
           <Spacer y={1} />
         </motion.div>
       ))}
+      <Modal {...cancelModal.bindings}>
+        <Modal.Title>Cancel order</Modal.Title>
+        <p style={{ textAlign: "justify" }}>
+          Are you sure you want to cancel your order <b>({cancelID})</b>?
+        </p>
+        <Button
+          style={{ margin: "0 auto" }}
+          small
+          onClick={async () => {
+            await client.cancel(cancelID);
+            setCancelID("");
+            cancelModal.setState(false);
+          }}
+        >
+          Cancel
+        </Button>
+      </Modal>
     </Page>
   );
 };

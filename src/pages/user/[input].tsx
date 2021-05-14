@@ -3,7 +3,16 @@ import {
   TransactionInterface,
   UserInterface,
 } from "@verto/js/dist/faces";
-import { Avatar, Button, Card, Page, Spacer, Tooltip } from "@verto/ui";
+import {
+  Avatar,
+  Button,
+  Card,
+  Modal,
+  Page,
+  Spacer,
+  Tooltip,
+  useModal,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
@@ -37,6 +46,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const arconnect = useArConnect();
   const [walletName, setWalletName] = useState("");
+  const cancelModal = useModal();
+  const [cancelID, setCancelID] = useState("");
 
   // set if the profile is owned by the logged in user
   useEffect(() => {
@@ -97,10 +108,6 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       );
     })();
   }, []);
-
-  async function cancelOrder(orderID: string) {
-    // TODO
-  }
 
   return (
     <Page>
@@ -206,7 +213,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             cancel={
               (isCurrentUser &&
                 order.status === "pending" &&
-                (() => cancelOrder(order.id))) ||
+                (() => {
+                  setCancelID(order.id);
+                  cancelModal.setState(true);
+                })) ||
               undefined
             }
           />
@@ -267,6 +277,23 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         </>
       )) || <span className="ShowMore">No transactions</span>}
       <Spacer y={1} />
+      <Modal {...cancelModal.bindings}>
+        <Modal.Title>Cancel order</Modal.Title>
+        <p style={{ textAlign: "justify" }}>
+          Are you sure you want to cancel your order <b>({cancelID})</b>?
+        </p>
+        <Button
+          style={{ margin: "0 auto" }}
+          small
+          onClick={async () => {
+            await client.cancel(cancelID);
+            setCancelID("");
+            cancelModal.setState(false);
+          }}
+        >
+          Cancel
+        </Button>
+      </Modal>
     </Page>
   );
 };

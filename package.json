@@ -12,7 +12,7 @@
   "dependencies": {
     "@iconicicons/react": "^1.0.3",
     "@primer/octicons-react": "^13.0.0",
-    "@verto/js": "^0.0.0-alpha.13",
+    "@verto/js": "^0.0.0-alpha.14",
     "@verto/ui": "^2.0.9-alpha",
     "arconnect": "^0.2.8",
     "ardb": "^1.0.8",
