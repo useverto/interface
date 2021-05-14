@@ -124,7 +124,11 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         <>
           <div className={styles.AvatarSection}>
             <Avatar
-              avatar={`https://arweave.net/${props.user.image}`}
+              avatar={
+                props.user.image
+                  ? `https://arweave.net/${props.user.image}`
+                  : randomEmoji()
+              }
               usertag={props.user.username}
               name={props.user.name}
               size="large-inline"
