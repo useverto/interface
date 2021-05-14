@@ -176,6 +176,17 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <Card.AssetClear image={`https://arweave.net/${id}`} />
         ))}
       </div>
+      {(creations.length > 0 && (
+        <>
+          <Spacer y={2} />
+          <Link href={`/@${props.input}/creations`}>
+            <a className="ShowMore">
+              View all
+              <ArrowRightIcon />
+            </a>
+          </Link>
+        </>
+      )) || <span className="NoItemsText">No creations...</span>}
       <Spacer y={2} />
       <h1 className="Title">Trades</h1>
       <Spacer y={2} />
@@ -235,7 +246,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="ShowMore">No trades</span>}
+      )) || <span className="NoItemsText">No trades...</span>}
       <Spacer y={4} />
       <h1 className="Title">Transactions</h1>
       <Spacer y={1} />
@@ -277,7 +288,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="ShowMore">No transactions</span>}
+      )) || <span className="NoItemsText">No transactions...</span>}
       <Spacer y={1} />
       <Modal {...cancelModal.bindings}>
         <Modal.Title>Cancel order</Modal.Title>

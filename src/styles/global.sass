@@ -35,20 +35,24 @@
       font-size: .75em
       border-radius: 10px
 
-.ShowMore
+.ShowMore, .NoItemsText
   display: flex
   align-items: center
   justify-content: center
   text-align: center
   color: variables.$light-text
+  width: max-content
+  margin: 0 auto
   font-size: 1.08em
-  cursor: pointer
   text-decoration: none
   transition: all .23s ease-in-out
+
+  &.ShowMore
+    cursor: pointer
+
+    &:hover
+      opacity: .8
 
   svg
     margin-left: .1em
     +variables.sameSizeSvg
-
-  &:hover
-    opacity: .8
