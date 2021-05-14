@@ -43,6 +43,10 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
     setIsCurrentUser(true);
   }, [currentAddress]);
 
+  async function cancelOrder(orderID: string) {
+    // TODO
+  }
+
   return (
     <Page>
       <Head>
