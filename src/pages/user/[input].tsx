@@ -49,6 +49,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const [walletName, setWalletName] = useState("");
   const cancelModal = useModal();
   const [cancelID, setCancelID] = useState("");
+  const [randomAvatar] = useState(randomEmoji());
 
   // set if the profile is owned by the logged in user
   useEffect(() => {
@@ -135,7 +136,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
               avatar={
                 props.user.image
                   ? `https://arweave.net/${props.user.image}`
-                  : randomEmoji()
+                  : randomAvatar
               }
               usertag={props.user.username}
               name={props.user.name}
@@ -159,7 +160,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       )) || (
         <div className={styles.AvatarSection}>
           <Avatar
-            avatar={randomEmoji()}
+            avatar={randomAvatar}
             usertag={formatAddress(props.input, 14)}
             name={walletName}
             size="large-inline"
