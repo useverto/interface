@@ -22,6 +22,7 @@ import { ArrowRightIcon } from "@iconicicons/react";
 import { UsernametoURL as usernameToURL } from "social-username-url";
 import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
+import { addToCancel, getCancelledOrders } from "../../utils/order";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
@@ -213,6 +214,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             cancel={
               (isCurrentUser &&
                 order.status === "pending" &&
+                !getCancelledOrders().includes(order.id) &&
                 (() => {
                   setCancelID(order.id);
                   cancelModal.setState(true);
@@ -289,6 +291,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             await client.cancel(cancelID);
             setCancelID("");
             cancelModal.setState(false);
+            addToCancel(cancelID);
           }}
         >
           Cancel
