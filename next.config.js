@@ -25,6 +25,14 @@ module.exports = {
         source: "/(@):user",
         destination: "/user/:user",
       },
+      {
+        source: "/(@):user/trades",
+        destination: "/user/:user/trades",
+      },
+      {
+        source: "/(@):user/transactions",
+        destination: "/user/:user/transactions",
+      },
     ];
   },
 };

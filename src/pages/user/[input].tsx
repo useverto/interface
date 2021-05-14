@@ -22,8 +22,8 @@ import Instagram from "../../components/icons/Instagram";
 import Twitter from "../../components/icons/Twitter";
 import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
-import styles from "../../styles/views/user.module.sass";
 import axios from "axios";
+import styles from "../../styles/views/user.module.sass";
 
 const client = new Verto();
 
@@ -52,6 +52,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   useEffect(() => {
     (async () => {
       if (!arconnect) return;
+      if (!currentAddress) return;
       setWalletName(
         (await arconnect.getWalletNames())[currentAddress] ?? "No name"
       );
@@ -137,7 +138,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             <div className={styles.Links}>
               {Object.entries(props.user.links).map(
                 ([identifier, value], i) => (
-                  <SocialIcon identifier={identifier} value={value} />
+                  <SocialIcon identifier={identifier} value={value} key={i} />
                 )
               )}
             </div>

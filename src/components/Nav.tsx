@@ -50,6 +50,15 @@ const Nav = () => {
 
   useEffect(syncSelected, [router.asPath]);
 
+  // set user data
+  useEffect(() => {
+    window.addEventListener("arweaveWalletLoaded", syncAddress);
+
+    return () => {
+      window.removeEventListener("arweaveWalletLoaded", syncAddress);
+    };
+  }, []);
+
   // random user avatar for users without an ID
   // and get current wallet name
   useEffect(() => {
@@ -112,7 +121,8 @@ const Nav = () => {
   }
 
   async function syncAddress(e?: CustomEvent<{ address: string }>) {
-    if (e) return dispatch(updateAddress(e.detail.address));
+    if (e && e?.detail?.address)
+      return dispatch(updateAddress(e.detail.address));
     try {
       dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
     } catch {
