@@ -437,23 +437,25 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         )}
       </AnimatePresence>
       {swap && (
-        // TODO: style this
-        <Modal {...confirmationModal.bindings}>
+        <Modal {...confirmationModal.bindings} className={styles.ConfirmModal}>
           <Modal.Title>Confirm Order</Modal.Title>
           <Modal.Content>
-            You are sending:
-            <ul>
-              <li>{swap.cost.ar} AR</li>
-              {swap.cost.token ? (
-                <li>
-                  {swap.cost.ar} {selectedPST?.ticker}
-                </li>
-              ) : (
-                <></>
-              )}
-            </ul>
-            <Button small disabled>
-              Make Trade
+            <p>Please confirm your order before submitting it:</p>
+            <div className={styles.ConfirmSwapItems}>
+              <p>{swap.cost.ar} AR</p>
+              <div className={styles.SwapIcon}>
+                <ArrowSwitchIcon />
+              </div>
+              {/** TODO */}
+              <p>
+                {(swap.cost.token &&
+                  swap.cost.ar + " " + selectedPST?.ticker) ||
+                  "TODO"}
+              </p>
+            </div>
+            <Spacer y={2} />
+            <Button small disabled className={styles.SubmitBtn}>
+              Submit
             </Button>
           </Modal.Content>
         </Modal>
