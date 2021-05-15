@@ -17,6 +17,7 @@ import {
   useInput,
   useModal,
   Modal,
+  useTheme,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { randomEmoji } from "../utils/user";
@@ -47,6 +48,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const [post, setPost] = useState("");
   const [posts, setPosts] = useState([]);
   const { setToast } = useToasts();
+  const theme = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -304,11 +306,13 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                 {
                   data: Object.values(graphData[graphMode]).reverse(),
                   ...GraphDataConfig,
+                  borderColor: theme === "Light" ? "#000000" : "#ffffff",
                 },
               ],
             }}
             options={{
               ...GraphOptions({
+                theme,
                 tooltipText: ({ value }) =>
                   graphMode === "price"
                     ? `${Number(value).toFixed(2)} ${selectedPST.ticker}/AR`

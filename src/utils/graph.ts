@@ -1,3 +1,5 @@
+import { DisplayTheme } from "@verto/ui/dist/types";
+
 export const GraphDataConfig = {
   borderColor: "#000000",
   fill: false,
@@ -26,6 +28,7 @@ export function GraphOptions({
   ticks = false,
   tooltipText,
   tickText,
+  theme,
 }: IGraphOptions) {
   const fontFamily = '"Poppins", sans-serif',
     fontStyle = {
@@ -53,11 +56,12 @@ export function GraphOptions({
       mode: "index",
       intersect: false,
       titleFontFamily: fontFamily,
-      bodyFontColor: "#d4d4d4",
+      bodyFontColor: theme === "Light" ? "#d4d4d4" : "#666666",
       bodyFontFamily: fontFamily,
+      titleFontColor: theme === "Light" ? "#ffffff" : "#000000",
       padding: 9,
       displayColors: false,
-      backgroundColor: "#000000",
+      backgroundColor: theme === "Light" ? "#000000" : "#ffffff",
       callbacks: {
         label: tooltipText ?? (({ value }: any) => value),
       },
@@ -93,4 +97,5 @@ interface IGraphOptions {
   ticks?: boolean;
   tooltipText?: (tooltipItem?: any) => string;
   tickText?: (value: string, index: number) => string;
+  theme: DisplayTheme;
 }

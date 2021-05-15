@@ -238,8 +238,14 @@ const Home = () => {
             <br />
             <ul>
               <li>
-                VRT Contract Address:
-                usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A
+                VRT Contract Address:{" "}
+                <a
+                  href="https://viewblock.io/arweave/address/usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A
+                </a>
               </li>
               <li>Initial Supply: 250,000,000 VRT</li>
             </ul>

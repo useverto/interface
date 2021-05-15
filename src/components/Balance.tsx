@@ -6,7 +6,7 @@ import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
 import { ClipboardIcon } from "@iconicicons/react";
-import { Tooltip, useToasts } from "@verto/ui";
+import { Tooltip, useTheme, useToasts } from "@verto/ui";
 import { useCountUp } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
@@ -24,6 +24,7 @@ const Balance = () => {
   const decimals = 8;
   const animatedBalance = useCountUp({ end: balance, decimals });
   const address = useSelector((state: RootState) => state.addressReducer);
+  const theme = useTheme();
 
   useEffect(() => {
     if (!address) return;
@@ -82,10 +83,12 @@ const Balance = () => {
                   {
                     data: Object.values(history).reverse(),
                     ...GraphDataConfig,
+                    borderColor: theme === "Light" ? "#000000" : "#ffffff",
                   },
                 ],
               }}
               options={GraphOptions({
+                theme,
                 tooltipText({ value, label }) {
                   const formattedBal =
                     Math.round(Number(value) * Math.pow(10, decimals)) /

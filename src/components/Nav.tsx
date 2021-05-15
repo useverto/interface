@@ -229,17 +229,33 @@ const Nav = () => {
             content={
               <>
                 <Link href={`/@${user ? user.username : address}`}>
-                  <a className={styles.MenuItem}>
+                  <a
+                    className={
+                      styles.MenuItem +
+                      " " +
+                      (theme === "Dark" ? styles.Dark : "")
+                    }
+                  >
                     <UserIcon />
                     View profile
                   </a>
                 </Link>
-                <div className={styles.MenuItem}>
+                <div
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (theme === "Dark" ? styles.Dark : "")
+                  }
+                >
                   <BellIcon />
                   Notifications
                 </div>
                 <div
-                  className={styles.MenuItem}
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (theme === "Dark" ? styles.Dark : "")
+                  }
                   onClick={() =>
                     dispatch(updateTheme(theme === "Dark" ? "Light" : "Dark"))
                   }
@@ -248,7 +264,11 @@ const Nav = () => {
                   {theme}
                 </div>
                 <div
-                  className={styles.MenuItem}
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (theme === "Dark" ? styles.Dark : "")
+                  }
                   onClick={() => signOutModal.setState(true)}
                 >
                   <LogOutIcon />

@@ -1,4 +1,4 @@
-import { Card, Page, Spacer } from "@verto/ui";
+import { Card, Page, Spacer, useTheme } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardAnimation } from "../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
@@ -21,6 +21,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
   const [currentPage, setCurrentPage] = useState<1 | 2 | 3 | 4>(1);
   const [currentTokenData, setCurrentTokenData] = useState(props.featured[0]);
   const router = useRouter();
+  const theme = useTheme();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -132,11 +133,13 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
                             history[currentTokenData.id]
                           ).reverse(),
                           ...GraphDataConfig,
-                          borderColor: "#ffffff",
+                          borderColor:
+                            theme === "Light" ? "#ffffff" : "#000000",
                         },
                       ],
                     }}
                     options={GraphOptions({
+                      theme,
                       tooltipText: ({ value }) =>
                         `${Number(value).toFixed(2)} AR`,
                     })}
