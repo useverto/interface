@@ -87,7 +87,11 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
         <Metas title="Space" />
       </Head>
       <Spacer y={3} />
-      <div className={styles.Featured}>
+      <div
+        className={
+          styles.Featured + " " + (theme === "Dark" ? styles.DarkFeatured : "")
+        }
+      >
         <AnimatePresence>
           <motion.div
             className={styles.FeaturedItem}
@@ -133,8 +137,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
                             history[currentTokenData.id]
                           ).reverse(),
                           ...GraphDataConfig,
-                          borderColor:
-                            theme === "Light" ? "#ffffff" : "#000000",
+                          borderColor: "#ffffff",
                         },
                       ],
                     }}

@@ -1,4 +1,4 @@
-import { Card, Loading, Page, Spacer, Tooltip } from "@verto/ui";
+import { Card, Loading, Page, Spacer, Tooltip, useTheme } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
 import { cardListAnimation } from "../../../utils/animations";
@@ -13,6 +13,7 @@ import styles from "../../../styles/views/orbit.module.sass";
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   const { loading, data } = useInfiniteScroll<any>(loadMore, props.orders);
   const [status, setStatus] = useState<"online" | "offline">();
+  const theme = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -113,6 +114,12 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
           tooltips: {
             mode: "index",
             intersect: false,
+            backgroundColor: theme === "Light" ? "#000000" : "#ffffff",
+            titleFontFamily: '"Poppins", sans-serif',
+            bodyFontColor: theme === "Light" ? "#d4d4d4" : "#666666",
+            bodyFontFamily: '"Poppins", sans-serif',
+            titleFontColor: theme === "Light" ? "#ffffff" : "#000000",
+            padding: 9,
           },
           hover: {
             mode: "nearest",

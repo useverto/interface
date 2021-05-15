@@ -92,6 +92,20 @@
         max-width: 200px
         min-height: 100px
 
+  &.DarkFeatured
+    background-color: variables.$lighter-background-color
+    box-shadow: none
+
+    .Paginator
+      span
+        border-color: variables.$foreground-color
+
+      .ActivePage
+        background-color: variables.$foreground-color
+
+    .FeaturedItem .TokenInfo h1
+      color: variables.$foreground-color
+
 .Cards
   display: grid
   justify-content: space-between

@@ -66,7 +66,7 @@ const App = () => {
                       : "/arweave.png",
                   }}
                 />
-                <Spacer y={1} />
+                <Spacer y={1.5} />
               </motion.div>
             )
         )}
