@@ -437,6 +437,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         )}
       </AnimatePresence>
       {swap && (
+        // TODO: style this
         <Modal {...confirmationModal.bindings}>
           <Modal.Title>Confirm Order</Modal.Title>
           <Modal.Content>

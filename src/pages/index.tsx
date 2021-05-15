@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
+import { randomEmoji } from "../utils/user";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -52,6 +53,10 @@ const Home = () => {
       const { data: gecko } = await axios.get(
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
+
+      data.owner.image = data.owner.image
+        ? `https://arweave.net/${data.owner.image}`
+        : randomEmoji();
 
       setArtwork({
         ...data,
@@ -122,7 +127,7 @@ const Home = () => {
                   <Card.Asset
                     name={artwork.name}
                     userData={{
-                      avatar: `https://arweave.net/${artwork.owner.image}`,
+                      avatar: artwork.owner.image,
                       name: artwork.owner.name,
                       usertag: artwork.owner.username,
                     }}

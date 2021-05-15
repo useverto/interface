@@ -51,6 +51,8 @@ export default function App({ Component, pageProps }) {
     };
   }, [router.asPath]);
 
+  // TODO check for permissions and ask for more if they are not added
+  // TODO that in swap too, before swapping
   async function checkLogin() {
     const protectedRoutes = /\/(app|swap)/;
     const connected = (await window.arweaveWallet.getPermissions()).length > 0;
