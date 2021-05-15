@@ -250,6 +250,22 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     setCreatingSwap(false);
   }
 
+  // selected PST price in AR
+  const [selectedPrice, setSelectedPrice] = useState(0);
+
+  useEffect(() => {
+    if (!selectedPST) return;
+    client
+      .getPrice(selectedPST.id)
+      .then(({ price }) => setSelectedPrice(price));
+  }, [selectedPST]);
+
+  // TODO: ETH price
+  useEffect(() => {
+    if (inputUnit.state !== "AR") return;
+    output.setState(Number((selectedPrice * Number(input.state)).toFixed(4)));
+  }, [input.state, selectedPrice]);
+
   return (
     <Page>
       <Head>
@@ -306,7 +322,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <Input
             label="You send"
             inlineLabel={
-              <Select {...inputUnit.bindings} small filled>
+              <Select
+                {...inputUnit.bindings}
+                small
+                filled
+                className={styles.UnitSelect}
+              >
                 {inputs.map((input, i) => (
                   <option value={input.id} key={i}>
                     {input.ticker}
@@ -315,7 +336,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
               </Select>
             }
             type="number"
-            style={{ width: "calc(100% - 6px)" }}
+            className={styles.SwapInput}
             {...input.bindings}
           />
           <Spacer y={1} />
@@ -325,7 +346,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <Input
             label="You recieve"
             inlineLabel={
-              <Select {...outputUnit.bindings} small filled>
+              <Select
+                {...outputUnit.bindings}
+                small
+                filled
+                className={styles.UnitSelect}
+              >
                 {outputs.map((output, i) => (
                   <option value={output.id} key={i}>
                     {output.ticker}
@@ -334,9 +360,14 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
               </Select>
             }
             type="number"
-            style={{ width: "calc(100% - 6px)" }}
+            className={styles.SwapInput}
             {...output.bindings}
-            disabled={inputUnit.state === "AR"}
+            readOnly={inputUnit.state === "AR" || inputUnit.state === "ETH"}
+            currency={
+              ((inputUnit.state === "AR" || inputUnit.state === "ETH") &&
+                "~") ||
+              undefined
+            }
           />
           <Spacer y={2} />
           <Button
@@ -375,8 +406,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           value={post}
           className={styles.TradingPostSelect}
         >
-          {posts.map((post) => (
-            <option value={post}>{post.substr(0, 6) + "..."}</option>
+          {posts.map((post, i) => (
+            <option value={post} key={i}>
+              {post.substr(0, 6) + "..."}
+            </option>
           ))}
         </Select>
       </h1>

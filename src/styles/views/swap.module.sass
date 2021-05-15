@@ -36,6 +36,23 @@
         height: 1em
         transform: rotate(90deg)
 
+    .SwapInput
+      div[class~=VertoInputWrapper]
+        width: calc(100% - 6px)
+
+        div[class~=VertoInputInlineLabel]
+          min-width: 160px
+          padding: 0
+
+      .UnitSelect
+        width: 100%
+
+        div[class~=VertoSelectWrapper]
+          width: 100%
+
+        span[class~=VertoSelectArrow]
+          right: 0
+
 .TradingPostSelect
   font-size: #{1em / variables.$title-font-size}em
   line-height: 1em
