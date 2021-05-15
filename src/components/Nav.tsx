@@ -1,7 +1,21 @@
-import { Avatar, Button, Modal, Popover, Spacer, useModal } from "@verto/ui";
+import {
+  Avatar,
+  Button,
+  Modal,
+  Popover,
+  Spacer,
+  useModal,
+  useTheme,
+} from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions } from "../utils/arconnect";
-import { BellIcon, LogOutIcon, UserIcon } from "@iconicicons/react";
+import {
+  BellIcon,
+  LogOutIcon,
+  MoonIcon,
+  SunIcon,
+  UserIcon,
+} from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
@@ -9,7 +23,7 @@ import { formatAddress } from "../utils/format";
 import { randomEmoji } from "../utils/user";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
-import { updateAddress } from "../store/actions";
+import { updateAddress, updateTheme } from "../store/actions";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Verto from "@verto/js";
@@ -37,6 +51,7 @@ const Nav = () => {
   });
   const signOutModal = useModal();
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -218,6 +233,15 @@ const Nav = () => {
                 <div className={styles.MenuItem}>
                   <BellIcon />
                   Notifications
+                </div>
+                <div
+                  className={styles.MenuItem}
+                  onClick={() =>
+                    dispatch(updateTheme(theme === "Dark" ? "Light" : "Dark"))
+                  }
+                >
+                  {(theme === "Dark" && <MoonIcon />) || <SunIcon />}
+                  {theme}
                 </div>
                 <div
                   className={styles.MenuItem}

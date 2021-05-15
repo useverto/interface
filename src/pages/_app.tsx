@@ -1,7 +1,8 @@
 import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Provider as ReduxProvider } from "react-redux";
+import { Provider as ReduxProvider, useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
@@ -62,7 +63,7 @@ export default function App({ Component, pageProps }) {
 
   return (
     <ReduxProvider store={store}>
-      <VertoProvider theme={"Light"}>
+      <Theme>
         <Head>
           <link
             rel="shortcut icon"
@@ -73,7 +74,13 @@ export default function App({ Component, pageProps }) {
         <Nav />
         <Component {...pageProps} />
         <Footer />
-      </VertoProvider>
+      </Theme>
     </ReduxProvider>
   );
 }
+
+const Theme = ({ children }) => {
+  const theme = useSelector((state: RootState) => state.themeReducer);
+
+  return <VertoProvider theme={theme}>{children}</VertoProvider>;
+};

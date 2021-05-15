@@ -1,4 +1,6 @@
+import { DisplayTheme } from "@verto/ui/dist/types";
 import { IAddressAction } from "./reducers/address";
+import { IThemeAction } from "./reducers/theme";
 
 export function updateAddress(address: string): IAddressAction {
   return {
@@ -6,6 +8,13 @@ export function updateAddress(address: string): IAddressAction {
     payload: {
       address,
     },
+  };
+}
+
+export function updateTheme(theme: DisplayTheme): IThemeAction {
+  return {
+    type: "UPDATE_THEME",
+    payload: { theme },
   };
 }
 
