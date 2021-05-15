@@ -42,11 +42,21 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   useEffect(() => {
-    const protectedRoutes = /\/(app|swap)/;
-    const address = store.getState().addressReducer;
+    if (!window.arweaveWallet)
+      window.addEventListener("arweaveWalletLoaded", checkLogin);
+    else checkLogin();
 
-    if (router.asPath.match(protectedRoutes) && !address) router.push("/");
+    return () => {
+      window.removeEventListener("arweaveWalletLoaded", checkLogin);
+    };
   }, [router.asPath]);
+
+  async function checkLogin() {
+    const protectedRoutes = /\/(app|swap)/;
+    const connected = (await window.arweaveWallet.getPermissions()).length > 0;
+
+    if (router.asPath.match(protectedRoutes) && !connected) router.push("/");
+  }
 
   return (
     <ReduxProvider store={store}>
