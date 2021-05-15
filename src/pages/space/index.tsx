@@ -71,6 +71,14 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
     })();
   }, []);
 
+  // preload logos of featured items
+  useEffect(() => {
+    for (const psc of props.featured) {
+      const logo = new Image();
+      logo.src = `https://arweave.net/${psc.logo}`;
+    }
+  }, []);
+
   return (
     <Page>
       <Head>

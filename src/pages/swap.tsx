@@ -1,4 +1,5 @@
 import {
+  BalanceInterface,
   SwapInterface,
   TokenInterface,
   UserInterface,
@@ -23,12 +24,20 @@ import { formatAddress } from "../utils/format";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
-import { ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
+import {
+  ChevronUpIcon,
+  ChevronDownIcon,
+  InformationIcon,
+} from "@iconicicons/react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
+import { client as arweave } from "../utils/arweave";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
+import Link from "next/link";
 import Metas from "../components/Metas";
 import styles from "../styles/views/swap.module.sass";
 
@@ -123,6 +132,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         volume: await client.getVolumeHistory(selectedPST.id),
       });
       setLoadingGraph(false);
+      input.setStatus(undefined);
+      output.setStatus(undefined);
     })();
   }, [selectedPST]);
 
@@ -134,6 +145,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     outputUnit.setState(inputVal.val);
     setInputs(outputVal.items);
     setOutputs(inputVal.items);
+    input.setStatus(undefined);
+    output.setStatus(undefined);
     setToast({
       title: "Switched",
       description: "Switched tokens",
@@ -144,6 +157,98 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const [swap, setSwap] = useState<SwapInterface>(null);
   const [creatingSwap, setCreatingSwap] = useState(false);
   const confirmationModal = useModal();
+  const currentAddress = useSelector(
+    (state: RootState) => state.addressReducer
+  );
+  const [balances, setBalances] = useState<BalanceInterface[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      if (!currentAddress) return;
+      setBalances(await client.getBalances(currentAddress));
+    })();
+  }, [currentAddress]);
+
+  /**
+   * Prepare a swap and display confirmation modal
+   */
+  async function prepareSwap() {
+    /**
+     * Check if the inputs are valid
+     */
+    if (input.state === "" || Number(input.state) === 0)
+      return input.setStatus("error");
+
+    if (output.state === "" || Number(output.state) === 0)
+      return output.setStatus("error");
+
+    setCreatingSwap(true);
+
+    try {
+      /**
+       * Check if the user has enough of the input token
+       */
+      if (inputUnit.state === "AR") {
+        // TODO: check for ETH balance too @johnletey
+        // check if AR balance is enough
+        const arBalance = parseFloat(
+          arweave.ar.winstonToAr(
+            await arweave.wallets.getBalance(currentAddress)
+          ) ?? "0"
+        );
+
+        if (Number(input.state) > arBalance) {
+          input.setStatus("error");
+          setToast({
+            title: "Error",
+            description: "Insufficient AR balance",
+            type: "error",
+            duration: 2700,
+          });
+          setCreatingSwap(false);
+          return;
+        }
+      } else {
+        // check if PST balance is enough
+        const pstBalance = balances.find((val) => val.id === selectedPST.id);
+
+        if (Number(input.state) > (pstBalance?.balance ?? 0)) {
+          input.setStatus("error");
+          setToast({
+            title: "Error",
+            description: `Insufficient ${selectedPST.ticker} balance`,
+            type: "error",
+            duration: 2700,
+          });
+          setCreatingSwap(false);
+          return;
+        }
+      }
+
+      /**
+       * Create the swap
+       */
+      setSwap(
+        await client.createSwap(
+          { amount: Number(input.state), unit: inputUnit.state },
+          { amount: Number(output.state), unit: outputUnit.state },
+          post
+        )
+      );
+      confirmationModal.setState(true);
+      input.setStatus(undefined);
+      output.setStatus(undefined);
+    } catch {
+      setToast({
+        title: "Error",
+        description: "Could not create swap",
+        type: "error",
+        duration: 3000,
+      });
+    }
+
+    setCreatingSwap(false);
+  }
 
   return (
     <Page>
@@ -231,25 +336,13 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             type="number"
             style={{ width: "calc(100% - 6px)" }}
             {...output.bindings}
+            disabled={inputUnit.state === "AR"}
           />
           <Spacer y={2} />
           <Button
             style={{ width: "100%" }}
             loading={creatingSwap}
-            onClick={async () => {
-              setCreatingSwap(true);
-
-              setSwap(
-                await client.createSwap(
-                  { amount: Number(input.state), unit: inputUnit.state },
-                  { amount: Number(output.state), unit: outputUnit.state },
-                  post
-                )
-              );
-
-              setCreatingSwap(false);
-              confirmationModal.setState(true);
-            }}
+            onClick={prepareSwap}
           >
             Swap
           </Button>
@@ -259,7 +352,16 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       <h1 className="Title">
         Orders
         <Select
-          label="Trading Post"
+          label={
+            <div className={styles.TradingPostInfo}>
+              Trading Post
+              <Link href={`/orbit/post/${post}`}>
+                <a>
+                  <InformationIcon />
+                </a>
+              </Link>
+            </div>
+          }
           small
           onChange={(ev) => {
             setPost(ev.target.value);
@@ -304,7 +406,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                   filled={order.received || 0}
                   orderID={order.txID}
                 />
-                <Spacer y={1} />
+                <Spacer y={i === 4 || i === orders.length - 1 ? 1 : 2} />
               </motion.div>
             )
           );
@@ -313,7 +415,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       <AnimatePresence>
         {orders.length > 5 && (
           <motion.div {...opacityAnimation()}>
-            <Spacer y={1} />
+            <Spacer y={2} />
             <span
               className="ShowMore"
               onClick={() => setShowAllOrders((val) => !val)}

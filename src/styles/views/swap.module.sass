@@ -39,3 +39,27 @@
 .TradingPostSelect
   font-size: #{1em / variables.$title-font-size}em
   line-height: 1em
+
+  .TradingPostInfo
+    display: flex
+    align-items: center
+
+    a
+      display: flex
+      align-items: center
+      cursor: pointer
+      font-size: 1.15em
+      text-decoration: none
+      color: inherit
+      transition: all .23s ease-in-out
+
+      &:hover
+        opacity: .88
+
+      &:active
+        transform: scale(.88)
+
+      svg
+        font-size: 1.35em
+        width: 1em
+        height: 1em

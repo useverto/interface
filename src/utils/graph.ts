@@ -39,13 +39,14 @@ export function GraphOptions({
     elements: {
       point: { radius: 0 },
       line: {
-        borderWidth: 4,
+        borderWidth: 3.5,
         borderCapStyle: "round",
       },
     },
     layout: {
       padding: {
-        top: 12,
+        top: 3.5,
+        right: 4,
       },
     },
     tooltips: {
