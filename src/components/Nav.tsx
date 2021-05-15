@@ -155,7 +155,11 @@ const Nav = () => {
       >
         <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
           <a className={styles.Logo}>
-            <img src="/logo_light.svg" alt="V" draggable={false} />
+            <img
+              src={`/logo_${theme.toLowerCase()}.svg`}
+              alt="V"
+              draggable={false}
+            />
           </a>
         </Link>
         <AnimatePresence>

@@ -1,8 +1,14 @@
 import { VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Provider as ReduxProvider, useSelector } from "react-redux";
+import {
+  Provider as ReduxProvider,
+  useDispatch,
+  useSelector,
+} from "react-redux";
 import { RootState } from "../store/reducers";
+import { updateTheme } from "../store/actions";
+import { DisplayTheme } from "@verto/ui/dist/types";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
@@ -81,6 +87,15 @@ export default function App({ Component, pageProps }) {
 
 const Theme = ({ children }) => {
   const theme = useSelector((state: RootState) => state.themeReducer);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateTheme(localStorage.getItem("verto_theme") as DisplayTheme));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("verto_theme", theme);
+  }, [theme]);
 
   return <VertoProvider theme={theme}>{children}</VertoProvider>;
 };
