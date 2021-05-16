@@ -8,12 +8,30 @@ import Metas from "../../../components/Metas";
 import Head from "next/head";
 import axios from "axios";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
+import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+import Verto from "@verto/js";
 import styles from "../../../styles/views/orbit.module.sass";
+
+const client = new Verto();
+dayjs.extend(duration);
 
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   const { loading, data } = useInfiniteScroll<any>(loadMore, props.orders);
   const [status, setStatus] = useState<"online" | "offline">();
   const theme = useTheme();
+  const [postUptime, setPostUptime] = useState(0);
+  const [postData, setPostData] = useState<{
+    version: string;
+    fee: number;
+    balance: number;
+    stake: number;
+  }>({
+    version: "0.0.0",
+    fee: 0,
+    balance: 0,
+    stake: 0,
+  });
 
   useEffect(() => {
     (async () => {
@@ -21,11 +39,28 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         const { data: post } = await axios.get(
           `https://v2.cache.verto.exchange/posts/${props.addr}`
         );
-        await axios.get(post.endpoint);
+        const { data: pingData } = await axios.get(post.endpoint);
         setStatus("online");
+        setPostData((val) => ({
+          ...val,
+          balance: post.balance,
+          stake: post.stake,
+        }));
+        setPostUptime(pingData.uptime);
       } catch {
         setStatus("offline");
       }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { tradeFee, version } = await client.getConfig(props.addr);
+      setPostData((val) => ({
+        ...val,
+        version,
+        fee: tradeFee,
+      }));
     })();
   }, []);
 
@@ -37,6 +72,18 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     );
 
     return moreOrders;
+  }
+
+  function calculateUptime() {
+    const data = dayjs.duration({ seconds: postUptime });
+    const days = Math.floor(data.asDays());
+    const hours = Math.floor(
+      dayjs.duration({ days: data.asDays() - days }).asHours()
+    );
+
+    return `${days} day${days > 1 ? "s" : ""} ${hours} hour${
+      hours > 1 ? "s" : ""
+    }`;
   }
 
   return (
@@ -75,7 +122,29 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
           )}
         </p>
       </div>
-      <Spacer y={3} />
+      <Spacer y={1.75} />
+      <div className={styles.TradingPostData}>
+        <div className={styles.Info}>
+          <span>Version</span>
+          {postData.version}
+        </div>
+        <div className={styles.Info}>
+          <span>Fee</span>
+          {postData.fee} AR
+        </div>
+        <div className={styles.Info}>
+          <span>Uptime</span>
+          {calculateUptime()}
+        </div>
+        <div className={styles.Info}>
+          <span>Stake</span>
+          {postData.stake} VRT
+        </div>
+        <div className={styles.Info}>
+          <span>Balance</span>
+          {postData.balance.toFixed(8)} AR
+        </div>
+      </div>
       <Bar
         data={{
           labels: Object.keys(props.stats).reverse(),

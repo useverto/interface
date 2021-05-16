@@ -1,5 +1,7 @@
 @use "../variables"
   
+$titleMarginLeft: .3em
+
 .OrbitTitle
   h1
     display: flex
@@ -56,7 +58,7 @@
 
     a
       color: variables.$light-text
-      margin-left: .3em
+      margin-left: $titleMarginLeft
       text-decoration: none
 
       &.TradingPostAddress
@@ -64,3 +66,19 @@
 
       &:hover
         text-decoration: underline
+
+.TradingPostData
+  display: grid
+  grid-template-columns: repeat(4, 25%)
+  margin-left: $titleMarginLeft
+
+  .Info
+    color: variables.$foreground-color
+    margin-bottom: 1em
+    font-size: 1.45em
+
+    span
+      display: block
+      font-size: .52em
+      color: variables.$light-text
+      line-height: 1em
