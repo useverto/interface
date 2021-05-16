@@ -1,4 +1,4 @@
-import { VertoProvider } from "@verto/ui";
+import { Button, Modal, Spacer, useModal, VertoProvider } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
@@ -9,6 +9,7 @@ import {
 import { RootState } from "../store/reducers";
 import { updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
+import { permissions } from "../utils/arconnect";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
@@ -58,13 +59,32 @@ export default function App({ Component, pageProps }) {
     };
   }, [router.asPath]);
 
-  // TODO check for permissions and ask for more if they are not added
-  // TODO that in swap too, before swapping
   async function checkLogin() {
     const protectedRoutes = /\/(app|swap)/;
     const connected = (await window.arweaveWallet.getPermissions()).length > 0;
 
     if (router.asPath.match(protectedRoutes) && !connected) router.push("/");
+  }
+
+  const permissionsModal = useModal();
+
+  useEffect(() => {
+    window.addEventListener("arweaveWalletLoaded", checkPerms);
+
+    return () => {
+      window.removeEventListener("arweaveWalletLoaded", checkPerms);
+    };
+  });
+
+  async function checkPerms() {
+    const existingPerms = await window.arweaveWallet.getPermissions();
+
+    if (existingPerms.length === 0) return;
+    for (const perm of permissions)
+      if (!existingPerms.includes(perm)) {
+        permissionsModal.setState(true);
+        break;
+      }
   }
 
   return (
@@ -80,6 +100,26 @@ export default function App({ Component, pageProps }) {
         <Nav />
         <Component {...pageProps} />
         <Footer />
+        <Modal {...permissionsModal.bindings}>
+          <Modal.Title>Missing permissions</Modal.Title>
+          <Modal.Content style={{ textAlign: "justify" }}>
+            A few permissions are missing. Some of them are essential for Verto
+            to work. Please allow these to use Verto to it's full potential.
+            <Spacer y={1.5} />
+            <Button
+              onClick={async () => {
+                try {
+                  await window.arweaveWallet.connect(permissions);
+                } catch {}
+                permissionsModal.setState(false);
+              }}
+              small
+              style={{ margin: "0 auto" }}
+            >
+              Allow
+            </Button>
+          </Modal.Content>
+        </Modal>
       </Theme>
     </ReduxProvider>
   );

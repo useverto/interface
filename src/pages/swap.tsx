@@ -35,6 +35,7 @@ import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { client as arweave } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
+import { permissions } from "../utils/arconnect";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -171,6 +172,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, [currentAddress]);
 
+  const permissionModal = useModal();
+
   /**
    * Prepare a swap and display confirmation modal
    */
@@ -226,6 +229,18 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           return;
         }
       }
+
+      /**
+       * Check for permissions
+       */
+      const allowedPermissions = await window.arweaveWallet.getPermissions();
+
+      for (const perm of permissions)
+        if (!allowedPermissions.includes(perm)) {
+          setCreatingSwap(false);
+          permissionModal.setState(true);
+          return;
+        }
 
       /**
        * Create the swap
@@ -497,6 +512,26 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           </Modal.Content>
         </Modal>
       )}
+      <Modal {...permissionModal.bindings}>
+        <Modal.Title>Missing permissions</Modal.Title>
+        <Modal.Content style={{ textAlign: "justify" }}>
+          A few permissions are missing. These are necessary for swapping to
+          work. Please allow them below.
+          <Spacer y={1.5} />
+          <Button
+            onClick={async () => {
+              try {
+                await window.arweaveWallet.connect(permissions);
+                permissionModal.setState(false);
+              } catch {}
+            }}
+            small
+            style={{ margin: "0 auto" }}
+          >
+            Allow
+          </Button>
+        </Modal.Content>
+      </Modal>
     </Page>
   );
 };
