@@ -12,9 +12,9 @@ import { permissions } from "../utils/arconnect";
 import {
   BellIcon,
   LogOutIcon,
+  MonitorIcon,
   MoonIcon,
   SunIcon,
-  TargetIcon,
   UserIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
@@ -264,14 +264,14 @@ const Nav = () => {
                         theme === "Dark"
                           ? "Light"
                           : theme === "Light"
-                          ? "Auto"
+                          ? "System"
                           : "Dark"
                       )
                     )
                   }
                 >
                   {(theme === "Dark" && <MoonIcon />) ||
-                    (theme === "Light" && <SunIcon />) || <TargetIcon />}
+                    (theme === "Light" && <SunIcon />) || <MonitorIcon />}
                   {theme}
                 </div>
                 <div

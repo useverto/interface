@@ -165,7 +165,7 @@ const Theme = ({ children }) => {
 
     localStorage.setItem("verto_theme", theme);
 
-    if (theme === "Auto") setDisplayTheme(query.matches ? "Dark" : "Light");
+    if (theme === "System") setDisplayTheme(query.matches ? "Dark" : "Light");
     else setDisplayTheme(theme);
 
     query.addEventListener("change", updateScheme);

@@ -11,7 +11,7 @@ export function updateAddress(address: string): IAddressAction {
   };
 }
 
-export function updateTheme(theme: DisplayTheme | "Auto"): IThemeAction {
+export function updateTheme(theme: DisplayTheme | "System"): IThemeAction {
   return {
     type: "UPDATE_THEME",
     payload: { theme },

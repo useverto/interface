@@ -3,7 +3,7 @@ import { DisplayTheme } from "@verto/ui/dist/types";
 export interface IThemeAction {
   type: "UPDATE_THEME" | "USER_SIGNOUT";
   payload: {
-    theme: DisplayTheme | "Auto";
+    theme: DisplayTheme | "System";
   };
 }
 
