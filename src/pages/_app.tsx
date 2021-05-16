@@ -78,6 +78,9 @@ export default function App({ Component, pageProps }) {
 
   async function checkPerms() {
     const existingPerms = await window.arweaveWallet.getPermissions();
+    const ignore = localStorage.getItem("verto_ignore_permission_warning");
+
+    if (ignore && JSON.parse(ignore).val) return;
 
     if (existingPerms.length === 0) return;
     for (const perm of permissions)
@@ -106,18 +109,39 @@ export default function App({ Component, pageProps }) {
             A few permissions are missing. Some of them are essential for Verto
             to work. Please allow these to use Verto to it's full potential.
             <Spacer y={1.5} />
-            <Button
-              onClick={async () => {
-                try {
-                  await window.arweaveWallet.connect(permissions);
-                } catch {}
-                permissionsModal.setState(false);
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
-              small
-              style={{ margin: "0 auto" }}
             >
-              Allow
-            </Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    await window.arweaveWallet.connect(permissions);
+                  } catch {}
+                  permissionsModal.setState(false);
+                }}
+                small
+              >
+                Allow
+              </Button>
+              <Spacer x={1} />
+              <Button
+                type="secondary"
+                small
+                onClick={() => {
+                  localStorage.setItem(
+                    "verto_ignore_permission_warning",
+                    JSON.stringify({ val: true })
+                  );
+                  permissionsModal.setState(false);
+                }}
+              >
+                Don't show again
+              </Button>
+            </div>
           </Modal.Content>
         </Modal>
       </Theme>
