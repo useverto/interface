@@ -152,14 +152,28 @@ export default function App({ Component, pageProps }) {
 const Theme = ({ children }) => {
   const theme = useSelector((state: RootState) => state.themeReducer);
   const dispatch = useDispatch();
+  const [displayTheme, setDisplayTheme] = useState<DisplayTheme>("Light");
 
   useEffect(() => {
     dispatch(updateTheme(localStorage.getItem("verto_theme") as DisplayTheme));
   }, []);
 
   useEffect(() => {
+    const query = window.matchMedia("(prefers-color-scheme: dark)");
+    const updateScheme = (val) =>
+      setDisplayTheme(val.matches ? "Dark" : "Light");
+
     localStorage.setItem("verto_theme", theme);
+
+    if (theme === "Auto") setDisplayTheme(query.matches ? "Dark" : "Light");
+    else setDisplayTheme(theme);
+
+    query.addEventListener("change", updateScheme);
+
+    return () => {
+      query.removeEventListener("change", updateScheme);
+    };
   }, [theme]);
 
-  return <VertoProvider theme={theme}>{children}</VertoProvider>;
+  return <VertoProvider theme={displayTheme}>{children}</VertoProvider>;
 };

@@ -14,6 +14,7 @@ import {
   LogOutIcon,
   MoonIcon,
   SunIcon,
+  TargetIcon,
   UserIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
@@ -51,7 +52,8 @@ const Nav = () => {
   });
   const signOutModal = useModal();
   const dispatch = useDispatch();
-  const theme = useTheme();
+  const theme = useSelector((state: RootState) => state.themeReducer);
+  const displayTheme = useTheme();
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -156,7 +158,7 @@ const Nav = () => {
         <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
           <a className={styles.Logo}>
             <img
-              src={`/logo_${theme.toLowerCase()}.svg`}
+              src={`/logo_${displayTheme.toLowerCase()}.svg`}
               alt="V"
               draggable={false}
             />
@@ -257,10 +259,19 @@ const Nav = () => {
                     (theme === "Dark" ? styles.Dark : "")
                   }
                   onClick={() =>
-                    dispatch(updateTheme(theme === "Dark" ? "Light" : "Dark"))
+                    dispatch(
+                      updateTheme(
+                        theme === "Dark"
+                          ? "Light"
+                          : theme === "Light"
+                          ? "Auto"
+                          : "Dark"
+                      )
+                    )
                   }
                 >
-                  {(theme === "Dark" && <MoonIcon />) || <SunIcon />}
+                  {(theme === "Dark" && <MoonIcon />) ||
+                    (theme === "Light" && <SunIcon />) || <TargetIcon />}
                   {theme}
                 </div>
                 <div
