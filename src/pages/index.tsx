@@ -18,7 +18,7 @@ import styles from "../styles/views/home.module.sass";
 
 const client = new Verto();
 
-const Home = () => {
+const Home = ({ artwork }: { artwork: any }) => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -42,26 +42,25 @@ const Home = () => {
     };
   }, []);
 
-  const [artwork, setArtwork] = useState<any>({});
+  const [arworkData, setArtworkData] = useState(artwork);
 
   useEffect(() => {
     (async () => {
-      const { data } = await axios.get(
-        "https://v2.cache.verto.exchange/site/artwork"
-      );
-      const res = await client.getPrice(data.id);
+      const res = await client.getPrice(artwork.id);
       const { data: gecko } = await axios.get(
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
 
-      data.owner.image = data.owner.image
-        ? `https://arweave.net/${data.owner.image}`
-        : randomEmoji();
-
-      setArtwork({
-        ...data,
+      setArtworkData((val) => ({
+        ...val,
+        owner: {
+          ...val.owner,
+          image: val.owner.image
+            ? `https://arweave.net/${artwork.owner.image}`
+            : randomEmoji(),
+        },
         price: (res.price * gecko.arweave.usd).toFixed(2),
-      });
+      }));
     })();
   }, []);
 
@@ -122,17 +121,17 @@ const Home = () => {
           </div>
           <div className={styles.FeaturedToken}>
             <AnimatePresence>
-              {Object.keys(artwork).length > 0 && (
+              {Object.keys(arworkData).length > 0 && (
                 <motion.div {...opacityAnimation()}>
                   <Card.Asset
-                    name={artwork.name}
+                    name={arworkData.name}
                     userData={{
-                      avatar: artwork.owner.image,
-                      name: artwork.owner.name,
-                      usertag: artwork.owner.username,
+                      avatar: arworkData.owner.image,
+                      name: arworkData.owner.name,
+                      usertag: arworkData.owner.username,
                     }}
-                    price={artwork.price}
-                    image={`https://arweave.net/${artwork.id}`}
+                    price={arworkData.price}
+                    image={`https://arweave.net/${arworkData.id}`}
                   />
                 </motion.div>
               )}
@@ -262,5 +261,13 @@ const Home = () => {
     </>
   );
 };
+
+export async function getServerSideProps() {
+  const { data } = await axios.get(
+    "https://v2.cache.verto.exchange/site/artwork"
+  );
+
+  return { props: { artwork: data } };
+}
 
 export default Home;
