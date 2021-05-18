@@ -42,10 +42,15 @@ import Head from "next/head";
 import Link from "next/link";
 import Metas from "../components/Metas";
 import styles from "../styles/views/swap.module.sass";
+import useSWR from "swr";
 
 const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
+  const { data: tokens } = useSWR("getTokens", () => client.getTokens(), {
+    initialData: props.tokens,
+  });
+
   const [post, setPost] = useState("");
   const [posts, setPosts] = useState([]);
   const { setToast } = useToasts();
@@ -65,12 +70,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       ticker: "AR",
     },
   ]);
-  const [outputs, setOutputs] = useState(props.tokens);
+  const [outputs, setOutputs] = useState(tokens);
 
   const input = useInput();
   const output = useInput();
   const inputUnit = useSelect<string>("AR");
-  const outputUnit = useSelect(props.tokens[0].id);
+  const outputUnit = useSelect(tokens[0].id);
 
   const [orders, setOrders] = useState([]);
   const [selectedPST, setSelectedPST] = useState<TokenInterface>();
@@ -536,10 +541,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const tokens = await client.getTokens();
 
-  return { props: { tokens } };
+  return { props: { tokens }, revalidate: 1 };
 }
 
 export default Swap;
