@@ -42,10 +42,15 @@ import Head from "next/head";
 import Link from "next/link";
 import Metas from "../components/Metas";
 import styles from "../styles/views/swap.module.sass";
+import useSWR from "swr";
 
 const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
+  const { data: tokens } = useSWR("getTokens", () => client.getTokens(), {
+    initialData: props.tokens,
+  });
+
   const [post, setPost] = useState("");
   const [posts, setPosts] = useState([]);
   const { setToast } = useToasts();
@@ -65,7 +70,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       ticker: "AR",
     },
   ];
-  const tokensDefaultInputsOutputs = props.tokens;
+  const tokensDefaultInputsOutputs = tokens;
   const [inputs, setInputs] = useState(chainsDefaultInputsOutputs);
   const [outputs, setOutputs] = useState(tokensDefaultInputsOutputs);
 
@@ -315,7 +320,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     if (!data || !JSON.parse(data)?.val)
       return {
         input: "AR",
-        output: props.tokens[0].id,
+        output: tokensDefaultInputsOutputs[0].id,
       };
 
     const { val: parsed } = JSON.parse(data);
@@ -591,10 +596,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const tokens = await client.getTokens();
 
-  return { props: { tokens } };
+  return { props: { tokens }, revalidate: 1 };
 }
 
 export default Swap;
