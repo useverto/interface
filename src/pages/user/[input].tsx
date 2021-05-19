@@ -358,9 +358,19 @@ const SocialIcon = ({ identifier, value }) => (
   </a>
 );
 
-export async function getServerSideProps(context) {
-  const { input } = context.query;
-  const user = (await client.getUser(input)) ?? null;
+export async function getStaticPaths() {
+  const { data: users } = await axios.get(
+    "https://v2.cache.verto.exchange/users"
+  );
+
+  return {
+    paths: users.map((input) => ({ params: { input } })),
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params: { input } }) {
+  const user = await client.getUser(input);
 
   if (user && input !== user.username)
     return {
