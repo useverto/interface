@@ -12,6 +12,7 @@ import {
   Spacer,
   Tooltip,
   useModal,
+  useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardListAnimation } from "../../utils/animations";
@@ -50,6 +51,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const cancelModal = useModal();
   const [cancelID, setCancelID] = useState("");
   const [randomAvatar] = useState(randomEmoji());
+  const { setToast } = useToasts();
+  const [cancelled, setCancelled] = useState<string[]>([]);
+
+  useEffect(() => setCancelled(getCancelledOrders()), []);
 
   // set if the profile is owned by the logged in user
   useEffect(() => {
@@ -226,7 +231,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             cancel={
               (isCurrentUser &&
                 order.status === "pending" &&
-                !getCancelledOrders().includes(order.id) &&
+                !cancelled.includes(order.id) &&
                 (() => {
                   setCancelID(order.id);
                   cancelModal.setState(true);
@@ -300,10 +305,24 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           style={{ margin: "0 auto" }}
           small
           onClick={async () => {
-            await client.cancel(cancelID);
-            setCancelID("");
-            cancelModal.setState(false);
-            addToCancel(cancelID);
+            try {
+              await client.cancel(cancelID);
+              setCancelID("");
+              cancelModal.setState(false);
+              addToCancel(cancelID);
+              setCancelled((val) => [...val, cancelID]);
+              setToast({
+                description: "Cancelled order",
+                type: "success",
+                duration: 3000,
+              });
+            } catch {
+              setToast({
+                description: "Could not cancel order",
+                type: "error",
+                duration: 3000,
+              });
+            }
           }}
         >
           Cancel

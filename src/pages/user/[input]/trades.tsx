@@ -1,10 +1,19 @@
-import { Button, Card, Modal, Page, Spacer, useModal } from "@verto/ui";
+import {
+  Button,
+  Card,
+  Modal,
+  Page,
+  Spacer,
+  useModal,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
 import { motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/reducers";
+import { addToCancel, getCancelledOrders } from "../../../utils/order";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
@@ -19,6 +28,8 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   );
   const cancelModal = useModal();
   const [cancelID, setCancelID] = useState("");
+  const { setToast } = useToasts();
+  const [cancelled, setCancelled] = useState<string[]>([]);
 
   // load orders
   useEffect(() => {
@@ -44,10 +55,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
       return;
     setIsCurrentUser(true);
   }, [currentAddress]);
-
-  async function cancelOrder(orderID: string) {
-    // TODO
-  }
+  useEffect(() => setCancelled(getCancelledOrders()), []);
 
   return (
     <Page>
@@ -104,6 +112,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
             cancel={
               (isCurrentUser &&
                 order.status === "pending" &&
+                !cancelled.includes(order.id) &&
                 (() => {
                   setCancelID(order.id);
                   cancelModal.setState(true);
@@ -123,9 +132,24 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
           style={{ margin: "0 auto" }}
           small
           onClick={async () => {
-            await client.cancel(cancelID);
-            setCancelID("");
-            cancelModal.setState(false);
+            try {
+              await client.cancel(cancelID);
+              setCancelID("");
+              cancelModal.setState(false);
+              addToCancel(cancelID);
+              setCancelled((val) => [...val, cancelID]);
+              setToast({
+                description: "Cancelled order",
+                type: "success",
+                duration: 3000,
+              });
+            } catch {
+              setToast({
+                description: "Could not cancel order",
+                type: "error",
+                duration: 3000,
+              });
+            }
           }}
         >
           Cancel

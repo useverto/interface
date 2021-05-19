@@ -31,6 +31,7 @@ export const addToCancel = (orderID: string) => {
  */
 export const getCancelledOrders = (): string[] => {
   const stored = localStorage.getItem(cachedCancelStoreName);
+  if (!stored) return [];
 
   return JSON.parse(stored);
 };
