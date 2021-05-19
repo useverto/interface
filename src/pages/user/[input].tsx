@@ -358,36 +358,14 @@ const SocialIcon = ({ identifier, value }) => (
   </a>
 );
 
-// export async function getStaticPaths() {
-//   const { data: users } = await axios.get(
-//     "https://v2.cache.verto.exchange/users"
-//   );
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
 
-//   return {
-//     paths: users.map((input) => ({ params: { input } })),
-//     fallback: true,
-//   };
-// }
-
-// export async function getStaticProps({ params: { input } }) {
-//   if (!input) return { notFound: true };
-//   const user = await client.getUser(input);
-
-//   // TODO: Welp figure out why this doesn't work ...
-
-//   // if (user && input !== user.username)
-//   //   return {
-//   //     redirect: {
-//   //       destination: `/@${user.username}`,
-//   //       permanent: false,
-//   //     },
-//   //   };
-
-//   return { props: { user, input }, revalidate: 1 };
-// }
-
-export async function getServerSideProps(context) {
-  const { input } = context.query;
+export async function getStaticProps({ params: { input } }) {
   const user = (await client.getUser(input)) ?? null;
 
   if (user && input !== user.username)
@@ -398,7 +376,7 @@ export async function getServerSideProps(context) {
       },
     };
 
-  return { props: { user, input } };
+  return { props: { user, input }, revalidate: 1 };
 }
 
 export default User;

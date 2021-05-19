@@ -27,11 +27,13 @@ const Transactions = (props: {
     if (props.user) {
       for (const address of props.user.addresses) {
         res.push(
+          // @ts-ignore
           ...(await client.getTransactions(address, data[data.length - 1].id))
         );
       }
     } else
       res.push(
+        // @ts-ignore
         ...(await client.getTransactions(props.input, data[data.length - 1].id))
       );
 
