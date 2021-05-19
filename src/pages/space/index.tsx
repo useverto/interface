@@ -10,16 +10,36 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import styles from "../../styles/views/space.module.sass";
+import useSWR from "swr";
 
 const client = new Verto();
 
 const Space = (props: { tokens: any[]; featured: any[] }) => {
+  const {
+    data: { data: tokens },
+  } = useSWR(
+    "getTokens",
+    () => axios.get("https://v2.cache.verto.exchange/site/communities/top"),
+    {
+      initialData: props.tokens,
+    }
+  );
+  const {
+    data: { data: featured },
+  } = useSWR(
+    "getFeatured",
+    () => axios.get("https://v2.cache.verto.exchange/site/communities/random"),
+    {
+      initialData: props.featured,
+    }
+  );
+
   const [prices, setPrices] = useState<{ [id: string]: number }>({});
   const [history, setHistory] = useState<{
     [id: string]: { [date: string]: number };
   }>({});
   const [currentPage, setCurrentPage] = useState<1 | 2 | 3 | 4>(1);
-  const [currentTokenData, setCurrentTokenData] = useState(props.featured[0]);
+  const [currentTokenData, setCurrentTokenData] = useState(featured[0]);
   const router = useRouter();
   const theme = useTheme();
 
@@ -36,7 +56,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
   }, [currentPage]);
 
   useEffect(() => {
-    setCurrentTokenData(props.featured[currentPage - 1]);
+    setCurrentTokenData(featured[currentPage - 1]);
   }, [currentPage]);
 
   useEffect(() => {
@@ -45,7 +65,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
 
-      for (const { id } of [...props.tokens, ...props.featured]) {
+      for (const { id } of [...tokens, ...featured]) {
         const res = await client.getPrice(id);
 
         if (res.price)
@@ -59,7 +79,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
 
   useEffect(() => {
     (async () => {
-      for (const { id } of props.featured) {
+      for (const { id } of featured) {
         const res = await client.getPriceHistory(id);
 
         if (Object.keys(res).length) {
@@ -74,7 +94,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
 
   // preload logos of featured items
   useEffect(() => {
-    for (const psc of props.featured) {
+    for (const psc of featured) {
       const logo = new Image();
       logo.src = `https://arweave.net/${psc.logo}`;
     }
@@ -167,7 +187,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
       <h1 className="Title">Communities</h1>
       <Spacer y={2} />
       <div className={styles.Cards}>
-        {props.tokens.map((token, i) => (
+        {tokens.map((token, i) => (
           <motion.div key={i} {...cardAnimation(i)}>
             <Card.Asset
               name={token.name}
@@ -185,7 +205,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
   );
 };
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const { data: tokens } = await axios.get(
     "https://v2.cache.verto.exchange/site/communities/top"
   );
@@ -193,7 +213,7 @@ export async function getServerSideProps() {
     "https://v2.cache.verto.exchange/site/communities/random"
   );
 
-  return { props: { tokens, featured } };
+  return { props: { tokens, featured }, revalidate: 1 };
 }
 
 export default Space;
