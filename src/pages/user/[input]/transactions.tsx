@@ -1,32 +1,42 @@
-import { Page, Spacer, Tooltip } from "@verto/ui";
-import { useEffect, useState } from "react";
+import { Loading, Page, Spacer, Tooltip } from "@verto/ui";
 import { TransactionInterface, UserInterface } from "@verto/js/dist/faces";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
+import useInfiniteScroll from "../../../utils/infinite_scroll";
 import styles from "../../../styles/views/user.module.sass";
 
 const client = new Verto();
 
-const Trades = (props: { user: UserInterface | null; input: string }) => {
-  const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
+const Transactions = (props: {
+  user: UserInterface | null;
+  input: string;
+  txs: TransactionInterface[];
+}) => {
+  const { loading, data } = useInfiniteScroll<TransactionInterface>(
+    loadMore,
+    props.txs
+  );
 
-  // load transactions
-  useEffect(() => {
-    (async () => {
-      let res: TransactionInterface[] = [];
+  async function loadMore() {
+    if (data.length === 0) return [];
+    let res: TransactionInterface[] = [];
 
-      if (props.user) {
-        for (const address of props.user.addresses) {
-          res.push(...(await client.getTransactions(address)));
-        }
-      } else res.push(...(await client.getTransactions(props.input)));
+    if (props.user) {
+      for (const address of props.user.addresses) {
+        res.push(
+          ...(await client.getTransactions(address, data[data.length - 1].id))
+        );
+      }
+    } else
+      res.push(
+        ...(await client.getTransactions(props.input, data[data.length - 1].id))
+      );
 
-      setTransactions(res.sort((a, b) => b.timestamp - a.timestamp));
-    })();
-  }, []);
+    return res;
+  }
 
   return (
     <Page>
@@ -49,7 +59,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
       <h1 className="Title">All Transactions</h1>
       <Spacer y={3} />
       <table className={styles.Transactions}>
-        {transactions.map((transaction, i) => (
+        {data.map((transaction, i) => (
           <motion.tr key={i} {...cardListAnimation(i)}>
             <td className={styles.TxType}>{transaction.type}</td>
             <td className={styles.TxID}>
@@ -76,6 +86,19 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
           </motion.tr>
         ))}
       </table>
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ ease: "easeInOut", duration: 0.22 }}
+          >
+            <Spacer y={1} />
+            <Loading.Spinner style={{ margin: "0 auto" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Page>
   );
 };
@@ -83,16 +106,22 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
 export async function getServerSideProps(context) {
   const { input } = context.query;
   const user = (await client.getUser(input)) ?? null;
+  let txs = [];
 
   if (user && input !== user.username)
     return {
       redirect: {
-        destination: `/@${user.username}/trades`,
+        destination: `/@${user.username}/transactions`,
         permanent: false,
       },
     };
 
-  return { props: { user, input } };
+  if (user) {
+    for (const address of user.addresses)
+      txs.push(...(await client.getTransactions(address)));
+  } else txs.push(...(await client.getTransactions(input)));
+
+  return { props: { user, input, txs } };
 }
 
-export default Trades;
+export default Transactions;
