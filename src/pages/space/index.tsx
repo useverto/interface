@@ -19,7 +19,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
     "getTokens",
     async () => {
       const { data } = await axios.get(
-        "https://v2.cache.verto.exchange/site/communities/random"
+        "https://v2.cache.verto.exchange/site/communities/top"
       );
       return data;
     },
