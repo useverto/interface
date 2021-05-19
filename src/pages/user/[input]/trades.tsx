@@ -159,19 +159,25 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { input } = context.query;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params: { input } }) {
   const user = (await client.getUser(input)) ?? null;
 
   if (user && input !== user.username)
     return {
       redirect: {
-        destination: `/@${user.username}/trades`,
+        destination: `/@${user.username}`,
         permanent: false,
       },
     };
 
-  return { props: { user, input } };
+  return { props: { user, input }, revalidate: 1 };
 }
 
 export default Trades;
