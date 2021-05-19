@@ -372,13 +372,15 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params: { input } }) {
   const user = await client.getUser(input);
 
-  if (user && input !== user.username)
-    return {
-      redirect: {
-        destination: `/@${user.username}`,
-        permanent: false,
-      },
-    };
+  // TODO: Welp figure out why this doesn't work ...
+
+  // if (user && input !== user.username)
+  //   return {
+  //     redirect: {
+  //       destination: `/@${user.username}`,
+  //       permanent: false,
+  //     },
+  //   };
 
   return { props: { user, input } };
 }
