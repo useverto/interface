@@ -35,10 +35,15 @@ import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
 import styles from "../../styles/views/user.module.sass";
+import useSWR from "swr";
 
 const client = new Verto();
 
 const User = (props: { user: UserInterface | null; input: string }) => {
+  const { data: user } = useSWR("getUser", () => client.getUser(props.input), {
+    initialData: props.user,
+  });
+
   const [creations, setCreations] = useState<string[]>([]);
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
@@ -59,7 +64,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   // set if the profile is owned by the logged in user
   useEffect(() => {
     if (
-      !props.user?.addresses.includes(currentAddress) &&
+      !user?.addresses.includes(currentAddress) &&
       props.input !== currentAddress
     )
       return;
@@ -89,8 +94,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     (async () => {
       let res: OrderInterface[] = [];
 
-      if (props.user) {
-        for (const address of props.user.addresses) {
+      if (user) {
+        for (const address of user.addresses) {
           res.push(...(await client.getOrders(address)));
         }
       } else res.push(...(await client.getOrders(props.input)));
@@ -104,8 +109,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     (async () => {
       let res: TransactionInterface[] = [];
 
-      if (props.user) {
-        for (const address of props.user.addresses) {
+      if (user) {
+        for (const address of user.addresses) {
           res.push(...(await client.getTransactions(address)));
         }
       } else res.push(...(await client.getTransactions(props.input)));
@@ -119,46 +124,41 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   return (
     <Page>
       <Head>
-        <title>@{props.user?.username || props.input} on Verto</title>
+        <title>@{user?.username || props.input} on Verto</title>
         <Metas
           title="User"
-          subtitle={`@${props.user?.username || props.input}`}
+          subtitle={`@${user?.username || props.input}`}
           image={
-            (props.user?.image && `https://arweave.net/${props.user.image}`) ||
-            undefined
+            (user?.image && `https://arweave.net/${user.image}`) || undefined
           }
         />
         <meta
           property="profile:username"
-          content={props.user?.username || props.input}
+          content={user?.username || props.input}
         />
       </Head>
       <Spacer y={3} />
-      {(props.user && (
+      {(user && (
         <>
           <div className={styles.AvatarSection}>
             <Avatar
               avatar={
-                props.user.image
-                  ? `https://arweave.net/${props.user.image}`
-                  : randomAvatar
+                user.image ? `https://arweave.net/${user.image}` : randomAvatar
               }
-              usertag={props.user.username}
-              name={props.user.name}
+              usertag={user.username}
+              name={user.name}
               size="large-inline"
               className={styles.Avatar}
             />
             {isCurrentUser && <Button>Edit profile</Button>}
           </div>
           <Spacer y={2} />
-          {props.user.bio && <p className={styles.Bio}>{props.user.bio}</p>}
-          {props.user.links && Object.keys(props.user.links).length > 0 && (
+          {user.bio && <p className={styles.Bio}>{user.bio}</p>}
+          {user.links && Object.keys(user.links).length > 0 && (
             <div className={styles.Links}>
-              {Object.entries(props.user.links).map(
-                ([identifier, value], i) => (
-                  <SocialIcon identifier={identifier} value={value} key={i} />
-                )
-              )}
+              {Object.entries(user.links).map(([identifier, value], i) => (
+                <SocialIcon identifier={identifier} value={value} key={i} />
+              ))}
             </div>
           )}
         </>
@@ -382,7 +382,7 @@ export async function getStaticProps({ params: { input } }) {
   //     },
   //   };
 
-  return { props: { user, input } };
+  return { props: { user, input }, revalidate: 1 };
 }
 
 export default User;
