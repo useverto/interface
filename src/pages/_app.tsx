@@ -155,7 +155,11 @@ const Theme = ({ children }) => {
   const [displayTheme, setDisplayTheme] = useState<DisplayTheme>("Light");
 
   useEffect(() => {
-    dispatch(updateTheme(localStorage.getItem("verto_theme") as DisplayTheme));
+    let loadedTheme = localStorage.getItem("verto_theme");
+    if (!loadedTheme) return;
+    if (!["Dark", "Light", "System"].includes(loadedTheme))
+      loadedTheme = "Light";
+    dispatch(updateTheme(loadedTheme as DisplayTheme));
   }, []);
 
   useEffect(() => {

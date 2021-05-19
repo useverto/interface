@@ -58,26 +58,28 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, []);
 
-  const [inputs, setInputs] = useState([
+  const chainsDefaultInputsOutputs = [
     {
       id: "AR",
       name: "AR",
       ticker: "AR",
     },
-  ]);
-  const [outputs, setOutputs] = useState(props.tokens);
+  ];
+  const tokensDefaultInputsOutputs = props.tokens;
+  const [inputs, setInputs] = useState(chainsDefaultInputsOutputs);
+  const [outputs, setOutputs] = useState(tokensDefaultInputsOutputs);
 
   const input = useInput();
   const output = useInput();
-  const inputUnit = useSelect<string>("AR");
-  const outputUnit = useSelect(props.tokens[0].id);
+  const inputUnit = useSelect<string>("...");
+  const outputUnit = useSelect<string>("...");
 
   const [orders, setOrders] = useState([]);
   const [selectedPST, setSelectedPST] = useState<TokenInterface>();
   const [showAllOrders, setShowAllOrders] = useState(false);
 
   useEffect(() => {
-    if (post) {
+    if (post && inputUnit.state !== "..." && outputUnit.state !== "...") {
       const id = inputUnit.state === "AR" ? outputUnit.state : inputUnit.state;
       if (inputUnit.state === "AR") {
         setOutputs((val) => {
@@ -127,7 +129,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   const [loadingGraph, setLoadingGraph] = useState(true);
 
   useEffect(() => {
-    if (!selectedPST) return;
+    if (!selectedPST || inputUnit.state === "..." || outputUnit.state === "...")
+      return;
     (async () => {
       setLoadingGraph(true);
       setGraphData({
@@ -186,6 +189,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
     if (output.state === "" || Number(output.state) === 0)
       return output.setStatus("error");
+
+    if (inputUnit.state === "..." || outputUnit.state === "...") return;
 
     setCreatingSwap(true);
 
@@ -282,6 +287,56 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     if (inputUnit.state !== "AR") return;
     output.setState(Number((selectedPrice * Number(input.state)).toFixed(4)));
   }, [input.state, selectedPrice]);
+
+  // save selected token IDs to local storage
+  useEffect(() => {
+    if (inputUnit.state === "..." || outputUnit.state === "...") {
+      const data = getInputOutput();
+
+      // TODO: ETH
+      setOutputs(
+        data.output === "AR"
+          ? chainsDefaultInputsOutputs
+          : tokensDefaultInputsOutputs
+      );
+      setInputs(
+        data.input === "AR"
+          ? chainsDefaultInputsOutputs
+          : tokensDefaultInputsOutputs
+      );
+
+      inputUnit.setState(data.input);
+      outputUnit.setState(data.output);
+    } else saveInputOutput();
+  }, [inputUnit, outputUnit, inputs, outputs]);
+
+  function getInputOutput(): { input: string; output: string } {
+    const data = localStorage.getItem("verto_swap_tokens");
+    if (!data || !JSON.parse(data)?.val)
+      return {
+        input: "AR",
+        output: props.tokens[0].id,
+      };
+
+    const { val: parsed } = JSON.parse(data);
+
+    return {
+      input: parsed.input,
+      output: parsed.output,
+    };
+  }
+
+  function saveInputOutput() {
+    localStorage.setItem(
+      "verto_swap_tokens",
+      JSON.stringify({
+        val: {
+          input: inputUnit.state,
+          output: outputUnit.state,
+        },
+      })
+    );
+  }
 
   return (
     <Page>
