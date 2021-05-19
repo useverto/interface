@@ -15,20 +15,26 @@ import useSWR from "swr";
 const client = new Verto();
 
 const Space = (props: { tokens: any[]; featured: any[] }) => {
-  const {
-    data: { data: tokens },
-  } = useSWR(
+  const { data: tokens } = useSWR(
     "getTokens",
-    () => axios.get("https://v2.cache.verto.exchange/site/communities/top"),
+    async () => {
+      const { data } = await axios.get(
+        "https://v2.cache.verto.exchange/site/communities/random"
+      );
+      return data;
+    },
     {
       initialData: props.tokens,
     }
   );
-  const {
-    data: { data: featured },
-  } = useSWR(
+  const { data: featured } = useSWR(
     "getFeatured",
-    () => axios.get("https://v2.cache.verto.exchange/site/communities/random"),
+    async () => {
+      const { data } = await axios.get(
+        "https://v2.cache.verto.exchange/site/communities/random"
+      );
+      return data;
+    },
     {
       initialData: props.featured,
     }
