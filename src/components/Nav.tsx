@@ -302,7 +302,8 @@ const Nav = () => {
             ) : (
               <Avatar
                 size="small"
-                usertag={formatAddress(address, 20)}
+                usertag={address}
+                displaytag={formatAddress(address, 20)}
                 name={noIDUser.name}
                 avatar={noIDUser.avatar}
                 left

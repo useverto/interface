@@ -507,7 +507,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                     avatar:
                       (user?.image && `https://arweave.net/${user.image}`) ||
                       randomEmoji(),
-                    usertag: user?.username || formatAddress(order.addr, 10),
+                    usertag: user?.username || order.addr,
+                    displaytag: user?.username || formatAddress(order.addr, 10),
                     name: user?.name || undefined,
                   }}
                   selling={{
