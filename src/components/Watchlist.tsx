@@ -1,6 +1,16 @@
-import { CheckIcon, EditIcon } from "@iconicicons/react";
-import { PriceInterface } from "@verto/js/dist/faces";
-import { Spacer, Tooltip, useTheme, useToasts } from "@verto/ui";
+import { CheckIcon, EditIcon, PlusIcon } from "@iconicicons/react";
+import { PriceInterface, TokenInterface } from "@verto/js/dist/faces";
+import {
+  Button,
+  Modal,
+  Select,
+  Spacer,
+  Tooltip,
+  useModal,
+  useSelect,
+  useTheme,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardAnimation, opacityAnimation } from "../utils/animations";
@@ -28,6 +38,9 @@ const Watchlist = () => {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const theme = useTheme();
   const { setToast } = useToasts();
+  const [tokens, setTokens] = useState<TokenInterface[]>([]);
+  const addTokenModal = useModal();
+  const tokenSelect = useSelect<string>();
 
   // load saved token ids & period data
   useEffect(() => {
@@ -37,7 +50,7 @@ const Watchlist = () => {
     setSelectedPeriod(periodData);
   }, []);
 
-  // load tokens
+  // load watchlist tokens
   useEffect(() => {
     (async () => {
       if (!tokenIDs) return;
@@ -67,6 +80,15 @@ const Watchlist = () => {
     localStorage.setItem(period_store_name, selectedPeriod);
   }, [selectedPeriod]);
 
+  // load all tokens
+  useEffect(() => {
+    (async () => {
+      const res = await client.getTokens();
+      setTokens(res);
+      tokenSelect.setState(res[0].id);
+    })();
+  }, []);
+
   return (
     <>
       <h1 className="Title">
@@ -86,6 +108,21 @@ const Watchlist = () => {
           </div>
         </div>
         <div className="ActionSheet">
+          <AnimatePresence>
+            {editMode && (
+              <motion.div {...opacityAnimation()} style={{ display: "flex" }}>
+                <Tooltip text="Add new">
+                  <button
+                    className="Btn"
+                    onClick={() => addTokenModal.setState(true)}
+                  >
+                    <PlusIcon />
+                  </button>
+                </Tooltip>
+                <Spacer x={0.4} />
+              </motion.div>
+            )}
+          </AnimatePresence>
           <Tooltip text={editMode ? "Done" : "Edit"}>
             <button className="Btn" onClick={() => setEditMode((val) => !val)}>
               {(editMode && <CheckIcon />) || <EditIcon />}
@@ -137,13 +174,13 @@ const Watchlist = () => {
                 <div className={styles.Data}>
                   <h1 className={styles.Ticker}>{item.ticker}</h1>
                   <h1 className={styles.Price}>
-                    {item.price.toLocaleString(undefined, {
+                    {(item.price ?? 0).toLocaleString(undefined, {
                       maximumFractionDigits: 2,
                       minimumFractionDigits: 2,
                     })}
                     <span>AR</span>
                     <AnimatePresence>
-                      {prices[0].price !== item.price && (
+                      {prices[0]?.price && prices[0].price !== item.price && (
                         <motion.span
                           {...opacityAnimation()}
                           className={
@@ -194,8 +231,63 @@ const Watchlist = () => {
         </AnimatePresence>
       </div>
       {items.length === 0 && (
-        <p className="NoItemsText">No items in watchlist</p>
+        <p className="NoItemsText">
+          No items in watchlist. Try{" "}
+          <span
+            style={{ textDecoration: "underline" }}
+            onClick={() => addTokenModal.setState(true)}
+          >
+            adding one?
+          </span>
+        </p>
       )}
+      <Modal {...addTokenModal.bindings}>
+        <Modal.Title>Add new</Modal.Title>
+        <Modal.Content>
+          <p style={{ textAlign: "center" }}>
+            Add a new token to your watchlist
+          </p>
+          <Select
+            label="Select token"
+            {...tokenSelect.bindings}
+            className={styles.SelectToken}
+          >
+            {tokens
+              .filter(({ id }) => !tokenIDs.includes(id))
+              .map((token, i) => (
+                <option value={token.id} key={i}>
+                  {token.ticker}
+                </option>
+              ))}
+          </Select>
+          <Spacer y={1.75} />
+          <Button
+            small
+            style={{ margin: "0 auto" }}
+            disabled={!tokenSelect.state}
+            onClick={() => {
+              if (!tokenSelect.state || tokenIDs.includes(tokenSelect.state))
+                return;
+              setTokenIDs((val) => [...val, tokenSelect.state]);
+              setToast({
+                description: `Added ${
+                  tokens.find(({ id }) => id === tokenSelect.state)?.ticker ??
+                  tokenSelect.state
+                } to watchlist`,
+                type: "success",
+                duration: 2100,
+              });
+              tokenSelect.setState(
+                tokens.filter(({ id }) => !tokenIDs.includes(id))[0]?.id ??
+                  undefined
+              );
+              addTokenModal.setState(false);
+            }}
+          >
+            Add
+          </Button>
+        </Modal.Content>
+      </Modal>
     </>
   );
 };
