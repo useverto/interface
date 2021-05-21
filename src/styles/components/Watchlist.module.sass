@@ -32,6 +32,14 @@
   grid-template-columns: auto auto auto
 
   .WatchlistItem
+    position: relative
+    
+    &:nth-child(3n+3)
+      margin-bottom: 3.5em
+
+    &:last-child
+      margin-bottom: 0
+
     .Data
       display: flex
       align-items: flex-start
@@ -63,3 +71,26 @@
       position: relative
       min-height: 135px
       margin-top: .4em
+
+    &.Edit::after
+      content: "Click to remove"
+      position: absolute
+      display: flex
+      align-items: center
+      justify-content: center
+      text-align: center
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      background-color: variables.$background-color
+      color: variables.$foreground-color
+      opacity: 0
+      backdrop-filter: blur(5px)
+      z-index: 10
+      cursor: pointer
+      font-weight: 500
+      transition: all .23s ease-in-out
+
+    &.Edit:hover::after
+      opacity: .5

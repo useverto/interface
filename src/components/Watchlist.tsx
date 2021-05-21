@@ -1,9 +1,9 @@
 import { CheckIcon, EditIcon } from "@iconicicons/react";
 import { PriceInterface } from "@verto/js/dist/faces";
-import { Spacer, Tooltip, useTheme } from "@verto/ui";
+import { Spacer, Tooltip, useTheme, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { cardAnimation } from "../utils/animations";
+import { cardAnimation, opacityAnimation } from "../utils/animations";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import Verto from "@verto/js";
@@ -27,6 +27,7 @@ const Watchlist = () => {
   const [tokenIDs, setTokenIDs] = useState<string[]>();
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const theme = useTheme();
+  const { setToast } = useToasts();
 
   // load saved token ids & period data
   useEffect(() => {
@@ -54,6 +55,9 @@ const Watchlist = () => {
         } catch {}
       }
 
+      setItems((val) =>
+        val.filter((watchlistItem) => tokenIDs.includes(watchlistItem.id))
+      );
       localStorage.setItem(store_name, JSON.stringify(tokenIDs));
     })();
   }, [tokenIDs]);
@@ -100,6 +104,7 @@ const Watchlist = () => {
                 (selectedPeriod === "1w" && "week") ||
                 (selectedPeriod === "1m" && "month") ||
                 "year";
+
               return dayjs(new Date(date)).isAfter(
                 dayjs().subtract(1, timeType)
               );
@@ -114,30 +119,50 @@ const Watchlist = () => {
 
             return (
               <motion.div
-                className={styles.WatchlistItem}
+                className={
+                  styles.WatchlistItem + " " + (editMode ? styles.Edit : "")
+                }
                 key={i}
                 {...cardAnimation(i)}
+                onClick={() => {
+                  if (!editMode) return;
+                  setTokenIDs((val) => val.filter((id) => id !== item.id));
+                  setToast({
+                    description: "Removed item",
+                    type: "success",
+                    duration: 1700,
+                  });
+                }}
               >
                 <div className={styles.Data}>
                   <h1 className={styles.Ticker}>{item.ticker}</h1>
                   <h1 className={styles.Price}>
-                    {item.price}
+                    {item.price.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                    })}
                     <span>AR</span>
-                    {prices[0].price !== item.price && (
-                      <span
-                        className={
-                          (prices[0].price < item.price && styles.Positive) ||
-                          styles.Negative
-                        }
-                      >
-                        {(prices[0].price < item.price && "+") || "-"}
-                        {(
-                          (item.price / prices[0].price) *
-                          100
-                        ).toLocaleString()}
-                        %
-                      </span>
-                    )}
+                    <AnimatePresence>
+                      {prices[0].price !== item.price && (
+                        <motion.span
+                          {...opacityAnimation()}
+                          className={
+                            (prices[0].price < item.price && styles.Positive) ||
+                            styles.Negative
+                          }
+                        >
+                          {(prices[0].price < item.price && "+") || "-"}
+                          {(
+                            (item.price / prices[0].price) *
+                            100
+                          ).toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                            minimumFractionDigits: 2,
+                          })}
+                          %
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </h1>
                 </div>
                 <div className={styles.Graph}>
