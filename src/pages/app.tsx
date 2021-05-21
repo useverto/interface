@@ -10,6 +10,7 @@ import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
+import Watchlist from "../components/Watchlist";
 import styles from "../styles/views/app.module.sass";
 
 const client = new Verto();
@@ -37,6 +38,8 @@ const App = () => {
       <Spacer y={3} />
       <Balance />
       <Spacer y={4} />
+      <Watchlist />
+      <Spacer y={3} />
       <h1 className="Title">
         Balances
         {/** TODO @martonlederer */}

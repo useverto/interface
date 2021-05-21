@@ -148,7 +148,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
             </div>
             <div className={styles.PriceData}>
               {(prices[currentTokenData.id] && (
-                <h2>${prices[currentTokenData.id]}</h2>
+                <h2>${prices[currentTokenData.id].toLocaleString()}</h2>
               )) || <h2>$--</h2>}
               <div className={styles.GraphData}>
                 {history[currentTokenData.id] && (
@@ -170,7 +170,10 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
                     options={GraphOptions({
                       theme,
                       tooltipText: ({ value }) =>
-                        `${Number(value).toFixed(2)} AR`,
+                        `${Number(value).toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                          minimumFractionDigits: 2,
+                        })} AR`,
                     })}
                   />
                 )}

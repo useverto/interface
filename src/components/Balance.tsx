@@ -21,7 +21,7 @@ const Balance = () => {
     val: number;
   }>();
   const { setToast } = useToasts();
-  const decimals = 8;
+  const decimals = 5;
   const animatedBalance = useCountUp({ end: balance, decimals });
   const address = useSelector((state: RootState) => state.addressReducer);
   const theme = useTheme();
@@ -45,7 +45,10 @@ const Balance = () => {
       <div className={styles.Data}>
         <p>{historicalBalance?.date || "Total balance"}</p>
         <h1>
-          {historicalBalance?.val || animatedBalance}
+          {(historicalBalance?.val || animatedBalance).toLocaleString(
+            undefined,
+            { minimumFractionDigits: decimals }
+          )}
           <b>AR</b>
         </h1>
         <p className={styles.Address}>
@@ -103,7 +106,10 @@ const Balance = () => {
                       val: formattedBal,
                     });
 
-                  return `${Number(value).toFixed(2)} AR`;
+                  return `${Number(value).toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  })} AR`;
                 },
               })}
             />

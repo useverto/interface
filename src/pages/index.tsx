@@ -130,7 +130,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                       name: arworkData.owner.name,
                       usertag: arworkData.owner.username,
                     }}
-                    price={arworkData.price}
+                    price={arworkData.price ?? 0}
                     image={`https://arweave.net/${arworkData.id}`}
                   />
                 </motion.div>
