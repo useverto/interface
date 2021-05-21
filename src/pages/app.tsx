@@ -98,6 +98,9 @@ const App = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      {balances.length === 0 && (
+        <p className="NoItemsText">Nothing in wallet</p>
+      )}
     </Page>
   );
 };
