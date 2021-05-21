@@ -167,6 +167,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <Avatar
             avatar={randomAvatar}
             usertag={props.input}
+            // @ts-ignore
             displaytag={formatAddress(props.input, 14)}
             name={walletName}
             size="large-inline"
