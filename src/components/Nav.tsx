@@ -303,6 +303,7 @@ const Nav = () => {
               <Avatar
                 size="small"
                 usertag={address}
+                // @ts-ignore
                 displaytag={formatAddress(address, 20)}
                 name={noIDUser.name}
                 avatar={noIDUser.avatar}

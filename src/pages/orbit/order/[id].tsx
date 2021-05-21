@@ -8,9 +8,23 @@ import Head from "next/head";
 import Metas from "../../../components/Metas";
 import Link from "next/link";
 import styles from "../../../styles/views/orbit.module.sass";
+import useSWR from "swr";
 
-const Order = (props: { order: any }) => {
+const Order = (props: { order: any; id: string }) => {
   const router = useRouter();
+
+  const { data: order } = useSWR(
+    "getOrder",
+    async () => {
+      const { data } = await axios.get(
+        `https://v2.cache.verto.exchange/order/${props.id}`
+      );
+      return data;
+    },
+    {
+      initialData: props.order,
+    }
+  );
 
   return (
     <Page>
@@ -22,26 +36,24 @@ const Order = (props: { order: any }) => {
       <div className={styles.OrbitTitle}>
         <h1>
           Order
-          <span className={styles.Type}>{getType(props.order.input)}</span>
+          <span className={styles.Type}>{getType(order.input)}</span>
         </h1>
         <p>
-          {props.order.id}
+          {order.id}
           <Spacer x={0.44} />
-          <Tooltip text={props.order.status} position="right">
+          <Tooltip text={order.status} position="right">
             <span
-              className={
-                styles.Status + " " + styles[`Status_${props.order.status}`]
-              }
+              className={styles.Status + " " + styles[`Status_${order.status}`]}
             />
           </Tooltip>
         </p>
         <p>
           Owner:
-          <Link href={`/@${props.order.sender}`}>{props.order.sender}</Link>
+          <Link href={`/@${order.sender}`}>{order.sender}</Link>
         </p>
       </div>
       <Spacer y={3} />
-      {props.order.actions.map((action, i) => (
+      {order.actions.map((action, i) => (
         <motion.div key={i} {...cardListAnimation(i)}>
           <Card.OrderStep
             title={action.description}
@@ -56,14 +68,19 @@ const Order = (props: { order: any }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { id } = context.query;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
 
+export async function getStaticProps({ params: { id } }) {
   const { data: order } = await axios.get(
     `https://v2.cache.verto.exchange/order/${id}`
   );
 
-  return { props: { order } };
+  return { props: { order, id }, revalidate: 1 };
 }
 
 export default Order;

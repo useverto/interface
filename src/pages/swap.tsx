@@ -511,6 +511,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                       (user?.image && `https://arweave.net/${user.image}`) ||
                       randomEmoji(),
                     usertag: user?.username || order.addr,
+                    // @ts-ignore
                     displaytag: user?.username || formatAddress(order.addr, 10),
                     name: user?.name || undefined,
                   }}
