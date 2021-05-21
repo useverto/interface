@@ -20,19 +20,20 @@ type WatchlistItem = PriceInterface & {
 
 const Watchlist = () => {
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
-  const [selectedPeriod, setSelectedPeriod] = useState(
-    periods[periods.length - 1]
-  );
+  const [selectedPeriod, setSelectedPeriod] = useState<string>();
   const [editMode, setEditMode] = useState(false);
   const store_name = "verto_watchlist";
+  const period_store_name = "verto_watchlist_watchlist";
   const [tokenIDs, setTokenIDs] = useState<string[]>();
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const theme = useTheme();
 
-  // load saved token ids
+  // load saved token ids & period data
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem(store_name) ?? "[]");
-    setTokenIDs(data);
+    const tokenData = JSON.parse(localStorage.getItem(store_name) ?? "[]");
+    const periodData = localStorage.getItem(period_store_name) ?? "ALL";
+    setTokenIDs(tokenData);
+    setSelectedPeriod(periodData);
   }, []);
 
   // load tokens
@@ -56,6 +57,11 @@ const Watchlist = () => {
       localStorage.setItem(store_name, JSON.stringify(tokenIDs));
     })();
   }, [tokenIDs]);
+
+  // save period data
+  useEffect(() => {
+    localStorage.setItem(period_store_name, selectedPeriod);
+  }, [selectedPeriod]);
 
   return (
     <>
@@ -117,10 +123,21 @@ const Watchlist = () => {
                   <h1 className={styles.Price}>
                     {item.price}
                     <span>AR</span>
-                    {/** TODO */}
-                    <span className={styles.Positive}>
-                      +{(6.44).toLocaleString()}%
-                    </span>
+                    {prices[0].price !== item.price && (
+                      <span
+                        className={
+                          (prices[0].price < item.price && styles.Positive) ||
+                          styles.Negative
+                        }
+                      >
+                        {(prices[0].price < item.price && "+") || "-"}
+                        {(
+                          (item.price / prices[0].price) *
+                          100
+                        ).toLocaleString()}
+                        %
+                      </span>
+                    )}
                   </h1>
                 </div>
                 <div className={styles.Graph}>
