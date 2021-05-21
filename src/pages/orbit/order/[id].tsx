@@ -12,6 +12,7 @@ import useSWR from "swr";
 
 const Order = (props: { order: any; id: string }) => {
   const router = useRouter();
+  if (router.isFallback) return <></>;
 
   const { data: order } = useSWR(
     "getOrder",
@@ -29,8 +30,8 @@ const Order = (props: { order: any; id: string }) => {
   return (
     <Page>
       <Head>
-        <title>Verto - Order {router.query.id}</title>
-        <Metas title="Order" subtitle={router.query.id.toString()} />
+        <title>Verto - Order {props.id}</title>
+        <Metas title="Order" subtitle={props.id} />
       </Head>
       <Spacer y={3} />
       <div className={styles.OrbitTitle}>
