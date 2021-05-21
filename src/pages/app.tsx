@@ -39,7 +39,7 @@ const App = () => {
       <Balance />
       <Spacer y={4} />
       <Watchlist />
-      <Spacer y={3} />
+      <Spacer y={4} />
       <h1 className="Title">
         Balances
         {/** TODO @martonlederer */}

@@ -232,9 +232,9 @@ const Watchlist = () => {
       </div>
       {items.length === 0 && (
         <p className="NoItemsText">
-          No items in watchlist. Try{" "}
+          No items in watchlist. Try <Spacer x={0.23} />
           <span
-            style={{ textDecoration: "underline" }}
+            style={{ textDecoration: "underline", cursor: "pointer" }}
             onClick={() => addTokenModal.setState(true)}
           >
             adding one?

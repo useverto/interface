@@ -27,9 +27,11 @@
         box-shadow: variables.$standard-shadow
 
 .WatchlistContainer
+  $gap: 3.5em
   display: grid
+  grid-template-columns: repeat(3, calc(33.333% - #{$gap}))
+  gap: $gap
   justify-content: space-between
-  grid-template-columns: auto auto auto
 
   .WatchlistItem
     position: relative
