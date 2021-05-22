@@ -123,10 +123,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         <Metas
           title="User"
           subtitle={`@${props.user?.username || props.input}`}
-          image={
-            (props.user?.image && `https://arweave.net/${props.user.image}`) ||
-            undefined
-          }
+          usertag={props?.user?.username}
         />
         <meta
           property="profile:username"

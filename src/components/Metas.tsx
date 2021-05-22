@@ -1,6 +1,6 @@
 // TODO: update OG API url on production
 const OGApiUrl = "https://vext.vercel.app";
-const Metas = ({ title, image, subtitle }: MetaProps) => (
+const Metas = ({ title, image, subtitle, usertag }: MetaProps) => (
   <>
     <meta name="title" content={`Verto - ${title} ${subtitle ?? ""}`} />
     <meta
@@ -15,9 +15,10 @@ const Metas = ({ title, image, subtitle }: MetaProps) => (
       property="og:image"
       content={
         image ??
-        `${OGApiUrl}/api/og?title=${
-          title + ((subtitle && "&subtitle=" + subtitle) || "")
-        }`
+        ((usertag && `${OGApiUrl}/api/user_og?u=${usertag}`) ||
+          `${OGApiUrl}/api/og?title=${
+            title + ((subtitle && "&subtitle=" + subtitle) || "")
+          }`)
       }
     />
     <meta
@@ -38,9 +39,10 @@ const Metas = ({ title, image, subtitle }: MetaProps) => (
       property="twitter:image"
       content={
         image ??
-        `${OGApiUrl}/api/og?title=${
-          title + ((subtitle && "&subtitle=" + subtitle) || "")
-        }`
+        ((usertag && `${OGApiUrl}/api/user_og?u=${usertag}`) ||
+          `${OGApiUrl}/api/og?title=${
+            title + ((subtitle && "&subtitle=" + subtitle) || "")
+          }`)
       }
     />
     <meta
@@ -56,4 +58,5 @@ interface MetaProps {
   title: string;
   image?: string;
   subtitle?: string;
+  usertag?: string;
 }
