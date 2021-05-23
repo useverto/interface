@@ -35,10 +35,14 @@ import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
 import styles from "../../styles/views/user.module.sass";
+import { useRouter } from "next/router";
 
 const client = new Verto();
 
 const User = (props: { user: UserInterface | null; input: string }) => {
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
   const [creations, setCreations] = useState<string[]>([]);
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);

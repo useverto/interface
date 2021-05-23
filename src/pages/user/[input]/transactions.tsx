@@ -7,6 +7,7 @@ import Head from "next/head";
 import Metas from "../../../components/Metas";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
 import styles from "../../../styles/views/user.module.sass";
+import { useRouter } from "next/router";
 
 const client = new Verto();
 
@@ -15,6 +16,9 @@ const Transactions = (props: {
   input: string;
   txs: TransactionInterface[];
 }) => {
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
   const { loading, data } = useInfiniteScroll<TransactionInterface>(
     loadMore,
     props.txs

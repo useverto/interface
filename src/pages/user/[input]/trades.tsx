@@ -17,10 +17,14 @@ import { addToCancel, getCancelledOrders } from "../../../utils/order";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
+import { useRouter } from "next/router";
 
 const client = new Verto();
 
 const Trades = (props: { user: UserInterface | null; input: string }) => {
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const currentAddress = useSelector(
