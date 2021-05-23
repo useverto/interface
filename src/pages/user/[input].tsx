@@ -15,7 +15,7 @@ import {
   useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { cardListAnimation } from "../../utils/animations";
+import { cardAnimation, cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
 import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
@@ -24,6 +24,7 @@ import { UsernametoURL as usernameToURL } from "social-username-url";
 import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
@@ -35,7 +36,6 @@ import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
 import styles from "../../styles/views/user.module.sass";
-import { useRouter } from "next/router";
 
 const client = new Verto();
 
@@ -85,7 +85,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   useEffect(() => {
     axios
       .get(`https://v2.cache.verto.exchange/user/${props.input}/creations`)
-      .then(({ data }) => setCreations(data));
+      .then(({ data }) => setCreations(data.slice(0, 4)));
   });
 
   // load orders
@@ -181,8 +181,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <h1 className="Title">Creations</h1>
       <Spacer y={2} />
       <div className={styles.Creations}>
-        {creations.map((id) => (
-          <Card.AssetClear image={`https://arweave.net/${id}`} />
+        {creations.map((id, i) => (
+          <motion.div key={i} {...cardAnimation(i)}>
+            <Card.AssetClear image={`https://arweave.net/${id}`} />
+          </motion.div>
         ))}
       </div>
       {(creations.length > 0 && (
