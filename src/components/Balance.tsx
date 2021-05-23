@@ -47,7 +47,7 @@ const Balance = () => {
         <h1>
           {(historicalBalance?.val || animatedBalance).toLocaleString(
             undefined,
-            { minimumFractionDigits: decimals }
+            { maximumFractionDigits: decimals }
           )}
           <b>AR</b>
         </h1>

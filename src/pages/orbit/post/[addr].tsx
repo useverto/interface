@@ -160,7 +160,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         </div>
         <div className={styles.Info}>
           <span>Fee</span>
-          {postData.fee} AR
+          {postData.fee.toLocaleString()} AR
         </div>
         <div className={styles.Info}>
           <span>Uptime</span>
@@ -168,11 +168,14 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         </div>
         <div className={styles.Info}>
           <span>Stake</span>
-          {postData.stake} VRT
+          {postData.stake.toLocaleString()} VRT
         </div>
         <div className={styles.Info}>
           <span>Balance</span>
-          {postData.balance.toFixed(8)} AR
+          {postData.balance.toLocaleString(undefined, {
+            maximumFractionDigits: 5,
+          })}{" "}
+          AR
         </div>
       </div>
       <Bar
