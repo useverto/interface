@@ -12,12 +12,42 @@ import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import Verto from "@verto/js";
 import styles from "../../../styles/views/orbit.module.sass";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 
 const client = new Verto();
 dayjs.extend(duration);
 
 const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
-  const { loading, data } = useInfiniteScroll<any>(loadMore, props.orders);
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
+  const { data: stats } = useSWR(
+    "getStats",
+    async () => {
+      const { data } = await axios.get(
+        `https://v2.cache.verto.exchange/posts/${props.addr}/stats`
+      );
+      return data;
+    },
+    {
+      initialData: props.stats,
+    }
+  );
+  const { data: orders } = useSWR(
+    "getOrders",
+    async () => {
+      const { data } = await axios.get(
+        `https://v2.cache.verto.exchange/posts/${props.addr}/orders?limit=10`
+      );
+      return data;
+    },
+    {
+      initialData: props.orders,
+    }
+  );
+
+  const { loading, data } = useInfiniteScroll<any>(loadMore, orders);
   const [status, setStatus] = useState<"online" | "offline">();
   const theme = useTheme();
   const [postUptime, setPostUptime] = useState(0);
@@ -147,14 +177,15 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
       </div>
       <Bar
         data={{
-          labels: Object.keys(props.stats).reverse(),
+          labels: Object.keys(stats).reverse(),
           datasets: [
             {
               label: "Succeeded",
               backgroundColor: "rgba(0, 212, 110, 0.5)",
               borderColor: "#00D46E",
               borderWidth: 0.5,
-              data: Object.values(props.stats)
+              data: Object.values(stats)
+                // @ts-ignore
                 .map((item) => item.succeeded)
                 .reverse(),
             },
@@ -163,7 +194,8 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
               backgroundColor: "rgba(255, 211, 54, 0.5)",
               borderColor: "#FFD336",
               borderWidth: 0.5,
-              data: Object.values(props.stats)
+              data: Object.values(stats)
+                // @ts-ignore
                 .map((item) => item.pending)
                 .reverse(),
             },
@@ -172,7 +204,8 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
               backgroundColor: "rgba(130, 130, 130, 0.5)",
               borderColor: "#828282",
               borderWidth: 0.5,
-              data: Object.values(props.stats)
+              data: Object.values(stats)
+                // @ts-ignore
                 .map((item) => item.neutral + item.errored)
                 .reverse(),
             },
@@ -242,9 +275,14 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { addr } = context.query;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
 
+export async function getStaticProps({ params: { addr } }) {
   const { data: stats } = await axios.get(
     `https://v2.cache.verto.exchange/posts/${addr}/stats`
   );
@@ -253,7 +291,7 @@ export async function getServerSideProps(context) {
     `https://v2.cache.verto.exchange/posts/${addr}/orders?limit=10`
   );
 
-  return { props: { addr, stats, orders } };
+  return { props: { addr, stats, orders }, revalidate: 1 };
 }
 
 export default Post;
