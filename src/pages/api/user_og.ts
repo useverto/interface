@@ -1,9 +1,12 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { randomEmoji } from "../../utils/user";
+import { formatAddress } from "../../utils/format";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
 import Verto from "@verto/js";
-import { formatAddress } from "../../utils/format";
+
+// TODO: update OG API url on production
+const OGApiUrl = "https://vext.vercel.app";
 
 export default async function UserOG(
   req: NextApiRequest,
@@ -67,6 +70,13 @@ export default async function UserOG(
             overflow: hidden;
             white-space: nowrap;
           }
+          .logo {
+            position: absolute;
+            bottom: 10vh;
+            right: 10vh;
+            width: 10vh;
+            height: 10vh;
+          }
         </style>
       </head>
       <body>
@@ -77,6 +87,7 @@ export default async function UserOG(
           ${(user?.name && `<h1>${user.name}</h1>`) || ""}
           <h2>@${user?.username ?? formatAddress(u, 14)}</h2>
         </div>
+        <img class="logo" src="${OGApiUrl}/logo_light.svg" alt="v" />
       </body>
     </html>
   `;
