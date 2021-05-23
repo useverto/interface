@@ -18,6 +18,8 @@ import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import Verto from "@verto/js";
 import dayjs from "dayjs";
+import isToday from "dayjs/plugin/isToday";
+import axios from "axios";
 import styles from "../styles/components/Watchlist.module.sass";
 
 const client = new Verto();
@@ -27,6 +29,7 @@ type WatchlistItem = PriceInterface & {
     [date: string]: number;
   };
 };
+dayjs.extend(isToday);
 
 const Watchlist = () => {
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
@@ -44,7 +47,8 @@ const Watchlist = () => {
 
   // load saved token ids & period data
   useEffect(() => {
-    const tokenData = JSON.parse(localStorage.getItem(store_name) ?? "[]");
+    // AR is added to watchlist by default
+    const tokenData = JSON.parse(localStorage.getItem(store_name) ?? '["AR"]');
     const periodData = localStorage.getItem(period_store_name) ?? "ALL";
     setTokenIDs(tokenData);
     setSelectedPeriod(periodData);
@@ -53,10 +57,41 @@ const Watchlist = () => {
   // load watchlist tokens
   useEffect(() => {
     (async () => {
-      if (!tokenIDs) return;
+      if (!tokenIDs || tokens.length === 0) return;
 
       for (const id of tokenIDs) {
         if (items.find((val) => val.id === id)) continue;
+        if (id === "AR" || id === "ETH") {
+          try {
+            const token = tokens.find((item) => item.id === id);
+            if (!token) continue;
+
+            const { data: history } = await axios.get(
+              `https://api.coingecko.com/api/v3/coins/${token.name.toLowerCase()}/market_chart?vs_currency=usd&days=max&interval=daily`
+            );
+            const { data: todayHistory } = await axios.get(
+              `https://api.coingecko.com/api/v3/coins/${token.name.toLowerCase()}/market_chart?vs_currency=usd&days=1&interval=hourly`
+            );
+            const data = {
+              id,
+              ticker: token.ticker,
+              name: token.name,
+              price: todayHistory.prices[todayHistory.prices.length - 1][1],
+              priceHistory: {},
+            };
+            for (const priceData of todayHistory.prices)
+              data.priceHistory[
+                dayjs(priceData[0]).format("MMM DD, YYYY hh:mm:ss A")
+              ] = priceData[1];
+
+            for (const priceData of history.prices)
+              data.priceHistory[dayjs(priceData[0]).format("MMM DD, YYYY")] =
+                priceData[1];
+
+            setItems((val) => [...val, data as WatchlistItem]);
+          } catch {}
+          continue;
+        }
         try {
           const data: WatchlistItem = {
             id,
@@ -73,7 +108,7 @@ const Watchlist = () => {
       );
       localStorage.setItem(store_name, JSON.stringify(tokenIDs));
     })();
-  }, [tokenIDs]);
+  }, [tokenIDs, tokens]);
 
   // save period data
   useEffect(() => {
@@ -84,7 +119,11 @@ const Watchlist = () => {
   useEffect(() => {
     (async () => {
       const res = await client.getTokens();
-      setTokens(res);
+      setTokens([
+        { id: "AR", name: "Arweave", ticker: "AR" },
+        { id: "ETH", name: "Ethereum", ticker: "ETH" },
+        ...res,
+      ]);
       tokenSelect.setState(res[0].id);
     })();
   }, []);
@@ -135,24 +174,38 @@ const Watchlist = () => {
         <AnimatePresence>
           {items.map((item, i) => {
             const filterDates = (date) => {
-              if (selectedPeriod === "ALL") return true;
               const timeType =
                 (selectedPeriod === "24h" && "day") ||
                 (selectedPeriod === "1w" && "week") ||
                 (selectedPeriod === "1m" && "month") ||
                 "year";
 
+              if (
+                timeType !== "day" &&
+                (item.id === "AR" || item.id === "ETH") &&
+                date.match(/([+-]?\d\d):(\d\d) (AM|PM)$/)
+              )
+                return false;
+
+              if (selectedPeriod === "ALL") return true;
               return dayjs(new Date(date)).isAfter(
                 dayjs().subtract(1, timeType)
               );
             };
             const prices = Object.keys(item.priceHistory)
               .filter((date) => filterDates(date))
-              .reverse()
               .map((key) => ({
                 date: key,
                 price: item.priceHistory[key],
-              }));
+              }))
+              .sort(
+                (a, b) =>
+                  new Date(a.date).getTime() - new Date(b.date).getTime()
+              );
+
+            if (selectedPeriod === "24h")
+              for (const pEl of prices)
+                pEl.date = dayjs(pEl.date).format("h:m A");
 
             return (
               <motion.div
@@ -174,11 +227,12 @@ const Watchlist = () => {
                 <div className={styles.Data}>
                   <h1 className={styles.Ticker}>{item.ticker}</h1>
                   <h1 className={styles.Price}>
+                    {(item.id === "AR" || item.id === "ETH") && "$"}
                     {(item.price ?? 0).toLocaleString(undefined, {
                       maximumFractionDigits: 2,
                       minimumFractionDigits: 2,
                     })}
-                    <span>AR</span>
+                    {item.id !== "AR" && item.id !== "ETH" && <span>AR</span>}
                     <AnimatePresence>
                       {prices[0]?.price && prices[0].price !== item.price && (
                         <motion.span
@@ -218,10 +272,14 @@ const Watchlist = () => {
                     options={GraphOptions({
                       theme,
                       tooltipText: ({ value }) =>
-                        `${Number(value).toLocaleString(undefined, {
+                        `${
+                          ((item.id === "AR" || item.id === "ETH") && "$") || ""
+                        }${Number(value).toLocaleString(undefined, {
                           maximumFractionDigits: 2,
                           minimumFractionDigits: 2,
-                        })} AR`,
+                        })}${
+                          (item.id !== "AR" && item.id !== "ETH" && " AR") || ""
+                        }`,
                     })}
                   />
                 </div>
