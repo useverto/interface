@@ -1,2 +1,13 @@
 @use "../variables"
   
+.OwnedCollectibles
+  border-radius: 18px
+  box-shadow: variables.$darker-shadow
+  padding: 1.4em 2em
+  background-color: variables.$foreground-color
+  color: variables.$foreground-reverse-color
+
+  &.DarkOwned
+    background-color: variables.$lighter-background-color
+    box-shadow: none
+    color: variables.$foreground-color
