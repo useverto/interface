@@ -68,10 +68,15 @@ const App = () => {
                   addBalance.balance +
                   (val.find(({ id }) => id === addBalance.id)?.balance ?? 0),
               })),
-            ].filter(({ id }) => !ownedCollectibles.find((el) => el.id === id))
+            ].filter(({ id }) => !ownedCollectibles.includes(id))
           );
         }
-      } else setBalances(await client.getBalances(address));
+      } else
+        setBalances(
+          (await client.getBalances(address)).filter(
+            ({ id }) => !ownedCollectibles.includes(id)
+          )
+        );
     })();
   }, [address]);
 
