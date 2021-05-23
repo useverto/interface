@@ -1,7 +1,8 @@
-import ArDB from "ardb";
 import { GQLEdgeTransactionInterface } from "ardb/lib/faces/gql";
 import Arweave from "arweave";
+import axios from "axios";
 import moment from "moment";
+import ArDB from "ardb";
 
 export const client = new Arweave({
   host: "arweave.net",
@@ -50,4 +51,12 @@ export const balanceHistory = async (
   }
 
   return res;
+};
+
+export const arPrice = async (): Promise<number> => {
+  const { data: gecko } = await axios.get(
+    "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+  );
+
+  return gecko.arweave.usd;
 };

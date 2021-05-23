@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
 import { useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
-import { cardListAnimation, opacityAnimation } from "../utils/animations";
+import {
+  cardAnimation,
+  cardListAnimation,
+  opacityAnimation,
+} from "../utils/animations";
 import { PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
+import { arPrice } from "../utils/arweave";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -21,7 +26,7 @@ const App = () => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const [showMorePsts, setShowMorePsts] = useState(false);
   const theme = useTheme();
-  const [owned, setOwned] = useState([]);
+  const [owned, setOwned] = useState<ArtworkInterface[]>([]);
 
   useEffect(() => {
     if (!address) return;
@@ -41,6 +46,8 @@ const App = () => {
               await axios.get(`https://v2.cache.verto.exchange/${artoworkID}`)
             ).data,
             id: artoworkID,
+            price:
+              (await arPrice()) * (await client.getPrice(artoworkID)).price,
           }))
         )
       );
@@ -150,6 +157,24 @@ const App = () => {
       >
         <h1 className="Title">Owned collectibles</h1>
         <Spacer y={2} />
+        <AnimatePresence>
+          {owned.map((collectible, i) => (
+            <motion.div {...cardAnimation(i)} key={i}>
+              <Card.Asset
+                name={collectible.name}
+                // TODO
+                userData={{
+                  avatar: "https://th8ta.org/marton.jpeg",
+                  usertag: "martonlederer",
+                  name: "Marton Lederer",
+                }}
+                price={collectible.price ?? 0}
+                image={`https://arweave.net/${collectible.id}`}
+                reverse={theme === "Light"}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </Page>
   );
@@ -157,4 +182,13 @@ const App = () => {
 
 export default App;
 
-interface ICollectible {}
+interface ArtworkInterface {
+  state: {
+    name: string;
+    ticker: string;
+    description: string;
+    balances: Record<string, number>;
+  };
+  price: number;
+  [key: string]: any;
+}
