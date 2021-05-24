@@ -235,7 +235,7 @@ const Nav = () => {
                     className={
                       styles.MenuItem +
                       " " +
-                      (theme === "Dark" ? styles.Dark : "")
+                      (displayTheme === "Dark" ? styles.Dark : "")
                     }
                   >
                     <UserIcon />
@@ -246,7 +246,9 @@ const Nav = () => {
                   className={
                     styles.MenuItem +
                     " " +
-                    (theme === "Dark" ? styles.Dark : "")
+                    (displayTheme === "Dark" ? styles.Dark : "") +
+                    " " +
+                    styles.DisabledMenuItem
                   }
                 >
                   <BellIcon />
@@ -256,7 +258,7 @@ const Nav = () => {
                   className={
                     styles.MenuItem +
                     " " +
-                    (theme === "Dark" ? styles.Dark : "")
+                    (displayTheme === "Dark" ? styles.Dark : "")
                   }
                   onClick={() =>
                     dispatch(
@@ -278,7 +280,7 @@ const Nav = () => {
                   className={
                     styles.MenuItem +
                     " " +
-                    (theme === "Dark" ? styles.Dark : "")
+                    (displayTheme === "Dark" ? styles.Dark : "")
                   }
                   onClick={() => signOutModal.setState(true)}
                 >
@@ -296,7 +298,7 @@ const Nav = () => {
                 name={user.name}
                 avatar={`https://arweave.net/${user.image}`}
                 left
-                notification={true}
+                //notification={true}
                 style={{ cursor: "pointer" }}
               />
             ) : (
@@ -308,7 +310,7 @@ const Nav = () => {
                 name={noIDUser.name}
                 avatar={noIDUser.avatar}
                 left
-                notification={true}
+                //notification={true}
                 style={{ cursor: "pointer" }}
               />
             )}
