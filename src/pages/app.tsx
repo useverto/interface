@@ -1,4 +1,4 @@
-import { BalanceInterface } from "@verto/js/dist/faces";
+import { BalanceInterface, UserInterface } from "@verto/js/dist/faces";
 import { Card, Page, Spacer, Tooltip, useTheme } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
@@ -9,14 +9,21 @@ import {
   cardListAnimation,
   opacityAnimation,
 } from "../utils/animations";
-import { PlusIcon, ChevronUpIcon, ChevronDownIcon } from "@iconicicons/react";
+import {
+  PlusIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ArrowRightIcon,
+} from "@iconicicons/react";
 import { arPrice } from "../utils/arweave";
+import { randomEmoji } from "../utils/user";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import Watchlist from "../components/Watchlist";
 import axios from "axios";
+import Link from "next/link";
 import styles from "../styles/views/app.module.sass";
 
 const client = new Verto();
@@ -27,14 +34,19 @@ const App = () => {
   const [showMorePsts, setShowMorePsts] = useState(false);
   const theme = useTheme();
   const [owned, setOwned] = useState<ArtworkInterface[]>([]);
+  const [userData, setUserData] = useState<UserInterface>();
+  const [loadingOwned, setLoadingOwned] = useState(true);
 
   useEffect(() => {
     if (!address) return;
     setBalances([]);
     setOwned([]);
+    setLoadingOwned(true);
 
     (async () => {
       const user = (await client.getUser(address)) ?? null;
+      setUserData(user);
+
       const { data: ownedCollectibles } = await axios.get(
         `https://v2.cache.verto.exchange/user/${user?.username ?? address}/owns`
       );
@@ -51,6 +63,7 @@ const App = () => {
           }))
         )
       );
+      setLoadingOwned(false);
 
       if (user) {
         for (const addr of user.addresses) {
@@ -162,24 +175,54 @@ const App = () => {
       >
         <h1 className="Title">Owned collectibles</h1>
         <Spacer y={2} />
-        <AnimatePresence>
-          {owned.map((collectible, i) => (
-            <motion.div {...cardAnimation(i)} key={i}>
-              <Card.Asset
-                name={collectible.name}
-                // TODO
-                userData={{
-                  avatar: "https://th8ta.org/marton.jpeg",
-                  usertag: "martonlederer",
-                  name: "Marton Lederer",
-                }}
-                price={collectible.price ?? 0}
-                image={`https://arweave.net/${collectible.id}`}
-                reverse={theme === "Light"}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        <div className={styles.OwnedList}>
+          <AnimatePresence>
+            {owned.slice(0, 4).map((collectible, i) => (
+              <motion.div {...cardAnimation(i)} key={i}>
+                <Card.Asset
+                  name={collectible.name}
+                  // TODO
+                  userData={{
+                    avatar: "https://th8ta.org/marton.jpeg",
+                    usertag: "martonlederer",
+                    name: "Marton Lederer",
+                  }}
+                  price={collectible.price ?? 0}
+                  image={`https://arweave.net/${collectible.id}`}
+                  reverse={theme === "Light"}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          <AnimatePresence>
+            {owned.length > 0 && (
+              <motion.div className={styles.ViewAll} {...opacityAnimation()}>
+                <Link href={`/@${userData?.username ?? address}/owns`}>
+                  <a>
+                    View all
+                    <ArrowRightIcon />
+                  </a>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {!loadingOwned && owned.length === 0 && (
+            <p className={styles.NoOwned}>
+              You do not own any collectibles. <br />
+              Maybe check out <Link href="/space">Space</Link>?
+            </p>
+          )}
+          {/** Placeholder */}
+          {owned.length === 0 && (
+            <Card.Asset
+              name=""
+              userData={{ avatar: randomEmoji(), usertag: "...", name: "..." }}
+              price={0}
+              image={"/logo_dark.svg"}
+              style={{ opacity: 0 }}
+            />
+          )}
+        </div>
       </div>
     </Page>
   );

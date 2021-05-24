@@ -1,13 +1,74 @@
 @use "../variables"
   
 .OwnedCollectibles
+  $sidePadding: 2em
   border-radius: 18px
   box-shadow: variables.$darker-shadow
-  padding: 1.4em 2em 2em
+  padding: 1.4em $sidePadding $sidePadding
   background-color: variables.$foreground-color
   color: variables.$foreground-reverse-color
+  overflow: hidden
+
+  .OwnedList
+    position: relative
+    display: grid
+    justify-content: space-between
+    grid-template-columns: auto auto auto auto
+
+    .NoOwned
+      position: absolute
+      top: 50%
+      left: 50%
+      text-align: center
+      transform: translate(-50%, -50%)
+      margin: 0
+      font-size: 1.1em
+      color: variables.$foreground-reverse-color
+
+      a
+        text-decoration: underline
+        color: variables.$foreground-reverse-color
+
+    .ViewAll
+      position: absolute
+      display: flex
+      align-items: center
+      justify-content: center
+      top: 0
+      right: -$sidePadding
+      bottom: 0
+      width: 25%
+      background: linear-gradient(to right, rgba(#000, .5), rgba(#000, .75) 8%, rgba(#000, .95) 27%, #000 42%)
+
+      a
+        color: variables.$foreground-reverse-color
+        font-weight: 600
+        font-size: 1.3em
+        display: flex
+        align-items: center
+        width: max-content
+        cursor: pointer
+        text-decoration: none
+        transition: all .23s ease-in-out
+
+        svg
+          +variables.sameSizeSvg
+          margin-left: .24em
+
+        &:hover
+          opacity: .82
 
   &.DarkOwned
     background-color: variables.$lighter-background-color
     box-shadow: none
     color: variables.$foreground-color
+
+    .OwnedList
+      .ViewAll
+        background: linear-gradient(to right, rgba(#060e2b, .5), rgba(#060e2b, .75) 8%, rgba(#060e2b, .95) 27%, #060e2b 42%)
+
+        a
+          color: variables.$foreground-color
+
+      .NoOwned, .NoOwned a
+        color: variables.$foreground-color
