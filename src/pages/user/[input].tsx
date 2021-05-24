@@ -44,6 +44,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   if (router.isFallback) return <></>;
 
   const [creations, setCreations] = useState<string[]>([]);
+  const [owned, setOwned] = useState<string[]>([]);
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
   const currentAddress = useSelector(
@@ -85,7 +86,16 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   useEffect(() => {
     axios
       .get(`https://v2.cache.verto.exchange/user/${props.input}/creations`)
-      .then(({ data }) => setCreations(data.slice(0, 4)));
+      .then(({ data }) => setCreations(data.slice(0, 4)))
+      .catch();
+  });
+
+  // load owned
+  useEffect(() => {
+    axios
+      .get(`https://v2.cache.verto.exchange/user/${props.input}/owns`)
+      .then(({ data }) => setOwned(data.slice(0, 4)))
+      .catch();
   });
 
   // load orders
@@ -168,16 +178,36 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <Avatar
             avatar={randomAvatar}
             usertag={props.input}
-            // @ts-ignore
             displaytag={formatAddress(props.input, 14)}
             name={walletName}
             size="large-inline"
             className={styles.Avatar}
           />
-          {isCurrentUser && <Button>Edit profile</Button>}
+          {isCurrentUser && <Button small>Edit profile</Button>}
         </div>
       )}
       <Spacer y={5} />
+      <h1 className="Title">Owned arts {"&"} collectibles</h1>
+      <Spacer y={2} />
+      <div className={styles.Creations}>
+        {owned.map((id, i) => (
+          <motion.div key={i} {...cardAnimation(i)}>
+            <Card.AssetClear image={`https://arweave.net/${id}`} />
+          </motion.div>
+        ))}
+      </div>
+      {(owned.length > 0 && (
+        <>
+          <Spacer y={2} />
+          <Link href={`/@${props.input}/owns`}>
+            <a className="ShowMore">
+              View all
+              <ArrowRightIcon />
+            </a>
+          </Link>
+        </>
+      )) || <span className="NoItemsText">No collectibles owned...</span>}
+      <Spacer y={2} />
       <h1 className="Title">Creations</h1>
       <Spacer y={2} />
       <div className={styles.Creations}>
