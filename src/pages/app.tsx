@@ -33,7 +33,7 @@ const App = () => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const [showMorePsts, setShowMorePsts] = useState(false);
   const theme = useTheme();
-  const [owned, setOwned] = useState<ArtworkInterface[]>([]);
+  const [owned, setOwned] = useState([]);
   const [userData, setUserData] = useState<UserInterface>();
   const [loadingOwned, setLoadingOwned] = useState(true);
 
@@ -53,14 +53,22 @@ const App = () => {
 
       setOwned(
         await Promise.all(
-          ownedCollectibles.map(async (artoworkID: string) => ({
-            ...(
-              await axios.get(`https://v2.cache.verto.exchange/${artoworkID}`)
-            ).data,
-            id: artoworkID,
-            price:
-              (await arPrice()) * (await client.getPrice(artoworkID)).price,
-          }))
+          ownedCollectibles.map(async (artoworkID: string) => {
+            const { data } = await axios.get(
+              `https://v2.cache.verto.exchange/site/artwork/${artoworkID}`
+            );
+            return {
+              ...data,
+              owner: {
+                ...data.owner,
+                image: data.owner.image
+                  ? `https://arweave.net/${data.owner.image}`
+                  : randomEmoji(),
+              },
+              price:
+                (await arPrice()) * (await client.getPrice(artoworkID)).price,
+            };
+          })
         )
       );
       setLoadingOwned(false);
@@ -181,11 +189,10 @@ const App = () => {
               <motion.div {...cardAnimation(i)} key={i}>
                 <Card.Asset
                   name={collectible.name}
-                  // TODO
                   userData={{
-                    avatar: "https://th8ta.org/marton.jpeg",
-                    usertag: "martonlederer",
-                    name: "Marton Lederer",
+                    avatar: collectible.owner.image,
+                    name: collectible.owner.name,
+                    usertag: collectible.owner.username,
                   }}
                   price={collectible.price ?? 0}
                   image={`https://arweave.net/${collectible.id}`}
@@ -229,14 +236,3 @@ const App = () => {
 };
 
 export default App;
-
-interface ArtworkInterface {
-  state: {
-    name: string;
-    ticker: string;
-    description: string;
-    balances: Record<string, number>;
-  };
-  price: number;
-  [key: string]: any;
-}
