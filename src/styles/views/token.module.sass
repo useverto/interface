@@ -1,0 +1,56 @@
+@use "../variables"
+@use "../components/PeriodMenu"
+
+.TokenDetails
+  width: 62.5%
+
+.Name
+  font-size: variables.$title-font-size * .92
+  font-weight: 500
+  color: variables.$foreground-color
+  line-height: 1em
+  margin: 0
+
+  span
+    color: variables.$light-text
+    text-transform: uppercase
+    font-size: .5em
+
+.Price
+  font-size: variables.$title-font-size * 1.575
+  font-weight: 600
+  color: variables.$foreground-color
+  line-height: 1em
+  margin: 0
+
+.PeriodMenu
+  +PeriodMenu.periodMenu
+
+.Graph
+  position: relative
+  min-height: 285px
+  width: 100%
+
+.Paragraph
+  font-size: 1.1em
+  color: variables.$light-text
+  text-align: justify
+  margin: 0
+
+  ul li
+    position: relative
+    list-style: none
+    margin: .2em 0
+
+    &:last-child
+      margin-bottom: 0
+
+    &::before
+      content: "-"
+      position: absolute
+      left: -1.25em
+      color: variables.$foreground-color
+
+    a
+      color: variables.$foreground-color
+      text-decoration: underline

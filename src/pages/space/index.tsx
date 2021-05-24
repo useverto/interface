@@ -204,6 +204,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
               price={prices[token.id] ?? " ??"}
               image={`https://arweave.net/${token.logo}`}
               ticker={token.ticker}
+              onClick={() => router.push(`/space/${token.id}`)}
             />
           </motion.div>
         ))}

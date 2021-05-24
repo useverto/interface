@@ -132,6 +132,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                     }}
                     price={arworkData.price ?? 0}
                     image={`https://arweave.net/${arworkData.id}`}
+                    onClick={() => router.push(`/space/${arworkData.id}`)}
                   />
                 </motion.div>
               )}

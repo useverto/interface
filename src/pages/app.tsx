@@ -17,6 +17,7 @@ import {
 } from "@iconicicons/react";
 import { arPrice } from "../utils/arweave";
 import { randomEmoji } from "../utils/user";
+import { useRouter } from "next/router";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -36,6 +37,7 @@ const App = () => {
   const [owned, setOwned] = useState([]);
   const [userData, setUserData] = useState<UserInterface>();
   const [loadingOwned, setLoadingOwned] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     if (!address) return;
@@ -197,6 +199,7 @@ const App = () => {
                   price={collectible.price ?? 0}
                   image={`https://arweave.net/${collectible.id}`}
                   reverse={theme === "Light"}
+                  onClick={() => router.push(`/space/${collectible.id}`)}
                 />
               </motion.div>
             ))}
