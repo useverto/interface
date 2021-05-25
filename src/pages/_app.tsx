@@ -1,4 +1,11 @@
-import { Button, Modal, Spacer, useModal, VertoProvider } from "@verto/ui";
+import {
+  Button,
+  Modal,
+  Spacer,
+  useModal,
+  useToasts,
+  VertoProvider,
+} from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import {
@@ -19,6 +26,7 @@ import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
 import Head from "next/head";
+import axios from "axios";
 import "../styles/global.sass";
 import "../styles/progress.sass";
 
@@ -97,57 +105,60 @@ export default function App({ Component, pageProps }) {
   return (
     <ReduxProvider store={store}>
       <Theme>
-        <Head>
-          <link
-            rel="shortcut icon"
-            href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
-            type="image/svg"
-          />
-        </Head>
-        <Nav />
-        <Component {...pageProps} />
-        <Footer />
-        <Modal {...permissionsModal.bindings}>
-          <Modal.Title>Missing permissions</Modal.Title>
-          <Modal.Content style={{ textAlign: "justify" }}>
-            A few permissions are missing. Some of them are essential for Verto
-            to work. Please allow these to use Verto to it's full potential.
-            <Spacer y={1.5} />
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                onClick={async () => {
-                  try {
-                    await window.arweaveWallet.connect(permissions);
-                  } catch {}
-                  permissionsModal.setState(false);
-                }}
-                small
-              >
-                Allow
-              </Button>
-              <Spacer x={1} />
-              <Button
-                type="secondary"
-                small
-                onClick={() => {
-                  localStorage.setItem(
-                    ignorePermissionWarning,
-                    JSON.stringify({ val: true })
-                  );
-                  permissionsModal.setState(false);
+        <ArweaveNetGateway>
+          <Head>
+            <link
+              rel="shortcut icon"
+              href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+              type="image/svg"
+            />
+          </Head>
+          <Nav />
+          <Component {...pageProps} />
+          <Footer />
+          <Modal {...permissionsModal.bindings}>
+            <Modal.Title>Missing permissions</Modal.Title>
+            <Modal.Content style={{ textAlign: "justify" }}>
+              A few permissions are missing. Some of them are essential for
+              Verto to work. Please allow these to use Verto to it's full
+              potential.
+              <Spacer y={1.5} />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                Don't show again
-              </Button>
-            </div>
-          </Modal.Content>
-        </Modal>
+                <Button
+                  onClick={async () => {
+                    try {
+                      await window.arweaveWallet.connect(permissions);
+                    } catch {}
+                    permissionsModal.setState(false);
+                  }}
+                  small
+                >
+                  Allow
+                </Button>
+                <Spacer x={1} />
+                <Button
+                  type="secondary"
+                  small
+                  onClick={() => {
+                    localStorage.setItem(
+                      ignorePermissionWarning,
+                      JSON.stringify({ val: true })
+                    );
+                    permissionsModal.setState(false);
+                  }}
+                >
+                  Don't show again
+                </Button>
+              </div>
+            </Modal.Content>
+          </Modal>
+        </ArweaveNetGateway>
       </Theme>
     </ReduxProvider>
   );
@@ -184,4 +195,28 @@ const Theme = ({ children }) => {
   }, [theme]);
 
   return <VertoProvider theme={displayTheme}>{children}</VertoProvider>;
+};
+
+const ArweaveNetGateway = ({ children }) => {
+  const { setToast } = useToasts();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await axios({
+          method: "GET",
+          url: "https://arweave.net",
+          timeout: 8000,
+        });
+      } catch {
+        setToast({
+          description: "The arweave.net gateway is down",
+          type: "error",
+          duration: 7000,
+        });
+      }
+    })();
+  }, []);
+
+  return <>{children}</>;
 };
