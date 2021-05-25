@@ -1,11 +1,14 @@
 import {
   Avatar,
   Button,
+  Input,
   Modal,
   Popover,
   Spacer,
+  useInput,
   useModal,
   useTheme,
+  useToasts,
 } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions } from "../utils/arconnect";
@@ -16,6 +19,7 @@ import {
   MoonIcon,
   SunIcon,
   UserIcon,
+  UserPlusIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -50,6 +54,7 @@ const Nav = () => {
     avatar: "",
     name: "",
   });
+  const inviteModal = useModal();
   const signOutModal = useModal();
   const dispatch = useDispatch();
   const theme = useSelector((state: RootState) => state.themeReducer);
@@ -145,6 +150,26 @@ const Nav = () => {
     } catch {
       dispatch(updateAddress(null));
     }
+  }
+
+  // TODO: When updating address, check:
+  //  1. Does the address have an invite token?
+  //  2. Does the address have any invites?
+  const [invites, setInvites] = useState(10);
+  const target = useInput();
+  const { setToast } = useToasts();
+
+  async function invite() {
+    // TODO: Send invite ...
+    setInvites((val) => val - 1);
+    inviteModal.setState(false);
+    setToast({
+      title: "Invited",
+      description: `${formatAddress(
+        target.state.toString()
+      )} has been sent an invite.`,
+      duration: 2400,
+    });
   }
 
   return (
@@ -248,6 +273,19 @@ const Nav = () => {
                     " " +
                     (displayTheme === "Dark" ? styles.Dark : "") +
                     " " +
+                    (invites === 0 ? styles.DisabledMenuItem : "")
+                  }
+                  onClick={() => inviteModal.setState(true)}
+                >
+                  <UserPlusIcon />
+                  Invites
+                </div>
+                <div
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (displayTheme === "Dark" ? styles.Dark : "") +
+                    " " +
                     styles.DisabledMenuItem
                   }
                 >
@@ -326,6 +364,18 @@ const Nav = () => {
             </Button>
           )}
       </motion.div>
+      <Modal {...inviteModal.bindings}>
+        <Modal.Title>
+          {`You have ${invites} invite${invites === 1 ? "" : "s"}`}
+        </Modal.Title>
+        <Modal.Content>
+          <Input label="Address" type="text" {...target.bindings} />
+          <Spacer y={2.5} />
+          <Button small onClick={invite} className={styles.SignOutBtn}>
+            Send Invite
+          </Button>
+        </Modal.Content>
+      </Modal>
       <Modal {...signOutModal.bindings}>
         <Modal.Title>Are you sure?</Modal.Title>
         <Modal.Content>
