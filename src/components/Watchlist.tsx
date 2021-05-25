@@ -244,7 +244,7 @@ const Watchlist = () => {
                         >
                           {(prices[0].price < item.price && "+") || "-"}
                           {(
-                            (item.price / prices[0].price) *
+                            ((item.price - prices[0].price) / prices[0].price) *
                             100
                           ).toLocaleString(undefined, {
                             maximumFractionDigits: 2,
