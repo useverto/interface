@@ -32,6 +32,7 @@ import {
 } from "@iconicicons/react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
+import { swapItems } from "../utils/storage_names";
 import { client as arweave } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
@@ -316,7 +317,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   }, [inputUnit, outputUnit, inputs, outputs]);
 
   function getInputOutput(): { input: string; output: string } {
-    const data = localStorage.getItem("verto_swap_tokens");
+    const data = localStorage.getItem(swapItems);
     if (!data || !JSON.parse(data)?.val)
       return {
         input: "AR",
@@ -333,7 +334,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   function saveInputOutput() {
     localStorage.setItem(
-      "verto_swap_tokens",
+      swapItems,
       JSON.stringify({
         val: {
           input: inputUnit.state,

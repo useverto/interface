@@ -1,8 +1,15 @@
 @use "../variables"
 @use "../components/PeriodMenu"
 
+$detailsWidth: 62.5%
+
+.Wrapper
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+
 .TokenDetails
-  width: 62.5%
+  width: $detailsWidth
 
 .Name
   font-size: variables.$title-font-size * .92
@@ -54,3 +61,18 @@
     a
       color: variables.$foreground-color
       text-decoration: underline
+
+.ActionCard
+  position: sticky !important
+  top: 4em
+  right: 0
+  width: 100% - $detailsWidth - 8% !important
+  min-width: unset !important
+
+  div[class~=VertoInputWrapper]
+    width: calc(100% - 6px)
+    min-width: unset
+
+    div[class~=VertoInputInlineLabel]
+      min-width: 130px
+      padding: 0

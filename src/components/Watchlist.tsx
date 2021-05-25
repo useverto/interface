@@ -16,6 +16,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardAnimation, opacityAnimation } from "../utils/animations";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
+import {
+  watchlist as store_name,
+  watchlistPeriod,
+} from "../utils/storage_names";
 import Verto from "@verto/js";
 import dayjs from "dayjs";
 import isToday from "dayjs/plugin/isToday";
@@ -35,8 +39,6 @@ const Watchlist = () => {
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
   const [selectedPeriod, setSelectedPeriod] = useState<string>();
   const [editMode, setEditMode] = useState(false);
-  const store_name = "verto_watchlist";
-  const period_store_name = "verto_watchlist_watchlist";
   const [tokenIDs, setTokenIDs] = useState<string[]>();
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const theme = useTheme();
@@ -49,7 +51,7 @@ const Watchlist = () => {
   useEffect(() => {
     // AR is added to watchlist by default
     const tokenData = JSON.parse(localStorage.getItem(store_name) ?? '["AR"]');
-    const periodData = localStorage.getItem(period_store_name) ?? "ALL";
+    const periodData = localStorage.getItem(watchlistPeriod) ?? "ALL";
     setTokenIDs(tokenData);
     setSelectedPeriod(periodData);
   }, []);
@@ -112,7 +114,7 @@ const Watchlist = () => {
 
   // save period data
   useEffect(() => {
-    localStorage.setItem(period_store_name, selectedPeriod);
+    localStorage.setItem(watchlistPeriod, selectedPeriod);
   }, [selectedPeriod]);
 
   // load all tokens

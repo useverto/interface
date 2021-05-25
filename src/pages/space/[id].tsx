@@ -1,14 +1,26 @@
-import { Loading, Page, Spacer, useInput, useTheme } from "@verto/ui";
+import {
+  Button,
+  Card,
+  Input,
+  Loading,
+  Page,
+  Spacer,
+  useInput,
+  useTheme,
+  useToasts,
+} from "@verto/ui";
 import { PriceInterface } from "@verto/js/dist/faces";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
+import { swapItems } from "../../utils/storage_names";
+import { useRouter } from "next/router";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import dayjs from "dayjs";
-import styles from "../../styles/views/token.module.sass";
+import tokenStyles from "../../styles/views/token.module.sass";
 
 const client = new Verto();
 
@@ -95,10 +107,13 @@ const Community = (props: PropTypes) => {
             .reduce((a: number, b: number) => a + b, 0);
         }
 
-      const marketCap = (totalSupply * props.price).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
+      const marketCap = (totalSupply * (props.price ?? 0)).toLocaleString(
+        undefined,
+        {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }
+      );
 
       setMetrics({
         marketCap,
@@ -108,16 +123,48 @@ const Community = (props: PropTypes) => {
     }
   }, [state]);
 
-  const amount = useInput();
-  const target = useInput();
+  const amount = useInput<number>();
+  const target = useInput<string>();
+
+  const { setToast } = useToasts();
+  const [transferring, setTransferring] = useState(false);
 
   const transfer = async () => {
-    const id = await client.transfer(
-      amount.state as number,
-      props.id,
-      target.state as string
+    setTransferring(true);
+
+    try {
+      await client.transfer(amount.state, props.id, target.state);
+      setToast({
+        description: `Transferring ${amount.state.toLocaleString()} ${
+          props.ticker
+        }`,
+        type: "success",
+        duration: 2600,
+      });
+    } catch {
+      setToast({
+        description: `Could not transfer ${props.ticker}`,
+        type: "success",
+        duration: 2600,
+      });
+    }
+
+    setTransferring(false);
+  };
+
+  const router = useRouter();
+
+  const goToSwap = () => {
+    localStorage.setItem(
+      swapItems,
+      JSON.stringify({
+        val: {
+          input: "AR",
+          output: props.id,
+        },
+      })
     );
-    console.log(id);
+    router.push("/swap");
   };
 
   return (
@@ -128,162 +175,210 @@ const Community = (props: PropTypes) => {
         <Metas title={props.name} />
       </Head>
       <Spacer y={3} />
-      <div className={styles.TokenDetails}>
-        <h1 className={styles.Name}>
-          {props.name} <span>({props.ticker})</span>
-        </h1>
-        <h1 className={styles.Price}>
-          $
-          {props.price.toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-            minimumFractionDigits: 2,
-          })}
-        </h1>
-        <Spacer y={3.75} />
-        <div className={styles.PeriodMenu}>
-          {periods.map((per, i) => (
-            <span
-              key={i}
-              className={selectedPeriod === per ? styles.Selected : ""}
-              onClick={() => setSelectedPeriod(per)}
-            >
-              {per}
-            </span>
-          ))}
-        </div>
-        <Spacer y={1.5} />
-        <div className={styles.Graph}>
-          {history && (
-            <Line
-              data={{
-                labels: history.map(({ date }) => date),
-                datasets: [
-                  {
-                    data: history.map(({ price }) => price),
-                    ...GraphDataConfig,
-                    borderColor: theme === "Light" ? "#000000" : "#ffffff",
-                  },
-                ],
-              }}
-              options={GraphOptions({
-                theme,
-                tooltipText: ({ value }) =>
-                  `${Number(value).toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  })} AR`,
-              })}
-            />
-          )}
-        </div>
-        <Spacer y={3.75} />
-        <h1 className="Title">About</h1>
-        <Spacer y={1} />
-        <p className={styles.Paragraph}>
-          {state?.settings?.communityDescription || (
-            <>
-              <Loading.Skeleton
-                style={{
-                  width: "100%",
-                  marginBottom: ".5em",
-                  height: "1.35em",
+      <div className={tokenStyles.Wrapper}>
+        <div className={tokenStyles.TokenDetails}>
+          <h1 className={tokenStyles.Name}>
+            {props.name} <span>({props.ticker})</span>
+          </h1>
+          <h1 className={tokenStyles.Price}>
+            $
+            {(props.price ?? 0).toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+              minimumFractionDigits: 2,
+            })}
+          </h1>
+          <Spacer y={3.75} />
+          <div className={tokenStyles.PeriodMenu}>
+            {periods.map((per, i) => (
+              <span
+                key={i}
+                className={selectedPeriod === per ? tokenStyles.Selected : ""}
+                onClick={() => setSelectedPeriod(per)}
+              >
+                {per}
+              </span>
+            ))}
+          </div>
+          <Spacer y={1.5} />
+          <div className={tokenStyles.Graph}>
+            {history && (
+              <Line
+                data={{
+                  labels: history.map(({ date }) => date),
+                  datasets: [
+                    {
+                      data: history.map(({ price }) => price),
+                      ...GraphDataConfig,
+                      borderColor: theme === "Light" ? "#000000" : "#ffffff",
+                    },
+                  ],
                 }}
+                options={GraphOptions({
+                  theme,
+                  tooltipText: ({ value }) =>
+                    `${Number(value).toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                    })} AR`,
+                })}
               />
-              <Loading.Skeleton
-                style={{
-                  width: "100%",
-                  marginBottom: ".5em",
-                  height: "1.35em",
-                }}
-              />
-              <Loading.Skeleton
-                style={{
-                  width: "100%",
-                  marginBottom: ".5em",
-                  height: "1.35em",
-                }}
-              />
-              <Loading.Skeleton style={{ width: "85%", height: "1.35em" }} />
-            </>
-          )}
-        </p>
-        <Spacer y={1.8} />
-        <h1 className="Title">Metrics</h1>
-        <Spacer y={1} />
-        <p className={styles.Paragraph}>
-          {(metrics && (
-            <>
-              Market Cap: ~${metrics.marketCap.toLocaleString()} USD
-              <br />
-              Circulating Supply: {metrics.circulatingSupply.toLocaleString()}{" "}
-              {props.ticker}
-              <br />
-              Total Supply: {metrics.totalSupply.toLocaleString()}{" "}
-              {props.ticker}
-            </>
-          )) || (
-            <>
-              <Loading.Skeleton
-                style={{ width: "36%", marginBottom: ".5em", height: "1.35em" }}
-              />
-              <Loading.Skeleton
-                style={{ width: "36%", marginBottom: ".5em", height: "1.35em" }}
-              />
-              <Loading.Skeleton style={{ width: "36%", height: "1.35em" }} />
-            </>
-          )}
-        </p>
-        <Spacer y={1.8} />
-        <h1 className="Title">Links</h1>
-        <Spacer y={1} />
-        <p className={styles.Paragraph}>
-          <ul>
-            {state?.settings?.communityAppUrl && (
-              <li>
-                <a
-                  href={state.settings.communityAppUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {state.settings.communityAppUrl.replace(
-                    /(http(s?)):\/\//,
-                    ""
-                  )}
-                </a>
-              </li>
             )}
-            {state && (
-              <li>
-                <a
-                  href={`https://community.xyz/#${props.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  community.xyz/{props.name.toLowerCase()}
-                </a>
-              </li>
+          </div>
+          <Spacer y={3.75} />
+          <h1 className="Title">About</h1>
+          <Spacer y={1} />
+          <p className={tokenStyles.Paragraph}>
+            {state?.settings?.communityDescription ||
+              (state && "No community description available...") || (
+                <>
+                  <Loading.Skeleton
+                    style={{
+                      width: "100%",
+                      marginBottom: ".5em",
+                      height: "1.35em",
+                    }}
+                  />
+                  <Loading.Skeleton
+                    style={{
+                      width: "100%",
+                      marginBottom: ".5em",
+                      height: "1.35em",
+                    }}
+                  />
+                  <Loading.Skeleton
+                    style={{
+                      width: "100%",
+                      marginBottom: ".5em",
+                      height: "1.35em",
+                    }}
+                  />
+                  <Loading.Skeleton
+                    style={{ width: "85%", height: "1.35em" }}
+                  />
+                </>
+              )}
+          </p>
+          <Spacer y={1.8} />
+          <h1 className="Title">Metrics</h1>
+          <Spacer y={1} />
+          <p className={tokenStyles.Paragraph}>
+            {(metrics && (
+              <>
+                Market Cap: ~${metrics.marketCap.toLocaleString()} USD
+                <br />
+                Circulating Supply: {metrics.circulatingSupply.toLocaleString()}{" "}
+                {props.ticker}
+                <br />
+                Total Supply: {metrics.totalSupply.toLocaleString()}{" "}
+                {props.ticker}
+              </>
+            )) || (
+              <>
+                <Loading.Skeleton
+                  style={{
+                    width: "36%",
+                    marginBottom: ".5em",
+                    height: "1.35em",
+                  }}
+                />
+                <Loading.Skeleton
+                  style={{
+                    width: "36%",
+                    marginBottom: ".5em",
+                    height: "1.35em",
+                  }}
+                />
+                <Loading.Skeleton style={{ width: "36%", height: "1.35em" }} />
+              </>
             )}
-            {state?.settings?.communityDiscussionLinks &&
-              state?.settings?.communityDiscussionLinks.map((url, i) => (
-                <li key={i}>
-                  <a href={url} target="_blank" rel="noopener noreferrer">
-                    {url.replace(/(http(s?)):\/\//, "")}
+          </p>
+          <Spacer y={1.8} />
+          <h1 className="Title">Links</h1>
+          <Spacer y={1} />
+          <p className={tokenStyles.Paragraph}>
+            <ul>
+              {state?.settings?.communityAppUrl && (
+                <li>
+                  <a
+                    href={state.settings.communityAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {state.settings.communityAppUrl.replace(
+                      /(http(s?)):\/\//,
+                      ""
+                    )}
                   </a>
                 </li>
-              ))}
-          </ul>
-          {!state?.settings && (
-            <>
-              <Loading.Skeleton
-                style={{ width: "28%", marginBottom: ".5em", height: "1.35em" }}
-              />
-              <Loading.Skeleton
-                style={{ width: "28%", marginBottom: ".5em", height: "1.35em" }}
-              />
-              <Loading.Skeleton style={{ width: "28%", height: "1.35em" }} />
-            </>
-          )}
-        </p>
+              )}
+              {state && (
+                <li>
+                  <a
+                    href={`https://community.xyz/#${props.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    community.xyz/{props.name.toLowerCase()}
+                  </a>
+                </li>
+              )}
+              {state?.settings?.communityDiscussionLinks &&
+                state?.settings?.communityDiscussionLinks.map((url, i) => (
+                  <li key={i}>
+                    <a href={url} target="_blank" rel="noopener noreferrer">
+                      {url.replace(/(http(s?)):\/\//, "")}
+                    </a>
+                  </li>
+                ))}
+            </ul>
+            {!state?.settings && (
+              <>
+                <Loading.Skeleton
+                  style={{
+                    width: "28%",
+                    marginBottom: ".5em",
+                    height: "1.35em",
+                  }}
+                />
+                <Loading.Skeleton
+                  style={{
+                    width: "28%",
+                    marginBottom: ".5em",
+                    height: "1.35em",
+                  }}
+                />
+                <Loading.Skeleton style={{ width: "28%", height: "1.35em" }} />
+              </>
+            )}
+          </p>
+        </div>
+        <Card className={tokenStyles.ActionCard}>
+          <Input
+            label="Address"
+            placeholder="Transfer target..."
+            {...target.bindings}
+          />
+          <Spacer y={1.2} />
+          <Input
+            label="Amount"
+            placeholder="2000"
+            type="number"
+            {...amount.bindings}
+            inlineLabel={props.ticker}
+          />
+          <Spacer y={2.8} />
+          <Button
+            onClick={transfer}
+            style={{ width: "100%" }}
+            loading={transferring}
+          >
+            Transfer
+          </Button>
+          <Spacer y={1.3} />
+          <Button type="outlined" style={{ width: "100%" }} onClick={goToSwap}>
+            Swap
+          </Button>
+        </Card>
       </div>
     </>
   );

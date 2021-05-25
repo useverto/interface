@@ -10,6 +10,10 @@ import { RootState } from "../store/reducers";
 import { updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
+import {
+  ignorePermissionWarning,
+  theme as themeStorageName,
+} from "../utils/storage_names";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
@@ -78,7 +82,7 @@ export default function App({ Component, pageProps }) {
 
   async function checkPerms() {
     const existingPerms = await window.arweaveWallet.getPermissions();
-    const ignore = localStorage.getItem("verto_ignore_permission_warning");
+    const ignore = localStorage.getItem(ignorePermissionWarning);
 
     if (ignore && JSON.parse(ignore).val) return;
 
@@ -133,7 +137,7 @@ export default function App({ Component, pageProps }) {
                 small
                 onClick={() => {
                   localStorage.setItem(
-                    "verto_ignore_permission_warning",
+                    ignorePermissionWarning,
                     JSON.stringify({ val: true })
                   );
                   permissionsModal.setState(false);
@@ -155,7 +159,7 @@ const Theme = ({ children }) => {
   const [displayTheme, setDisplayTheme] = useState<DisplayTheme>("Light");
 
   useEffect(() => {
-    let loadedTheme = localStorage.getItem("verto_theme");
+    let loadedTheme = localStorage.getItem(themeStorageName);
     if (!loadedTheme) return;
     if (!["Dark", "Light", "System"].includes(loadedTheme))
       loadedTheme = "Light";
@@ -167,7 +171,7 @@ const Theme = ({ children }) => {
     const updateScheme = (val) =>
       setDisplayTheme(val.matches ? "Dark" : "Light");
 
-    localStorage.setItem("verto_theme", theme);
+    localStorage.setItem(themeStorageName, theme);
 
     if (theme === "System") setDisplayTheme(query.matches ? "Dark" : "Light");
     else setDisplayTheme(theme);

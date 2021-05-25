@@ -1,3 +1,5 @@
+import { cancelCache } from "./storage_names";
+
 /**
  * Get the type of an order
  *
@@ -10,8 +12,6 @@ export const getType = (input: string): "buy" | "sell" => {
   return "sell";
 };
 
-const cachedCancelStoreName = "verto_orders_cancelled";
-
 /**
  * Add an order to the cached cancelled orders list
  *
@@ -19,7 +19,7 @@ const cachedCancelStoreName = "verto_orders_cancelled";
  */
 export const addToCancel = (orderID: string) => {
   localStorage.setItem(
-    cachedCancelStoreName,
+    cancelCache,
     JSON.stringify([...getCancelledOrders(), orderID])
   );
 };
@@ -30,7 +30,7 @@ export const addToCancel = (orderID: string) => {
  * @returns Array of order ids
  */
 export const getCancelledOrders = (): string[] => {
-  const stored = localStorage.getItem(cachedCancelStoreName);
+  const stored = localStorage.getItem(cancelCache);
   if (!stored) return [];
 
   return JSON.parse(stored);
