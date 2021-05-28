@@ -1,6 +1,6 @@
 // TODO: update OG API url on production
 const OGApiUrl = "https://vext.vercel.app";
-const Metas = ({ title, image, subtitle, usertag }: MetaProps) => (
+const Metas = ({ title, image, subtitle, localImage }: MetaProps) => (
   <>
     <meta name="title" content={`Verto - ${title} ${subtitle ?? ""}`} />
     <meta
@@ -15,10 +15,11 @@ const Metas = ({ title, image, subtitle, usertag }: MetaProps) => (
       property="og:image"
       content={
         image ??
-        ((usertag && `${OGApiUrl}/api/user_og?u=${usertag}`) ||
-          `${OGApiUrl}/api/og?title=${
-            title + ((subtitle && "&subtitle=" + subtitle) || "")
-          }`)
+        (localImage
+          ? `${OGApiUrl}/${localImage}`
+          : `${OGApiUrl}/api/og?title=${
+              title + ((subtitle && "&subtitle=" + subtitle) || "")
+            }`)
       }
     />
     <meta
@@ -39,10 +40,11 @@ const Metas = ({ title, image, subtitle, usertag }: MetaProps) => (
       property="twitter:image"
       content={
         image ??
-        ((usertag && `${OGApiUrl}/api/user_og?u=${usertag}`) ||
-          `${OGApiUrl}/api/og?title=${
-            title + ((subtitle && "&subtitle=" + subtitle) || "")
-          }`)
+        (localImage
+          ? `${OGApiUrl}/${localImage}`
+          : `${OGApiUrl}/api/og?title=${
+              title + ((subtitle && "&subtitle=" + subtitle) || "")
+            }`)
       }
     />
     <meta
@@ -58,5 +60,5 @@ interface MetaProps {
   title: string;
   image?: string;
   subtitle?: string;
-  usertag?: string;
+  localImage?: string;
 }

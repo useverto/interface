@@ -171,8 +171,7 @@ const Community = (props: PropTypes) => {
     <>
       <Head>
         <title>Verto - {props.name}</title>
-        {/** TODO: get image of community and put it in the metas OG */}
-        <Metas title={props.name} />
+        <Metas title={props.name} localImage={`api/token_og?id=${props.id}`} />
       </Head>
       <Spacer y={3} />
       <div className={tokenStyles.Wrapper}>

@@ -137,7 +137,11 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         <Metas
           title="User"
           subtitle={`@${props.user?.username || props.input}`}
-          usertag={props?.user?.username}
+          localImage={
+            props?.user?.username
+              ? `api/user_og?u=${props?.user?.username}`
+              : undefined
+          }
         />
         <meta
           property="profile:username"

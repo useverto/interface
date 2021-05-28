@@ -5,16 +5,13 @@ import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
 import Verto from "@verto/js";
 
-// TODO: update OG API url on production
-const OGApiUrl = "https://vext.vercel.app";
-
 export default async function UserOG(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const { u } = req.query;
   if (!u || typeof u !== "string")
-    return res.status(400).send("Missing usertag");
+    return res.status(400).send("Missing or invalid usertag");
 
   const client = new Verto();
   const user = await client.getUser(u);
@@ -70,13 +67,6 @@ export default async function UserOG(
             overflow: hidden;
             white-space: nowrap;
           }
-          .logo {
-            position: absolute;
-            bottom: 10vh;
-            right: 10vh;
-            width: 10vh;
-            height: 10vh;
-          }
         </style>
       </head>
       <body>
@@ -87,7 +77,6 @@ export default async function UserOG(
           ${(user?.name && `<h1>${user.name}</h1>`) || ""}
           <h2>@${user?.username ?? formatAddress(u, 14)}</h2>
         </div>
-        <img class="logo" src="${OGApiUrl}/logo_light.svg" alt="v" />
       </body>
     </html>
   `;
