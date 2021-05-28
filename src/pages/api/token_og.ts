@@ -20,6 +20,10 @@ export default async function TokenOG(
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
   );
+  const currentPrice =
+    gecko.arweave.usd *
+    (Object.values(priceHistory)?.[Object.values(priceHistory).length - 1] ??
+      0);
 
   let {
     data: { state },
@@ -71,10 +75,10 @@ export default async function TokenOG(
       <body>
         <div class="token-data">
           <h1>${state.name} <span class="ticker">(${state.ticker})</span></h1>
-          <h1 class="price">$${
-            gecko.arweave.usd *
-            Object.values(priceHistory)[Object.values(priceHistory).length - 1]
-          }</h1>
+          <h1 class="price">$${currentPrice.toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2,
+          })}</h1>
         </div>
         <img class="logo" src="${
           state.settings?.communityLogo
