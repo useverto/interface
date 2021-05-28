@@ -15,6 +15,8 @@ import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/reducers";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -44,6 +46,7 @@ const Community = (props: PropTypes) => {
   const [selectedPeriod, setSelectedPeriod] = useState<string>("ALL");
   const [state, setState] = useState(null);
   const theme = useTheme();
+  const address = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
     axios
@@ -130,6 +133,16 @@ const Community = (props: PropTypes) => {
   const [transferring, setTransferring] = useState(false);
 
   const transfer = async () => {
+    if (amount.state <= 0) return amount.setStatus("error");
+
+    if (target.state === "") return target.setStatus("error");
+
+    const balances = await client.getBalances(address);
+    const tokenBalance = balances.find(({ id }) => id === props.id);
+
+    if (!tokenBalance || tokenBalance.balance < amount.state)
+      return amount.setStatus("error");
+
     setTransferring(true);
 
     try {
