@@ -33,6 +33,7 @@ export default async function TokenOG(
     state.settings = Object.fromEntries(new Map(state.settings));
 
   const size = { width: 1200, height: 630 };
+  const graphSize = { width: size.width * 0.8, height: size.width * 0.5 };
   const OGImage = `
     <!DOCTYPE HTML>
     <html>
@@ -70,6 +71,14 @@ export default async function TokenOG(
             width: 180px;
             height: 180px;
           }
+          .graph {
+            position: absolute;
+            top: 45vh;
+            left: 10vh;
+            right: 10vh;
+            height: 50vh;
+            width: calc(100vw - 20vh);
+          }
         </style>
       </head>
       <body>
@@ -85,6 +94,26 @@ export default async function TokenOG(
             ? `https://arweave.net/${state?.settings?.communityLogo}`
             : randomEmoji(600)
         }" alt="logo" />
+        <svg viewBox="0 0 ${graphSize.width} ${
+    graphSize.height
+  }" preserveAspectRatio="none" class="graph">
+          <path d="M${Object.values(priceHistory)
+            .reverse()
+            .map(
+              (val, i) =>
+                `${
+                  i * (graphSize.width / Object.values(priceHistory).length)
+                } ${
+                  graphSize.height -
+                  (graphSize.height / 100) *
+                    (((val - Math.min(...Object.values(priceHistory))) /
+                      (Math.max(...Object.values(priceHistory)) -
+                        Math.min(...Object.values(priceHistory)))) *
+                      100)
+                }`
+            )
+            .join(" L ")}" fill="none" stroke="#000" stroke-width="4" />
+        </svg>
       </body>
     </html>
   `;
