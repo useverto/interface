@@ -42,6 +42,11 @@ const Token = (props: PropTypes) => {
 };
 
 const Community = (props: PropTypes) => {
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
+  // TODO(@johnletey): SWR ...
+
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
   const [selectedPeriod, setSelectedPeriod] = useState<string>("ALL");
   const [state, setState] = useState(null);
@@ -164,8 +169,6 @@ const Community = (props: PropTypes) => {
 
     setTransferring(false);
   };
-
-  const router = useRouter();
 
   const goToSwap = () => {
     localStorage.setItem(
@@ -408,15 +411,24 @@ const Art = (props: PropTypes) => {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { id } = context.query;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: true,
+  };
+}
+
+export async function getStaticProps({ params: { id } }) {
   const res = await client.getPrice(id);
 
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
   );
 
-  return { props: { id, ...res, price: res.price * gecko.arweave.usd } };
+  return {
+    props: { id, ...res, price: res.price * gecko.arweave.usd },
+    revalidate: 1,
+  };
 }
 
 export default Token;
