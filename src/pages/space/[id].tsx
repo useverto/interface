@@ -26,8 +26,12 @@ import tokenStyles from "../../styles/views/token.module.sass";
 
 const client = new Verto();
 
-interface PropTypes extends PriceInterface {
+interface PropTypes {
   id: string;
+  name: string;
+  ticker: string;
+  price: number | "--";
+  type?: "art" | "community" | "custom";
 }
 
 const Token = (props: PropTypes) => {
@@ -115,13 +119,13 @@ const Community = (props: PropTypes) => {
             .reduce((a: number, b: number) => a + b, 0);
         }
 
-      const marketCap = (totalSupply * (props.price ?? 0)).toLocaleString(
-        undefined,
-        {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        }
-      );
+      const marketCap =
+        props.price === "--"
+          ? 0
+          : (totalSupply * props.price).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
 
       setMetrics({
         marketCap,
@@ -195,51 +199,58 @@ const Community = (props: PropTypes) => {
           <h1 className={tokenStyles.Name}>
             {props.name} <span>({props.ticker})</span>
           </h1>
-          <h1 className={tokenStyles.Price}>
-            $
-            {(props.price ?? 0).toLocaleString(undefined, {
-              maximumFractionDigits: 2,
-              minimumFractionDigits: 2,
-            })}
-          </h1>
-          <Spacer y={3.75} />
-          <div className={tokenStyles.PeriodMenu}>
-            {periods.map((per, i) => (
-              <span
-                key={i}
-                className={selectedPeriod === per ? tokenStyles.Selected : ""}
-                onClick={() => setSelectedPeriod(per)}
-              >
-                {per}
-              </span>
-            ))}
-          </div>
-          <Spacer y={1.5} />
-          <div className={tokenStyles.Graph}>
-            {history && (
-              <Line
-                data={{
-                  labels: history.map(({ date }) => date),
-                  datasets: [
-                    {
-                      data: history.map(({ price }) => price),
-                      ...GraphDataConfig,
-                      borderColor: theme === "Light" ? "#000000" : "#ffffff",
-                    },
-                  ],
-                }}
-                options={GraphOptions({
-                  theme,
-                  tooltipText: ({ value }) =>
-                    `${Number(value).toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                      minimumFractionDigits: 2,
-                    })} AR`,
+          {(props.price !== "--" && (
+            <>
+              <h1 className={tokenStyles.Price}>
+                $
+                {props.price.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
                 })}
-              />
-            )}
-          </div>
-          <Spacer y={3.75} />
+              </h1>
+              <Spacer y={3.75} />
+              <div className={tokenStyles.PeriodMenu}>
+                {periods.map((per, i) => (
+                  <span
+                    key={i}
+                    className={
+                      selectedPeriod === per ? tokenStyles.Selected : ""
+                    }
+                    onClick={() => setSelectedPeriod(per)}
+                  >
+                    {per}
+                  </span>
+                ))}
+              </div>
+              <Spacer y={1.5} />
+              <div className={tokenStyles.Graph}>
+                {history && (
+                  <Line
+                    data={{
+                      labels: history.map(({ date }) => date),
+                      datasets: [
+                        {
+                          data: history.map(({ price }) => price),
+                          ...GraphDataConfig,
+                          borderColor:
+                            theme === "Light" ? "#000000" : "#ffffff",
+                        },
+                      ],
+                    }}
+                    options={GraphOptions({
+                      theme,
+                      tooltipText: ({ value }) =>
+                        `${Number(value).toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                          minimumFractionDigits: 2,
+                        })} AR`,
+                    })}
+                  />
+                )}
+              </div>
+              <Spacer y={1.5} />
+            </>
+          )) || <Spacer y={3.75} />}
           <h1 className="Title">About</h1>
           <Spacer y={1} />
           <p className={tokenStyles.Paragraph}>
@@ -419,6 +430,9 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { id } }) {
+  const {
+    data: { state },
+  } = await axios.get(`https://v2.cache.verto.exchange/${id}`);
   const res = await client.getPrice(id);
 
   const { data: gecko } = await axios.get(
@@ -426,7 +440,12 @@ export async function getStaticProps({ params: { id } }) {
   );
 
   return {
-    props: { id, ...res, price: res.price * gecko.arweave.usd },
+    props: {
+      id,
+      name: state.name,
+      ticker: state.ticker,
+      price: res ? res.price * gecko.arweave.usd : "--",
+    },
     revalidate: 1,
   };
 }
