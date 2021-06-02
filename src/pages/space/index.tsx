@@ -239,7 +239,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <Spacer y={2} />
       <div className={styles.Cards}>
         {tokens.map((token, i) => (
-          <motion.div key={i} {...cardAnimation(i)}>
+          <motion.div key={i} {...cardAnimation(i + 4)}>
             <Card.Asset
               name={token.name}
               // @ts-ignore
