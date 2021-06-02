@@ -9,7 +9,6 @@ import {
   useTheme,
   useToasts,
 } from "@verto/ui";
-import { PriceInterface } from "@verto/js/dist/faces";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";

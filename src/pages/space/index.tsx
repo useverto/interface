@@ -5,16 +5,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
+import { randomEmoji } from "../../utils/user";
+import useSWR from "swr";
 import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import styles from "../../styles/views/space.module.sass";
-import useSWR from "swr";
 
 const client = new Verto();
 
-const Space = (props: { tokens: any[]; featured: any[] }) => {
+const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: tokens } = useSWR(
     "getTokens",
     async () => {
@@ -37,6 +38,26 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
     },
     {
       initialData: props.featured,
+    }
+  );
+  const { data: arts } = useSWR(
+    "getArts",
+    async () => {
+      const { data } = await axios.get(
+        "https://v2.cache.verto.exchange/site/artworks/random"
+      );
+      return data.map((val) => ({
+        ...val,
+        owner: {
+          ...val.owner,
+          image: val.owner.image
+            ? `https://arweave.net/${val.owner.image}`
+            : randomEmoji(),
+        },
+      }));
+    },
+    {
+      initialData: props.arts,
     }
   );
 
@@ -71,7 +92,7 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
 
-      for (const { id } of [...tokens, ...featured]) {
+      for (const { id } of [...tokens, ...featured, ...arts]) {
         const res = await client.getPrice(id);
 
         if (res.price)
@@ -193,6 +214,27 @@ const Space = (props: { tokens: any[]; featured: any[] }) => {
         </div>
       </div>
       <Spacer y={4} />
+      <h1 className="Title">Art {"&"} Collectibles</h1>
+      <Spacer y={2} />
+      <div className={styles.Cards}>
+        {arts.map((art, i) => (
+          <motion.div key={i} {...cardAnimation(i)}>
+            <Card.Asset
+              name={art.name}
+              userData={{
+                avatar: art.owner.image,
+                name: art.owner.name,
+                usertag: art.owner.username,
+              }}
+              // @ts-ignore
+              price={prices[art.id] ?? " ??"}
+              image={`https://arweave.net/${art.id}`}
+              onClick={() => router.push(`/space/${art.id}`)}
+            />
+          </motion.div>
+        ))}
+      </div>
+      <Spacer y={4} />
       <h1 className="Title">Communities</h1>
       <Spacer y={2} />
       <div className={styles.Cards}>
@@ -223,7 +265,20 @@ export async function getStaticProps() {
     "https://v2.cache.verto.exchange/site/communities/random"
   );
 
-  return { props: { tokens, featured }, revalidate: 1 };
+  let { data: arts } = await axios.get(
+    "https://v2.cache.verto.exchange/site/artworks/random"
+  );
+  arts = arts.map((val) => ({
+    ...val,
+    owner: {
+      ...val.owner,
+      image: val.owner.image
+        ? `https://arweave.net/${val.owner.image}`
+        : randomEmoji(),
+    },
+  }));
+
+  return { props: { tokens, featured, arts }, revalidate: 1 };
 }
 
 export default Space;
