@@ -131,7 +131,7 @@ const Nav = () => {
   }, [address]);
 
   async function login() {
-    await window.arweaveWallet.connect(permissions);
+    await window.arweaveWallet.connect(permissions, { name: "Verto" });
     await syncAddress();
   }
 

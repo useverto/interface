@@ -133,7 +133,9 @@ export default function App({ Component, pageProps }) {
                 <Button
                   onClick={async () => {
                     try {
-                      await window.arweaveWallet.connect(permissions);
+                      await window.arweaveWallet.connect(permissions, {
+                        name: "Verto",
+                      });
                     } catch {}
                     permissionsModal.setState(false);
                   }}

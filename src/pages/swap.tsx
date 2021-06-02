@@ -587,7 +587,9 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <Button
             onClick={async () => {
               try {
-                await window.arweaveWallet.connect(permissions);
+                await window.arweaveWallet.connect(permissions, {
+                  name: "Verto",
+                });
                 permissionModal.setState(false);
               } catch {}
             }}

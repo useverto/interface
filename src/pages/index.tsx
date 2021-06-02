@@ -65,7 +65,7 @@ const Home = ({ artwork }: { artwork: any }) => {
   }, []);
 
   async function login() {
-    await window.arweaveWallet.connect(permissions);
+    await window.arweaveWallet.connect(permissions, { name: "Verto" });
     dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
   }
 
