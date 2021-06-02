@@ -63,24 +63,30 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
   // set if the profile is owned by the logged in user
   useEffect(() => {
-    if (
-      !props.user?.addresses.includes(currentAddress) &&
-      props.input !== currentAddress
-    )
-      return;
-    setIsCurrentUser(true);
-  }, [currentAddress]);
+    (async () => {
+      if (!arconnect || !currentAddress) return;
+
+      const addresses = await arconnect.getAllAddresses();
+
+      setIsCurrentUser(false);
+
+      for (const addr of addresses)
+        if (props.user?.addresses.includes(addr) || props.input === addr) {
+          setIsCurrentUser(true);
+          break;
+        }
+    })();
+  }, [arconnect, currentAddress, props.input]);
 
   // set current wallet name from arconnect
   useEffect(() => {
     (async () => {
-      if (!arconnect) return;
-      if (!currentAddress) return;
+      if (!arconnect || !currentAddress || !isCurrentUser) return;
       setWalletName(
         (await arconnect.getWalletNames())[currentAddress] ?? "No name"
       );
     })();
-  }, [arconnect, currentAddress]);
+  }, [arconnect, currentAddress, isCurrentUser]);
 
   // load creations
   useEffect(() => {
