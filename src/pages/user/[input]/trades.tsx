@@ -166,7 +166,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: true,
+    fallback: "blocking",
   };
 }
 

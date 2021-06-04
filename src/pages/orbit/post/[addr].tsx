@@ -281,7 +281,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
 export async function getStaticPaths() {
   return {
     paths: [],
-    fallback: true,
+    fallback: "blocking",
   };
 }
 
