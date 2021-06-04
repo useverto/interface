@@ -22,6 +22,7 @@ import Head from "next/head";
 import Metas from "../../components/Metas";
 import dayjs from "dayjs";
 import tokenStyles from "../../styles/views/token.module.sass";
+import artStyles from "../../styles/views/art.module.sass";
 
 const client = new Verto();
 
@@ -35,11 +36,12 @@ interface PropTypes {
 
 const Token = (props: PropTypes) => {
   // TODO: custom layout
-  const type = props.type || "community";
 
   return (
     <Page>
-      {(type === "community" && <Community {...props} />) || <Art {...props} />}
+      {(props.type === "community" && <Community {...props} />) || (
+        <Art {...props} />
+      )}
     </Page>
   );
 };
@@ -416,7 +418,9 @@ const Art = (props: PropTypes) => {
         <title>Verto - {props.name}</title>
         <Metas title={props.name} image={`https://arweave.net/${props.id}`} />
       </Head>
-      <img src={`https://arweave.net/${props.id}`} />
+      <Spacer y={3} />
+      <h1 className={artStyles.Title}>{props.name}</h1>
+      <Spacer y={3} />
     </>
   );
 };
@@ -433,6 +437,9 @@ export async function getStaticProps({ params: { id } }) {
     data: { state },
   } = await axios.get(`https://v2.cache.verto.exchange/${id}`);
   const res = await client.getPrice(id);
+  const {
+    data: { type },
+  } = await axios.get(`http://v2.cache.verto.exchange/site/type/${id}`);
 
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
@@ -444,6 +451,7 @@ export async function getStaticProps({ params: { id } }) {
       name: state.name,
       ticker: state.ticker,
       price: res ? res.price * gecko.arweave.usd : "--",
+      type: type || "community",
     },
     revalidate: 1,
   };
