@@ -414,8 +414,21 @@ const Community = (props: PropTypes) => {
 
 const Art = (props: PropTypes) => {
   const [fullScreen, setFullScreen] = useState(false);
+  const [arPrice, setArPrice] = useState("--");
   const previewEl = useRef<HTMLDivElement>();
   const theme = useTheme();
+
+  useEffect(() => {
+    (async () => {
+      const price = await client.getPrice(props.id);
+      setArPrice(
+        price?.price?.toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        }) ?? "--"
+      );
+    })();
+  }, []);
 
   function toggleFullscreen() {
     if (!fullScreen) previewEl.current?.requestFullscreen();
@@ -459,7 +472,22 @@ const Art = (props: PropTypes) => {
             </button>
           </div>
         </Card>
-        <Card className={artStyles.Form}></Card>
+        <Card className={artStyles.Form}>
+          <p className={artStyles.FormTitle}>Lowest price:</p>
+          <h1 className={artStyles.Price}>
+            {(props.price !== "--" && (
+              <>
+                $
+                {props.price.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 2,
+                })}
+              </>
+            )) ||
+              props.price}
+            <span className={artStyles.FormTitle}>/share (~{arPrice})</span>
+          </h1>
+        </Card>
         {fullScreen && (
           <>
             <img

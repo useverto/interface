@@ -58,9 +58,27 @@
   $cardWidth: 48%
 
   .Form
-    $padding: 1.03em
+    $padding: 1.35em
     width: calc(#{$cardWidth} - #{$padding * 2})
     padding: $padding
+
+    p, .FormTitle
+      color: variables.$foreground-color
+      font-size: 1.1em
+      font-weight: 500
+      margin: 0
+
+    .FormTitle
+      color: variables.$light-text
+
+    .Price
+      margin: 0
+      color: variables.$foreground-color
+      font-weight: 500
+      
+      .FormTitle
+        margin-left: .7em
+        font-size: .5em
 
   &.FullScreenLayout
     display: block
