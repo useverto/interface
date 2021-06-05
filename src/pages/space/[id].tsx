@@ -9,13 +9,14 @@ import {
   useTheme,
   useToasts,
 } from "@verto/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
+import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -412,6 +413,23 @@ const Community = (props: PropTypes) => {
 };
 
 const Art = (props: PropTypes) => {
+  const [fullScreen, setFullScreen] = useState(false);
+  const previewEl = useRef<HTMLDivElement>();
+  const theme = useTheme();
+
+  function toggleFullscreen() {
+    if (!fullScreen) previewEl.current?.requestFullscreen();
+    else document.exitFullscreen();
+    setFullScreen((val) => !val);
+  }
+
+  useEffect(() => {
+    const handler = () => setFullScreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
   return (
     <>
       <Head>
@@ -420,6 +438,64 @@ const Art = (props: PropTypes) => {
       </Head>
       <Spacer y={3} />
       <h1 className={artStyles.Title}>{props.name}</h1>
+      <Spacer y={3} />
+      <div
+        className={
+          artStyles.Layout +
+          " " +
+          (fullScreen ? artStyles.FullScreenLayout : "")
+        }
+        ref={previewEl}
+      >
+        <Card className={artStyles.Preview}>
+          <img
+            src={`https://arweave.net/${props.id}`}
+            alt="art"
+            draggable={false}
+          />
+          <div className={artStyles.Actions}>
+            <button onClick={toggleFullscreen}>
+              <MaximizeIcon />
+            </button>
+          </div>
+        </Card>
+        <Card className={artStyles.Form}></Card>
+        {fullScreen && (
+          <>
+            <img
+              src={`https://arweave.net/${props.id}`}
+              alt="fullscreen-preview"
+              className={artStyles.FullScreenPreview}
+              draggable={false}
+            />
+            <div
+              className={
+                artStyles.Actions +
+                " " +
+                (theme === "Dark" ? artStyles.ActionsDark : "")
+              }
+            >
+              <button onClick={toggleFullscreen}>
+                <MinimizeIcon />
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+      <Spacer y={3} />
+      <h1 className="Title">History</h1>
+      <Spacer y={3} />
+      <Card.ArtActivity
+        type="buy"
+        user={{
+          avatar: "https://th8ta.org/marton.jpeg",
+          usertag: "martonlederer",
+          name: "Marton Lederer",
+        }}
+        timestamp={new Date()}
+        price={{ usd: 1204.768548, ar: 300.43256424 }}
+        orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
+      />
       <Spacer y={3} />
     </>
   );

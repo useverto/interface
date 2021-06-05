@@ -6,3 +6,92 @@
   font-size: variables.$title-font-size
   color: variables.$foreground-color
   font-weight: 500
+
+.Actions
+  position: absolute
+  bottom: 1.5em
+  right: 1.5em
+
+  button
+    position: relative
+    display: block
+    cursor: pointer
+    color: #fff
+    background-color: rgba(#000, .6)
+    border-radius: 100%
+    width: 34px
+    height: 34px
+    outline: none
+    border: none
+    margin-bottom: .65em
+    transition: all .23s ease-in-out
+
+    &:last-child
+      margin-bottom: 0
+
+    &:hover
+      background-color: rgba(#000, .8)
+        
+    &:active
+      transform: scale(.92)
+
+    svg
+      position: absolute
+      top: 50%
+      left: 50%
+      font-size: 1.1em
+      width: 66%
+      height: 66%
+      transform: translate(-50%, -50%)
+
+  &.ActionsDark button
+    color: #000
+    background-color: rgba(#fff, .8)
+
+    &:hover
+      background-color: rgba(#fff, .6)
+
+.Layout
+  display: flex
+  align-items: stretch
+  justify-content: space-between
+  $cardWidth: 48%
+
+  .Form
+    $padding: 1.03em
+    width: calc(#{$cardWidth} - #{$padding * 2})
+    padding: $padding
+
+  &.FullScreenLayout
+    display: block
+    position: relative
+    background-color: variables.$background-color
+
+    .Form, .Preview
+      display: none
+
+  .Preview
+    position: relative
+    width: $cardWidth
+    padding: 0
+      top: 50%
+    background-color: variables.$foreground-color
+    overflow: hidden
+
+    img
+      position: absolute
+      max-width: 100%
+      max-height: 100%
+      top: 50%
+      left: 50%
+      user-select: none
+      transform: translate(-50%, -50%)
+
+  .FullScreenPreview
+    position: absolute
+    max-width: 90%
+    max-height: 90%
+    top: 50%
+    left: 50%
+    user-select: none
+    transform: translate(-50%, -50%)
