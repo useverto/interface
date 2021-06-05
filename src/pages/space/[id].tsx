@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Card,
   Input,
@@ -17,6 +18,8 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
+import { UserData } from "@verto/ui/dist/components/Card";
+import { randomEmoji } from "../../utils/user";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -443,6 +446,37 @@ const Art = (props: PropTypes) => {
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
+  const [state, setState] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`https://v2.cache.verto.exchange/${props.id}`)
+      .then(({ data }) => {
+        let state = data.state;
+        if (state.settings)
+          state.settings = Object.fromEntries(new Map(state.settings));
+
+        setState(state);
+      });
+  }, []);
+
+  const [userData, setUserData] = useState<UserData>();
+  const router = useRouter();
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await axios.get(
+        `https://v2.cache.verto.exchange/site/artwork/${props.id}`
+      );
+
+      setUserData({
+        name: data.owner.name,
+        usertag: data.owner.username,
+        avatar: data.owner.image ?? randomEmoji(),
+      });
+    })();
+  }, []);
+
   return (
     <>
       <Head>
@@ -473,20 +507,40 @@ const Art = (props: PropTypes) => {
           </div>
         </Card>
         <Card className={artStyles.Form}>
-          <p className={artStyles.FormTitle}>Lowest price:</p>
-          <h1 className={artStyles.Price}>
-            {(props.price !== "--" && (
-              <>
-                $
-                {props.price.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                })}
-              </>
-            )) ||
-              props.price}
-            <span className={artStyles.FormTitle}>/share (~{arPrice})</span>
-          </h1>
+          <div>
+            <p className={artStyles.FormTitle}>Lowest price:</p>
+            <h1 className={artStyles.Price}>
+              {(props.price !== "--" && (
+                <>
+                  $
+                  {props.price.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  })}
+                </>
+              )) ||
+                props.price}
+              <span className={artStyles.FormTitle}>/share (~{arPrice})</span>
+            </h1>
+            <Spacer y={0.85} />
+            <Avatar
+              {...userData}
+              style={{ cursor: "pointer" }}
+              onClick={() => router.push(`/@${userData.usertag}`)}
+            />
+            <Spacer y={0.85} />
+            <p className={artStyles.FormTitle}>Description</p>
+            <p style={{ textAlign: "justify" }}>
+              {state?.settings?.communityDescription || "No description."}
+            </p>
+          </div>
+          <div>
+            <Button className={artStyles.FormBtn}>Buy</Button>
+            <Spacer y={0.85} />
+            <Button className={artStyles.FormBtn} type="outlined">
+              Sell
+            </Button>
+          </div>
         </Card>
         {fullScreen && (
           <>
