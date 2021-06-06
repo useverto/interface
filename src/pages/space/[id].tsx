@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
+import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { UserData } from "@verto/ui/dist/components/Card";
 import { randomEmoji } from "../../utils/user";
 import Verto from "@verto/js";
@@ -477,6 +478,28 @@ const Art = (props: PropTypes) => {
     })();
   }, []);
 
+  const [tokenType, setTokenType] = useState<
+    "image" | "video" | "audio" | "other"
+  >("image");
+  const [contentType, setContentType] = useState("");
+  const [videoMuted, setVideoMuted] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      const content_type = (
+        await fetch(`https://arweave.net/${props.id}`)
+      ).headers.get("Content-Type");
+      setContentType(content_type);
+
+      if (content_type.match(/^image\//)) setTokenType("image");
+      else if (content_type.match(/^video\//)) setTokenType("video");
+      else if (content_type.match(/^audio\//)) {
+        setTokenType("audio");
+        setVideoMuted(false);
+      } else setTokenType("other");
+    })();
+  }, []);
+
   return (
     <>
       <Head>
@@ -485,7 +508,7 @@ const Art = (props: PropTypes) => {
       </Head>
       <Spacer y={3} />
       <h1 className={artStyles.Title}>{props.name}</h1>
-      <Spacer y={3} />
+      <Spacer y={3.75} />
       <div
         className={
           artStyles.Layout +
@@ -495,12 +518,36 @@ const Art = (props: PropTypes) => {
         ref={previewEl}
       >
         <Card className={artStyles.Preview}>
-          <img
-            src={`https://arweave.net/${props.id}`}
-            alt="art"
-            draggable={false}
-          />
+          {(tokenType === "image" && (
+            <img
+              src={`https://arweave.net/${props.id}`}
+              alt="art"
+              draggable={false}
+            />
+          )) ||
+            ((tokenType === "video" || tokenType === "audio") && (
+              <video
+                controls={tokenType === "audio"}
+                muted={videoMuted}
+                autoPlay
+              >
+                <source
+                  src={`https://arweave.net/${props.id}`}
+                  type={contentType}
+                />
+              </video>
+            ))}
           <div className={artStyles.Actions}>
+            {tokenType === "video" && (
+              <button
+                onClick={() => setVideoMuted((val) => !val)}
+                className={artStyles.Octicon}
+              >
+                {(videoMuted && <MuteIcon size={24} />) || (
+                  <UnmuteIcon size={24} />
+                )}
+              </button>
+            )}
             <button onClick={toggleFullscreen}>
               <MaximizeIcon />
             </button>
@@ -527,6 +574,7 @@ const Art = (props: PropTypes) => {
               {...userData}
               style={{ cursor: "pointer" }}
               onClick={() => router.push(`/@${userData.usertag}`)}
+              className={artStyles.Avatar}
             />
             <Spacer y={0.85} />
             <p className={artStyles.FormTitle}>Description</p>
@@ -544,12 +592,27 @@ const Art = (props: PropTypes) => {
         </Card>
         {fullScreen && (
           <>
-            <img
-              src={`https://arweave.net/${props.id}`}
-              alt="fullscreen-preview"
-              className={artStyles.FullScreenPreview}
-              draggable={false}
-            />
+            {(tokenType === "image" && (
+              <img
+                src={`https://arweave.net/${props.id}`}
+                alt="art"
+                className={artStyles.FullScreenPreview}
+                draggable={false}
+              />
+            )) ||
+              ((tokenType === "video" || tokenType === "audio") && (
+                <video
+                  controls={tokenType === "audio"}
+                  muted={videoMuted}
+                  autoPlay
+                  className={artStyles.FullScreenPreview}
+                >
+                  <source
+                    src={`https://arweave.net/${props.id}`}
+                    type={contentType}
+                  />
+                </video>
+              ))}
             <div
               className={
                 artStyles.Actions +
@@ -557,6 +620,16 @@ const Art = (props: PropTypes) => {
                 (theme === "Dark" ? artStyles.ActionsDark : "")
               }
             >
+              {tokenType === "video" && (
+                <button
+                  onClick={() => setVideoMuted((val) => !val)}
+                  className={artStyles.Octicon}
+                >
+                  {(videoMuted && <MuteIcon size={24} />) || (
+                    <UnmuteIcon size={24} />
+                  )}
+                </button>
+              )}
               <button onClick={toggleFullscreen}>
                 <MinimizeIcon />
               </button>

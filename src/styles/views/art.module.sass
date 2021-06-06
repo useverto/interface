@@ -44,6 +44,11 @@
       height: 66%
       transform: translate(-50%, -50%)
 
+    &.Octicon svg
+      font-size: 1em
+      width: 55%
+      height: 55%
+
   &.ActionsDark button
     color: #000
     background-color: rgba(#fff, .8)
@@ -87,6 +92,13 @@
     .FormBtn
       width: 100%
 
+    .Avatar
+      cursor: pointer
+      transition: all .23s ease-in-out
+
+      &:active
+        transform: scale(.95)
+
   &.FullScreenLayout
     display: block
     position: relative
@@ -103,7 +115,7 @@
     background-color: variables.$foreground-color
     overflow: hidden
 
-    img
+    img, video
       position: absolute
       max-width: 100%
       max-height: 100%
