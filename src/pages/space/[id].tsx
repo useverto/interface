@@ -21,6 +21,8 @@ import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { UserData } from "@verto/ui/dist/components/Card";
 import { randomEmoji } from "../../utils/user";
+import { OrderBookInterface } from "@verto/js/dist/faces";
+import { formatAddress } from "../../utils/format";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -497,6 +499,47 @@ const Art = (props: PropTypes) => {
         setTokenType("audio");
         setVideoMuted(false);
       } else setTokenType("other");
+    })();
+  }, []);
+
+  type HistoryItem = OrderBookInterface & {
+    user: UserData;
+  };
+
+  const [orderBook, setOrderBook] = useState<HistoryItem[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const tradingPosts = await client.getTradingPosts();
+
+      for (const post of tradingPosts) {
+        const orders = await client.getOrderBook(post.address, props.id);
+        const history = await Promise.all(
+          orders.map(
+            async (order): Promise<HistoryItem> => {
+              const userData = await client.getUser(order.addr);
+
+              return {
+                ...order,
+                user: userData
+                  ? {
+                      name: userData.name,
+                      usertag: userData.username,
+                      avatar: userData.image ?? randomEmoji(),
+                    }
+                  : {
+                      name: undefined,
+                      usertag: order.addr,
+                      displaytag: formatAddress(order.addr, 10),
+                      avatar: randomEmoji(),
+                    },
+              };
+            }
+          )
+        );
+
+        setOrderBook((val) => [...val, ...history]);
+      }
     })();
   }, []);
 
