@@ -30,6 +30,7 @@ import { randomEmoji } from "../../utils/user";
 import { OrderBookInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
+import { run } from "ar-gql";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -569,12 +570,33 @@ const Art = (props: PropTypes) => {
   useEffect(() => {
     (async () => {
       if (!userData) return;
+      const listTx = (
+        await run(
+          `
+        query($id: ID!) {
+          transactions(ids: [$id]) {
+            edges {
+              node {
+                block {
+                  timestamp
+                }
+              }
+            }
+          }
+        }
+      `,
+          {
+            id: props.id,
+          }
+        )
+      ).data.transactions.edges[0];
+
       const listAction: HistoryItem = {
         txID: props.id,
-        amnt: 0,
+        amnt: parseFloat(listTx?.node.quantity?.ar ?? "0"),
         addr: "",
         type: "list",
-        createdAt: 0, // TODO
+        createdAt: listTx?.node.block.timestamp ?? 0,
         received: 0,
         user: userData,
       };

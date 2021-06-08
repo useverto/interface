@@ -356,10 +356,10 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@2.1.12-alpha":
-  version "2.1.12-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.12-alpha.tgz#f7931c1d93615ec4a9db9c9d135aacd03d357fdc"
-  integrity sha512-mzgNmHEPkUSOiCaXgFp6BIkJFcv+X7aBM+2eINC3NUFSwxb/zwdwPG3LbTZPVFgIh0espRBQKAY4Vutd2CFobw==
+"@verto/ui@^2.1.13-alpha":
+  version "2.1.13-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.13-alpha.tgz#502dbaab12ad8869692f53e488cc04ab4b512e30"
+  integrity sha512-JUA+tKIWRLohnckPLxrQBli+t1+ypj9e0Q8feALXAdL97Dp89FvOqZQr/bH7vZnfXw3QJVcGuSvnhj/Nq0Spxw==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     framer-motion "^3.1.1"
@@ -436,6 +436,13 @@ anymatch@~3.1.1:
   integrity sha512-KLy/ugo33KZA7nugtQ7O0E1c8kQ52N3IvD/XgIh4w/Nr28ypfkwDfA67F1ev4N1m5D+BOk1+b2dEJDfpj/VvZg==
   dependencies:
     sylvester ">= 0.0.8"
+
+ar-gql@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/ar-gql/-/ar-gql-0.0.6.tgz#ebb313195c092f27a997440a2835060feaf8df81"
+  integrity sha512-eXKsXGQcx8uwxwlFJzBXA17Qsg+Gty6tcp85IB5SX1iop7NsXLQ/iH2WEz69NCz2/Zcb81C1QryIiNTgw0/4aA==
+  dependencies:
+    axios "^0.21.1"
 
 arconnect@^0.2.8:
   version "0.2.8"
