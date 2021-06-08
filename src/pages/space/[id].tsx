@@ -17,12 +17,19 @@ import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  MaximizeIcon,
+  MinimizeIcon,
+} from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { UserData } from "@verto/ui/dist/components/Card";
 import { randomEmoji } from "../../utils/user";
 import { OrderBookInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
+import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -502,11 +509,27 @@ const Art = (props: PropTypes) => {
     })();
   }, []);
 
+  const [arRate, setArRate] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const {
+        data: {
+          arweave: { usd: price },
+        },
+      } = await axios.get(
+        "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+      );
+      setArRate(price);
+    })();
+  }, []);
+
   type HistoryItem = OrderBookInterface & {
     user: UserData;
   };
 
   const [orderBook, setOrderBook] = useState<HistoryItem[]>([]);
+  const [showAllOrders, setShowAllOrders] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -542,6 +565,23 @@ const Art = (props: PropTypes) => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!userData) return;
+      const listAction: HistoryItem = {
+        txID: props.id,
+        amnt: 0,
+        addr: "",
+        type: "list",
+        createdAt: 0, // TODO
+        received: 0,
+        user: userData,
+      };
+
+      setOrderBook((val) => [listAction, ...val]);
+    })();
+  }, [userData]);
 
   return (
     <>
@@ -680,21 +720,52 @@ const Art = (props: PropTypes) => {
           </>
         )}
       </div>
-      <Spacer y={3} />
+      <Spacer y={4.5} />
       <h1 className="Title">History</h1>
       <Spacer y={3} />
-      <Card.ArtActivity
-        type="buy"
-        user={{
-          avatar: "https://th8ta.org/marton.jpeg",
-          usertag: "martonlederer",
-          name: "Marton Lederer",
-        }}
-        timestamp={new Date()}
-        price={{ usd: 1204.768548, ar: 300.43256424 }}
-        orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
-      />
-      <Spacer y={3} />
+      <AnimatePresence>
+        {orderBook.map(
+          (order, i) =>
+            (showAllOrders || i < 3) && (
+              <motion.div key={i} {...cardListAnimation(i)}>
+                <Card.ArtActivity
+                  key={i}
+                  // @ts-ignore
+                  type={order.type}
+                  user={order.user}
+                  timestamp={new Date(order.createdAt * 1000)}
+                  price={{ usd: order.amnt * arRate, ar: order.amnt }}
+                  orderID={order.txID}
+                />
+                <Spacer y={i === 2 || i === orderBook.length - 1 ? 1 : 2} />
+              </motion.div>
+            )
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {(orderBook.length > 3 && (
+          <motion.div {...opacityAnimation()}>
+            <Spacer y={2} />
+            <span
+              className="ShowMore"
+              onClick={() => setShowAllOrders((val) => !val)}
+            >
+              Show{" "}
+              {(showAllOrders && (
+                <>
+                  less
+                  <ChevronUpIcon />
+                </>
+              )) || (
+                <>
+                  all
+                  <ChevronDownIcon />
+                </>
+              )}
+            </span>
+          </motion.div>
+        )) || <Spacer y={2} />}
+      </AnimatePresence>
     </>
   );
 };
