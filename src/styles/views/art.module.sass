@@ -1,5 +1,7 @@
 @use "../variables"
-  
+
+$formPadding: 1.35em
+
 .Title
   text-align: center
   margin: 0
@@ -63,12 +65,11 @@
   $cardWidth: 48%
 
   .Form
-    $padding: 1.35em
     display: flex
     flex-direction: column
     justify-content: space-between
-    width: calc(#{$cardWidth} - #{$padding * 2})
-    padding: $padding
+    width: calc(#{$cardWidth} - #{$formPadding * 2})
+    padding: $formPadding
 
     p, .FormTitle
       color: variables.$foreground-color
@@ -133,3 +134,9 @@
     user-select: none
     box-shadow: variables.$standard-shadow
     transform: translate(-50%, -50%)
+
+.Bits
+  $childWidth: calc(50% - #{$formPadding})
+  display: grid
+  justify-content: space-between
+  grid-template-columns: $childWidth $childWidth

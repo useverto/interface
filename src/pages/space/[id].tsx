@@ -530,7 +530,7 @@ const Art = (props: PropTypes) => {
   };
 
   const [orderBook, setOrderBook] = useState<HistoryItem[]>([]);
-  const [showAllOrders, setShowAllOrders] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -604,6 +604,40 @@ const Art = (props: PropTypes) => {
       setOrderBook((val) => [listAction, ...val]);
     })();
   }, [userData]);
+
+  interface BitsInterface {
+    quantity: number;
+    priceAr: number;
+    priceUSD: number;
+  }
+
+  const [sellingBits, setSellingBits] = useState<BitsInterface[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const tradingPosts = await client.getTradingPosts();
+      let bits: BitsInterface[] = [];
+
+      for (const post of tradingPosts) {
+        const orders = await client.getOrderBook(post.address, props.id);
+
+        bits = [
+          ...bits,
+          ...orders.map((order) => ({
+            quantity: order.amnt,
+            priceAr: order.rate,
+            priceUSD: order.rate * arRate,
+          })),
+        ];
+      }
+
+      setSellingBits(bits);
+    })();
+  }, [arRate]);
+
+  const [view, setView] = useState<"preview" | "buy" | "sell">("preview");
+
+  useEffect(() => setShowAll(false), [view]);
 
   return (
     <>
@@ -688,9 +722,18 @@ const Art = (props: PropTypes) => {
             </p>
           </div>
           <div>
-            <Button className={artStyles.FormBtn}>Buy</Button>
+            <Button
+              className={artStyles.FormBtn}
+              onClick={() => setView("buy")}
+            >
+              Buy
+            </Button>
             <Spacer y={0.85} />
-            <Button className={artStyles.FormBtn} type="outlined">
+            <Button
+              className={artStyles.FormBtn}
+              type="outlined"
+              onClick={() => setView("sell")}
+            >
               Sell
             </Button>
           </div>
@@ -743,37 +786,51 @@ const Art = (props: PropTypes) => {
         )}
       </div>
       <Spacer y={4.5} />
-      <h1 className="Title">History</h1>
+      <h1 className="Title">
+        {(view === "preview" && "History") || "Available bits"}
+      </h1>
       <Spacer y={3} />
       <AnimatePresence>
-        {orderBook.map(
-          (order, i) =>
-            (showAllOrders || i < 3) && (
+        {view === "preview" &&
+          orderBook.map(
+            (order, i) =>
+              (showAll || i < 3) && (
+                <motion.div key={i} {...cardListAnimation(i)}>
+                  <Card.ArtActivity
+                    key={i}
+                    // @ts-ignore
+                    type={order.type}
+                    user={order.user}
+                    timestamp={new Date(order.createdAt * 1000)}
+                    price={{ usd: order.amnt * arRate, ar: order.amnt }}
+                    orderID={order.txID}
+                  />
+                  <Spacer y={i === 2 || i === orderBook.length - 1 ? 1 : 2} />
+                </motion.div>
+              )
+          )}
+      </AnimatePresence>
+      <div className={artStyles.Bits}>
+        <AnimatePresence>
+          {(view === "buy" || view === "sell") &&
+            sellingBits.map((bit, i) => (
               <motion.div key={i} {...cardListAnimation(i)}>
-                <Card.ArtActivity
-                  key={i}
-                  // @ts-ignore
-                  type={order.type}
-                  user={order.user}
-                  timestamp={new Date(order.createdAt * 1000)}
-                  price={{ usd: order.amnt * arRate, ar: order.amnt }}
-                  orderID={order.txID}
-                />
+                <Card.Bits {...bit} />
                 <Spacer y={i === 2 || i === orderBook.length - 1 ? 1 : 2} />
               </motion.div>
-            )
-        )}
-      </AnimatePresence>
+            ))}
+        </AnimatePresence>
+      </div>
       <AnimatePresence>
-        {(orderBook.length > 3 && (
+        {(view === "preview" && orderBook.length > 3 && (
           <motion.div {...opacityAnimation()}>
             <Spacer y={2} />
             <span
               className="ShowMore"
-              onClick={() => setShowAllOrders((val) => !val)}
+              onClick={() => setShowAll((val) => !val)}
             >
               Show{" "}
-              {(showAllOrders && (
+              {(showAll && (
                 <>
                   less
                   <ChevronUpIcon />
