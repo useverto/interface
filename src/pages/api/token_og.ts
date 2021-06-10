@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { randomEmoji } from "../../utils/user";
+import { CACHE_URL } from "../../utils/arweave";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
 import Verto from "@verto/js";
@@ -27,7 +28,7 @@ export default async function TokenOG(
 
   let {
     data: { state },
-  } = await axios.get(`http://v2.cache.verto.exchange/${id}`);
+  } = await axios.get(`${CACHE_URL}/${id}`);
 
   if (state.settings)
     state.settings = Object.fromEntries(new Map(state.settings));

@@ -25,6 +25,7 @@ import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
+import { CACHE_URL } from "../../utils/arweave";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
@@ -91,7 +92,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   // load creations
   useEffect(() => {
     axios
-      .get(`https://v2.cache.verto.exchange/user/${props.input}/creations`)
+      .get(`${CACHE_URL}/user/${props.input}/creations`)
       .then(({ data }) => setCreations(data.slice(0, 4)))
       .catch();
   });
@@ -99,7 +100,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   // load owned
   useEffect(() => {
     axios
-      .get(`https://v2.cache.verto.exchange/user/${props.input}/owns`)
+      .get(`${CACHE_URL}/user/${props.input}/owns`)
       .then(({ data }) => setOwned(data.slice(0, 4)))
       .catch();
   });

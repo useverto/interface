@@ -15,7 +15,7 @@ import {
   ChevronDownIcon,
   ArrowRightIcon,
 } from "@iconicicons/react";
-import { arPrice } from "../utils/arweave";
+import { arPrice, CACHE_URL } from "../utils/arweave";
 import { randomEmoji } from "../utils/user";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
@@ -50,14 +50,14 @@ const App = () => {
       setUserData(user);
 
       const { data: ownedCollectibles } = await axios.get(
-        `https://v2.cache.verto.exchange/user/${user?.username ?? address}/owns`
+        `${CACHE_URL}/user/${user?.username ?? address}/owns`
       );
 
       setOwned(
         await Promise.all(
           ownedCollectibles.map(async (artoworkID: string) => {
             const { data } = await axios.get(
-              `https://v2.cache.verto.exchange/site/artwork/${artoworkID}`
+              `${CACHE_URL}/site/artwork/${artoworkID}`
             );
             return {
               ...data,

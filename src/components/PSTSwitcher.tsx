@@ -1,8 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import styles from "../styles/components/PSTSwitcher.module.sass";
 import { useRouter } from "next/router";
+import { CACHE_URL } from "../utils/arweave";
+import axios from "axios";
+import styles from "../styles/components/PSTSwitcher.module.sass";
 
 const PSTSwitcher = () => {
   const [firstLoad, setFirstLoad] = useState(true);
@@ -28,7 +29,7 @@ const PSTSwitcher = () => {
 
   const fetch = async (index: number): Promise<boolean> => {
     const { data: res } = await axios.get(
-      "https://v2.cache.verto.exchange/site/communities/random"
+      `${CACHE_URL}/site/communities/random`
     );
 
     let imgs: typeof images;

@@ -8,6 +8,7 @@ import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { randomEmoji } from "../utils/user";
+import { CACHE_URL } from "../utils/arweave";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -264,9 +265,7 @@ const Home = ({ artwork }: { artwork: any }) => {
 };
 
 export async function getServerSideProps() {
-  const { data } = await axios.get(
-    "https://v2.cache.verto.exchange/site/artwork"
-  );
+  const { data } = await axios.get(`${CACHE_URL}/site/artwork`);
 
   return { props: { artwork: data } };
 }

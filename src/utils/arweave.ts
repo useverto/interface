@@ -12,6 +12,8 @@ export const client = new Arweave({
 
 const gql = new ArDB(client);
 
+export const CACHE_URL = "https://v2.cache.verto.exchange";
+
 export const balanceHistory = async (
   address: string
 ): Promise<{ [date: string]: number }> => {

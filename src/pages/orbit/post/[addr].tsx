@@ -4,6 +4,8 @@ import { Bar } from "react-chartjs-2";
 import { cardListAnimation } from "../../../utils/animations";
 import { getType } from "../../../utils/order";
 import { useEffect, useState } from "react";
+import { CACHE_URL } from "../../../utils/arweave";
+import { useRouter } from "next/router";
 import Metas from "../../../components/Metas";
 import Head from "next/head";
 import axios from "axios";
@@ -11,9 +13,8 @@ import useInfiniteScroll from "../../../utils/infinite_scroll";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 import Verto from "@verto/js";
-import styles from "../../../styles/views/orbit.module.sass";
-import { useRouter } from "next/router";
 import useSWR from "swr";
+import styles from "../../../styles/views/orbit.module.sass";
 
 const client = new Verto();
 dayjs.extend(duration);
@@ -26,7 +27,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     "getStats",
     async () => {
       const { data } = await axios.get(
-        `https://v2.cache.verto.exchange/posts/${props.addr}/stats`
+        `${CACHE_URL}/posts/${props.addr}/stats`
       );
       return data;
     },
@@ -38,7 +39,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     "getOrders",
     async () => {
       const { data } = await axios.get(
-        `https://v2.cache.verto.exchange/posts/${props.addr}/orders?limit=10`
+        `${CACHE_URL}/posts/${props.addr}/orders?limit=10`
       );
       return data;
     },
@@ -67,7 +68,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     (async () => {
       try {
         const { data: post } = await axios.get(
-          `https://v2.cache.verto.exchange/posts/${props.addr}`
+          `${CACHE_URL}/posts/${props.addr}`
         );
         const { data: pingData } = await axios.get(post.endpoint);
         setStatus("online");
@@ -96,9 +97,9 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
 
   async function loadMore() {
     const { data: moreOrders } = await axios.get(
-      `https://v2.cache.verto.exchange/posts/${
-        props.addr
-      }/orders?limit=10&after=${data[data.length - 1].id}`
+      `${CACHE_URL}/posts/${props.addr}/orders?limit=10&after=${
+        data[data.length - 1].id
+      }`
     );
 
     return moreOrders;
@@ -286,12 +287,10 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { addr } }) {
-  const { data: stats } = await axios.get(
-    `https://v2.cache.verto.exchange/posts/${addr}/stats`
-  );
+  const { data: stats } = await axios.get(`${CACHE_URL}/posts/${addr}/stats`);
 
   const { data: orders } = await axios.get(
-    `https://v2.cache.verto.exchange/posts/${addr}/orders?limit=10`
+    `${CACHE_URL}/posts/${addr}/orders?limit=10`
   );
 
   return { props: { addr, stats, orders }, revalidate: 1 };

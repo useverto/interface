@@ -6,6 +6,7 @@ import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { randomEmoji } from "../../utils/user";
+import { CACHE_URL } from "../../utils/arweave";
 import useSWR from "swr";
 import axios from "axios";
 import Verto from "@verto/js";
@@ -19,9 +20,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: tokens } = useSWR(
     "getTokens",
     async () => {
-      const { data } = await axios.get(
-        "https://v2.cache.verto.exchange/site/communities/top"
-      );
+      const { data } = await axios.get(`${CACHE_URL}/site/communities/top`);
       return data;
     },
     {
@@ -31,9 +30,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: featured } = useSWR(
     "getFeatured",
     async () => {
-      const { data } = await axios.get(
-        "https://v2.cache.verto.exchange/site/communities/random"
-      );
+      const { data } = await axios.get(`${CACHE_URL}/site/communities/random`);
       return data;
     },
     {
@@ -43,9 +40,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: arts } = useSWR(
     "getArts",
     async () => {
-      const { data } = await axios.get(
-        "https://v2.cache.verto.exchange/site/artworks/random"
-      );
+      const { data } = await axios.get(`${CACHE_URL}/site/artworks/random`);
       return data.map((val) => ({
         ...val,
         owner: {
@@ -258,16 +253,12 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 };
 
 export async function getStaticProps() {
-  const { data: tokens } = await axios.get(
-    "https://v2.cache.verto.exchange/site/communities/top"
-  );
+  const { data: tokens } = await axios.get(`${CACHE_URL}/site/communities/top`);
   const { data: featured } = await axios.get(
-    "https://v2.cache.verto.exchange/site/communities/random"
+    `${CACHE_URL}/site/communities/random`
   );
 
-  let { data: arts } = await axios.get(
-    "https://v2.cache.verto.exchange/site/artworks/random"
-  );
+  let { data: arts } = await axios.get(`${CACHE_URL}/site/artworks/random`);
   arts = arts.map((val) => ({
     ...val,
     owner: {

@@ -31,6 +31,7 @@ import { OrderBookInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
+import { CACHE_URL } from "../../utils/arweave";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -74,15 +75,13 @@ const Community = (props: PropTypes) => {
   const address = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
-    axios
-      .get(`https://v2.cache.verto.exchange/${props.id}`)
-      .then(({ data }) => {
-        let state = data.state;
-        if (state.settings)
-          state.settings = Object.fromEntries(new Map(state.settings));
+    axios.get(`${CACHE_URL}/${props.id}`).then(({ data }) => {
+      let state = data.state;
+      if (state.settings)
+        state.settings = Object.fromEntries(new Map(state.settings));
 
-        setState(state);
-      });
+      setState(state);
+    });
   }, []);
 
   const [history, setHistory] = useState<
@@ -460,15 +459,13 @@ const Art = (props: PropTypes) => {
   const [state, setState] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(`https://v2.cache.verto.exchange/${props.id}`)
-      .then(({ data }) => {
-        let state = data.state;
-        if (state.settings)
-          state.settings = Object.fromEntries(new Map(state.settings));
+    axios.get(`${CACHE_URL}/${props.id}`).then(({ data }) => {
+      let state = data.state;
+      if (state.settings)
+        state.settings = Object.fromEntries(new Map(state.settings));
 
-        setState(state);
-      });
+      setState(state);
+    });
   }, []);
 
   const [userData, setUserData] = useState<UserData>();
@@ -476,9 +473,7 @@ const Art = (props: PropTypes) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await axios.get(
-        `https://v2.cache.verto.exchange/site/artwork/${props.id}`
-      );
+      const { data } = await axios.get(`${CACHE_URL}/site/artwork/${props.id}`);
 
       setUserData({
         name: data.owner.name,
@@ -968,11 +963,11 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params: { id } }) {
   const {
     data: { state },
-  } = await axios.get(`https://v2.cache.verto.exchange/${id}`);
+  } = await axios.get(`${CACHE_URL}/${id}`);
   const res = await client.getPrice(id);
   const {
     data: { type },
-  } = await axios.get(`http://v2.cache.verto.exchange/site/type/${id}`);
+  } = await axios.get(`${CACHE_URL}/site/type/${id}`);
 
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"

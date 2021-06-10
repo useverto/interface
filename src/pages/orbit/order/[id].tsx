@@ -3,12 +3,13 @@ import { useRouter } from "next/router";
 import { cardListAnimation } from "../../../utils/animations";
 import { motion } from "framer-motion";
 import { getType } from "../../../utils/order";
+import { CACHE_URL } from "../../../utils/arweave";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import Link from "next/link";
-import styles from "../../../styles/views/orbit.module.sass";
 import useSWR from "swr";
+import styles from "../../../styles/views/orbit.module.sass";
 
 const Order = (props: { order: any; id: string }) => {
   const router = useRouter();
@@ -17,9 +18,7 @@ const Order = (props: { order: any; id: string }) => {
   const { data: order } = useSWR(
     "getOrder",
     async () => {
-      const { data } = await axios.get(
-        `https://v2.cache.verto.exchange/order/${props.id}`
-      );
+      const { data } = await axios.get(`${CACHE_URL}/order/${props.id}`);
       return data;
     },
     {
@@ -77,9 +76,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { id } }) {
-  const { data: order } = await axios.get(
-    `https://v2.cache.verto.exchange/order/${id}`
-  );
+  const { data: order } = await axios.get(`${CACHE_URL}/order/${id}`);
 
   return { props: { order, id }, revalidate: 1 };
 }
