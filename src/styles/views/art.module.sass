@@ -100,6 +100,13 @@ $formPadding: 1.35em
       &:active
         transform: scale(.95)
 
+    div[class~=VertoInputWrapper]
+      width: calc(100% - 6px)
+
+      div[class~=VertoInputInlineLabel]
+        min-width: 160px
+        padding: 0
+
   &.FullScreenLayout
     display: block
     position: relative
@@ -140,3 +147,9 @@ $formPadding: 1.35em
   display: grid
   justify-content: space-between
   grid-template-columns: $childWidth $childWidth
+
+.NoSale
+  text-align: center
+  margin: 0
+  color: variables.$light-text
+  font-size: 1.1em

@@ -639,6 +639,41 @@ const Art = (props: PropTypes) => {
 
   useEffect(() => setShowAll(false), [view]);
 
+  const bitsAmountInput = useInput<number>(0);
+  const [bitsPrice, setBitsPrice] = useState({
+    usd: 0,
+    ar: 0,
+  });
+  const [totalSupply, setTotalSupply] = useState(0);
+
+  useEffect(() => {
+    if (!state) return;
+    const circulatingSupply = Object.values(state.balances).reduce(
+      (a: number, b: number) => a + b,
+      0
+    ) as number;
+
+    let total: number = circulatingSupply;
+    if (state.vault)
+      for (const vault of Object.values(state.vault) as any) {
+        total += vault
+          .map((a: any) => a.balance)
+          .reduce((a: number, b: number) => a + b, 0);
+      }
+
+    setTotalSupply(total);
+  }, [state]);
+
+  const [bitsAvailable, setBitsAvailable] = useState(0);
+
+  useEffect(() => {
+    let bitsOnSale = 0;
+
+    for (const bit of sellingBits) bitsOnSale += bit.quantity;
+
+    setBitsAvailable(bitsOnSale);
+  }, [sellingBits]);
+
   return (
     <>
       <Head>
@@ -693,50 +728,121 @@ const Art = (props: PropTypes) => {
           </div>
         </Card>
         <Card className={artStyles.Form}>
-          <div>
-            <p className={artStyles.FormTitle}>Lowest price:</p>
-            <h1 className={artStyles.Price}>
-              {(props.price !== "--" && (
-                <>
-                  $
-                  {props.price.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                    minimumFractionDigits: 2,
-                  })}
-                </>
-              )) ||
-                props.price}
-              <span className={artStyles.FormTitle}>/share (~{arPrice})</span>
-            </h1>
-            <Spacer y={0.85} />
-            <Avatar
-              {...userData}
-              style={{ cursor: "pointer" }}
-              onClick={() => router.push(`/@${userData.usertag}`)}
-              className={artStyles.Avatar}
-            />
-            <Spacer y={0.85} />
-            <p className={artStyles.FormTitle}>Description</p>
-            <p style={{ textAlign: "justify" }}>
-              {state?.settings?.communityDescription || "No description."}
-            </p>
-          </div>
-          <div>
-            <Button
-              className={artStyles.FormBtn}
-              onClick={() => setView("buy")}
-            >
-              Buy
-            </Button>
-            <Spacer y={0.85} />
-            <Button
-              className={artStyles.FormBtn}
-              type="outlined"
-              onClick={() => setView("sell")}
-            >
-              Sell
-            </Button>
-          </div>
+          {(view === "preview" && (
+            <>
+              <div>
+                <p className={artStyles.FormTitle}>Lowest price:</p>
+                <h1 className={artStyles.Price}>
+                  {(props.price !== "--" && (
+                    <>
+                      $
+                      {props.price.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+                      })}
+                    </>
+                  )) ||
+                    props.price}
+                  <span className={artStyles.FormTitle}>
+                    /share (~{arPrice})
+                  </span>
+                </h1>
+                <Spacer y={0.85} />
+                <Avatar
+                  {...userData}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => router.push(`/@${userData.usertag}`)}
+                  className={artStyles.Avatar}
+                />
+                <Spacer y={0.85} />
+                <p className={artStyles.FormTitle}>Description</p>
+                <p style={{ textAlign: "justify" }}>
+                  {state?.settings?.communityDescription || "No description."}
+                </p>
+              </div>
+              <div>
+                <Button
+                  className={artStyles.FormBtn}
+                  onClick={() => setView("buy")}
+                >
+                  Buy
+                </Button>
+                <Spacer y={0.85} />
+                <Button
+                  className={artStyles.FormBtn}
+                  type="outlined"
+                  onClick={() => setView("sell")}
+                >
+                  Sell
+                </Button>
+              </div>
+            </>
+          )) || (
+            <>
+              <div>
+                <Input
+                  {...bitsAmountInput.bindings}
+                  placeholder="Quantity of bits"
+                  inlineLabel="Bits"
+                  type="number"
+                />
+                <Spacer y={1.25} />
+                <Input
+                  readOnly
+                  currency="$"
+                  type="number"
+                  value={bitsPrice.usd}
+                  inlineLabel="USD"
+                />
+                <Spacer y={1.25} />
+                <Input
+                  readOnly
+                  type="number"
+                  value={bitsPrice.ar}
+                  inlineLabel="AR"
+                />
+                <Spacer y={1.25} />
+                {view === "buy" && (
+                  <>
+                    <p className={artStyles.FormTitle}>
+                      {bitsAvailable} bits available from {sellingBits.length}{" "}
+                      orders
+                      <br />
+                      {totalSupply} bits in total
+                    </p>
+                    <Spacer y={1.25} />
+                  </>
+                )}
+              </div>
+              {(view === "buy" && (
+                <div>
+                  <Button className={artStyles.FormBtn}>
+                    Add to collection
+                  </Button>
+                  <Spacer y={0.85} />
+                  <Button
+                    className={artStyles.FormBtn}
+                    type="secondary"
+                    onClick={() => setView("preview")}
+                  >
+                    Back
+                  </Button>
+                </div>
+              )) || (
+                <div>
+                  <Button className={artStyles.FormBtn}>Sell bits</Button>
+                  <Spacer y={0.85} />
+                  <Button
+                    className={artStyles.FormBtn}
+                    type="secondary"
+                    onClick={() => setView("preview")}
+                  >
+                    Back
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </Card>
         {fullScreen && (
           <>
@@ -821,6 +927,9 @@ const Art = (props: PropTypes) => {
             ))}
         </AnimatePresence>
       </div>
+      {sellingBits.length === 0 && view !== "preview" && (
+        <p className={artStyles.NoSale}>No bits on sale</p>
+      )}
       <AnimatePresence>
         {(view === "preview" && orderBook.length > 3 && (
           <motion.div {...opacityAnimation()}>
