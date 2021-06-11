@@ -444,10 +444,10 @@ ar-gql@^0.0.6:
   dependencies:
     axios "^0.21.1"
 
-arconnect@^0.2.8:
-  version "0.2.8"
-  resolved "https://registry.yarnpkg.com/arconnect/-/arconnect-0.2.8.tgz#46d86d4e52be1ed69b801ac54e949426fb12ef80"
-  integrity sha512-BGc4em7vMgZyNOI2SlkqFNNosPW0wN2CPs5mImVNWQfjv/WK7XAH6R23ngVCArh2r7NTIAtQYdnVRAID8eXzNw==
+arconnect@^0.2.9:
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/arconnect/-/arconnect-0.2.9.tgz#be07d2281f20d864a91cdcb44e3eed7fccb97f12"
+  integrity sha512-Us49eN/+8l6BrkAPdXnJVPwWlxxUPR7QaBjA0j3OBAcioIFRpwTdoPN9FxtwDGN91lgM6ebOudTXJToRiNizoA==
   dependencies:
     arweave "^1.10.13"
 
@@ -2844,6 +2844,25 @@ smartweave@^0.4.29:
   version "0.4.29"
   resolved "https://registry.yarnpkg.com/smartweave/-/smartweave-0.4.29.tgz#81b375f6b9aee8efbe6865e454a294727836be16"
   integrity sha512-NscAXWBtsdhHFWzgmxP8UxdoRJ4kl3hcRJr4uVDw7W5WHoJCc/fiirFbeXKq7+hvfCTtFCjvv7cNUOtUbkbXYg==
+  dependencies:
+    "@types/clui" "^0.3.0"
+    "@types/inquirer" "^7.3.1"
+    "@weavery/clarity" "^0.1.5"
+    arweave "^1.10.11"
+    bignumber.js "^9.0.1"
+    chalk "^4.1.0"
+    clui "^0.3.6"
+    figlet "^1.5.0"
+    inquirer "^7.3.3"
+    json-beautify "^1.1.1"
+    loglevel "^1.7.0"
+    sentencer "^0.2.1"
+    yargs "^16.2.0"
+
+smartweave@^0.4.31:
+  version "0.4.31"
+  resolved "https://registry.yarnpkg.com/smartweave/-/smartweave-0.4.31.tgz#d5647cdee11ca7a2ddaddd8384b8f46260d32727"
+  integrity sha512-DOW0AimcxnWGdcCPZm9hpAmwJ79uywcyLxu1HXPlWHEbwaN2TqYf4OgYMZTlHXVXXGk+m7PutUufgkx+Hv+fUQ==
   dependencies:
     "@types/clui" "^0.3.0"
     "@types/inquirer" "^7.3.1"

@@ -1,5 +1,5 @@
 import { BalanceInterface, UserInterface } from "@verto/js/dist/faces";
-import { Card, Page, Spacer, Tooltip, useTheme } from "@verto/ui";
+import { Card, Page, Spacer, Tooltip, useModal, useTheme } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
 import { useSelector } from "react-redux";
@@ -25,6 +25,7 @@ import Metas from "../components/Metas";
 import Watchlist from "../components/Watchlist";
 import axios from "axios";
 import Link from "next/link";
+import ListingModal from "../components/ListingModal";
 import styles from "../styles/views/app.module.sass";
 
 const client = new Verto();
@@ -38,6 +39,7 @@ const App = () => {
   const [userData, setUserData] = useState<UserInterface>();
   const [loadingOwned, setLoadingOwned] = useState(true);
   const router = useRouter();
+  const listModal = useModal();
 
   useEffect(() => {
     if (!address) return;
@@ -116,10 +118,9 @@ const App = () => {
       <Spacer y={4} />
       <h1 className="Title">
         Balances
-        {/** TODO @martonlederer */}
         <div className="ActionSheet">
           <Tooltip text="List new">
-            <button className="Btn">
+            <button className="Btn" onClick={() => listModal.setState(true)}>
               <PlusIcon />
             </button>
           </Tooltip>
@@ -234,6 +235,7 @@ const App = () => {
           )}
         </div>
       </div>
+      <ListingModal {...listModal.bindings} />
     </Page>
   );
 };

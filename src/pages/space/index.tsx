@@ -1,4 +1,4 @@
-import { Card, Page, Spacer, useTheme } from "@verto/ui";
+import { Button, Card, Page, Spacer, useModal, useTheme } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardAnimation } from "../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
@@ -12,6 +12,7 @@ import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
+import ListingModal from "../../components/ListingModal";
 import styles from "../../styles/views/space.module.sass";
 
 const client = new Verto();
@@ -64,6 +65,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const [currentTokenData, setCurrentTokenData] = useState(featured[0]);
   const router = useRouter();
   const theme = useTheme();
+  const listModal = useModal();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -247,7 +249,19 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         ))}
       </div>
       <Spacer y={4} />
-      <h1 className="Title">All</h1>
+      <h1 className="Title">
+        All
+        <div className="ActionSheet">
+          <Button
+            small
+            onClick={() => listModal.setState(true)}
+            style={{ padding: ".35em 1.2em" }}
+          >
+            Add new
+          </Button>
+        </div>
+      </h1>
+      <ListingModal {...listModal.bindings} />
     </Page>
   );
 };
