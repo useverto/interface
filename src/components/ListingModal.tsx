@@ -1,4 +1,4 @@
-import { Modal, Input, useInput, Spacer, Button } from "@verto/ui";
+import { Modal, Input, useInput, Spacer, Button, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { readContract } from "smartweave";
 import { client } from "../utils/arweave";
@@ -29,11 +29,27 @@ export default function ListingModal(props: Props) {
     })();
   }, [contractIDInput.state]);
 
+  const { setToast } = useToasts();
+
   async function listToken() {
     if (!/[a-z0-9_-]{43}/i.test(contractIDInput.state))
       return contractIDInput.setStatus("error");
+
     setLoading(true);
-    // TODO: list token here
+    try {
+      // TODO: list token here
+      setToast({
+        description: "Token is now listed",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Error listing token",
+        type: "error",
+        duration: 4500,
+      });
+    }
     setLoading(false);
   }
 

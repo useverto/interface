@@ -431,6 +431,8 @@ const Art = (props: PropTypes) => {
   const previewEl = useRef<HTMLDivElement>();
   const theme = useTheme();
 
+  // TODO(@johnletey): SWR ...
+
   useEffect(() => {
     (async () => {
       const price = await client.getPrice(props.id);
@@ -635,10 +637,6 @@ const Art = (props: PropTypes) => {
   useEffect(() => setShowAll(false), [view]);
 
   const bitsAmountInput = useInput<number>(0);
-  const [bitsPrice, setBitsPrice] = useState({
-    usd: 0,
-    ar: 0,
-  });
   const [totalSupply, setTotalSupply] = useState(0);
 
   useEffect(() => {
@@ -668,6 +666,83 @@ const Art = (props: PropTypes) => {
 
     setBitsAvailable(bitsOnSale);
   }, [sellingBits]);
+
+  const [price, setPrice] = useState(0);
+  const [bitsPrice, setBitsPrice] = useState({
+    usd: 0,
+    ar: 0,
+  });
+
+  useEffect(() => {
+    client.getPrice(props.id).then(({ price }) => setPrice(price ?? 0));
+  }, []);
+
+  useEffect(() => {
+    setBitsPrice({
+      usd: price * bitsAmountInput.state * arRate,
+      ar: price * bitsAmountInput.state,
+    });
+  }, [price, bitsAmountInput.state]);
+
+  const [ownedAmount, setOwnedAmount] = useState(0);
+  const address = useSelector((state: RootState) => state.addressReducer);
+
+  useEffect(() => {
+    if (!address) return;
+    (async () => {
+      const balances = await client.getBalances(address);
+      setOwnedAmount(balances.find(({ id }) => id === props.id)?.balance ?? 0);
+    })();
+  }, [address]);
+
+  const [loading, setLoading] = useState(false);
+  const { setToast } = useToasts();
+
+  async function buy() {
+    if (bitsAmountInput.state <= 0 && bitsAmountInput.state > bitsAvailable)
+      return bitsAmountInput.setStatus("error");
+
+    setLoading(true);
+    try {
+      // TODO @johnletey buy bits
+      setToast({
+        description: "Your order has been submitted",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Error submitting your order",
+        type: "error",
+        duration: 4500,
+      });
+    }
+    setLoading(false);
+    bitsAmountInput.setStatus(undefined);
+  }
+
+  async function sell() {
+    if (bitsAmountInput.state <= 0 && bitsAmountInput.state > ownedAmount)
+      return bitsAmountInput.setStatus("error");
+
+    setLoading(true);
+    try {
+      // TODO @johnletey sell bits
+      setToast({
+        description: "Your order has been submitted",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Error submitting your order",
+        type: "error",
+        duration: 4500,
+      });
+    }
+    setLoading(false);
+    bitsAmountInput.setStatus(undefined);
+  }
 
   return (
     <>
@@ -759,6 +834,7 @@ const Art = (props: PropTypes) => {
                 <Button
                   className={artStyles.FormBtn}
                   onClick={() => setView("buy")}
+                  disabled={!address || bitsAvailable === 0}
                 >
                   Buy
                 </Button>
@@ -767,6 +843,7 @@ const Art = (props: PropTypes) => {
                   className={artStyles.FormBtn}
                   type="outlined"
                   onClick={() => setView("sell")}
+                  disabled={!address || ownedAmount === 0}
                 >
                   Sell
                 </Button>
@@ -780,6 +857,8 @@ const Art = (props: PropTypes) => {
                   placeholder="Quantity of bits"
                   inlineLabel="Bits"
                   type="number"
+                  max={view === "sell" ? ownedAmount : bitsAvailable}
+                  min={0}
                 />
                 <Spacer y={1.25} />
                 <Input
@@ -811,26 +890,42 @@ const Art = (props: PropTypes) => {
               </div>
               {(view === "buy" && (
                 <div>
-                  <Button className={artStyles.FormBtn}>
+                  <Button
+                    className={artStyles.FormBtn}
+                    onClick={buy}
+                    loading={loading}
+                  >
                     Add to collection
                   </Button>
                   <Spacer y={0.85} />
                   <Button
                     className={artStyles.FormBtn}
                     type="secondary"
-                    onClick={() => setView("preview")}
+                    onClick={() => {
+                      if (loading) return;
+                      setView("preview");
+                    }}
                   >
                     Back
                   </Button>
                 </div>
               )) || (
                 <div>
-                  <Button className={artStyles.FormBtn}>Sell bits</Button>
+                  <Button
+                    className={artStyles.FormBtn}
+                    onClick={sell}
+                    loading={loading}
+                  >
+                    Sell bits
+                  </Button>
                   <Spacer y={0.85} />
                   <Button
                     className={artStyles.FormBtn}
                     type="secondary"
-                    onClick={() => setView("preview")}
+                    onClick={() => {
+                      if (loading) return;
+                      setView("preview");
+                    }}
                   >
                     Back
                   </Button>
