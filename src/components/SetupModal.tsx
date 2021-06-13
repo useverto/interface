@@ -25,11 +25,12 @@ export default function SetupModal(props: Props) {
       github: string;
     }>
   >({});
+  const [currentPfpName, setCurrentPfpName] = useState<string>();
 
   return (
     <Modal {...props}>
       <Modal.Title>Setup Verto ID</Modal.Title>
-      <Modal.Content style={{ overflowX: "hidden" }}>
+      <Modal.Content>
         {(page === 0 && (
           <>
             <p className={styles.Description}>
@@ -118,6 +119,25 @@ export default function SetupModal(props: Props) {
                   setSocialLinks((val) => ({ ...val, github: e.target.value }))
                 }
               />
+            </>
+          )) ||
+          (page === 2 && (
+            <>
+              <p className={styles.Description}>
+                Want to add a profile picture?
+              </p>
+              <Spacer y={2} />
+              <div className={styles.Pfp}>
+                <p>
+                  {currentPfpName ||
+                    "Drag & drop or click to add a profile picture"}
+                </p>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCurrentPfpName(e.target.files?.[0]?.name)}
+                />
+              </div>
             </>
           ))}
         <Spacer y={2.5} />
