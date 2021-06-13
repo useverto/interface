@@ -156,20 +156,34 @@ const Nav = () => {
   //  1. Does the address have an invite token?
   //  2. Does the address have any invites?
   const [invites, setInvites] = useState(10);
-  const target = useInput();
+  const target = useInput<string>();
   const { setToast } = useToasts();
+  const [loadingInvite, setLoadingInvite] = useState(false);
 
   async function invite() {
-    // TODO: Send invite ...
-    setInvites((val) => val - 1);
-    inviteModal.setState(false);
-    setToast({
-      title: "Invited",
-      description: `${formatAddress(
-        target.state.toString()
-      )} has been sent an invite.`,
-      duration: 2400,
-    });
+    if (!/[a-z0-9_-]{43}/i.test(target.state)) return target.setStatus("error");
+
+    setLoadingInvite(true);
+    try {
+      // TODO: Send invite ...
+
+      setInvites((val) => val - 1);
+      inviteModal.setState(false);
+      setToast({
+        title: "Invited",
+        description: `${formatAddress(
+          target.state.toString()
+        )} has been sent an invite.`,
+        duration: 2400,
+      });
+    } catch {
+      setToast({
+        description: "Error inviting address",
+        type: "error",
+        duration: 2300,
+      });
+    }
+    setLoadingInvite(false);
   }
 
   return (
@@ -365,13 +379,25 @@ const Nav = () => {
           )}
       </motion.div>
       <Modal {...inviteModal.bindings}>
-        <Modal.Title>
-          {`You have ${invites} invite${invites === 1 ? "" : "s"}`}
-        </Modal.Title>
+        <Modal.Title>Invite someone</Modal.Title>
         <Modal.Content>
-          <Input label="Address" type="text" {...target.bindings} />
+          <p className={styles.SignOutAlert}>
+            You have {invites} invite{invites === 1 ? "" : "s"} left
+          </p>
+          <Input
+            label="Address"
+            type="text"
+            {...target.bindings}
+            placeholder="Enter target address..."
+            className={styles.ModalInput}
+          />
           <Spacer y={2.5} />
-          <Button small onClick={invite} className={styles.SignOutBtn}>
+          <Button
+            small
+            onClick={invite}
+            className={styles.SignOutBtn}
+            loading={loadingInvite}
+          >
             Send Invite
           </Button>
         </Modal.Content>
