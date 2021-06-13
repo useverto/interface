@@ -1,14 +1,25 @@
-import { Modal, Input, useInput, Spacer, Button } from "@verto/ui";
+import {
+  Modal,
+  Input,
+  useInput,
+  Spacer,
+  Button,
+  Tooltip,
+  useToasts,
+} from "@verto/ui";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MentionIcon,
 } from "@primer/octicons-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CloseIcon } from "@iconicicons/react";
+import { formatAddress } from "../utils/format";
 import Instagram from "./icons/Instagram";
 import Twitter from "./icons/Github";
 import Facebook from "./icons/Facebook";
 import Github from "./icons/Github";
+import useArConnect from "use-arconnect";
 import styles from "../styles/components/SetupModal.module.sass";
 
 export default function SetupModal(props: Props) {
@@ -16,16 +27,50 @@ export default function SetupModal(props: Props) {
   const usernameInput = useInput<string>();
   const [bio, setBio] = useState("");
   const [page, setPage] = useState(0);
-  const [isNext, setIsNext] = useState(true);
   const [socialLinks, setSocialLinks] = useState<
     Partial<{
-      intagram: string;
+      instagram: string;
       twitter: string;
       facebook: string;
       github: string;
     }>
   >({});
   const [currentPfpName, setCurrentPfpName] = useState<string>();
+  const [addresses, setAddresses] = useState<string[]>([]);
+  const arconnect = useArConnect();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!arconnect) return;
+    arconnect.getAllAddresses().then((res) => setAddresses(res));
+  }, [props.open, arconnect]);
+
+  useEffect(() => {
+    nameInput.setState("");
+    usernameInput.setState("");
+    setBio("");
+    setPage(0);
+    setSocialLinks({});
+    setCurrentPfpName(undefined);
+    setLoading(false);
+  }, [props.open]);
+
+  const { setToast } = useToasts();
+
+  async function updateID() {
+    setLoading(true);
+    try {
+      // TODO @johnletey
+      setToast({ description: "Updated ID", type: "success", duration: 4500 });
+    } catch {
+      setToast({
+        description: "Could not update Verto ID",
+        type: "error",
+        duration: 4500,
+      });
+    }
+    setLoading(false);
+  }
 
   return (
     <Modal {...props}>
@@ -86,11 +131,11 @@ export default function SetupModal(props: Props) {
                 className={styles.Input + " " + styles.WithIconLabel}
                 leftInlineLabel={true}
                 inlineLabel={<Instagram />}
-                value={socialLinks.intagram}
+                value={socialLinks.instagram}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
-                    intagram: e.target.value,
+                    instagram: e.target.value,
                   }))
                 }
               />
@@ -139,6 +184,28 @@ export default function SetupModal(props: Props) {
                 />
               </div>
             </>
+          )) ||
+          (page === 3 && (
+            <>
+              <p className={styles.Description}>
+                Add your addresses to your ID.
+              </p>
+              <Spacer y={2} />
+              {addresses.map((addr, i) => (
+                <div className={styles.Address} key={i}>
+                  <p>{formatAddress(addr)}</p>
+                  <Tooltip text="Remove">
+                    <CloseIcon
+                      onClick={() =>
+                        setAddresses((val) =>
+                          val.filter((address) => address !== addr)
+                        )
+                      }
+                    />
+                  </Tooltip>
+                </div>
+              ))}
+            </>
           ))}
         <Spacer y={2.5} />
         <div
@@ -154,7 +221,7 @@ export default function SetupModal(props: Props) {
             style={{ paddingLeft: "1em" }}
             disabled={page === 0}
             onClick={() => {
-              setIsNext(false);
+              if (loading) return;
               setPage((val) => val - 1);
             }}
           >
@@ -166,19 +233,23 @@ export default function SetupModal(props: Props) {
             small
             style={{ paddingRight: "1em" }}
             onClick={() => {
-              if (
-                (nameInput.state === "" || usernameInput.state === "") &&
-                page === 0
-              ) {
-                nameInput.setStatus("error");
-                usernameInput.setStatus("error");
-                return;
+              if (loading) return;
+              if (page === 3) updateID();
+              else {
+                if (
+                  (nameInput.state === "" || usernameInput.state === "") &&
+                  page === 0
+                ) {
+                  nameInput.setStatus("error");
+                  usernameInput.setStatus("error");
+                  return;
+                }
+                setPage((val) => val + 1);
               }
-              setIsNext(true);
-              setPage((val) => val + 1);
             }}
+            loading={loading}
           >
-            Next
+            {(page === 3 && "Save") || "Next"}
             <Spacer x={0.45} />
             <ChevronRightIcon />
           </Button>
