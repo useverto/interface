@@ -6,9 +6,11 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
-import { opacityAnimation } from "../utils/animations";
+import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { randomEmoji } from "../utils/user";
 import { CACHE_URL } from "../utils/arweave";
+import { OrderInterface } from "@verto/js/dist/faces";
+import { getType } from "../utils/order";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -69,6 +71,48 @@ const Home = ({ artwork }: { artwork: any }) => {
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
     dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
   }
+
+  type Activity = OrderInterface & {
+    actions: {
+      id: string;
+      descriptions: string;
+      timestamp: number;
+      match?: string;
+    }[];
+  };
+  const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const { data: activities } = await axios.get(
+        `${CACHE_URL}/latest-activity`
+      );
+
+      setLatestActivity(
+        activities.map(
+          ({
+            status,
+            sender,
+            target,
+            token,
+            input,
+            output,
+            timestamp,
+            actions,
+          }: Activity) => ({
+            id: actions[0].id,
+            status,
+            sender,
+            target,
+            token,
+            input,
+            output,
+            timestamp,
+          })
+        )
+      );
+    })();
+  }, []);
 
   return (
     <>
@@ -143,43 +187,19 @@ const Home = ({ artwork }: { artwork: any }) => {
         <Spacer y={5} />
         <div className={styles.Section}>
           <h1 className={styles.Title}>Latest Activity</h1>
-          <Card.Order
-            type="sell"
-            orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
-            status="success"
-            timestamp={new Date()}
-          />
-          <Spacer y={1.5} />
-          <Card.ArtActivity
-            type="buy"
-            user={{
-              avatar: "https://th8ta.org/marton.jpeg",
-              usertag: "martonlederer",
-              name: "Marton Lederer",
-            }}
-            timestamp={new Date()}
-            price={{ usd: 1204.768548, ar: 300.43256424 }}
-            orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
-          />
-          <Spacer y={1.5} />
-          <Card.ArtActivity
-            type="buy"
-            user={{
-              avatar: "https://th8ta.org/marton.jpeg",
-              usertag: "martonlederer",
-              name: "Marton Lederer",
-            }}
-            timestamp={new Date()}
-            price={{ usd: 1204.768548, ar: 300.43256424 }}
-            orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
-          />
-          <Spacer y={1.5} />
-          <Card.Order
-            type="sell"
-            orderID="WE5dJ4BenAiBbjs8zs8EWAsOo33gjwadsfa7ntxVLVc"
-            status="success"
-            timestamp={new Date()}
-          />
+          <AnimatePresence>
+            {latestActivity.map((activity, i) => (
+              <motion.div key={i} {...cardListAnimation(i)}>
+                <Card.Order
+                  type={getType(activity.input)}
+                  orderID={activity.id}
+                  status={activity.status}
+                  timestamp={new Date(activity.timestamp * 1000)}
+                />
+                {i !== latestActivity.length - 1 && <Spacer y={1.5} />}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
         <Spacer y={5} />
         <div className={styles.Section + " " + styles.PSTs}>
