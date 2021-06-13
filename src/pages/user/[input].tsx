@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
 import { CACHE_URL } from "../../utils/arweave";
+import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import Verto from "@verto/js";
@@ -59,6 +60,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const [randomAvatar] = useState(randomEmoji());
   const { setToast } = useToasts();
   const [cancelled, setCancelled] = useState<string[]>([]);
+  const setupModal = useModal();
 
   useEffect(() => setCancelled(getCancelledOrders()), []);
 
@@ -95,7 +97,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       .get(`${CACHE_URL}/user/${props.input}/creations`)
       .then(({ data }) => setCreations(data.slice(0, 4)))
       .catch();
-  });
+  }, []);
 
   // load owned
   useEffect(() => {
@@ -103,7 +105,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       .get(`${CACHE_URL}/user/${props.input}/owns`)
       .then(({ data }) => setOwned(data.slice(0, 4)))
       .catch();
-  });
+  }, []);
 
   // load orders
   useEffect(() => {
@@ -170,7 +172,11 @@ const User = (props: { user: UserInterface | null; input: string }) => {
               size="large-inline"
               className={styles.Avatar}
             />
-            {isCurrentUser && <Button>Edit profile</Button>}
+            {isCurrentUser && (
+              <Button small onClick={() => setupModal.setState(true)}>
+                Edit profile
+              </Button>
+            )}
           </div>
           <Spacer y={2} />
           {props.user.bio && <p className={styles.Bio}>{props.user.bio}</p>}
@@ -194,7 +200,11 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             size="large-inline"
             className={styles.Avatar}
           />
-          {isCurrentUser && <Button small>Edit profile</Button>}
+          {isCurrentUser && (
+            <Button small onClick={() => setupModal.setState(true)}>
+              Edit profile
+            </Button>
+          )}
         </div>
       )}
       <Spacer y={5} />
@@ -374,6 +384,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           Cancel
         </Button>
       </Modal>
+      <SetupModal {...setupModal.bindings} />
     </Page>
   );
 };

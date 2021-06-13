@@ -1,0 +1,49 @@
+@use "../variables"
+  
+.Description
+  color: variables.$light-text
+  font-size: 1.1em
+  text-align: center
+  padding-bottom: 0
+
+.Input
+  div[class~=VertoInputWrapper]
+    width: calc(100% - 6px)
+
+    div[class~=VertoInputInlineLabel]
+      min-width: 160px
+      padding: 0
+
+.WithIconLabel div[class~=VertoInputWrapper] div[class~=VertoInputInlineLabel]
+  min-width: 60px
+
+.Label
+  display: block
+  color: variables.$light-text
+  text-transform: uppercase
+  margin: 0
+    bottom: .27em
+  font-weight: 500
+  font-size: 1.075em
+
+.Textarea
+  border: 3px solid variables.$foreground-color
+  padding: .8em .85em
+  border-radius: 13px
+  height: 150px
+
+  textarea
+    font-family: "JetBrainsMono", sans-serif
+    font-weight: 500
+    font-size: 1.5em
+    color: variables.$light-text
+    height: 100%
+    width: 100%
+    padding: 0
+    margin: 0
+    border: none
+    outline: none
+    resize: none
+
+    &::placeholder
+      opacity: .45
