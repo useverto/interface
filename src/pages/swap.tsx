@@ -105,7 +105,6 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     }
   }, [post, inputUnit.state, outputUnit.state]);
 
-  type ExtendedUserInterface = UserInterface & { baseAddress: string };
   const [users, setUsers] = useState<ExtendedUserInterface[]>([]);
 
   useEffect(() => {
@@ -611,3 +610,4 @@ export async function getStaticProps() {
 }
 
 export default Swap;
+export type ExtendedUserInterface = UserInterface & { baseAddress: string };

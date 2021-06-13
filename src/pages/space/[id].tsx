@@ -32,6 +32,7 @@ import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
 import { CACHE_URL } from "../../utils/arweave";
+import { ExtendedUserInterface } from "../swap";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -598,7 +599,7 @@ const Art = (props: PropTypes) => {
         user: userData,
       };
 
-      setOrderBook((val) => [listAction, ...val]);
+      setOrderBook((val) => [...val, listAction]);
     })();
   }, [userData]);
 
@@ -694,6 +695,24 @@ const Art = (props: PropTypes) => {
       setOwnedAmount(balances.find(({ id }) => id === props.id)?.balance ?? 0);
     })();
   }, [address]);
+
+  const [users, setUsers] = useState<ExtendedUserInterface[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      setUsers([]);
+
+      for (const order of orderBook) {
+        const user = await client.getUser(order.addr);
+
+        if (user)
+          setUsers((val) => [
+            ...val.filter(({ baseAddress }) => baseAddress !== order.addr),
+            { ...user, baseAddress: order.addr },
+          ]);
+      }
+    })();
+  }, [orderBook]);
 
   const [loading, setLoading] = useState(false);
   const { setToast } = useToasts();
@@ -988,23 +1007,56 @@ const Art = (props: PropTypes) => {
       <Spacer y={3} />
       <AnimatePresence>
         {view === "preview" &&
-          orderBook.map(
-            (order, i) =>
-              (showAll || i < 3) && (
-                <motion.div key={i} {...cardListAnimation(i)}>
-                  <Card.ArtActivity
-                    key={i}
-                    // @ts-ignore
-                    type={order.type}
-                    user={order.user}
-                    timestamp={new Date(order.createdAt * 1000)}
-                    price={{ usd: order.amnt * arRate, ar: order.amnt }}
-                    orderID={order.txID}
-                  />
-                  <Spacer y={i === 2 || i === orderBook.length - 1 ? 1 : 2} />
-                </motion.div>
-              )
-          )}
+          orderBook
+            .sort((a, b) => b.createdAt - a.createdAt)
+            .map(
+              (order, i) =>
+                (showAll || i < 3) && (
+                  <motion.div key={i} {...cardListAnimation(i)}>
+                    {/** TODO: map activities */}
+                    {(order.type === "list" && (
+                      <Card.ArtActivity
+                        key={i}
+                        // @ts-ignore
+                        type={order.type}
+                        user={order.user}
+                        timestamp={new Date(order.createdAt * 1000)}
+                        price={{ usd: order.amnt * arRate, ar: order.amnt }}
+                        orderID={order.txID}
+                      />
+                    )) ||
+                      (() => {
+                        const user = users.find((user) =>
+                          user.addresses.includes(order.addr)
+                        );
+
+                        return (
+                          <Card.SwapSell
+                            user={{
+                              avatar:
+                                (user?.image &&
+                                  `https://arweave.net/${user.image}`) ||
+                                randomEmoji(),
+                              usertag: user?.username || order.addr,
+                              // @ts-ignore
+                              displaytag:
+                                user?.username || formatAddress(order.addr, 10),
+                              name: user?.name || undefined,
+                            }}
+                            selling={{
+                              quantity: order.amnt,
+                              ticker: props.ticker,
+                            }}
+                            rate={1 / order.rate}
+                            filled={order.received || 0}
+                            orderID={order.txID}
+                          />
+                        );
+                      })()}
+                    <Spacer y={i === 2 || i === orderBook.length - 1 ? 1 : 2} />
+                  </motion.div>
+                )
+            )}
       </AnimatePresence>
       <div className={artStyles.Bits}>
         <AnimatePresence>
