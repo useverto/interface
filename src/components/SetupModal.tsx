@@ -47,7 +47,9 @@ export default function SetupModal(props: Props) {
 
   useEffect(() => {
     nameInput.setState("");
+    nameInput.setStatus(undefined);
     usernameInput.setState("");
+    usernameInput.setStatus(undefined);
     setBio("");
     setPage(0);
     setSocialLinks({});
