@@ -1,7 +1,7 @@
 import { Modal, Input, useInput, Spacer, Button, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { readContract } from "smartweave";
-import { client } from "../utils/arweave";
+import { interactWrite, readContract } from "smartweave";
+import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import styles from "../styles/components/ListingModal.module.sass";
 
 export default function ListingModal(props: Props) {
@@ -37,12 +37,18 @@ export default function ListingModal(props: Props) {
 
     setLoading(true);
     try {
-      // TODO: list token here
+      await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
+        function: "list",
+        id: contractIDInput.state,
+        type: selectedLayout,
+      });
+
       setToast({
         description: "Token is now listed",
         type: "success",
         duration: 4500,
       });
+      props.onClose();
     } catch {
       setToast({
         description: "Error listing token",
