@@ -20,7 +20,7 @@ import { RootState } from "../store/reducers";
 import { interactWrite } from "smartweave";
 import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import Instagram from "./icons/Instagram";
-import Twitter from "./icons/Github";
+import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";
 import Github from "./icons/Github";
 import useArConnect from "use-arconnect";
