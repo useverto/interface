@@ -48,6 +48,7 @@ export default function SetupModal(props: Props) {
     (state: RootState) => state.addressReducer
   );
   const [avatar, setAvatar] = useState<File>();
+  const [initialImage, setInitialImage] = useState<string>();
 
   useEffect(() => {
     (async () => {
@@ -66,6 +67,7 @@ export default function SetupModal(props: Props) {
       // @ts-ignore
       setSocialLinks(userData?.links ?? "");
       setAddresses(userData?.addresses ?? arconnectAddresses);
+      setInitialImage(userData?.image);
       setCurrentPfpName(undefined);
       setLoading(false);
     })();
@@ -87,7 +89,7 @@ export default function SetupModal(props: Props) {
 
     setLoading(true);
     // if there's an avatar uploaded, create a transaction for it
-    let image: string = undefined;
+    let image: string = initialImage;
 
     if (avatar && avatar.type.match(/image\/(.*)/)) {
       try {
@@ -183,8 +185,9 @@ export default function SetupModal(props: Props) {
               <textarea
                 onChange={(e) => setBio(e.target.textContent)}
                 placeholder="Enter your bio..."
-                value={bio ?? ""}
-              ></textarea>
+              >
+                {bio ?? ""}
+              </textarea>
             </div>
           </>
         )) ||
