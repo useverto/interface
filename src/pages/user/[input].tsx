@@ -202,7 +202,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           />
           {isCurrentUser && (
             <Button small onClick={() => setupModal.setState(true)}>
-              Edit profile
+              Setup Verto ID
             </Button>
           )}
         </div>

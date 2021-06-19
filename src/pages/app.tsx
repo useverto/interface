@@ -1,5 +1,13 @@
 import { BalanceInterface, UserInterface } from "@verto/js/dist/faces";
-import { Card, Page, Spacer, Tooltip, useModal, useTheme } from "@verto/ui";
+import {
+  Card,
+  Page,
+  Spacer,
+  Tooltip,
+  useModal,
+  useTheme,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
 import { useSelector } from "react-redux";
@@ -40,6 +48,7 @@ const App = () => {
   const [loadingOwned, setLoadingOwned] = useState(true);
   const router = useRouter();
   const listModal = useModal();
+  const { setToast } = useToasts();
 
   useEffect(() => {
     if (!address) return;
@@ -120,7 +129,18 @@ const App = () => {
         Balances
         <div className="ActionSheet">
           <Tooltip text="List new">
-            <button className="Btn" onClick={() => listModal.setState(true)}>
+            <button
+              className="Btn"
+              onClick={() => {
+                if (!userData)
+                  return setToast({
+                    description: "Please setup your Verto ID first",
+                    type: "error",
+                    duration: 5300,
+                  });
+                listModal.setState(true);
+              }}
+            >
               <PlusIcon />
             </button>
           </Tooltip>

@@ -1,4 +1,12 @@
-import { Button, Card, Page, Spacer, useModal, useTheme } from "@verto/ui";
+import {
+  Button,
+  Card,
+  Page,
+  Spacer,
+  useModal,
+  useTheme,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardAnimation } from "../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,6 +15,9 @@ import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { randomEmoji } from "../../utils/user";
 import { CACHE_URL } from "../../utils/arweave";
+import { UserInterface } from "@verto/js/dist/faces";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/reducers";
 import useSWR from "swr";
 import axios from "axios";
 import Verto from "@verto/js";
@@ -122,6 +133,17 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       const logo = new Image();
       logo.src = `https://arweave.net/${psc.logo}`;
     }
+  }, []);
+
+  const [userData, setUserData] = useState<UserInterface>();
+  const address = useSelector((state: RootState) => state.addressReducer);
+  const { setToast } = useToasts();
+
+  useEffect(() => {
+    (async () => {
+      const user = (await client.getUser(address)) ?? null;
+      setUserData(user);
+    })();
   }, []);
 
   return (
@@ -254,7 +276,15 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         <div className="ActionSheet">
           <Button
             small
-            onClick={() => listModal.setState(true)}
+            onClick={() => {
+              if (!userData)
+                return setToast({
+                  description: "Please setup your Verto ID first",
+                  type: "error",
+                  duration: 5300,
+                });
+              listModal.setState(true);
+            }}
             style={{ padding: ".35em 1.2em" }}
           >
             Add new
