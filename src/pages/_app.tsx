@@ -21,6 +21,7 @@ import {
   ignorePermissionWarning,
   theme as themeStorageName,
 } from "../utils/storage_names";
+import { CACHE_URL } from "../utils/arweave";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
@@ -105,7 +106,7 @@ export default function App({ Component, pageProps }) {
   return (
     <ReduxProvider store={store}>
       <Theme>
-        <ArweaveNetGateway>
+        <StatusChecker>
           <Head>
             <link
               rel="shortcut icon"
@@ -160,7 +161,7 @@ export default function App({ Component, pageProps }) {
               </div>
             </Modal.Content>
           </Modal>
-        </ArweaveNetGateway>
+        </StatusChecker>
       </Theme>
     </ReduxProvider>
   );
@@ -199,9 +200,10 @@ const Theme = ({ children }) => {
   return <VertoProvider theme={displayTheme}>{children}</VertoProvider>;
 };
 
-const ArweaveNetGateway = ({ children }) => {
+const StatusChecker = ({ children }) => {
   const { setToast } = useToasts();
 
+  // check arweave.net
   useEffect(() => {
     (async () => {
       try {
@@ -213,6 +215,25 @@ const ArweaveNetGateway = ({ children }) => {
       } catch {
         setToast({
           description: "The arweave.net gateway is down",
+          type: "error",
+          duration: 7000,
+        });
+      }
+    })();
+  }, []);
+
+  // check cache
+  useEffect(() => {
+    (async () => {
+      try {
+        await axios({
+          method: "GET",
+          url: CACHE_URL,
+          timeout: 8000,
+        });
+      } catch {
+        setToast({
+          description: "The cache server is down",
           type: "error",
           duration: 7000,
         });
