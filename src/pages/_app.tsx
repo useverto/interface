@@ -226,11 +226,18 @@ const StatusChecker = ({ children }) => {
   useEffect(() => {
     (async () => {
       try {
-        await axios({
+        const { data } = await axios({
           method: "GET",
-          url: CACHE_URL,
+          url: `${CACHE_URL}/ping`,
           timeout: 8000,
         });
+
+        if (data.connection !== 1)
+          setToast({
+            description: "The cache server is not connected to the DB",
+            type: "error",
+            duration: 7000,
+          });
       } catch {
         setToast({
           description: "The cache server is down",
