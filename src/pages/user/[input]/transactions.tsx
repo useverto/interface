@@ -2,12 +2,12 @@ import { Loading, Page, Spacer, Tooltip } from "@verto/ui";
 import { TransactionInterface, UserInterface } from "@verto/js/dist/faces";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
+import { useRouter } from "next/router";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
 import styles from "../../../styles/views/user.module.sass";
-import { useRouter } from "next/router";
 
 const client = new Verto();
 
@@ -109,8 +109,14 @@ const Transactions = (props: {
   );
 };
 
-export async function getServerSideProps(context) {
-  const { input } = context.query;
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps({ params: { input } }) {
   const user = (await client.getUser(input)) ?? null;
   let txs = [];
 
@@ -127,7 +133,7 @@ export async function getServerSideProps(context) {
       txs.push(...(await client.getTransactions(address)));
   } else txs.push(...(await client.getTransactions(input)));
 
-  return { props: { user, input, txs } };
+  return { props: { user, input, txs }, revalidate: 1 };
 }
 
 export default Transactions;

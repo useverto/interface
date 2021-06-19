@@ -14,10 +14,10 @@ import { cardListAnimation } from "../../../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store/reducers";
 import { addToCancel, getCancelledOrders } from "../../../utils/order";
+import { useRouter } from "next/router";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
-import { useRouter } from "next/router";
 
 const client = new Verto();
 
