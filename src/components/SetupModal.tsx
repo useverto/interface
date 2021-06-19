@@ -24,6 +24,7 @@ import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";
 import Github from "./icons/Github";
 import useArConnect from "use-arconnect";
+import Verto from "@verto/js";
 import styles from "../styles/components/SetupModal.module.sass";
 
 export default function SetupModal(props: Props) {
@@ -49,21 +50,26 @@ export default function SetupModal(props: Props) {
   const [avatar, setAvatar] = useState<File>();
 
   useEffect(() => {
-    if (!arconnect || !currentAddress) return;
-    arconnect.getAllAddresses().then((res) => setAddresses(res));
-  }, [props.open, arconnect, currentAddress]);
+    (async () => {
+      if (!arconnect || !currentAddress) return;
 
-  useEffect(() => {
-    nameInput.setState("");
-    nameInput.setStatus(undefined);
-    usernameInput.setState("");
-    usernameInput.setStatus(undefined);
-    setBio("");
-    setPage(0);
-    setSocialLinks({});
-    setCurrentPfpName(undefined);
-    setLoading(false);
-  }, [props.open]);
+      const verto = new Verto();
+      const userData = await verto.getUser(currentAddress);
+      const arconnectAddresses = await arconnect.getAllAddresses();
+
+      nameInput.setState(userData?.name ?? "");
+      nameInput.setStatus(undefined);
+      usernameInput.setState(userData?.username ?? "");
+      usernameInput.setStatus(undefined);
+      setBio(userData?.bio ?? "");
+      setPage(0);
+      // @ts-ignore
+      setSocialLinks(userData?.links ?? "");
+      setAddresses(userData?.addresses ?? arconnectAddresses);
+      setCurrentPfpName(undefined);
+      setLoading(false);
+    })();
+  }, [props.open, arconnect, currentAddress]);
 
   const { setToast } = useToasts();
 
@@ -177,7 +183,7 @@ export default function SetupModal(props: Props) {
               <textarea
                 onChange={(e) => setBio(e.target.textContent)}
                 placeholder="Enter your bio..."
-                value={bio}
+                value={bio ?? ""}
               ></textarea>
             </div>
           </>
@@ -194,7 +200,7 @@ export default function SetupModal(props: Props) {
                 className={styles.Input + " " + styles.WithIconLabel}
                 leftInlineLabel={true}
                 inlineLabel={<Twitter />}
-                value={socialLinks.twitter}
+                value={socialLinks.twitter ?? ""}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, twitter: e.target.value }))
                 }
@@ -205,7 +211,7 @@ export default function SetupModal(props: Props) {
                 className={styles.Input + " " + styles.WithIconLabel}
                 leftInlineLabel={true}
                 inlineLabel={<Instagram />}
-                value={socialLinks.instagram}
+                value={socialLinks.instagram ?? ""}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -219,7 +225,7 @@ export default function SetupModal(props: Props) {
                 className={styles.Input + " " + styles.WithIconLabel}
                 leftInlineLabel={true}
                 inlineLabel={<Facebook />}
-                value={socialLinks.facebook}
+                value={socialLinks.facebook ?? ""}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -233,7 +239,7 @@ export default function SetupModal(props: Props) {
                 className={styles.Input + " " + styles.WithIconLabel}
                 leftInlineLabel={true}
                 inlineLabel={<Github />}
-                value={socialLinks.github}
+                value={socialLinks.github ?? ""}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, github: e.target.value }))
                 }
@@ -308,7 +314,7 @@ export default function SetupModal(props: Props) {
           </Button>
           <Button
             small
-            style={{ paddingRight: "1em" }}
+            style={{ paddingRight: loading ? undefined : "1em" }}
             onClick={() => {
               if (loading) return;
               if (page === 3) updateID();
