@@ -14,6 +14,7 @@ const gql = new ArDB(client);
 
 export const CACHE_URL = "https://v2.cache.verto.exchange";
 export const COMMUNITY_CONTRACT = "mp8gF3oo3MCJ6hBdminh2Uborv0ZS_I1o9my_2dp424";
+export const INVITE_CONTRACT = ""; // TODO
 
 export const balanceHistory = async (
   address: string

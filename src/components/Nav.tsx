@@ -29,10 +29,17 @@ import { randomEmoji } from "../utils/user";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
+import {
+  CACHE_URL,
+  INVITE_CONTRACT,
+  client as arweave,
+} from "../utils/arweave";
+import { interactWrite } from "smartweave";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
+import axios from "axios";
 import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
@@ -160,28 +167,51 @@ const Nav = () => {
     }
   }
 
-  // TODO: When updating address, check:
-  //  1. Does the address have an invite token?
-  //  2. Does the address have any invites?
-  const [invites, setInvites] = useState(10);
+  //
+  // INVITES
+  //
+
+  const [invites, setInvites] = useState(0);
   const target = useInput<string>();
   const { setToast } = useToasts();
   const [loadingInvite, setLoadingInvite] = useState(false);
 
+  // get invite count
+  useEffect(() => {
+    if (!address) return;
+    (async () => {
+      const { data } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
+
+      setInvites(data.invites?.[address] ?? 0);
+    })();
+  }, [address]);
+
+  // TODO: sign out if the user does not have an invite token
+
   async function invite() {
     if (!/[a-z0-9_-]{43}/i.test(target.state)) return target.setStatus("error");
+    if (invites > 1)
+      return setToast({
+        description: "No invites left",
+        type: "error",
+        duration: 4750,
+      });
 
     setLoadingInvite(true);
     try {
-      // TODO: Send invite ...
+      await interactWrite(arweave, "use_wallet", INVITE_CONTRACT, {
+        function: "invite",
+        target: target.state,
+      });
 
       setInvites((val) => val - 1);
       inviteModal.setState(false);
       setToast({
-        title: "Invited",
         description: `${formatAddress(
-          target.state.toString()
+          target.state.toString(),
+          20
         )} has been sent an invite.`,
+        type: "success",
         duration: 2400,
       });
     } catch {
@@ -405,6 +435,7 @@ const Nav = () => {
             onClick={invite}
             className={styles.SignOutBtn}
             loading={loadingInvite}
+            disabled={invites < 1}
           >
             Send Invite
           </Button>
