@@ -32,6 +32,7 @@ import { updateAddress, updateTheme } from "../store/actions";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Verto from "@verto/js";
+import SetupModal from "./SetupModal";
 import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
@@ -130,9 +131,16 @@ const Nav = () => {
     };
   }, [address]);
 
+  const setupModal = useModal();
+
   async function login() {
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
     await syncAddress();
+
+    const user = await client.getUser(
+      await window.arweaveWallet.getActiveAddress()
+    );
+    if (!user) setupModal.setState(true);
   }
 
   async function signOut() {
@@ -412,6 +420,7 @@ const Nav = () => {
           </Button>
         </Modal.Content>
       </Modal>
+      <SetupModal {...setupModal.bindings} />
     </>
   );
 };

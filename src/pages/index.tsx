@@ -1,4 +1,4 @@
-import { Button, Card, Page, Spacer } from "@verto/ui";
+import { Button, Card, Page, Spacer, useModal } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions } from "../utils/arconnect";
 import { useRouter } from "next/router";
@@ -17,6 +17,7 @@ import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
+import SetupModal from "../components/SetupModal";
 import styles from "../styles/views/home.module.sass";
 
 const client = new Verto();
@@ -67,9 +68,17 @@ const Home = ({ artwork }: { artwork: any }) => {
     })();
   }, []);
 
+  const setupModal = useModal();
+
   async function login() {
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
-    dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
+
+    const activeAddress = await window.arweaveWallet.getActiveAddress();
+    dispatch(updateAddress(activeAddress));
+
+    const user = await client.getUser(activeAddress);
+
+    if (!user) setupModal.setState(true);
   }
 
   type Activity = OrderInterface & {
@@ -280,6 +289,7 @@ const Home = ({ artwork }: { artwork: any }) => {
           </p>
         </div>
       </Page>
+      <SetupModal {...setupModal.bindings} />
     </>
   );
 };

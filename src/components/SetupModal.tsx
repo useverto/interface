@@ -15,6 +15,10 @@ import {
 import { useEffect, useState } from "react";
 import { CloseIcon } from "@iconicicons/react";
 import { formatAddress } from "../utils/format";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
+import { interactWrite } from "smartweave";
+import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import Instagram from "./icons/Instagram";
 import Twitter from "./icons/Github";
 import Facebook from "./icons/Facebook";
@@ -39,11 +43,15 @@ export default function SetupModal(props: Props) {
   const [addresses, setAddresses] = useState<string[]>([]);
   const arconnect = useArConnect();
   const [loading, setLoading] = useState(false);
+  const currentAddress = useSelector(
+    (state: RootState) => state.addressReducer
+  );
+  const [avatar, setAvatar] = useState<File>();
 
   useEffect(() => {
-    if (!arconnect) return;
+    if (!arconnect || !currentAddress) return;
     arconnect.getAllAddresses().then((res) => setAddresses(res));
-  }, [props.open, arconnect]);
+  }, [props.open, arconnect, currentAddress]);
 
   useEffect(() => {
     nameInput.setState("");
@@ -60,10 +68,64 @@ export default function SetupModal(props: Props) {
   const { setToast } = useToasts();
 
   async function updateID() {
+    if (nameInput.state === "" || usernameInput.state === "") {
+      if (nameInput.state === "") nameInput.setStatus("error");
+      if (usernameInput.state === "") usernameInput.setStatus("error");
+
+      return setToast({
+        description: "Username or display name is missing",
+        type: "error",
+        duration: 3750,
+      });
+    }
+
     setLoading(true);
+    // if there's an avatar uploaded, create a transaction for it
+    let image: string = undefined;
+
+    if (avatar && avatar.type.match(/image\/(.*)/)) {
+      try {
+        const avatarData = await getAvatarData();
+        const avatarTx = await client.createTransaction({
+          data: avatarData,
+        });
+
+        avatarTx.addTag("Content-Type", avatar.type);
+        avatarTx.addTag("App-Name", "Verto");
+        avatarTx.addTag("Type", "Avatar-Upload");
+
+        await client.transactions.sign(avatarTx);
+
+        const uploader = await client.transactions.getUploader(avatarTx);
+
+        while (!uploader.isComplete) {
+          await uploader.uploadChunk();
+        }
+
+        image = avatarTx.id;
+      } catch {
+        setToast({
+          description: "Error uploading avatar. Skipping.",
+          type: "error",
+          duration: 4500,
+        });
+      }
+    }
+
     try {
-      // TODO @johnletey
+      // update user
+      await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
+        function: "claim",
+        username: usernameInput.state,
+        name: nameInput.state,
+        addresses,
+        image,
+        bio,
+        links: socialLinks,
+      });
+
       setToast({ description: "Updated ID", type: "success", duration: 4500 });
+      props.onClose();
     } catch {
       setToast({
         description: "Could not update Verto ID",
@@ -73,6 +135,16 @@ export default function SetupModal(props: Props) {
     }
     setLoading(false);
   }
+
+  const getAvatarData = () =>
+    new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => resolve(e.target.result as ArrayBuffer);
+      reader.onerror = (e) => reject(e);
+      reader.onabort = (e) => reject(e);
+      reader.readAsArrayBuffer(avatar);
+    });
 
   return (
     <Modal {...props}>
@@ -182,7 +254,10 @@ export default function SetupModal(props: Props) {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setCurrentPfpName(e.target.files?.[0]?.name)}
+                  onChange={(e) => {
+                    setCurrentPfpName(e.target.files?.[0]?.name);
+                    setAvatar(e.target.files?.[0]);
+                  }}
                 />
               </div>
             </>
@@ -242,8 +317,10 @@ export default function SetupModal(props: Props) {
                   (nameInput.state === "" || usernameInput.state === "") &&
                   page === 0
                 ) {
-                  nameInput.setStatus("error");
-                  usernameInput.setStatus("error");
+                  if (nameInput.state === "") nameInput.setStatus("error");
+                  if (usernameInput.state === "")
+                    usernameInput.setStatus("error");
+
                   return;
                 }
                 setPage((val) => val + 1);
