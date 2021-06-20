@@ -43,6 +43,14 @@ module.exports = {
         source: "/(@):user/transactions",
         destination: "/user/:user/transactions",
       },
+      {
+        source: "/(@):user/creations",
+        destination: "/user/:user/creations",
+      },
+      {
+        source: "/(@):user/owns",
+        destination: "/user/:user/owns",
+      },
     ];
   },
 };
