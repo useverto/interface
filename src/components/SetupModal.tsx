@@ -183,7 +183,7 @@ export default function SetupModal(props: Props) {
             <p className={styles.Label}>Bio</p>
             <div className={styles.Textarea}>
               <textarea
-                onChange={(e) => setBio(e.target.textContent)}
+                onChange={(e) => setBio(e.target.value)}
                 placeholder="Enter your bio..."
               >
                 {bio ?? ""}
