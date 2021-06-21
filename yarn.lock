@@ -356,10 +356,10 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@^2.1.13-alpha":
-  version "2.1.13-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.13-alpha.tgz#502dbaab12ad8869692f53e488cc04ab4b512e30"
-  integrity sha512-JUA+tKIWRLohnckPLxrQBli+t1+ypj9e0Q8feALXAdL97Dp89FvOqZQr/bH7vZnfXw3QJVcGuSvnhj/Nq0Spxw==
+"@verto/ui@^2.1.14-alpha":
+  version "2.1.14-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.14-alpha.tgz#478b7a4f83cf014c59a1ecf219e9bb35b16e41bd"
+  integrity sha512-vVMpQscHQzmMq9Ac7sU5YCq79g+9oaQUfXIyd3vrdAxC/z+5ocuAupwAj8nDt181oQu1EGS16uRNQ69MFbMn7g==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     framer-motion "^3.1.1"

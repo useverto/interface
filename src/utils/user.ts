@@ -1,3 +1,5 @@
+import { UserInterface } from "@verto/js/dist/faces";
+
 export function randomEmoji(size = 100) {
   const emojis = ["😂", "🥺", "😊", "🥰", "😃", "🤩", "🤔", "😏", "😷"];
   const emoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -10,3 +12,12 @@ export function randomEmoji(size = 100) {
     (size / 100) * 70
   }%22>${emoji}</text></svg>`;
 }
+
+export interface Art {
+  id: string;
+  name: string;
+  price?: number;
+  owner: UserInterface;
+}
+
+export type TokenType = "community" | "art" | "custom";

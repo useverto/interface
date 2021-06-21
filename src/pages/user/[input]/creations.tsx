@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { arPrice, CACHE_URL } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
-import { randomEmoji } from "../../../utils/user";
+import { Art, randomEmoji } from "../../../utils/user";
 import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -29,7 +29,7 @@ const Creations = (props: {
 
     const { data: ids } = await axios.get(
       `${CACHE_URL}/user/${props.user?.username ?? props.input}/creations/${
-        data.length * 4
+        data.length
       }`
     );
 
@@ -144,10 +144,3 @@ export async function getStaticProps({ params: { input } }) {
 }
 
 export default Creations;
-
-export interface Art {
-  id: string;
-  name: string;
-  price?: number;
-  owner: UserInterface;
-}

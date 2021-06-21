@@ -7,6 +7,7 @@ import styles from "../styles/components/ListingModal.module.sass";
 export default function ListingModal(props: Props) {
   const contractIDInput = useInput<string>();
   const [tokenName, setTokenName] = useState("");
+  // TODO: custom layout
   const [selectedLayout, setSelectedLayout] = useState<"community" | "art">(
     "community"
   );

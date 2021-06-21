@@ -6,6 +6,7 @@ import {
   useModal,
   useTheme,
   useToasts,
+  Loading,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { cardAnimation } from "../../utils/animations";
@@ -13,8 +14,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
-import { randomEmoji } from "../../utils/user";
-import { CACHE_URL } from "../../utils/arweave";
+import { Art, randomEmoji, TokenType } from "../../utils/user";
+import { arPrice, CACHE_URL } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
@@ -24,6 +25,7 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
+import useInfiniteScroll from "../../utils/infinite_scroll";
 import styles from "../../styles/views/space.module.sass";
 
 const client = new Verto();
@@ -96,9 +98,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 
   useEffect(() => {
     (async () => {
-      const { data: gecko } = await axios.get(
-        "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-      );
+      const arweavePrice = await arPrice();
 
       for (const { id } of [...tokens, ...featured, ...arts]) {
         const res = await client.getPrice(id);
@@ -106,7 +106,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         if (res.price)
           setPrices((val) => ({
             ...val,
-            [id]: (res.price * gecko.arweave.usd).toFixed(2),
+            [id]: (res.price * arweavePrice).toFixed(2),
           }));
       }
     })();
@@ -145,6 +145,36 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       setUserData(user);
     })();
   }, []);
+
+  // all tokens
+  const {
+    loading: loadingAllTokens,
+    data: allTokens,
+  } = useInfiniteScroll<UnifiedTokenInterface>(loadMore);
+
+  async function loadMore() {
+    const items: UnifiedTokenInterface[] = [];
+    const { data } = await axios.get(
+      `${CACHE_URL}/site/tokens/${allTokens.length}`
+    );
+
+    for (const token of data) {
+      if ([...tokens, ...items, ...allTokens].find(({ id }) => id === token.id))
+        continue;
+
+      const price = (await arPrice()) * (await client.getPrice(token.id)).price;
+
+      if (!token.owner.image) token.owner.image = randomEmoji();
+      else token.owner.image = `https://arweave.net/${token.owner.image}`;
+
+      items.push({
+        ...token,
+        price,
+      });
+    }
+
+    return items;
+  }
 
   return (
     <Page>
@@ -291,6 +321,49 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
           </Button>
         </div>
       </h1>
+      <Spacer y={2} />
+      <div className={styles.Cards}>
+        {allTokens.map((token, i) => (
+          <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
+            {(token.type === "community" && (
+              <Card.Asset
+                name={token.name}
+                // @ts-ignore
+                price={token.price ?? " ??"}
+                image={`https://arweave.net/${token.logo}`}
+                ticker={token.ticker}
+                onClick={() => router.push(`/space/${token.id}`)}
+              />
+            )) || (
+              <Card.Asset
+                name={token.name}
+                userData={{
+                  avatar: token.owner.image,
+                  name: token.owner.name,
+                  usertag: token.owner.username,
+                }}
+                // @ts-ignore
+                price={token.price ?? " ??"}
+                image={`https://arweave.net/${token.id}`}
+                onClick={() => router.push(`/space/${token.id}`)}
+              />
+            )}
+          </motion.div>
+        ))}
+      </div>
+      <AnimatePresence>
+        {loadingAllTokens && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ ease: "easeInOut", duration: 0.22 }}
+          >
+            <Spacer y={2} />
+            <Loading.Spinner style={{ margin: "0 auto" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <ListingModal {...listModal.bindings} />
     </Page>
   );
@@ -317,3 +390,9 @@ export async function getStaticProps() {
 }
 
 export default Space;
+
+interface UnifiedTokenInterface extends Art {
+  ticker: string;
+  logo?: string;
+  type: TokenType;
+}

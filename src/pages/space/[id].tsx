@@ -26,7 +26,7 @@ import {
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserData } from "@verto/ui/dist/components/Card";
-import { randomEmoji } from "../../utils/user";
+import { randomEmoji, TokenType } from "../../utils/user";
 import { OrderBookInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
@@ -48,7 +48,7 @@ interface PropTypes {
   name: string;
   ticker: string;
   price: number | "--";
-  type?: "art" | "community" | "custom";
+  type?: TokenType;
 }
 
 const Token = (props: PropTypes) => {
