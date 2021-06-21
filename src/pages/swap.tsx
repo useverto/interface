@@ -290,7 +290,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   // TODO: ETH price
   useEffect(() => {
     if (inputUnit.state !== "AR") return;
-    output.setState(Number((selectedPrice * Number(input.state)).toFixed(4)));
+    output.setState(Number((Number(input.state) / selectedPrice).toFixed(4)));
   }, [input.state, selectedPrice]);
 
   // save selected token IDs to local storage
@@ -426,7 +426,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             <ArrowSwitchIcon />
           </div>
           <Input
-            label="You recieve"
+            label="You receive"
             inlineLabel={
               <Select
                 {...outputUnit.bindings}

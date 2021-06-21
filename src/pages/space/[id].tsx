@@ -271,6 +271,7 @@ const Community = (props: PropTypes) => {
           <Spacer y={1} />
           <p className={tokenStyles.Paragraph}>
             {state?.settings?.communityDescription ||
+              state?.description ||
               (state && "No community description available...") || (
                 <>
                   <Loading.Skeleton
