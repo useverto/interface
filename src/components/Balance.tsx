@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { balanceHistory } from "../utils/arweave";
 import { Line } from "react-chartjs-2";
 import { formatAddress } from "../utils/format";

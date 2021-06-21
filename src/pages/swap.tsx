@@ -205,6 +205,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
        */
       if (inputUnit.state === "AR") {
         // TODO: check for ETH balance too @johnletey
+
         // check if AR balance is enough
         const arBalance = parseFloat(
           arweave.ar.winstonToAr(
@@ -258,7 +259,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       setSwap(
         await client.createSwap(
           { amount: Number(input.state), unit: inputUnit.state },
-          { amount: Number(output.state), unit: outputUnit.state },
+          {
+            amount: inputUnit.state === "AR" ? undefined : Number(output.state),
+            unit: outputUnit.state,
+          },
           post
         )
       );
@@ -559,15 +563,17 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <Modal.Content>
             <p>Please confirm your order before submitting it:</p>
             <div className={styles.ConfirmSwapItems}>
-              <p>{swap.cost.ar} AR</p>
+              <p>
+                {(inputUnit.state === "AR" && swap.cost.ar + " AR") ||
+                  swap.cost.token + " " + selectedPST?.ticker}
+              </p>
               <div className={styles.SwapIcon}>
                 <ArrowSwitchIcon />
               </div>
-              {/** TODO */}
               <p>
-                {(swap.cost.token &&
-                  swap.cost.ar + " " + selectedPST?.ticker) ||
-                  "TODO"}
+                {(inputUnit.state === "AR" &&
+                  output.state + " " + selectedPST?.ticker) ||
+                  output.state + " AR"}
               </p>
             </div>
             <Spacer y={2} />
