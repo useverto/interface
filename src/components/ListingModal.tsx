@@ -27,6 +27,10 @@ export default function ListingModal(props: Props) {
 
       const currentState = await readContract(client, contractIDInput.state);
       setTokenName(currentState.ticker ?? "");
+
+      if (currentState.roles || currentState.votes)
+        setSelectedLayout("community");
+      else setSelectedLayout("art");
     })();
   }, [contractIDInput.state]);
 
