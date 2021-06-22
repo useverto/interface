@@ -106,7 +106,7 @@ export default function ListingModal(props: Props) {
             </div>
             <span className={styles.Name}>Art {"&"} collectible</span>
             <span className={styles.Description}>
-              Recommended for arts and other collectables
+              Recommended for arts and other collectibles
             </span>
           </div>
         </div>
