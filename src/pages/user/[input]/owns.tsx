@@ -40,6 +40,8 @@ const Owns = (props: {
       const price = (await arPrice()) * (await client.getPrice(id)).price;
 
       if (!artworkData.owner.image) artworkData.owner.image = randomEmoji();
+      else
+        artworkData.owner.image = `https://arweave.net/${artworkData.owner.image}`;
 
       arts.push({
         ...artworkData,
@@ -72,7 +74,7 @@ const Owns = (props: {
         />
       </Head>
       <Spacer y={3} />
-      <h1 className="Title">All Owned arts {"&"} collectibles</h1>
+      <h1 className="Title">Owned arts {"&"} collectibles</h1>
       <Spacer y={3} />
       <div className={styles.Creations}>
         <AnimatePresence>
@@ -145,6 +147,7 @@ export async function getStaticProps({ params: { input } }) {
       const price = (await arPrice()) * (await client.getPrice(id)).price;
 
       if (!data.owner.image) data.owner.image = randomEmoji();
+      else data.owner.image = `https://arweave.net/${data.owner.image}`;
 
       owns.push({
         ...data,
