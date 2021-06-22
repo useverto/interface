@@ -325,9 +325,12 @@ const Nav = () => {
                     " " +
                     (displayTheme === "Dark" ? styles.Dark : "") +
                     " " +
-                    (invites === 0 ? styles.DisabledMenuItem : "")
+                    (invites < 1 ? styles.DisabledMenuItem : "")
                   }
-                  onClick={() => inviteModal.setState(true)}
+                  onClick={() => {
+                    if (invites < 1) return;
+                    inviteModal.setState(true);
+                  }}
                 >
                   <UserPlusIcon />
                   Invites
