@@ -1,7 +1,7 @@
 import { Modal, Input, useInput, Spacer, Button, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
-import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
+import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
 import styles from "../styles/components/ListingModal.module.sass";
 
 export default function ListingModal(props: Props) {
@@ -22,8 +22,7 @@ export default function ListingModal(props: Props) {
 
   useEffect(() => {
     (async () => {
-      if (!/[a-z0-9_-]{43}/i.test(contractIDInput.state))
-        return setTokenName("");
+      if (!isAddress(contractIDInput.state)) return setTokenName("");
 
       const currentState = await readContract(client, contractIDInput.state);
       setTokenName(currentState.ticker ?? "");
@@ -37,7 +36,7 @@ export default function ListingModal(props: Props) {
   const { setToast } = useToasts();
 
   async function listToken() {
-    if (!/[a-z0-9_-]{43}/i.test(contractIDInput.state))
+    if (!isAddress(contractIDInput.state))
       return contractIDInput.setStatus("error");
 
     setLoading(true);

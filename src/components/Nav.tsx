@@ -33,6 +33,7 @@ import {
   CACHE_URL,
   INVITE_CONTRACT,
   client as arweave,
+  isAddress,
 } from "../utils/arweave";
 import { interactWrite } from "smartweave";
 import useArConnect from "use-arconnect";
@@ -189,7 +190,7 @@ const Nav = () => {
   // TODO: sign out if the user does not have an invite token
 
   async function invite() {
-    if (!/[a-z0-9_-]{43}/i.test(target.state)) return target.setStatus("error");
+    if (!isAddress(target.state)) return target.setStatus("error");
     if (invites > 1)
       return setToast({
         description: "No invites left",

@@ -1,7 +1,7 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useRouter } from "next/router";
-import { arPrice, CACHE_URL } from "../../../utils/arweave";
+import { arPrice, CACHE_URL, isAddress } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { Art, randomEmoji } from "../../../utils/user";
@@ -125,6 +125,15 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params: { input } }) {
   const user = (await client.getUser(input)) ?? null;
   const owns: Art[] = [];
+
+  // redirect if the user cannot be found and if it is not and address either
+  if (!isAddress(input) && !user)
+    return {
+      redirect: {
+        destination: "/404",
+        permanent: false,
+      },
+    };
 
   for (let i = 0; i < 2; i++) {
     const { data: ids } = await axios.get(

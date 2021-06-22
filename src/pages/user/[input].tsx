@@ -25,7 +25,7 @@ import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, isAddress } from "../../utils/arweave";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -424,6 +424,15 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params: { input } }) {
   const user = (await client.getUser(input)) ?? null;
+
+  // redirect if the user cannot be found and if it is not and address either
+  if (!isAddress(input) && !user)
+    return {
+      redirect: {
+        destination: "/404",
+        permanent: false,
+      },
+    };
 
   if (user && input !== user.username)
     return {
