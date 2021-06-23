@@ -96,11 +96,11 @@ const NotFound = () => {
                               ? `/@${item.username}`
                               : `/space/${item.id}`
                           }
+                          key={i}
                         >
                           <motion.a
                             className={styles.ResultItem}
                             {...opacityAnimation()}
-                            key={i}
                             href={
                               item.type === "user"
                                 ? `/@${item.username}`

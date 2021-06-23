@@ -128,6 +128,21 @@ const Home = ({ artwork }: { artwork: any }) => {
       <Head>
         <title>Verto - Welcome</title>
         <Metas title="Welcome" />
+        <script type="application/ld+json">{`
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "url": "https://vext.vercel.app/",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://vext.vercel.app/space?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        `}</script>
       </Head>
       <Page>
         <Spacer y={5} />
