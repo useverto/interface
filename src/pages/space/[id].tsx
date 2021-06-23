@@ -847,7 +847,7 @@ const Art = (props: PropTypes) => {
                 <Spacer y={0.85} />
                 <p className={artStyles.FormTitle}>Description</p>
                 <p style={{ textAlign: "justify" }}>
-                  {state.description ||
+                  {state?.description ||
                     state?.settings?.communityDescription ||
                     "No description."}
                 </p>

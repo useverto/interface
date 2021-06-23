@@ -143,7 +143,7 @@ const CommunitySkeleton = () => (
     <rect y="98" width="138" height="39" rx="3" fill="#E4E4E4" />
     <rect y="144" width="26" height="6" rx="2" fill="#E4E4E4" />
     <rect y="155" width="138" height="21" rx="3" fill="#E4E4E4" />
-    <g clip-path="url(#clip0)">
+    <g clipPath="url(#clip0)">
       <ellipse cx="121.5" cy="92" rx="52.5" ry="37" fill="#E4E4E4" />
       <ellipse cx="48.5" cy="87" rx="52.5" ry="37" fill="#E4E4E4" />
     </g>
@@ -192,7 +192,7 @@ const CustomSkeleton = () => (
     <rect y="144" width="101" height="12" rx="2" fill="#E4E4E4" />
     <rect y="163" width="101" height="12" rx="2" fill="#E4E4E4" />
     <rect x="111" width="101" height="68" rx="4" fill="#E4E4E4" />
-    <g clip-path="url(#clip0)">
+    <g clipPath="url(#clip0)">
       <ellipse cx="209" cy="127" rx="52" ry="37" fill="#E4E4E4" />
       <ellipse cx="141.5" cy="120" rx="44.5" ry="37" fill="#E4E4E4" />
     </g>
