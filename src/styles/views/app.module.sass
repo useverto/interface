@@ -15,6 +15,11 @@
     justify-content: space-between
     grid-template-columns: auto auto auto auto
 
+    @media screen and (max-width: variables.$mobile-screen)
+      grid-template-columns: auto
+      gap: 2em
+      justify-content: center
+
     .NoOwned
       position: absolute
       top: 50%
@@ -39,6 +44,15 @@
       bottom: 0
       width: 25%
       background: linear-gradient(to right, rgba(#000, .5), rgba(#000, .75) 8%, rgba(#000, .95) 27%, #000 42%)
+
+      @media screen and (max-width: variables.$mobile-screen)
+        position: relative
+        top: unset
+        right: unset
+        bottom: unset
+        background: none
+        width: auto
+        margin: 0 auto
 
       a
         color: variables.$foreground-reverse-color

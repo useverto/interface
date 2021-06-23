@@ -277,7 +277,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <Spacer y={2} />
       <div className={styles.Cards}>
         {arts.map((art, i) => (
-          <motion.div key={i} {...cardAnimation(i)}>
+          <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
             <Card.Asset
               name={art.name}
               userData={{
@@ -298,7 +298,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <Spacer y={2} />
       <div className={styles.Cards}>
         {tokens.map((token, i) => (
-          <motion.div key={i} {...cardAnimation(i + 4)}>
+          <motion.div key={i} {...cardAnimation(i + 4)} className={styles.Card}>
             <Card.Asset
               name={token.name}
               // @ts-ignore
@@ -334,7 +334,11 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <Spacer y={2} />
       <div className={styles.Cards}>
         {allTokens.map((token, i) => (
-          <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
+          <motion.div
+            key={i}
+            {...cardAnimation(i)}
+            className={styles.Card + " " + styles.AllTokensCard}
+          >
             {(token.type === "community" && (
               <Card.Asset
                 name={token.name}

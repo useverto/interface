@@ -36,12 +36,18 @@ $titleSize: 2.7em
     align-items: center
     width: 40%
 
+    @media screen and (max-width: variables.$mobile-screen)
+      display: none
+
 .Section
   .Title
     font-weight: 500
     font-size: $titleSize
     margin: 0
       bottom: .55em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin-top: 1em
 
   .Description
     font-size: 1.1em
@@ -63,6 +69,9 @@ $titleSize: 2.7em
 
 .PSTs
   display: flex
+
+  @media screen and (max-width: variables.$mobile-screen)
+    display: none
 
   .Text
     flex: 2

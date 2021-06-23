@@ -33,6 +33,9 @@
     width: max-content
     transform: translate(-50%, -50%)
 
+    @media screen and (max-width: variables.$mobile-screen)
+      display: none
+
     a
       font-size: $menuItemFontSize
       color: variables.$foreground-color

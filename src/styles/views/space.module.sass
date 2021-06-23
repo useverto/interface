@@ -111,11 +111,22 @@
   justify-content: space-between
   grid-template-columns: auto auto auto auto
 
-  .Card
-    margin-bottom: 2.75em
+  @media screen and (max-width: variables.$mobile-screen)
+    display: block
 
-    div[class~=VertoAssetCard]
-      height: 100%
+  .Card
+    $marginBottom: 2.75em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      display: flex
+      justify-content: center
+      margin-bottom: $marginBottom
+
+    &.AllTokensCard
+      margin-bottom: $marginBottom
+
+      div[class~=VertoAssetCard]
+        height: 100%
 
 .Search
   color: variables.$light-text
