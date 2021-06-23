@@ -8,6 +8,7 @@ import { randomEmoji } from "../utils/user";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import axios from "axios";
+import Link from "next/link";
 import styles from "../styles/views/404.module.sass";
 
 const NotFound = () => {
@@ -89,31 +90,48 @@ const NotFound = () => {
                   >
                     <AnimatePresence>
                       {results.map((item, i) => (
-                        <motion.div
-                          className={styles.ResultItem}
-                          {...opacityAnimation()}
-                          key={i}
+                        <Link
+                          href={
+                            item.type === "user"
+                              ? `/@${item.username}`
+                              : `/space/${item.id}`
+                          }
                         >
-                          <div className={styles.TokenData}>
-                            <img
-                              src={item.image}
-                              alt="img"
-                              draggable={false}
-                              className={
-                                item.type === "user" ? styles.UserAvatar : ""
-                              }
-                            />
-                            <div>
-                              <h1>{item.name}</h1>
-                              <h2>
-                                {item.type === "user"
-                                  ? `@${item.username}`
-                                  : item.ticker}
-                              </h2>
+                          <motion.a
+                            className={styles.ResultItem}
+                            {...opacityAnimation()}
+                            key={i}
+                            href={
+                              item.type === "user"
+                                ? `/@${item.username}`
+                                : `/space/${item.id}`
+                            }
+                          >
+                            <div className={styles.TokenData}>
+                              <img
+                                src={item.image}
+                                alt="img"
+                                draggable={false}
+                                className={
+                                  item.type === "user" ? styles.UserAvatar : ""
+                                }
+                              />
+                              <div>
+                                <h1>{item.name}</h1>
+                                <h2
+                                  className={
+                                    item.type === "user" ? styles.UserTag : ""
+                                  }
+                                >
+                                  {item.type === "user"
+                                    ? `@${item.username}`
+                                    : item.ticker}
+                                </h2>
+                              </div>
                             </div>
-                          </div>
-                          <ShareIcon />
-                        </motion.div>
+                            <ShareIcon />
+                          </motion.a>
+                        </Link>
                       ))}
                     </AnimatePresence>
                     <AnimatePresence>

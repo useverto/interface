@@ -58,6 +58,7 @@
     font-weight: 500
     margin: 0
     cursor: text
+    transition: all .23s ease-in-out
 
   input
     position: absolute
@@ -67,7 +68,10 @@
     background-color: transparent
     border: none
     font-size: 1em
-    color: variables.$cec
+    color: variables.$foreground-color
+
+  &:focus-within svg
+    color: variables.$foreground-color
 
 .SearchContent
   position: fixed
@@ -149,6 +153,9 @@
             font-size: 1em
             text-transform: uppercase
             line-height: 1em
+
+            &.UserTag
+              text-transform: none
 
         &:hover
           background-color: rgba(0, 0, 0, .07)
