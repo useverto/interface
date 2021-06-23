@@ -12,6 +12,7 @@ export const client = new Arweave({
 
 const gql = new ArDB(client);
 
+export const ROOT_URL = "https://vext.vercel.app";
 export const CACHE_URL = "https://v2.cache.verto.exchange";
 export const COMMUNITY_CONTRACT = "W_84yhLuUptuBi4qTUChiAE2wtHOOvTdqvj3IYfU6gg";
 export const INVITE_CONTRACT = ""; // TODO

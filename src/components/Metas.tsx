@@ -1,5 +1,5 @@
-// TODO: update OG API url on production
-const OGApiUrl = "https://vext.vercel.app";
+import { ROOT_URL } from "../utils/arweave";
+
 const Metas = ({ title, image, subtitle, localImage }: MetaProps) => (
   <>
     <meta name="title" content={`Verto - ${title} ${subtitle ?? ""}`} />
@@ -16,8 +16,8 @@ const Metas = ({ title, image, subtitle, localImage }: MetaProps) => (
       content={
         image ??
         (localImage
-          ? `${OGApiUrl}/${localImage}`
-          : `${OGApiUrl}/api/og?title=${
+          ? `${ROOT_URL}/${localImage}`
+          : `${ROOT_URL}/api/og?title=${
               title + ((subtitle && "&subtitle=" + subtitle) || "")
             }`)
       }
@@ -41,8 +41,8 @@ const Metas = ({ title, image, subtitle, localImage }: MetaProps) => (
       content={
         image ??
         (localImage
-          ? `${OGApiUrl}/${localImage}`
-          : `${OGApiUrl}/api/og?title=${
+          ? `${ROOT_URL}/${localImage}`
+          : `${ROOT_URL}/api/og?title=${
               title + ((subtitle && "&subtitle=" + subtitle) || "")
             }`)
       }
