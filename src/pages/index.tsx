@@ -128,7 +128,10 @@ const Home = ({ artwork }: { artwork: any }) => {
       <Head>
         <title>Verto - Welcome</title>
         <Metas title="Welcome" />
-        <script type="application/ld+json">{`
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: `
           {
             "@context": "https://schema.org",
             "@type": "WebSite",
@@ -142,7 +145,9 @@ const Home = ({ artwork }: { artwork: any }) => {
               "query-input": "required name=search_term_string"
             }
           }
-        `}</script>
+        `,
+          }}
+        ></script>
       </Head>
       <Page>
         <Spacer y={5} />
