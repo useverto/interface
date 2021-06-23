@@ -39,6 +39,13 @@ class MyDocument extends Document {
               },
               {
                 "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "The Verto Protocol",
+                "url": "${ROOT_URL}",
+                "logo": "${ROOT_URL}/logo_light.svg"
+              },
+              {
+                "@context": "https://schema.org",
                 "@type": "BreadcrumbList",
                 "url": "${ROOT_URL}",
                 "itemListElement": [
@@ -53,7 +60,7 @@ class MyDocument extends Document {
                   },
                   {
                     "@type": "ListItem",
-                    "position": 2,
+                    "position": 1,
                     "item": {
                       "@id": "${ROOT_URL}/orbit",
                       "name": "Orbit",
