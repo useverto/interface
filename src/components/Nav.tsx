@@ -177,6 +177,8 @@ const Nav = () => {
   const { setToast } = useToasts();
   const [loadingInvite, setLoadingInvite] = useState(false);
 
+  /**
+
   // get invite count
   useEffect(() => {
     if (!address) return;
@@ -188,6 +190,8 @@ const Nav = () => {
   }, [address]);
 
   // TODO: sign out if the user does not have an invite token
+
+  **/
 
   async function invite() {
     if (!isAddress(target.state)) return target.setStatus("error");

@@ -1,0 +1,44 @@
+@use "../variables"
+
+.Page
+  padding: 0
+
+.Content
+  position: absolute
+  top: 45%
+  left: 50%
+  width: max-content
+  transform: translate(-50%, -50%)
+
+  .Title, .Subtitle
+    text-align: center
+    margin: 0 auto
+    line-height: .94em
+
+  .Title
+    font-size: 8em
+    font-weight: 600
+    color: variables.$foreground-color
+
+  .Subtitle
+    font-size: 2.5em
+    font-weight: 500
+    color: variables.$light-text
+
+  .SimulateInput
+    display: flex
+    align-items: center
+    justify-content: space-between
+    padding: .55em 1.15em
+    border-radius: 2.5em
+    border: 3.5px solid variables.$foreground-color
+    width: 33vw
+    background-color: variables.$background-color
+    box-shadow: variables.$darker-shadow
+    
+    p, svg
+      color: variables.$cec
+      font-weight: 500
+      font-size: 1.3em
+      margin: 0
+      cursor: text
