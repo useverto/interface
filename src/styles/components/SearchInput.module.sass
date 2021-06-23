@@ -1,0 +1,35 @@
+@use "../variables"
+
+.SearchInput
+  $padding: .55em 1.15em
+  position: relative
+  +variables.flexCenterWithSpace
+  padding: $padding
+  border-radius: 2.5em
+  border: 3.5px solid variables.$foreground-color
+  background-color: variables.$background-color
+  box-shadow: variables.$darker-shadow
+  color: variables.$cec
+  font-weight: 500
+  font-size: 1.3em
+  cursor: text
+    
+  p, svg
+    font-size: 1em
+    font-weight: 500
+    margin: 0
+    cursor: text
+    transition: all .23s ease-in-out
+
+  input
+    position: absolute
+    +variables.absoluteExtend
+    padding: $padding
+    outline: none
+    background-color: transparent
+    border: none
+    font-size: 1em
+    color: variables.$foreground-color
+
+  &:focus-within svg
+    color: variables.$foreground-color

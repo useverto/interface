@@ -19,6 +19,8 @@ import { arPrice, CACHE_URL } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
+import { SearchIcon } from "@iconicicons/react";
+import Search, { useSearch } from "../../components/Search";
 import useSWR from "swr";
 import axios from "axios";
 import Verto from "@verto/js";
@@ -176,6 +178,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     return items;
   }
 
+  const search = useSearch();
+
   return (
     <Page>
       <Head>
@@ -263,7 +267,13 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         </div>
       </div>
       <Spacer y={4} />
-      <h1 className="Title">Art {"&"} Collectibles</h1>
+      <h1 className="Title">
+        Art {"&"} Collectibles
+        <SearchIcon
+          className={styles.Search}
+          onClick={() => search.setOpen(true)}
+        />
+      </h1>
       <Spacer y={2} />
       <div className={styles.Cards}>
         {arts.map((art, i) => (
@@ -365,6 +375,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         )}
       </AnimatePresence>
       <ListingModal {...listModal.bindings} />
+      <Search {...search} />
     </Page>
   );
 };
