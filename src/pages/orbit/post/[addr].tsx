@@ -6,6 +6,8 @@ import { getType } from "../../../utils/order";
 import { useEffect, useState } from "react";
 import { CACHE_URL } from "../../../utils/arweave";
 import { useRouter } from "next/router";
+import { useMediaPredicate } from "react-media-hook";
+import { formatAddress } from "../../../utils/format";
 import Metas from "../../../components/Metas";
 import Head from "next/head";
 import axios from "axios";
@@ -117,6 +119,13 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
     }`;
   }
 
+  const notMobile = useMediaPredicate("(min-width: 720px)");
+
+  function shortOnMobile(addr: string) {
+    if (notMobile) return addr;
+    else return formatAddress(addr, 18);
+  }
+
   return (
     <Page>
       <Head>
@@ -133,7 +142,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
             rel="noopener noreferrer"
             className={styles.TradingPostAddress}
           >
-            {props.addr}
+            {shortOnMobile(props.addr)}
           </a>
           {status && (
             <>

@@ -53,6 +53,10 @@ $titleMarginLeft: .3em
         opacity: 1
         background-color: variables.$success
 
+    &.Owner
+      @media screen and (max-width: variables.$mobile-screen)
+        align-items: flex-start
+
     div[class~=VertoTooltip]
       text-transform: capitalize
 
@@ -72,10 +76,16 @@ $titleMarginLeft: .3em
   grid-template-columns: repeat(4, 25%)
   margin-left: $titleMarginLeft
 
+  @media screen and (max-width: variables.$mobile-screen)
+    grid-template-columns: repeat(2, 50%)
+
   .Info
     color: variables.$foreground-color
     margin-bottom: 1em
     font-size: 1.45em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      font-size: 1.3em
 
     span
       display: block

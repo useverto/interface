@@ -4,6 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useRouter } from "next/router";
 import { isAddress } from "../../../utils/arweave";
+import { useMediaPredicate } from "react-media-hook";
+import { formatAddress } from "../../../utils/format";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
@@ -45,6 +47,13 @@ const Transactions = (props: {
     return res;
   }
 
+  const notMobile = useMediaPredicate("(min-width: 720px)");
+
+  function shortOnMobile(addr: string) {
+    if (notMobile) return addr;
+    else return formatAddress(addr, 12);
+  }
+
   return (
     <Page>
       <Head>
@@ -75,7 +84,7 @@ const Transactions = (props: {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {transaction.id}
+                {shortOnMobile(transaction.id)}
               </a>
               <Tooltip
                 text={transaction.status}

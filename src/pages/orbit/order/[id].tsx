@@ -4,6 +4,8 @@ import { cardListAnimation } from "../../../utils/animations";
 import { motion } from "framer-motion";
 import { getType } from "../../../utils/order";
 import { CACHE_URL } from "../../../utils/arweave";
+import { useMediaPredicate } from "react-media-hook";
+import { formatAddress } from "../../../utils/format";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
@@ -26,6 +28,13 @@ const Order = (props: { order: any; id: string }) => {
     }
   );
 
+  const notMobile = useMediaPredicate("(min-width: 720px)");
+
+  function shortOnMobile(addr: string) {
+    if (notMobile) return addr;
+    else return formatAddress(addr, 18);
+  }
+
   return (
     <Page>
       <Head>
@@ -39,7 +48,7 @@ const Order = (props: { order: any; id: string }) => {
           <span className={styles.Type}>{getType(order.input)}</span>
         </h1>
         <p>
-          {order.id}
+          {shortOnMobile(order.id)}
           <Spacer x={0.44} />
           <Tooltip text={order.status} position="right">
             <span
@@ -47,9 +56,9 @@ const Order = (props: { order: any; id: string }) => {
             />
           </Tooltip>
         </p>
-        <p>
+        <p className={styles.Owner}>
           Owner:
-          <Link href={`/@${order.sender}`}>{order.sender}</Link>
+          <Link href={`/@${order.sender}`}>{shortOnMobile(order.sender)}</Link>
         </p>
       </div>
       <Spacer y={3} />

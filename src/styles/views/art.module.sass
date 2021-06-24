@@ -9,6 +9,9 @@ $formPadding: 1.35em
   color: variables.$foreground-color
   font-weight: 500
 
+  @media screen and (max-width: variables.$mobile-screen)
+    font-size: variables.$title-font-size - .3em
+
 .Actions
   position: absolute
   bottom: 1.5em
@@ -64,12 +67,19 @@ $formPadding: 1.35em
   justify-content: space-between
   $cardWidth: 48%
 
+  @media screen and (max-width: variables.$mobile-screen)
+    display: block
+
   .Form
     display: flex
     flex-direction: column
     justify-content: space-between
     width: calc(#{$cardWidth} - #{$formPadding * 2})
     padding: $formPadding
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: auto
+      min-height: 55vh
 
     p, .FormTitle
       color: variables.$foreground-color
@@ -122,6 +132,11 @@ $formPadding: 1.35em
       top: 50%
     background-color: variables.$foreground-color
     overflow: hidden
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: auto
+      min-height: 30vh
+      margin-bottom: 3em
 
     img, video
       position: absolute

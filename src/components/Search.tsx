@@ -95,7 +95,7 @@ export default function Search({ open, setOpen }) {
                           <div className={styles.TokenData}>
                             <img
                               src={item.image}
-                              alt="img"
+                              alt={item.name}
                               draggable={false}
                               className={
                                 item.type === "user" ? styles.UserAvatar : ""

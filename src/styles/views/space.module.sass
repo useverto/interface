@@ -12,6 +12,9 @@
   height: 250px
   overflow: hidden
 
+  @media screen and (max-width: variables.$mobile-screen)
+    height: 450px
+
   .Paginator
     position: absolute
     display: flex
@@ -47,15 +50,26 @@
     width: calc(100% - #{$sidePadding * 2})
     padding: $topPadding $sidePadding $bottomPadding
 
+    @media screen and (max-width: variables.$mobile-screen)
+      align-items: flex-start
+
     .TokenInfo
       display: flex
       align-items: center
+
+      @media screen and (max-width: variables.$mobile-screen)
+        display: block
 
       img
         height: 110px
         user-select: none
         margin-right: $sidePadding
         border-radius: 11px
+
+        @media screen and (max-width: variables.$mobile-screen)
+          margin:
+            right: 0
+            bottom: $sidePadding
 
       h1
         font-size: variables.$title-font-size
@@ -91,6 +105,9 @@
       .GraphData
         max-width: 200px
         min-height: 100px
+
+        @media screen and (max-width: variables.$mobile-screen)
+          display: none
 
   &.DarkFeatured
     background-color: variables.$lighter-background-color

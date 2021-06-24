@@ -8,8 +8,15 @@ $detailsWidth: 62.5%
   align-items: flex-start
   justify-content: space-between
 
+  @media screen and (max-width: variables.$mobile-screen)
+    display: block
+
 .TokenDetails
   width: $detailsWidth
+
+  @media screen and (max-width: variables.$mobile-screen)
+    width: auto
+    margin-bottom: 2em
 
 .Name
   font-size: variables.$title-font-size * .92
@@ -37,6 +44,9 @@ $detailsWidth: 62.5%
   position: relative
   min-height: 285px
   width: 100%
+
+  @media screen and (max-width: variables.$mobile-screen)
+    min-height: 250px
 
 .Paragraph
   font-size: 1.1em
@@ -69,6 +79,10 @@ $detailsWidth: 62.5%
   width: 100% - $detailsWidth - 8% !important
   min-width: unset !important
 
+  @media screen and (max-width: variables.$mobile-screen)
+    position: relative
+    width: auto !important
+
   div[class~=VertoInputWrapper]
     width: calc(100% - 6px)
     min-width: unset
@@ -79,3 +93,6 @@ $detailsWidth: 62.5%
 
       @media screen and (max-width: 1300px)
         min-width: 110px
+
+      @media screen and (max-width: variables.$mobile-screen)
+        min-width: 160px

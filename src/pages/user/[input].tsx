@@ -26,6 +26,7 @@ import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
 import { CACHE_URL, isAddress } from "../../utils/arweave";
+import { useMediaPredicate } from "react-media-hook";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -138,6 +139,13 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       );
     })();
   }, []);
+
+  const notMobile = useMediaPredicate("(min-width: 720px)");
+
+  function shortOnMobile(addr: string) {
+    if (notMobile) return addr;
+    else return formatAddress(addr, 12);
+  }
 
   return (
     <Page>
@@ -322,7 +330,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {transaction.id}
+                {shortOnMobile(transaction.id)}
               </a>
               <Tooltip
                 text={transaction.status}

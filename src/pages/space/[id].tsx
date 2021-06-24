@@ -482,7 +482,9 @@ const Art = (props: PropTypes) => {
       setUserData({
         name: data.owner.name,
         usertag: data.owner.username,
-        avatar: data.owner.image ?? randomEmoji(),
+        avatar: data.owner.image
+          ? `https://arweave.net/${data.owner.image}`
+          : randomEmoji(),
       });
     })();
   }, []);

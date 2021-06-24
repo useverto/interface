@@ -7,6 +7,9 @@
   padding: 1.32em variables.$nav-side-padding
   border-top: 1px solid #eaeaea
 
+  @media screen and (max-width: variables.$mobile-screen)
+    padding: 1.32em variables.$nav-side-padding / 2
+
   a
     text-decoration: none
     color: variables.$light-text
@@ -40,6 +43,9 @@
     a
       font-size: .95em
       margin: 0 .8em
+
+      @media screen and (max-width: variables.$mobile-screen)
+        margin: 0 .35em
 
       &:last-child
         margin-right: 0

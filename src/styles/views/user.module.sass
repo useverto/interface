@@ -5,8 +5,14 @@
   align-items: center
   justify-content: space-between
 
+  @media screen and (max-width: variables.$mobile-screen)
+    display: block
+
   .Avatar
     font-size: 1.3em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin-bottom: 1em
 
     h1
       margin-bottom: 0 !important
@@ -41,12 +47,21 @@
   justify-content: space-between
   grid-template-columns: auto auto auto auto
 
+  @media screen and (max-width: variables.$mobile-screen)
+    justify-content: center
+    grid-template-columns: auto
+
   .CreationItem
+    $bottomMarginCreationItem: 3.5em
+
     &:nth-child(4n+4)
-      margin-bottom: 3.5em
+      margin-bottom: $bottomMarginCreationItem
 
     &:last-child
       margin-bottom: 0
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin-bottom: $bottomMarginCreationItem
 
 .Transactions
   width: 100%

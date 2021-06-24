@@ -5,9 +5,17 @@
   align-items: stretch
   justify-content: space-between
 
+  @media screen and (max-width: variables.$mobile-screen)
+    display: block
+
   .Graph
     position: relative
     width: 50%
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: 100%
+      height: 25vh
+      margin-bottom: 2em
 
     .GraphMode
       position: absolute
