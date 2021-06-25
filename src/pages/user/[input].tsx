@@ -221,7 +221,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <div className={styles.Creations}>
         {owned.map((id, i) => (
           <motion.div key={i} {...cardAnimation(i)}>
-            <Card.AssetClear image={`https://arweave.net/${id}`} />
+            <Card.AssetClear
+              image={`https://arweave.net/${id}`}
+              onClick={() => router.push(`/space/${id}`)}
+            />
           </motion.div>
         ))}
       </div>
@@ -242,7 +245,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <div className={styles.Creations}>
         {creations.map((id, i) => (
           <motion.div key={i} {...cardAnimation(i)}>
-            <Card.AssetClear image={`https://arweave.net/${id}`} />
+            <Card.AssetClear
+              image={`https://arweave.net/${id}`}
+              onClick={() => router.push(`/space/${id}`)}
+            />
           </motion.div>
         ))}
       </div>

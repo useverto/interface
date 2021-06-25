@@ -720,48 +720,59 @@ const Art = (props: PropTypes) => {
   const [loading, setLoading] = useState(false);
   const { setToast } = useToasts();
 
-  async function buy() {
-    if (bitsAmountInput.state <= 0 && bitsAmountInput.state > bitsAvailable)
+  async function order(mode: "buy" | "sell") {
+    if (
+      bitsAmountInput.state <= 0 &&
+      bitsAmountInput.state > bitsAvailable &&
+      mode === "buy"
+    )
+      return bitsAmountInput.setStatus("error");
+
+    if (
+      bitsAmountInput.state <= 0 &&
+      bitsAmountInput.state > ownedAmount &&
+      mode === "sell"
+    )
       return bitsAmountInput.setStatus("error");
 
     setLoading(true);
+
     try {
-      // TODO @johnletey buy bits
-      setToast({
-        description: "Your order has been submitted",
-        type: "success",
-        duration: 4500,
-      });
+      // TODO: create swap
+      /**
+      const swapItem = await client.createSwap(
+        { amount: Number(input.state), unit: inputUnit.state },
+        {
+          amount: inputUnit.state === "AR" ? undefined : Number(output.state),
+          unit: outputUnit.state,
+        },
+        await client.recommendPost()
+      );
+      */
+
+      try {
+        // TODO: submit swap
+
+        setToast({
+          description: "Your order has been submitted",
+          type: "success",
+          duration: 4500,
+        });
+      } catch {
+        setToast({
+          description: "Error submitting your order",
+          type: "error",
+          duration: 4500,
+        });
+      }
     } catch {
       setToast({
-        description: "Error submitting your order",
+        description: "Error creating your order",
         type: "error",
         duration: 4500,
       });
     }
-    setLoading(false);
-    bitsAmountInput.setStatus(undefined);
-  }
 
-  async function sell() {
-    if (bitsAmountInput.state <= 0 && bitsAmountInput.state > ownedAmount)
-      return bitsAmountInput.setStatus("error");
-
-    setLoading(true);
-    try {
-      // TODO @johnletey sell bits
-      setToast({
-        description: "Your order has been submitted",
-        type: "success",
-        duration: 4500,
-      });
-    } catch {
-      setToast({
-        description: "Error submitting your order",
-        type: "error",
-        duration: 4500,
-      });
-    }
     setLoading(false);
     bitsAmountInput.setStatus(undefined);
   }
@@ -916,7 +927,7 @@ const Art = (props: PropTypes) => {
                 <div>
                   <Button
                     className={artStyles.FormBtn}
-                    onClick={buy}
+                    onClick={() => order("buy")}
                     loading={loading}
                   >
                     Add to collection
@@ -937,7 +948,7 @@ const Art = (props: PropTypes) => {
                 <div>
                   <Button
                     className={artStyles.FormBtn}
-                    onClick={sell}
+                    onClick={() => order("sell")}
                     loading={loading}
                   >
                     Sell bits

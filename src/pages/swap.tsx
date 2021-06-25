@@ -252,6 +252,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           permissionModal.setState(true);
           return;
         }
+
       /**
        * Create the swap
        */
