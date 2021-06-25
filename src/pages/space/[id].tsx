@@ -737,6 +737,8 @@ const Art = (props: PropTypes) => {
 
     setLoading(true);
 
+    // TODO: remove disabled from buy/sell buttons after this is ready
+
     try {
       // TODO: create swap
       /**
@@ -869,7 +871,9 @@ const Art = (props: PropTypes) => {
                 <Button
                   className={artStyles.FormBtn}
                   onClick={() => setView("buy")}
-                  disabled={!address || bitsAvailable === 0}
+                  // disabled={!address || bitsAvailable === 0}
+                  // TODO: remove disabled below
+                  disabled
                 >
                   Buy
                 </Button>
@@ -878,7 +882,9 @@ const Art = (props: PropTypes) => {
                   className={artStyles.FormBtn}
                   type="outlined"
                   onClick={() => setView("sell")}
-                  disabled={!address || ownedAmount === 0}
+                  // disabled={!address || ownedAmount === 0}
+                  // TODO: remove disabled below
+                  disabled
                 >
                   Sell
                 </Button>
