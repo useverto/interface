@@ -356,14 +356,15 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@^2.1.14-alpha":
-  version "2.1.14-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.14-alpha.tgz#478b7a4f83cf014c59a1ecf219e9bb35b16e41bd"
-  integrity sha512-vVMpQscHQzmMq9Ac7sU5YCq79g+9oaQUfXIyd3vrdAxC/z+5ocuAupwAj8nDt181oQu1EGS16uRNQ69MFbMn7g==
+"@verto/ui@^2.1.15-alpha":
+  version "2.1.15-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.15-alpha.tgz#b59d7b9e63bbfde9562822882a439f045d8bad4a"
+  integrity sha512-tKUvXY6rWKm1VxxX8JneQ9W5xx8vVhl0by69+REyd6Xo/3S4QoKpTzVD7hIzUf+23424QIbSmIp+lv5FemVigA==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     framer-motion "^3.1.1"
     nanoid "^3.1.22"
+    react-media-hook "^0.4.9"
     styled-components "^5.2.1"
 
 "@weavery/clarity@^0.1.5":

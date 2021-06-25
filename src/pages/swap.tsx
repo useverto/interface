@@ -252,7 +252,6 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           permissionModal.setState(true);
           return;
         }
-
       /**
        * Create the swap
        */
@@ -271,7 +270,6 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       output.setStatus(undefined);
     } catch {
       setToast({
-        title: "Error",
         description: "Could not create swap",
         type: "error",
         duration: 3000,
@@ -279,6 +277,33 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     }
 
     setCreatingSwap(false);
+  }
+
+  const [submittingSwap, setSubmittingSwap] = useState(false);
+
+  /**
+   * Submit the swap for the protocol to process
+   */
+  async function submit() {
+    setSubmittingSwap(true);
+
+    try {
+      await client.sendSwap(swap.transactions);
+
+      setToast({
+        description: "Submitted your order",
+        type: "success",
+        duration: 5000,
+      });
+    } catch {
+      setToast({
+        description: "Could not submit your order",
+        type: "error",
+        duration: 4500,
+      });
+    }
+
+    setSubmittingSwap(false);
   }
 
   // selected PST price in AR
@@ -577,7 +602,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
               </p>
             </div>
             <Spacer y={2} />
-            <Button small disabled className={styles.SubmitBtn}>
+            <Button
+              small
+              onClick={submit}
+              loading={submittingSwap}
+              className={styles.SubmitBtn}
+            >
               Submit
             </Button>
           </Modal.Content>
