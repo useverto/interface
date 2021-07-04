@@ -278,18 +278,31 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <div className={styles.Cards}>
         {arts.map((art, i) => (
           <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
-            <Card.Asset
-              name={art.name}
-              userData={{
-                avatar: art.owner.image,
-                name: art.owner.name,
-                usertag: art.owner.username,
-              }}
-              // @ts-ignore
-              price={prices[art.id] ?? " ??"}
-              image={`https://arweave.net/${art.id}`}
-              onClick={() => router.push(`/space/${art.id}`)}
-            />
+            {(art.items && (
+              <Card.Collection
+                name={art.name}
+                userData={{
+                  avatar: art.owner.image,
+                  name: art.owner.name,
+                  usertag: art.owner.username,
+                }}
+                images={art.items.map((txID) => `https://arweave.net/${txID}`)}
+                onClick={() => router.push(`/space/${art.id}`)}
+              />
+            )) || (
+              <Card.Asset
+                name={art.name}
+                userData={{
+                  avatar: art.owner.image,
+                  name: art.owner.name,
+                  usertag: art.owner.username,
+                }}
+                // @ts-ignore
+                price={prices[art.id] ?? " ??"}
+                image={`https://arweave.net/${art.id}`}
+                onClick={() => router.push(`/space/${art.id}`)}
+              />
+            )}
           </motion.div>
         ))}
       </div>
