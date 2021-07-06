@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
-import { SearchIcon, ShareIcon } from "@iconicicons/react";
+import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { useTheme } from "@verto/ui";
 import { CACHE_URL } from "../utils/arweave";
@@ -93,14 +93,18 @@ export default function Search({ open, setOpen }) {
                           }
                         >
                           <div className={styles.TokenData}>
-                            <img
-                              src={item.image}
-                              alt={item.name}
-                              draggable={false}
-                              className={
-                                item.type === "user" ? styles.UserAvatar : ""
-                              }
-                            />
+                            {(item.type === "collection" && (
+                              <img
+                                src={item.image}
+                                alt={item.name}
+                                draggable={false}
+                                className={
+                                  item.type === "user" ? styles.UserAvatar : ""
+                                }
+                              />
+                            )) || (
+                              <MenuIcon className={styles.CollectionIcon} />
+                            )}
                             <div>
                               <h1>{item.name}</h1>
                               <h2
@@ -110,7 +114,7 @@ export default function Search({ open, setOpen }) {
                               >
                                 {item.type === "user"
                                   ? `@${item.username}`
-                                  : item.ticker}
+                                  : item.ticker ?? "Collection"}
                               </h2>
                             </div>
                           </div>
