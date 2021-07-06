@@ -20,7 +20,7 @@ export default function ListingModal(props: Props) {
     setSelectedLayout("community");
   }, [props.open]);
 
-  const [invalidFormat, setInvalidFormat] = useState(false);
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -40,11 +40,11 @@ export default function ListingModal(props: Props) {
             type: "error",
             duration: 4500,
           });
-          setInvalidFormat(true);
+          setDisabled(true);
           return;
         }
 
-        setInvalidFormat(false);
+        setDisabled(false);
 
         if (currentState.roles || currentState.votes)
           setSelectedLayout("community");
@@ -55,6 +55,7 @@ export default function ListingModal(props: Props) {
           type: "error",
           duration: 2750,
         });
+        setDisabled(true);
       }
     })();
   }, [contractIDInput.state]);
@@ -142,7 +143,7 @@ export default function ListingModal(props: Props) {
           className={styles.Submit}
           onClick={listToken}
           loading={loading}
-          disabled={invalidFormat}
+          disabled={disabled}
         >
           Add to space
         </Button>
