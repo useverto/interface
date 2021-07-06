@@ -14,7 +14,7 @@ const gql = new ArDB(client);
 
 export const ROOT_URL = "https://vext.vercel.app";
 export const CACHE_URL = "https://v2.cache.verto.exchange";
-export const COMMUNITY_CONTRACT = "yxdwrWJiaDDwKHIridjuBhtSR_IF7K8B8euJRLqaTrw";
+export const COMMUNITY_CONTRACT = "Wgp3SpOtWXGCi1SardwQAwrOsQeW6aQn36ooo6eo8nc";
 export const INVITE_CONTRACT = ""; // TODO
 
 export const balanceHistory = async (
