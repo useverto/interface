@@ -240,7 +240,7 @@ const App = () => {
           {!loadingOwned && owned.length === 0 && (
             <p className={styles.NoOwned}>
               You do not own any collectibles. <br />
-              Maybe check out <Link href="/space">Space</Link>?
+              Consider checking out <Link href="/space">Space</Link>
             </p>
           )}
           {/** Placeholder */}

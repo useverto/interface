@@ -836,7 +836,7 @@ const Art = (props: PropTypes) => {
           {(view === "preview" && (
             <>
               <div>
-                <p className={artStyles.FormTitle}>Lowest price:</p>
+                <p className={artStyles.FormTitle}>Last price:</p>
                 <h1 className={artStyles.Price}>
                   {(props.price !== "--" && (
                     <>

@@ -216,7 +216,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         </div>
       )}
       <Spacer y={5} />
-      <h1 className="Title">Owned arts {"&"} collectibles</h1>
+      <h1 className="Title">Owned art {"&"} collectibles</h1>
       <Spacer y={2} />
       <div className={styles.Creations}>
         {owned.map((id, i) => (
