@@ -20,16 +20,42 @@ export default function ListingModal(props: Props) {
     setSelectedLayout("community");
   }, [props.open]);
 
+  const [invalidFormat, setInvalidFormat] = useState(false);
+
   useEffect(() => {
     (async () => {
       if (!isAddress(contractIDInput.state)) return setTokenName("");
 
-      const currentState = await readContract(client, contractIDInput.state);
-      setTokenName(currentState.ticker ?? "");
+      try {
+        const currentState = await readContract(client, contractIDInput.state);
+        setTokenName(currentState.ticker ?? "");
 
-      if (currentState.roles || currentState.votes)
-        setSelectedLayout("community");
-      else setSelectedLayout("art");
+        if (
+          !currentState.ticker ||
+          !currentState.name ||
+          !currentState.balances
+        ) {
+          setToast({
+            description: "Not a token contract",
+            type: "error",
+            duration: 4500,
+          });
+          setInvalidFormat(true);
+          return;
+        }
+
+        setInvalidFormat(false);
+
+        if (currentState.roles || currentState.votes)
+          setSelectedLayout("community");
+        else setSelectedLayout("art");
+      } catch {
+        setToast({
+          description: "Could not read contract",
+          type: "error",
+          duration: 2750,
+        });
+      }
     })();
   }, [contractIDInput.state]);
 
@@ -116,6 +142,7 @@ export default function ListingModal(props: Props) {
           className={styles.Submit}
           onClick={listToken}
           loading={loading}
+          disabled={invalidFormat}
         >
           Add to space
         </Button>
