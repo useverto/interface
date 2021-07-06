@@ -10,12 +10,6 @@ const Footer = () => {
     >
       <h1 className={styles.Title}>
         <span>Verto</span>
-        <Spacer x={0.3} />
-        by
-        <Spacer x={0.3} />
-        <a href="https://th8ta.org" target="_blank" rel="noopener noreferrer">
-          th8ta
-        </a>
       </h1>
       <div className={styles.Links}>
         <a

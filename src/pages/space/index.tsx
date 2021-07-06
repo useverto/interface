@@ -340,7 +340,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
             }}
             style={{ padding: ".35em 1.2em" }}
           >
-            Add new
+            Add
           </Button>
         </div>
       </h1>

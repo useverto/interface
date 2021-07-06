@@ -398,7 +398,7 @@ const Community = (props: PropTypes) => {
         <Card className={tokenStyles.ActionCard}>
           <Input
             label="Address"
-            placeholder="Transfer target..."
+            placeholder="Recipient..."
             {...target.bindings}
           />
           <Spacer y={1.2} />
@@ -848,9 +848,7 @@ const Art = (props: PropTypes) => {
                     </>
                   )) ||
                     props.price}
-                  <span className={artStyles.FormTitle}>
-                    /share (~{arPrice})
-                  </span>
+                  <span className={artStyles.FormTitle}>/bit (~{arPrice})</span>
                 </h1>
                 <Spacer y={0.85} />
                 <Avatar
