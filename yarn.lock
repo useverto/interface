@@ -183,10 +183,10 @@
   resolved "https://registry.yarnpkg.com/@iconicicons/react/-/react-1.1.1.tgz#8d2f94457f26d064fae813540fe47e9c499f7351"
   integrity sha512-o0Zlt0E8aoRenVxot+bo04XodYXVj0x3Muh/H+BXbANVC8usQvCWSyLvsrRJoyrAWgF2tAV7crgYZ7MEe7sTzw==
 
-"@iconicicons/react@^1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@iconicicons/react/-/react-1.3.0.tgz#d6bafb0e0fa25e6a219d01016a4f322078d41ba9"
-  integrity sha512-f6sDsuJba5gCMDRgd33hN+96yHgGPqQo7vIT86BYwQGY5F4bMXLqRjV2fZVrD71/rc0xF8HEuJ9U6WZdKzzQWQ==
+"@iconicicons/react@^1.5.0":
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/@iconicicons/react/-/react-1.5.0.tgz#906c1c8d5114be2c6bd9e4b31be3eb1123801a7d"
+  integrity sha512-WEPtx5uYyz1zSpRSrdpBIY6Wdq2T46vHWedIJQDoSnFZ+BsL1Sk2Sggp0nShetUm7yImtINiPD3To5okGoDprQ==
 
 "@next/env@10.1.3":
   version "10.1.3"

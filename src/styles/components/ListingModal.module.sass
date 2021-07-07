@@ -60,3 +60,41 @@ $labelFontSize: 1.075em
 
     svg
       width: 100%
+
+.SideAction
+  color: variables.$light-text
+  text-align: center
+  text-decoration: underline
+  margin: 0
+  cursor: pointer
+  transition: all .23s ease-in-out
+
+  &:hover
+    opacity: .8
+
+.Textarea
+  +variables.modalTextarea
+
+.CollaboratorLabel
+  +variables.flexCenterWithSpace
+
+  svg
+    cursor: pointer
+    transition: all .23s ease-in-out
+
+    &:hover
+      opacity: .8
+
+    &:active
+      transform: scale(.8)
+
+.Collaborator
+  $size: 32px
+  display: inline-block
+  border: 1px solid variables.$background-color
+  border-radius: 100%
+  width: $size
+  user-select: none
+
+  &:not(:first-child)
+    margin-left: -($size /  5 * 3)

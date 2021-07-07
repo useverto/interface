@@ -1,8 +1,25 @@
-import { Modal, Input, useInput, Spacer, Button, useToasts } from "@verto/ui";
+import {
+  Modal,
+  Input,
+  useInput,
+  Spacer,
+  Button,
+  useToasts,
+  useModal,
+} from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
+import { UserInterface } from "@verto/js/dist/faces";
 import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
+import { CheckIcon, PlusIcon } from "@iconicicons/react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
+import { AnimatePresence, motion } from "framer-motion";
+import { randomEmoji } from "../utils/user";
+import Verto from "@verto/js";
 import styles from "../styles/components/ListingModal.module.sass";
+
+const verto = new Verto();
 
 export default function ListingModal(props: Props) {
   const contractIDInput = useInput<string>();
@@ -90,65 +107,140 @@ export default function ListingModal(props: Props) {
     setLoading(false);
   }
 
+  const collectionModal = useModal();
+  const collectionNameInput = useInput<string>("");
+  const [collectionDescription, setCollectionDescription] = useState("");
+  const [collaborators, setCollaborators] = useState<UserInterface[]>([]);
+  const [items, setItems] = useState<string[]>([]);
+  const activeAddress = useSelector((state: RootState) => state.addressReducer);
+
+  useEffect(() => {
+    collectionNameInput.setState("");
+    setCollectionDescription("");
+    setCollaborators([]);
+    setItems([]);
+    verto
+      .getUser(activeAddress)
+      .then((user) => setCollaborators([fixUserImage(user)]));
+  }, [collectionModal.state]);
+
+  const fixUserImage = (user: UserInterface) => ({
+    ...user,
+    image: user.image ? `https://arweave.net/${user.image}` : randomEmoji(),
+  });
+
   return (
-    <Modal {...props} className={styles.Modal}>
-      <Modal.Title>List new token</Modal.Title>
-      <Modal.Content>
-        <Input
-          label={<>Token contract ID {tokenName !== "" && `(${tokenName})`}</>}
-          className={styles.Input}
-          placeholder="Contract ID"
-          type="text"
-          {...contractIDInput.bindings}
-        />
-        <Spacer y={2} />
-        <span className={styles.Label}>Choose token layout</span>
-        <div className={styles.TokenLayoutPicker}>
-          <div
-            className={
-              styles.TokenItem +
-              " " +
-              (selectedLayout === "community" ? styles.ActiveItem : "")
+    <>
+      <Modal {...props} className={styles.Modal}>
+        <Modal.Title>List new token</Modal.Title>
+        <Modal.Content>
+          <Input
+            label={
+              <>Token contract ID {tokenName !== "" && `(${tokenName})`}</>
             }
-            onClick={() => setSelectedLayout("community")}
-          >
-            <div className={styles.Layout}>
-              <CommunitySkeleton />
+            className={styles.Input}
+            placeholder="Contract ID"
+            type="text"
+            {...contractIDInput.bindings}
+          />
+          <Spacer y={2} />
+          <span className={styles.Label}>Choose token layout</span>
+          <div className={styles.TokenLayoutPicker}>
+            <div
+              className={
+                styles.TokenItem +
+                " " +
+                (selectedLayout === "community" ? styles.ActiveItem : "")
+              }
+              onClick={() => setSelectedLayout("community")}
+            >
+              <div className={styles.Layout}>
+                <CommunitySkeleton />
+              </div>
+              <span className={styles.Name}>Community</span>
+              <span className={styles.Description}>
+                Recommended for community PSTs
+              </span>
             </div>
-            <span className={styles.Name}>Community</span>
-            <span className={styles.Description}>
-              Recommended for community PSTs
-            </span>
-          </div>
-          <div
-            className={
-              styles.TokenItem +
-              " " +
-              (selectedLayout === "art" ? styles.ActiveItem : "")
-            }
-            onClick={() => setSelectedLayout("art")}
-          >
-            <div className={styles.Layout}>
-              <ArtSkeleton />
+            <div
+              className={
+                styles.TokenItem +
+                " " +
+                (selectedLayout === "art" ? styles.ActiveItem : "")
+              }
+              onClick={() => setSelectedLayout("art")}
+            >
+              <div className={styles.Layout}>
+                <ArtSkeleton />
+              </div>
+              <span className={styles.Name}>Art {"&"} collectible</span>
+              <span className={styles.Description}>
+                Recommended for arts and other collectibles
+              </span>
             </div>
-            <span className={styles.Name}>Art {"&"} collectible</span>
-            <span className={styles.Description}>
-              Recommended for arts and other collectibles
-            </span>
           </div>
-        </div>
-        <Spacer y={2} />
-        <Button
-          small
-          className={styles.Submit}
-          onClick={listToken}
-          loading={loading}
-          disabled={disabled}
-        >
-          Add to space
-        </Button>
-      </Modal.Content>
-    </Modal>
+          <Spacer y={2} />
+          <Button
+            small
+            className={styles.Submit}
+            onClick={listToken}
+            loading={loading}
+            disabled={disabled}
+          >
+            Add to space
+          </Button>
+          <Spacer y={1.5} />
+          <p
+            className={styles.SideAction}
+            onClick={() => {
+              collectionModal.setState(true);
+              props.onClose();
+            }}
+          >
+            Create collection
+          </p>
+        </Modal.Content>
+      </Modal>
+      <Modal {...collectionModal.bindings} className={styles.Modal}>
+        <Modal.Title>Create collection</Modal.Title>
+        <Modal.Content>
+          <Input
+            label="Name"
+            className={styles.Input}
+            placeholder="Collection name..."
+            type="text"
+            {...collectionNameInput.bindings}
+          />
+          <Spacer y={2} />
+          <p className={styles.Label}>Description</p>
+          <div className={styles.Textarea}>
+            <textarea
+              onChange={(e) => setCollectionDescription(e.target.value)}
+              placeholder="Add a description for the collection..."
+            >
+              {collectionDescription ?? ""}
+            </textarea>
+          </div>
+          <Spacer y={2} />
+          <div className={styles.Label + " " + styles.CollaboratorLabel}>
+            Collaborators
+            <PlusIcon />
+          </div>
+          <div>
+            <AnimatePresence>
+              {collaborators.map((user, i) => (
+                <motion.img
+                  className={styles.Collaborator}
+                  src={user.image}
+                  draggable={false}
+                  key={i}
+                />
+              ))}
+            </AnimatePresence>
+          </div>
+        </Modal.Content>
+      </Modal>
+    </>
   );
 }
 

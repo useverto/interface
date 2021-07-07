@@ -93,7 +93,7 @@ export default function Search({ open, setOpen }) {
                           }
                         >
                           <div className={styles.TokenData}>
-                            {(item.type === "collection" && (
+                            {(item.type !== "collection" && (
                               <img
                                 src={item.image}
                                 alt={item.name}

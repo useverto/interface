@@ -27,26 +27,7 @@
   font-size: 1.075em
 
 .Textarea
-  border: 3px solid variables.$foreground-color
-  padding: .8em .85em
-  border-radius: 13px
-  height: 150px
-
-  textarea
-    font-family: "JetBrainsMono", sans-serif
-    font-weight: 500
-    font-size: 1.5em
-    color: variables.$light-text
-    height: 100%
-    width: 100%
-    padding: 0
-    margin: 0
-    border: none
-    outline: none
-    resize: none
-
-    &::placeholder
-      opacity: .45
+  +variables.modalTextarea
 
 .Pfp
   position: relative
