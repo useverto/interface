@@ -6,17 +6,20 @@ import {
   Button,
   useToasts,
   useModal,
+  Popover,
+  useTheme,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
-import { PlusIcon, TrashIcon } from "@iconicicons/react";
+import { PlusIcon, SearchIcon, TrashIcon } from "@iconicicons/react";
 import { opacityAnimation } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
 import { randomEmoji } from "../utils/user";
+import { formatAddress } from "../utils/format";
 import Verto from "@verto/js";
 import styles from "../styles/components/ListingModal.module.sass";
 
@@ -120,6 +123,7 @@ export default function ListingModal(props: Props) {
     setCollectionDescription("");
     setCollaborators([]);
     setItems([]);
+    setUserQuery("");
     verto
       .getUser(activeAddress)
       .then((user) => setCollaborators([fixUserImage(user)]));
@@ -129,6 +133,44 @@ export default function ListingModal(props: Props) {
     ...user,
     image: user.image ? `https://arweave.net/${user.image}` : randomEmoji(),
   });
+
+  interface UserWithDisplayTagInterface extends UserInterface {
+    displaytag?: string;
+  }
+
+  const [userQuery, setUserQuery] = useState("");
+  const [usersResult, setUsersResult] = useState<UserWithDisplayTagInterface[]>(
+    []
+  );
+
+  useEffect(() => {
+    (async () => {
+      let res: UserWithDisplayTagInterface[] = [];
+
+      // add to results if search query is an address
+      if (
+        isAddress(userQuery) &&
+        !collaborators.find(
+          (collaborator) =>
+            collaborator.addresses.includes(userQuery) ||
+            collaborator.username === userQuery
+        )
+      )
+        res.push({
+          username: userQuery,
+          name: "",
+          addresses: [userQuery],
+          image: randomEmoji(),
+          displaytag: formatAddress(userQuery, 12),
+        });
+
+      // TODO: fetch user search results from cache
+
+      setUsersResult(res);
+    })();
+  }, [userQuery]);
+
+  const theme = useTheme();
 
   return (
     <>
@@ -225,7 +267,52 @@ export default function ListingModal(props: Props) {
           <Spacer y={2} />
           <div className={styles.Label + " " + styles.CollaboratorLabel}>
             Collaborators
-            <PlusIcon />
+            <Popover
+              content={
+                <div className={styles.CollaboratorsPopover}>
+                  <div
+                    className={
+                      styles.SearchUser +
+                      " " +
+                      (theme === "Dark" ? styles.DarkSearchUser : "")
+                    }
+                  >
+                    <input
+                      type="text"
+                      placeholder="Search for users..."
+                      value={userQuery}
+                      onChange={(e) => setUserQuery(e.target.value)}
+                    />
+                    <SearchIcon />
+                  </div>
+                  <Spacer y={0.8} />
+                  <AnimatePresence>
+                    {usersResult.map((user, i) => (
+                      <motion.div
+                        {...opacityAnimation()}
+                        key={i}
+                        className={styles.UserResult}
+                        onClick={() => {
+                          setCollaborators((val) => [...val, user]);
+                          setUsersResult((val) =>
+                            val.filter((u) => u.username !== user.username)
+                          );
+                        }}
+                      >
+                        <img src={user.image} alt="u" draggable={false} />
+                        <div className={styles.UserInfo}>
+                          {user.name !== "" && <h1>{user.name}</h1>}
+                          <h2>{user.displaytag ?? user.username}</h2>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              }
+              position="left"
+            >
+              <PlusIcon className={styles.AddCollaborator} />
+            </Popover>
           </div>
           <div className={styles.Collaborators}>
             <AnimatePresence>
@@ -237,7 +324,14 @@ export default function ListingModal(props: Props) {
                 >
                   <img src={user.image} draggable={false} alt="U" />
                   {!user.addresses.includes(activeAddress) && (
-                    <div className={styles.Remove}>
+                    <div
+                      className={styles.Remove}
+                      onClick={() =>
+                        setCollaborators((val) =>
+                          val.filter((u) => u.username !== user.username)
+                        )
+                      }
+                    >
                       <TrashIcon />
                     </div>
                   )}

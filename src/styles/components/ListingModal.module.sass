@@ -78,7 +78,11 @@ $labelFontSize: 1.075em
 .CollaboratorLabel
   +variables.flexCenterWithSpace
 
-  svg
+  div[class~=VertoPopoverWrapper]
+    display: flex
+    align-items: center
+
+  .AddCollaborator
     cursor: pointer
     transition: all .23s ease-in-out
 
@@ -93,7 +97,6 @@ $labelFontSize: 1.075em
     $size: 32px
     position: relative
     display: inline-block
-    border: 1px solid variables.$background-color
     cursor: pointer
     transition: all .23s ease-in-out
 
@@ -103,6 +106,8 @@ $labelFontSize: 1.075em
       border-radius: 100%
       user-select: none
       z-index: 1
+      border: 1px solid variables.$background-color
+      background-color: variables.$background-color
 
     &:not(:first-child)
       margin-left: -($size /  5 * 3)
@@ -128,3 +133,63 @@ $labelFontSize: 1.075em
 
   &:hover .Collaborator:not(:first-child)
     margin-left: .2rem
+
+.CollaboratorsPopover
+  .SearchUser
+    $sidePadding: .55em
+    $iconSize: 1em
+    position: relative
+
+    input
+      display: block
+      outline: none
+      border: none
+      width: 160px
+      background-color: rgba(0, 0, 0, .07)
+      border-radius: 8px
+      color: variables.$light-text
+      font-weight: 500
+      font-size: 1em
+      padding: .3em $sidePadding + $iconSize .3em $sidePadding
+
+    svg
+      position: absolute
+      right: $sidePadding
+      top: 50%
+      z-index: 2
+      color: variables.$light-text
+      opacity: .7
+      font-size: $iconSize + .2em
+      width: $iconSize
+      height: $iconSize
+      transform: translateY(-50%)
+
+    &.DarkSearchUser input
+      background-color: rgba(255, 255, 255, .07)
+
+  .UserResult
+    display: flex
+    align-items: center
+    cursor: pointer
+
+    &:hover
+      img, .UserInfo
+        opacity: .8
+
+    img
+      width: 32px
+      height: 32px
+      border-radius: 100%
+      user-select: none
+      margin-right: .3em
+      transition: all .23s ease-in-out
+
+    .UserInfo
+      transition: all .23s ease-in-out
+
+      h1, h2
+        font-size: 1.05em
+        font-weight: 500
+
+      h2
+        font-size: .8em
