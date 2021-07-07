@@ -120,7 +120,7 @@ const Watchlist = () => {
   // load all tokens
   useEffect(() => {
     (async () => {
-      const res = await client.getTokens();
+      const res = await client.getTokens(true);
       setTokens([
         { id: "AR", name: "Arweave", ticker: "AR" },
         { id: "ETH", name: "Ethereum", ticker: "ETH" },

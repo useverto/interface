@@ -48,7 +48,7 @@ import useSWR from "swr";
 const client = new Verto();
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
-  const { data: tokens } = useSWR("getTokens", () => client.getTokens(), {
+  const { data: tokens } = useSWR("getTokens", () => client.getTokens(true), {
     initialData: props.tokens,
   });
 
@@ -641,7 +641,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 };
 
 export async function getStaticProps() {
-  const tokens = await client.getTokens();
+  const tokens = await client.getTokens(true);
 
   return { props: { tokens }, revalidate: 1 };
 }
