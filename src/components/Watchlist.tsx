@@ -152,7 +152,7 @@ const Watchlist = () => {
           <AnimatePresence>
             {editMode && (
               <motion.div {...opacityAnimation()} style={{ display: "flex" }}>
-                <Tooltip text="Add new">
+                <Tooltip text="Add">
                   <button
                     className="Btn"
                     onClick={() => addTokenModal.setState(true)}
@@ -302,7 +302,7 @@ const Watchlist = () => {
         </p>
       )}
       <Modal {...addTokenModal.bindings}>
-        <Modal.Title>Add new</Modal.Title>
+        <Modal.Title>Add</Modal.Title>
         <Modal.Content>
           <p style={{ textAlign: "center" }}>
             Add a new token to your watchlist

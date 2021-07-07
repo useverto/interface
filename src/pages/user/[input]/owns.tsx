@@ -56,13 +56,13 @@ const Owns = (props: {
     <Page>
       <Head>
         <title>
-          @{props.user?.username || props.input} - Owned arts {"&"} collectibles
+          @{props.user?.username || props.input} - Owned art {"&"} collectibles
         </title>
         <Metas
           title="User"
           subtitle={`@${
             props.user?.username || props.input
-          } - Owned arts & collectibles`}
+          } - Owned art & collectibles`}
           image={
             (props.user?.image && `https://arweave.net/${props.user.image}`) ||
             undefined
@@ -74,7 +74,7 @@ const Owns = (props: {
         />
       </Head>
       <Spacer y={3} />
-      <h1 className="Title">Owned arts {"&"} collectibles</h1>
+      <h1 className="Title">Owned art {"&"} collectibles</h1>
       <Spacer y={3} />
       <div className={styles.Creations}>
         <AnimatePresence>

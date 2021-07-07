@@ -170,7 +170,7 @@ const Post = (props: { addr: string; stats: any[]; orders: any[] }) => {
         </div>
         <div className={styles.Info}>
           <span>Fee</span>
-          {postData.fee.toLocaleString()} AR
+          {(postData.fee * 100).toLocaleString()}%
         </div>
         <div className={styles.Info}>
           <span>Uptime</span>
