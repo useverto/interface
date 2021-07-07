@@ -12,15 +12,21 @@ import {
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
 import { UserInterface } from "@verto/js/dist/faces";
-import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
+import {
+  CACHE_URL,
+  client,
+  COMMUNITY_CONTRACT,
+  isAddress,
+} from "../utils/arweave";
 import { PlusIcon, SearchIcon, TrashIcon } from "@iconicicons/react";
 import { opacityAnimation } from "../utils/animations";
-import { useSelector } from "react-redux";
+import { ReactReduxContext, useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
 import { randomEmoji } from "../utils/user";
 import { formatAddress } from "../utils/format";
 import Verto from "@verto/js";
+import axios from "axios";
 import styles from "../styles/components/ListingModal.module.sass";
 
 const verto = new Verto();
@@ -119,6 +125,7 @@ export default function ListingModal(props: Props) {
   const activeAddress = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
+    if (!collectionModal.state) return;
     collectionNameInput.setState("");
     setCollectionDescription("");
     setCollaborators([]);
@@ -131,7 +138,7 @@ export default function ListingModal(props: Props) {
 
   const fixUserImage = (user: UserInterface) => ({
     ...user,
-    image: user.image ? `https://arweave.net/${user.image}` : randomEmoji(),
+    image: user?.image ? `https://arweave.net/${user.image}` : randomEmoji(),
   });
 
   interface UserWithDisplayTagInterface extends UserInterface {
@@ -146,6 +153,8 @@ export default function ListingModal(props: Props) {
   useEffect(() => {
     (async () => {
       let res: UserWithDisplayTagInterface[] = [];
+
+      if (userQuery === "") return setUsersResult([]);
 
       // add to results if search query is an address
       if (
@@ -164,7 +173,23 @@ export default function ListingModal(props: Props) {
           displaytag: formatAddress(userQuery, 12),
         });
 
-      // TODO: fetch user search results from cache
+      const { data } = await axios.get(`${CACHE_URL}/site/search/${userQuery}`);
+
+      res.push(
+        ...data
+          .filter(
+            ({ type, username, addresses }) =>
+              type === "user" &&
+              !collaborators.find(
+                (collaborator) =>
+                  collaborator.username === username ||
+                  collaborator.addresses.find((addr) =>
+                    addresses.includes(addr)
+                  )
+              )
+          )
+          .map((user) => fixUserImage(user))
+      );
 
       setUsersResult(res);
     })();
@@ -302,7 +327,7 @@ export default function ListingModal(props: Props) {
                         <img src={user.image} alt="u" draggable={false} />
                         <div className={styles.UserInfo}>
                           {user.name !== "" && <h1>{user.name}</h1>}
-                          <h2>{user.displaytag ?? user.username}</h2>
+                          <h2>@{user.displaytag ?? user.username}</h2>
                         </div>
                       </motion.div>
                     ))}
