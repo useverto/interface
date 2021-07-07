@@ -11,7 +11,8 @@ import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
-import { CheckIcon, PlusIcon } from "@iconicicons/react";
+import { PlusIcon, TrashIcon } from "@iconicicons/react";
+import { opacityAnimation } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
@@ -226,15 +227,21 @@ export default function ListingModal(props: Props) {
             Collaborators
             <PlusIcon />
           </div>
-          <div>
+          <div className={styles.Collaborators}>
             <AnimatePresence>
               {collaborators.map((user, i) => (
-                <motion.img
+                <motion.div
                   className={styles.Collaborator}
-                  src={user.image}
-                  draggable={false}
                   key={i}
-                />
+                  {...opacityAnimation(i)}
+                >
+                  <img src={user.image} draggable={false} alt="U" />
+                  {!user.addresses.includes(activeAddress) && (
+                    <div className={styles.Remove}>
+                      <TrashIcon />
+                    </div>
+                  )}
+                </motion.div>
               ))}
             </AnimatePresence>
           </div>

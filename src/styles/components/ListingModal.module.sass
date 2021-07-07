@@ -88,13 +88,43 @@ $labelFontSize: 1.075em
     &:active
       transform: scale(.8)
 
-.Collaborator
-  $size: 32px
-  display: inline-block
-  border: 1px solid variables.$background-color
-  border-radius: 100%
-  width: $size
-  user-select: none
+.Collaborators
+  .Collaborator
+    $size: 32px
+    position: relative
+    display: inline-block
+    border: 1px solid variables.$background-color
+    cursor: pointer
+    transition: all .23s ease-in-out
 
-  &:not(:first-child)
-    margin-left: -($size /  5 * 3)
+    img
+      width: $size
+      height: $size
+      border-radius: 100%
+      user-select: none
+      z-index: 1
+
+    &:not(:first-child)
+      margin-left: -($size /  5 * 3)
+
+    .Remove
+      position: absolute
+      +variables.absoluteExtend
+      background-color: rgba(#000, .5)
+      z-index: 2
+      opacity: 0
+      width: $size
+      height: $size
+      border-radius: 100%
+      transition: all .23s ease-in-out
+
+      svg
+        position: absolute
+        color: #fff
+        +variables.absoluteCenter
+
+    &:hover .Remove
+      opacity: 1
+
+  &:hover .Collaborator:not(:first-child)
+    margin-left: .2rem
