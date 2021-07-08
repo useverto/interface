@@ -269,10 +269,12 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <Spacer y={4} />
       <h1 className="Title">
         Art {"&"} Collectibles
-        <SearchIcon
-          className={styles.Search}
-          onClick={() => search.setOpen(true)}
-        />
+        {address && (
+          <SearchIcon
+            className={styles.Search}
+            onClick={() => search.setOpen(true)}
+          />
+        )}
       </h1>
       <Spacer y={2} />
       <div className={styles.Cards}>

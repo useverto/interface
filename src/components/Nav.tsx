@@ -428,16 +428,24 @@ const Nav = () => {
               />
             )}
           </Popover>
-        )) ||
-          (arconnect && (
-            <Button small onClick={login}>
-              Connect
-            </Button>
-          )) || (
-            <Button small onClick={() => window.open("https://arconnect.io")}>
-              Install ArConnect
-            </Button>
-          )}
+        )) || (
+          <div className={styles.SearchAndConnect}>
+            <SearchIcon
+              className={styles.SearchIcon}
+              onClick={() => search.setOpen(true)}
+            />
+            <Spacer x={1} />
+            {(arconnect && (
+              <Button small onClick={login}>
+                Connect
+              </Button>
+            )) || (
+              <Button small onClick={() => window.open("https://arconnect.io")}>
+                Install ArConnect
+              </Button>
+            )}
+          </div>
+        )}
       </motion.div>
       <Modal {...inviteModal.bindings}>
         <Modal.Title>Invite someone</Modal.Title>
