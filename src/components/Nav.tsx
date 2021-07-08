@@ -20,6 +20,7 @@ import {
   SunIcon,
   UserIcon,
   UserPlusIcon,
+  SearchIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -40,6 +41,7 @@ import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
+import Search, { useSearch } from "./Search";
 import axios from "axios";
 import styles from "../styles/components/Nav.module.sass";
 
@@ -229,6 +231,8 @@ const Nav = () => {
     setLoadingInvite(false);
   }
 
+  const search = useSearch();
+
   return (
     <>
       <motion.div
@@ -358,6 +362,17 @@ const Nav = () => {
                     " " +
                     (displayTheme === "Dark" ? styles.Dark : "")
                   }
+                  onClick={() => search.setOpen(true)}
+                >
+                  <SearchIcon />
+                  Search
+                </div>
+                <div
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (displayTheme === "Dark" ? styles.Dark : "")
+                  }
                   onClick={() =>
                     dispatch(
                       updateTheme(
@@ -460,6 +475,7 @@ const Nav = () => {
         </Modal.Content>
       </Modal>
       <SetupModal {...setupModal.bindings} />
+      <Search {...search} />
     </>
   );
 };
