@@ -8,6 +8,7 @@ import {
   useModal,
   Popover,
   useTheme,
+  Tooltip,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
@@ -18,9 +19,15 @@ import {
   COMMUNITY_CONTRACT,
   isAddress,
 } from "../utils/arweave";
-import { PlusIcon, SearchIcon, TrashIcon } from "@iconicicons/react";
+import {
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
+  AtSignIcon,
+  ClipboardIcon,
+} from "@iconicicons/react";
 import { opacityAnimation } from "../utils/animations";
-import { ReactReduxContext, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
 import { randomEmoji } from "../utils/user";
@@ -197,6 +204,38 @@ export default function ListingModal(props: Props) {
 
   const theme = useTheme();
 
+  const [collectiblesQuery, setCollectiblesQuery] = useState("");
+  const [collectiblesResult, setCollectiblesResult] = useState<
+    {
+      id: string;
+      ticker: string;
+      name: string;
+      type: "art";
+      image: string;
+      owner: UserWithDisplayTagInterface;
+    }[]
+  >([]);
+
+  useEffect(() => {
+    (async () => {
+      if (collectiblesQuery === "") setCollectiblesResult([]);
+
+      const { data } = await axios.get(
+        `${CACHE_URL}/site/search/${collectiblesQuery}`
+      );
+
+      setCollectiblesResult(
+        data
+          .filter(({ type, id }) => type === "art" && !items.includes(id))
+          .map((item) => ({
+            ...item,
+            owner: fixUserImage(item.owner),
+          }))
+          .splice(0, 4)
+      );
+    })();
+  }, [collectiblesQuery]);
+
   return (
     <>
       <Modal {...props} className={styles.Modal}>
@@ -290,11 +329,11 @@ export default function ListingModal(props: Props) {
             </textarea>
           </div>
           <Spacer y={2} />
-          <div className={styles.Label + " " + styles.CollaboratorLabel}>
+          <div className={styles.Label + " " + styles.ActionLabel}>
             Collaborators
             <Popover
               content={
-                <div className={styles.CollaboratorsPopover}>
+                <div className={styles.SearchPopover}>
                   <div
                     className={
                       styles.SearchUser +
@@ -302,11 +341,13 @@ export default function ListingModal(props: Props) {
                       (theme === "Dark" ? styles.DarkSearchUser : "")
                     }
                   >
+                    <AtSignIcon className={styles.LeftIcon} />
                     <input
                       type="text"
                       placeholder="Search for users..."
                       value={userQuery}
                       onChange={(e) => setUserQuery(e.target.value)}
+                      className={styles.WithLeftIcon}
                     />
                     <SearchIcon />
                   </div>
@@ -316,7 +357,7 @@ export default function ListingModal(props: Props) {
                       <motion.div
                         {...opacityAnimation()}
                         key={i}
-                        className={styles.UserResult}
+                        className={styles.Result}
                         onClick={() => {
                           setCollaborators((val) => [...val, user]);
                           setUsersResult((val) =>
@@ -325,18 +366,31 @@ export default function ListingModal(props: Props) {
                         }}
                       >
                         <img src={user.image} alt="u" draggable={false} />
-                        <div className={styles.UserInfo}>
+                        <div className={styles.ResultInfo}>
                           {user.name !== "" && <h1>{user.name}</h1>}
                           <h2>@{user.displaytag ?? user.username}</h2>
                         </div>
                       </motion.div>
                     ))}
                   </AnimatePresence>
+                  {usersResult.length === 0 && (
+                    <>
+                      <p className={styles.PopoverText}>
+                        {(userQuery === "" && "Type to search...") ||
+                          "No users found."}
+                      </p>
+                      <Spacer y={0.55} />
+                    </>
+                  )}
                 </div>
               }
               position="left"
             >
-              <PlusIcon className={styles.AddCollaborator} />
+              <Tooltip text="Add collaborator" className="test">
+                <div className={styles.AddAction}>
+                  <PlusIcon />
+                </div>
+              </Tooltip>
             </Popover>
           </div>
           <div className={styles.Collaborators}>
@@ -363,6 +417,82 @@ export default function ListingModal(props: Props) {
                 </motion.div>
               ))}
             </AnimatePresence>
+          </div>
+          <Spacer y={1} />
+          <div className={styles.Label + " " + styles.ActionLabel}>
+            Items
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Tooltip text="From clipboard" className="test">
+                <div className={styles.AddAction}>
+                  <ClipboardIcon />
+                </div>
+              </Tooltip>
+              <Spacer x={0.75} />
+              <Popover
+                content={
+                  <div className={styles.SearchPopover}>
+                    <div
+                      className={
+                        styles.SearchUser +
+                        " " +
+                        (theme === "Dark" ? styles.DarkSearchUser : "")
+                      }
+                    >
+                      <input
+                        type="text"
+                        placeholder="Search for an item..."
+                        value={collectiblesQuery}
+                        onChange={(e) => setCollectiblesQuery(e.target.value)}
+                      />
+                      <SearchIcon />
+                    </div>
+                    <Spacer y={0.8} />
+                    <AnimatePresence>
+                      {collectiblesResult.map((item, i) => (
+                        <motion.div
+                          {...opacityAnimation()}
+                          key={i}
+                          className={styles.Result}
+                          onClick={() => {
+                            setItems((val) => [...val, item.id]);
+                            setCollectiblesResult((val) =>
+                              val.filter(({ id }) => id !== item.id)
+                            );
+                          }}
+                        >
+                          <img
+                            src={`https://arweave.net/${item.image}`}
+                            alt="i"
+                            draggable={false}
+                            className={styles.Square}
+                          />
+                          <div className={styles.ResultInfo}>
+                            <h1>{item.name}</h1>
+                            <h2>{item.ticker}</h2>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                    {collectiblesResult.length === 0 && (
+                      <>
+                        <p className={styles.PopoverText}>
+                          {(collectiblesQuery === "" && "Type to search...") ||
+                            "No items found."}
+                        </p>
+                        <Spacer y={0.55} />
+                      </>
+                    )}
+                  </div>
+                }
+                position="left"
+              >
+                <Tooltip text="Add item" className="test">
+                  <div className={styles.AddAction}>
+                    <PlusIcon />
+                  </div>
+                </Tooltip>
+              </Popover>
+            </div>
           </div>
         </Modal.Content>
       </Modal>

@@ -75,14 +75,22 @@ $labelFontSize: 1.075em
 .Textarea
   +variables.modalTextarea
 
-.CollaboratorLabel
+.ActionLabel
   +variables.flexCenterWithSpace
 
   div[class~=VertoPopoverWrapper]
     display: flex
     align-items: center
 
-  .AddCollaborator
+  div[class~=VertoTooltip]
+    text-transform: none
+    font-weight: 500
+    font-size: .85em
+
+  .AddAction
+    display: flex
+    align-items: center
+    justify-content: center
     cursor: pointer
     transition: all .23s ease-in-out
 
@@ -91,6 +99,13 @@ $labelFontSize: 1.075em
 
     &:active
       transform: scale(.8)
+
+  .PopoverText
+    font-size: .9em
+    font-weight: 500
+    text-align: center
+    text-transform: none
+    margin: 0
 
 .Collaborators
   .Collaborator
@@ -134,7 +149,7 @@ $labelFontSize: 1.075em
   &:hover .Collaborator:not(:first-child)
     margin-left: .2rem
 
-.CollaboratorsPopover
+.SearchPopover
   .SearchUser
     $sidePadding: .55em
     $iconSize: 1em
@@ -144,13 +159,17 @@ $labelFontSize: 1.075em
       display: block
       outline: none
       border: none
-      width: 160px
+      width: 180px
       background-color: rgba(0, 0, 0, .07)
       border-radius: 8px
       color: variables.$light-text
       font-weight: 500
       font-size: 1em
       padding: .3em $sidePadding + $iconSize .3em $sidePadding
+
+      &.WithLeftIcon
+        width: 160px
+        padding: .3em $sidePadding * 2 + $iconSize
 
     svg
       position: absolute
@@ -164,10 +183,14 @@ $labelFontSize: 1.075em
       height: $iconSize
       transform: translateY(-50%)
 
+      &.LeftIcon
+        left: $sidePadding
+        right: unset
+
     &.DarkSearchUser input
       background-color: rgba(255, 255, 255, .07)
 
-  .UserResult
+  .Result
     display: flex
     align-items: center
     cursor: pointer
@@ -188,7 +211,10 @@ $labelFontSize: 1.075em
       margin-right: .45em
       transition: all .23s ease-in-out
 
-    .UserInfo
+      &.Square
+        border-radius: 4px
+
+    .ResultInfo
       transition: all .23s ease-in-out
 
       h1, h2
