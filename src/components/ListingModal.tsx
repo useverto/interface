@@ -180,7 +180,9 @@ export default function ListingModal(props: Props) {
           displaytag: formatAddress(userQuery, 12),
         });
 
-      const { data } = await axios.get(`${CACHE_URL}/site/search/${userQuery}`);
+      const { data } = await axios.get(
+        `${CACHE_URL}/site/search/${userQuery}?type=user`
+      );
 
       res.push(
         ...data
@@ -221,7 +223,7 @@ export default function ListingModal(props: Props) {
       if (collectiblesQuery === "") setCollectiblesResult([]);
 
       const { data } = await axios.get(
-        `${CACHE_URL}/site/search/${collectiblesQuery}`
+        `${CACHE_URL}/site/search/${collectiblesQuery}?type=art`
       );
 
       setCollectiblesResult(
@@ -386,7 +388,7 @@ export default function ListingModal(props: Props) {
               }
               position="left"
             >
-              <Tooltip text="Add collaborator" className="test">
+              <Tooltip text="Add collaborator">
                 <div className={styles.AddAction}>
                   <PlusIcon />
                 </div>
@@ -422,7 +424,7 @@ export default function ListingModal(props: Props) {
           <div className={styles.Label + " " + styles.ActionLabel}>
             Items
             <div style={{ display: "flex", alignItems: "center" }}>
-              <Tooltip text="From clipboard" className="test">
+              <Tooltip text="From clipboard">
                 <div className={styles.AddAction}>
                   <ClipboardIcon />
                 </div>
@@ -486,7 +488,7 @@ export default function ListingModal(props: Props) {
                 }
                 position="left"
               >
-                <Tooltip text="Add item" className="test">
+                <Tooltip text="Add item">
                   <div className={styles.AddAction}>
                     <PlusIcon />
                   </div>
@@ -494,6 +496,33 @@ export default function ListingModal(props: Props) {
               </Popover>
             </div>
           </div>
+          <div className={styles.Items}>
+            <AnimatePresence>
+              {items.map((item, i) => (
+                <motion.div
+                  className={styles.Item}
+                  {...opacityAnimation(i)}
+                  key={i}
+                  onClick={() =>
+                    setItems((val) => val.filter((itemID) => itemID !== item))
+                  }
+                >
+                  <img
+                    src={`https://arweave.net/${item}`}
+                    alt="i"
+                    draggable={false}
+                  />
+                  <div className={styles.RemoveItem}>
+                    <TrashIcon />
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+          <Spacer y={2} />
+          <Button small className={styles.Submit}>
+            Submit
+          </Button>
         </Modal.Content>
       </Modal>
     </>

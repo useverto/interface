@@ -229,3 +229,37 @@ $labelFontSize: 1.075em
 
       h2
         font-size: .8em
+
+.Items
+  $gap: 1em
+  display: grid
+  grid-template-columns: repeat(8, calc(12.5% - #{$gap}))
+  gap: $gap
+  justify-content: space-between
+
+  .Item
+    position: relative
+    border-radius: 6px
+    overflow: hidden
+    cursor: pointer
+
+    img
+      display: block
+      width: 100%
+      user-select: none
+
+    .RemoveItem
+      position: absolute
+      +variables.absoluteExtend
+      background-color: rgba(#000, .5)
+      opacity: 0
+      z-index: 2
+      transition: all .15s ease-in-out
+
+      svg
+        position: absolute
+        color: #fff
+        +variables.absoluteCenter
+
+    &:hover .RemoveItem
+      opacity: 1
