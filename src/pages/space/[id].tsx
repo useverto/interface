@@ -1138,6 +1138,7 @@ interface CollectionProps {
 }
 
 const Collection = ({
+  id,
   name,
   description,
   collaborators,
@@ -1172,6 +1173,27 @@ const Collection = ({
     })();
   }, [collaborators]);
 
+  const [creator, setCreator] = useState<string>();
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await run(
+        `
+        query($id: ID!) {
+          transaction(id: $id) {
+            owner {
+              address
+            }
+          }
+        }      
+      `,
+        { id }
+      );
+
+      setCreator(data.transaction.owner.address);
+    })();
+  }, [id]);
+
   return (
     <>
       <Head>
@@ -1183,7 +1205,13 @@ const Collection = ({
       <Spacer y={0.3} />
       <p className={collectionStyles.Subtitle}>{description}</p>
       <Spacer y={0.42} />
-      <div className={collectionStyles.Collaborators}>
+      <div
+        className={
+          collectionStyles.Collaborators +
+          " " +
+          (activeAddress === creator ? collectionStyles.EditCollaborators : "")
+        }
+      >
         <AnimatePresence>
           {collaboratorUsers.map((user, i) => (
             <motion.div
@@ -1195,12 +1223,12 @@ const Collection = ({
               {!user.addresses.includes(activeAddress) && (
                 <div
                   className={collectionStyles.Remove}
-                  onClick={() =>
-                    /*setCollaborators((val) =>
-                          val.filter((u) => u.username !== user.username)
-                        )*/
-                    {}
-                  }
+                  onClick={() => {
+                    if (activeAddress !== creator) return;
+                    setCollaboratorUsers((val) =>
+                      val.filter((u) => u.username !== user.username)
+                    );
+                  }}
                 >
                   <TrashIcon />
                 </div>
