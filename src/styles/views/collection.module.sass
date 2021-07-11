@@ -1,4 +1,5 @@
 @use "../variables"
+@use "../components/SearchPopover" as search
 
 .Title
   font-size: variables.$title-font-size + .25em
@@ -14,6 +15,20 @@
 
   &.EditCollaborators
     +variables.collaborators($editable: true)
+
+  .AddCollaborator
+    font-size: 1em
+    width: 30px !important
+    height: 30px !important
+    color: variables.$light-text
+    opacity: 0
+    transition: all .23s ease-in-out
+
+    &:active
+      transform: scale(.8)
+
+  &:hover .AddCollaborator
+    opacity: 1
 
 .Items
   display: grid
@@ -35,3 +50,18 @@
 
     @media screen and (max-width: variables.$mobile-screen)
       margin-bottom: $bottomMargin
+
+.SearchPopover
+  +search.SearchPopover
+
+.AddNew
+  margin: 0 auto
+  color: variables.$light-text
+  text-decoration: underline
+  width: max-content
+  text-align: center
+  cursor: pointer
+  transition: all .23s ease-in-out
+
+  &:hover
+    opacity: .83

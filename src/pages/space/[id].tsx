@@ -5,6 +5,7 @@ import {
   Input,
   Loading,
   Page,
+  Popover,
   Spacer,
   useInput,
   useTheme,
@@ -23,6 +24,7 @@ import {
   MaximizeIcon,
   MinimizeIcon,
   TrashIcon,
+  PlusIcon,
 } from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -1236,6 +1238,15 @@ const Collection = ({
             </motion.div>
           ))}
         </AnimatePresence>
+        <div className={collectionStyles.Collaborator}>
+          <Popover
+            content={<>TODO</>}
+            position="right"
+            style={{ cursor: "auto" }}
+          >
+            <PlusIcon className={collectionStyles.AddCollaborator} />
+          </Popover>
+        </div>
       </div>
       <Spacer y={3} />
       <div className={collectionStyles.Items}>
@@ -1255,6 +1266,12 @@ const Collection = ({
             ))}
         </AnimatePresence>
       </div>
+      {activeAddress === creator && (
+        <>
+          <Spacer y={2.5} />
+          <p className={collectionStyles.AddNew}>Add new</p>
+        </>
+      )}
     </>
   );
 };

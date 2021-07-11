@@ -1,4 +1,5 @@
 @use "../variables"
+@use "./SearchPopover" as search
   
 .Modal
   .Input
@@ -111,85 +112,7 @@ $labelFontSize: 1.075em
   +variables.collaborators
 
 .SearchPopover
-  .SearchUser
-    $sidePadding: .55em
-    $iconSize: 1em
-    position: relative
-
-    input
-      display: block
-      outline: none
-      border: none
-      width: 180px
-      background-color: rgba(0, 0, 0, .07)
-      border-radius: 8px
-      color: variables.$light-text
-      font-weight: 500
-      font-size: 1em
-      padding: .3em $sidePadding + $iconSize .3em $sidePadding
-
-      &.WithLeftIcon
-        width: 160px
-        padding: .3em $sidePadding * 2 + $iconSize
-
-    svg
-      position: absolute
-      right: $sidePadding
-      top: 50%
-      z-index: 2
-      color: variables.$light-text
-      opacity: .7
-      font-size: $iconSize + .2em
-      width: $iconSize
-      height: $iconSize
-      transform: translateY(-50%)
-
-      &.LeftIcon
-        left: $sidePadding
-        right: unset
-
-    &.DarkSearchUser input
-      background-color: rgba(255, 255, 255, .07)
-
-  .Result
-    display: flex
-    align-items: center
-    cursor: pointer
-    margin-bottom: .35em
-
-    &:last-child
-      margin-bottom: 0
-
-    &:hover
-      img, .UserInfo
-        opacity: .8
-
-    img
-      width: 32px
-      height: 32px
-      border-radius: 100%
-      user-select: none
-      margin-right: .45em
-      transition: all .23s ease-in-out
-
-      &.Square
-        border-radius: 4px
-
-    .ResultInfo
-      transition: all .23s ease-in-out
-
-      h1, h2
-        font-size: 1.05em
-        font-weight: 500
-        margin: 0
-        line-height: 1em
-        text-transform: none
-
-      h1
-        color: variables.$foreground-color
-
-      h2
-        font-size: .8em
+  +search.SearchPopover
 
 .Items
   $gap: 1em
