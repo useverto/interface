@@ -16,6 +16,7 @@ import { UserInterface } from "@verto/js/dist/faces";
 import {
   CACHE_URL,
   client,
+  COLLECTION_CONTRACT_SRC,
   COMMUNITY_CONTRACT,
   isAddress,
 } from "../utils/arweave";
@@ -265,6 +266,22 @@ export default function ListingModal(props: Props) {
               duration: 4500,
             });
 
+          for (const item of parsedItems) {
+            if (typeof item !== "string")
+              return setToast({
+                description: "An item is not a string",
+                type: "error",
+                duration: 3000,
+              });
+
+            if (!isAddress(item))
+              return setToast({
+                description: "An item is not a valid ID",
+                type: "error",
+                duration: 3000,
+              });
+          }
+
           setItems((val) => [...val, ...parsedItems]);
         } catch {
           setToast({
@@ -281,6 +298,99 @@ export default function ListingModal(props: Props) {
         duration: 4500,
       });
     }
+  }
+
+  const [creatingCollection, setCreatingCollection] = useState(false);
+
+  async function createCollection() {
+    if (collectionNameInput.state === "")
+      return collectionNameInput.setStatus("error");
+
+    if (collectionDescription === "")
+      return setToast({
+        description: "Please add a short description",
+        type: "error",
+        duration: 3000,
+      });
+
+    if (items.length < 3)
+      return setToast({
+        description: "Please add at least 3 items to your collection",
+        type: "error",
+        duration: 4200,
+      });
+
+    setCreatingCollection(true);
+
+    try {
+      // creating the initial state transactions
+      // and the contract transaction in one
+
+      const initialState = {
+        name: collectionNameInput.state,
+        description: collectionDescription,
+        collaborators: [],
+        items,
+      };
+
+      for (const user of collaborators)
+        initialState.collaborators.push(...user.addresses);
+
+      // if for some reason the collaborators didn't have
+      // the current user, we make sure to add it here
+      // as well
+      if (!initialState.collaborators.includes(activeAddress)) {
+        const currentUser = await verto.getUser(activeAddress);
+        initialState.collaborators.push(...currentUser.addresses);
+      }
+
+      const contractTx = await client.createTransaction({
+        data: JSON.stringify(initialState, null, 2),
+      });
+
+      contractTx.addTag("App-Name", "SmartWeaveContract");
+      contractTx.addTag("App-Version", "0.3.0");
+      contractTx.addTag("Contract-Src", COLLECTION_CONTRACT_SRC);
+      contractTx.addTag("Content-Type", "application/json");
+
+      await client.transactions.sign(contractTx);
+
+      let uploader = await client.transactions.getUploader(contractTx);
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+      }
+
+      // listing the collection via it's contract ID
+      try {
+        await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
+          function: "list",
+          id: contractTx.id,
+          type: "collection",
+        });
+
+        setToast({
+          description: "Collection created and listed",
+          type: "success",
+          duration: 4500,
+        });
+        collectionModal.setState(false);
+      } catch {
+        setToast({
+          description: "Error listing the collection",
+          type: "error",
+          duration: 4000,
+        });
+      }
+    } catch {
+      setToast({
+        description: "Error creating collection contract",
+        type: "error",
+        duration: 4000,
+      });
+    }
+
+    setCreatingCollection(false);
   }
 
   return (
@@ -568,7 +678,12 @@ export default function ListingModal(props: Props) {
             </AnimatePresence>
           </div>
           <Spacer y={2} />
-          <Button small className={styles.Submit}>
+          <Button
+            small
+            className={styles.Submit}
+            loading={creatingCollection}
+            onClick={createCollection}
+          >
             Submit
           </Button>
         </Modal.Content>

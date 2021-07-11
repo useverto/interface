@@ -133,7 +133,7 @@ var __generator =
     }
   };
 exports.__esModule = true;
-exports.isAddress = exports.arPrice = exports.balanceHistory = exports.INVITE_CONTRACT = exports.COMMUNITY_CONTRACT = exports.CACHE_URL = exports.ROOT_URL = exports.client = void 0;
+exports.isAddress = exports.arPrice = exports.balanceHistory = exports.COLLECTION_CONTRACT_SRC = exports.INVITE_CONTRACT = exports.COMMUNITY_CONTRACT = exports.CACHE_URL = exports.ROOT_URL = exports.client = void 0;
 var arweave_1 = require("arweave");
 var axios_1 = require("axios");
 var moment_1 = require("moment");
@@ -148,6 +148,7 @@ exports.ROOT_URL = "https://vext.vercel.app";
 exports.CACHE_URL = "https://v2.cache.verto.exchange";
 exports.COMMUNITY_CONTRACT = "Wgp3SpOtWXGCi1SardwQAwrOsQeW6aQn36ooo6eo8nc";
 exports.INVITE_CONTRACT = ""; // TODO
+exports.COLLECTION_CONTRACT_SRC = "yBY5nhbOAmsz0ztFE1ieM7jNP2pFU_ytUizicPJBTvQ";
 exports.balanceHistory = function (address) {
   return __awaiter(void 0, void 0, Promise, function () {
     var inTxs, outTxs, txs, balance, _a, _b, _c, res, _i, txs_1, node;

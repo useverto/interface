@@ -471,7 +471,7 @@ function ListingModal(props) {
   );
   function copyItemsFromClipboard() {
     return __awaiter(this, void 0, void 0, function () {
-      var clipboardContent_1, parsedItems_1, _a;
+      var clipboardContent_1, parsedItems_2, _i, parsedItems_1, item, _a;
       return __generator(this, function (_b) {
         switch (_b.label) {
           case 0:
@@ -503,7 +503,7 @@ function ListingModal(props) {
             } else {
               // try reading it as a JSON array
               try {
-                parsedItems_1 = JSON.parse(clipboardContent_1);
+                parsedItems_2 = JSON.parse(clipboardContent_1);
                 if (!Array.isArray(items))
                   return [
                     2 /*return*/,
@@ -513,8 +513,33 @@ function ListingModal(props) {
                       duration: 4500,
                     }),
                   ];
+                for (
+                  _i = 0, parsedItems_1 = parsedItems_2;
+                  _i < parsedItems_1.length;
+                  _i++
+                ) {
+                  item = parsedItems_1[_i];
+                  if (typeof item !== "string")
+                    return [
+                      2 /*return*/,
+                      setToast({
+                        description: "An item is not a string",
+                        type: "error",
+                        duration: 3000,
+                      }),
+                    ];
+                  if (!arweave_1.isAddress(item))
+                    return [
+                      2 /*return*/,
+                      setToast({
+                        description: "An item is not a valid ID",
+                        type: "error",
+                        duration: 3000,
+                      }),
+                    ];
+                }
                 setItems(function (val) {
-                  return __spreadArrays(val, parsedItems_1);
+                  return __spreadArrays(val, parsedItems_2);
                 });
               } catch (_c) {
                 setToast({
@@ -534,6 +559,156 @@ function ListingModal(props) {
             });
             return [3 /*break*/, 3];
           case 3:
+            return [2 /*return*/];
+        }
+      });
+    });
+  }
+  var _m = react_1.useState(false),
+    creatingCollection = _m[0],
+    setCreatingCollection = _m[1];
+  function createCollection() {
+    return __awaiter(this, void 0, void 0, function () {
+      var initialState,
+        _i,
+        collaborators_1,
+        user,
+        currentUser,
+        contractTx,
+        uploader,
+        _a,
+        _b;
+      var _c, _d;
+      return __generator(this, function (_e) {
+        switch (_e.label) {
+          case 0:
+            if (collectionNameInput.state === "")
+              return [2 /*return*/, collectionNameInput.setStatus("error")];
+            if (collectionDescription === "")
+              return [
+                2 /*return*/,
+                setToast({
+                  description: "Please add a short description",
+                  type: "error",
+                  duration: 3000,
+                }),
+              ];
+            if (items.length < 3)
+              return [
+                2 /*return*/,
+                setToast({
+                  description: "Please add at least 3 items to your collection",
+                  type: "error",
+                  duration: 4200,
+                }),
+              ];
+            setCreatingCollection(true);
+            _e.label = 1;
+          case 1:
+            _e.trys.push([1, 13, , 14]);
+            initialState = {
+              name: collectionNameInput.state,
+              description: collectionDescription,
+              collaborators: [],
+              items: items,
+            };
+            for (
+              _i = 0, collaborators_1 = collaborators;
+              _i < collaborators_1.length;
+              _i++
+            ) {
+              user = collaborators_1[_i];
+              (_c = initialState.collaborators).push.apply(_c, user.addresses);
+            }
+            if (!!initialState.collaborators.includes(activeAddress))
+              return [3 /*break*/, 3];
+            return [4 /*yield*/, verto.getUser(activeAddress)];
+          case 2:
+            currentUser = _e.sent();
+            (_d = initialState.collaborators).push.apply(
+              _d,
+              currentUser.addresses
+            );
+            _e.label = 3;
+          case 3:
+            return [
+              4 /*yield*/,
+              arweave_1.client.createTransaction({
+                data: JSON.stringify(initialState, null, 2),
+              }),
+            ];
+          case 4:
+            contractTx = _e.sent();
+            contractTx.addTag("App-Name", "SmartWeaveContract");
+            contractTx.addTag("App-Version", "0.3.0");
+            contractTx.addTag(
+              "Contract-Src",
+              arweave_1.COLLECTION_CONTRACT_SRC
+            );
+            contractTx.addTag("Content-Type", "application/json");
+            return [
+              4 /*yield*/,
+              arweave_1.client.transactions.sign(contractTx),
+            ];
+          case 5:
+            _e.sent();
+            return [
+              4 /*yield*/,
+              arweave_1.client.transactions.getUploader(contractTx),
+            ];
+          case 6:
+            uploader = _e.sent();
+            _e.label = 7;
+          case 7:
+            if (!!uploader.isComplete) return [3 /*break*/, 9];
+            return [4 /*yield*/, uploader.uploadChunk()];
+          case 8:
+            _e.sent();
+            return [3 /*break*/, 7];
+          case 9:
+            _e.trys.push([9, 11, , 12]);
+            return [
+              4 /*yield*/,
+              smartweave_1.interactWrite(
+                arweave_1.client,
+                "use_wallet",
+                arweave_1.COMMUNITY_CONTRACT,
+                {
+                  function: "list",
+                  id: contractTx.id,
+                  type: "collection",
+                }
+              ),
+            ];
+          case 10:
+            _e.sent();
+            setToast({
+              description: "Collection created and listed",
+              type: "success",
+              duration: 4500,
+            });
+            collectionModal.setState(false);
+            return [3 /*break*/, 12];
+          case 11:
+            _a = _e.sent();
+            setToast({
+              description: "Error listing the collection",
+              type: "error",
+              duration: 4000,
+            });
+            return [3 /*break*/, 12];
+          case 12:
+            return [3 /*break*/, 14];
+          case 13:
+            _b = _e.sent();
+            setToast({
+              description: "Error creating collection contract",
+              type: "error",
+              duration: 4000,
+            });
+            return [3 /*break*/, 14];
+          case 14:
+            setCreatingCollection(false);
             return [2 /*return*/];
         }
       });
@@ -1044,6 +1219,8 @@ function ListingModal(props) {
           {
             small: true,
             className: ListingModal_module_sass_1["default"].Submit,
+            loading: creatingCollection,
+            onClick: createCollection,
           },
           "Submit"
         )
