@@ -238,6 +238,51 @@ export default function ListingModal(props: Props) {
     })();
   }, [collectiblesQuery]);
 
+  async function copyItemsFromClipboard() {
+    try {
+      const clipboardContent = (await navigator.clipboard.readText()).trim();
+
+      // get the format of IDs on the clipboard
+      if (/^((([a-z0-9_-]{43}),)+)([a-z0-9_-]{43})$/i.test(clipboardContent)) {
+        // IDs separated with commas
+        // e.g.: address1,address2,address3
+        setItems((val) => [...val, ...clipboardContent.split(",")]);
+      } else if (
+        /^((([a-z0-9_-]{43})(, ))+)([a-z0-9_-]{43})$/i.test(clipboardContent)
+      ) {
+        // IDs separeted with commas and spaces
+        // e.g.: address1, address2, address3
+        setItems((val) => [...val, ...clipboardContent.split(", ")]);
+      } else {
+        // try reading it as a JSON array
+        try {
+          const parsedItems = JSON.parse(clipboardContent);
+
+          if (!Array.isArray(items))
+            return setToast({
+              description: "Clipboard content is not an array",
+              type: "error",
+              duration: 4500,
+            });
+
+          setItems((val) => [...val, ...parsedItems]);
+        } catch {
+          setToast({
+            description: "Invalid items format",
+            type: "error",
+            duration: 4500,
+          });
+        }
+      }
+    } catch {
+      setToast({
+        description: "Could not read clipboard",
+        type: "error",
+        duration: 4500,
+      });
+    }
+  }
+
   return (
     <>
       <Modal {...props} className={styles.Modal}>
@@ -425,7 +470,10 @@ export default function ListingModal(props: Props) {
             Items
             <div style={{ display: "flex", alignItems: "center" }}>
               <Tooltip text="From clipboard">
-                <div className={styles.AddAction}>
+                <div
+                  className={styles.AddAction}
+                  onClick={copyItemsFromClipboard}
+                >
                   <ClipboardIcon />
                 </div>
               </Tooltip>

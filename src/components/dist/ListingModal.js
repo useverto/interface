@@ -469,6 +469,76 @@ function ListingModal(props) {
     },
     [collectiblesQuery]
   );
+  function copyItemsFromClipboard() {
+    return __awaiter(this, void 0, void 0, function () {
+      var clipboardContent_1, parsedItems_1, _a;
+      return __generator(this, function (_b) {
+        switch (_b.label) {
+          case 0:
+            _b.trys.push([0, 2, , 3]);
+            return [4 /*yield*/, navigator.clipboard.readText()];
+          case 1:
+            clipboardContent_1 = _b.sent().trim();
+            // get the format of IDs on the clipboard
+            if (
+              /^((([a-z0-9_-]{43}),)+)([a-z0-9_-]{43})$/i.test(
+                clipboardContent_1
+              )
+            ) {
+              // IDs separated with commas
+              // e.g.: address1,address2,address3
+              setItems(function (val) {
+                return __spreadArrays(val, clipboardContent_1.split(","));
+              });
+            } else if (
+              /^((([a-z0-9_-]{43})(, ))+)([a-z0-9_-]{43})$/i.test(
+                clipboardContent_1
+              )
+            ) {
+              // IDs separeted with commas and spaces
+              // e.g.: address1, address2, address3
+              setItems(function (val) {
+                return __spreadArrays(val, clipboardContent_1.split(", "));
+              });
+            } else {
+              // try reading it as a JSON array
+              try {
+                parsedItems_1 = JSON.parse(clipboardContent_1);
+                if (!Array.isArray(items))
+                  return [
+                    2 /*return*/,
+                    setToast({
+                      description: "Clipboard content is not an array",
+                      type: "error",
+                      duration: 4500,
+                    }),
+                  ];
+                setItems(function (val) {
+                  return __spreadArrays(val, parsedItems_1);
+                });
+              } catch (_c) {
+                setToast({
+                  description: "Invalid items format",
+                  type: "error",
+                  duration: 4500,
+                });
+              }
+            }
+            return [3 /*break*/, 3];
+          case 2:
+            _a = _b.sent();
+            setToast({
+              description: "Could not read clipboard",
+              type: "error",
+              duration: 4500,
+            });
+            return [3 /*break*/, 3];
+          case 3:
+            return [2 /*return*/];
+        }
+      });
+    });
+  }
   return React.createElement(
     React.Fragment,
     null,
@@ -818,7 +888,10 @@ function ListingModal(props) {
               { text: "From clipboard" },
               React.createElement(
                 "div",
-                { className: ListingModal_module_sass_1["default"].AddAction },
+                {
+                  className: ListingModal_module_sass_1["default"].AddAction,
+                  onClick: copyItemsFromClipboard,
+                },
                 React.createElement(react_2.ClipboardIcon, null)
               )
             ),
