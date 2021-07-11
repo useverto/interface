@@ -39,7 +39,9 @@ export const balanceHistory = async (
     client.ar.winstonToAr(await client.wallets.getBalance(address))
   );
 
-  const res = {};
+  const res = {
+    [moment().format("MMM DD, YYYY - HH:mm")]: balance,
+  };
 
   for (const { node } of txs) {
     balance += parseFloat(node.fee.ar);
