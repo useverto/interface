@@ -363,20 +363,32 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
                 ticker={token.ticker}
                 onClick={() => router.push(`/space/${token.id}`)}
               />
-            )) || (
-              <Card.Asset
-                name={token.name}
-                userData={{
-                  avatar: token.owner.image,
-                  name: token.owner.name,
-                  usertag: token.owner.username,
-                }}
-                // @ts-ignore
-                price={token.price ?? " ??"}
-                image={`https://arweave.net/${token.id}`}
-                onClick={() => router.push(`/space/${token.id}`)}
-              />
-            )}
+            )) ||
+              (token.type === "collection" && (
+                <Card.Collection
+                  name={token.name}
+                  userData={{
+                    avatar: token.owner.image,
+                    name: token.owner.name,
+                    usertag: token.owner.username,
+                  }}
+                  images={token.items.map((id) => `https://arweave.net/${id}`)}
+                  onClick={() => router.push(`/space/${token.id}`)}
+                />
+              )) || (
+                <Card.Asset
+                  name={token.name}
+                  userData={{
+                    avatar: token.owner.image,
+                    name: token.owner.name,
+                    usertag: token.owner.username,
+                  }}
+                  // @ts-ignore
+                  price={token.price ?? " ??"}
+                  image={`https://arweave.net/${token.id}`}
+                  onClick={() => router.push(`/space/${token.id}`)}
+                />
+              )}
           </motion.div>
         ))}
       </div>
@@ -425,4 +437,5 @@ interface UnifiedTokenInterface extends Art {
   ticker: string;
   logo?: string;
   type: TokenType;
+  items?: string[];
 }

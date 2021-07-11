@@ -20,4 +20,4 @@ export interface Art {
   owner: UserInterface;
 }
 
-export type TokenType = "community" | "art" | "custom";
+export type TokenType = "community" | "art" | "collection" | "custom";
