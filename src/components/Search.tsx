@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
-import { useTheme } from "@verto/ui";
+import { useTheme, Spacer } from "@verto/ui";
 import { CACHE_URL } from "../utils/arweave";
 import { randomEmoji } from "../utils/user";
 import { useRouter } from "next/router";
@@ -24,21 +24,38 @@ export default function Search({ open, setOpen }) {
     } else setQuery("");
   }, [open, router.query]);
 
+  const [page, setPage] = useState(0);
+  const [noMore, setNoMore] = useState(false);
+
   useEffect(() => {
-    (async () => {
-      let { data } = await axios.get(`${CACHE_URL}/site/search/${query}`);
-
-      data = data.map((val) => ({
-        ...val,
-        image:
-          (val.image && `https://arweave.net/${val.image}`) ||
-          (val.type === "user" && randomEmoji()) ||
-          "/arweave.png",
-      }));
-
-      setResults(data);
-    })();
+    setPage(0);
+    setNoMore(false);
+    loadMore(true);
   }, [query]);
+
+  async function loadMore(initial = false) {
+    if (query === "") return setResults([]);
+
+    let { data } = await axios.get(
+      `${CACHE_URL}/site/search/${query}/${initial ? 0 : page}`
+    );
+
+    if (data.length === 0) return setNoMore(true);
+
+    data = data.map((val) => ({
+      ...val,
+      image:
+        (val.image && `https://arweave.net/${val.image}`) ||
+        (val.type === "user" && randomEmoji()) ||
+        "/arweave.png",
+    }));
+
+    setPage((val) => val + 1);
+    setResults((val) => {
+      if (initial) return data;
+      return [...val, ...data];
+    });
+  }
 
   return (
     <AnimatePresence>
@@ -91,6 +108,7 @@ export default function Search({ open, setOpen }) {
                               ? `/@${item.username}`
                               : `/space/${item.id}`
                           }
+                          onClick={() => setOpen(false)}
                         >
                           <div className={styles.TokenData}>
                             {(item.type !== "collection" && (
@@ -130,6 +148,18 @@ export default function Search({ open, setOpen }) {
                       </motion.p>
                     )}
                   </AnimatePresence>
+                  {!noMore && results.length > 0 && (
+                    <>
+                      <Spacer y={1} />
+                      <div
+                        className={styles.LoadMore}
+                        onClick={() => loadMore()}
+                      >
+                        See more
+                      </div>
+                      <Spacer y={1} />
+                    </>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
