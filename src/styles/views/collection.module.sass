@@ -1,0 +1,37 @@
+@use "../variables"
+
+.Title
+  font-size: variables.$title-font-size + .25em
+
+.Subtitle
+  font-size: 1.07em
+  color: variables.$light-text
+  font-weight: 400
+  margin: 0
+
+.Collaborators
+  +variables.collaborators($editable: false)
+
+  &.EditCollaborators
+    +variables.collaborators($editable: true)
+
+.Items
+  display: grid
+  justify-content: space-between
+  grid-template-columns: auto auto auto auto
+
+  @media screen and (max-width: variables.$mobile-screen)
+    justify-content: center
+    grid-template-columns: auto
+
+  .Item
+    $bottomMargin: 3.5em
+
+    &:nth-child(4n+4)
+      margin-bottom: $bottomMargin
+
+    &:last-child
+      margin-bottom: 0
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin-bottom: $bottomMargin

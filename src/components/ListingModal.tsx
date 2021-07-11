@@ -31,7 +31,7 @@ import { opacityAnimation } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
-import { randomEmoji } from "../utils/user";
+import { randomEmoji, fixUserImage } from "../utils/user";
 import { formatAddress } from "../utils/format";
 import Verto from "@verto/js";
 import axios from "axios";
@@ -143,11 +143,6 @@ export default function ListingModal(props: Props) {
       .getUser(activeAddress)
       .then((user) => setCollaborators([fixUserImage(user)]));
   }, [collectionModal.state]);
-
-  const fixUserImage = (user: UserInterface) => ({
-    ...user,
-    image: user?.image ? `https://arweave.net/${user.image}` : randomEmoji(),
-  });
 
   interface UserWithDisplayTagInterface extends UserInterface {
     displaytag?: string;

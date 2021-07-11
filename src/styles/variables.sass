@@ -70,3 +70,49 @@ $mobile-screen: 720px
 
     &::placeholder
       opacity: .45
+
+=collaborators($editable: true)
+  .Collaborator
+    $size: 32px
+    position: relative
+    display: inline-block
+    transition: all .23s ease-in-out
+
+    @if $editable
+      cursor: pointer
+
+    img
+      width: $size
+      height: $size
+      border-radius: 100%
+      user-select: none
+      z-index: 1
+      border: 1px solid $background-color
+      background-color: $background-color
+
+    &:not(:first-child)
+      margin-left: -($size /  5 * 3)
+
+    .Remove
+      position: absolute
+      +absoluteExtend
+      background-color: rgba(#000, .5)
+      z-index: 2
+      opacity: 0
+      width: $size
+      height: $size
+      border-radius: 100%
+      transition: all .23s ease-in-out
+
+      svg
+        position: absolute
+        color: #fff
+        +absoluteCenter
+
+    &:hover .Remove
+      @if $editable
+        opacity: 1
+
+  &:hover .Collaborator:not(:first-child)
+    @if $editable
+      margin-left: .2rem

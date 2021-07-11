@@ -21,3 +21,8 @@ export interface Art {
 }
 
 export type TokenType = "community" | "art" | "collection" | "custom";
+
+export const fixUserImage = (user: UserInterface) => ({
+  ...user,
+  image: user?.image ? `https://arweave.net/${user.image}` : randomEmoji(),
+});

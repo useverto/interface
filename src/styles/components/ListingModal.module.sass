@@ -108,46 +108,7 @@ $labelFontSize: 1.075em
     margin: 0
 
 .Collaborators
-  .Collaborator
-    $size: 32px
-    position: relative
-    display: inline-block
-    cursor: pointer
-    transition: all .23s ease-in-out
-
-    img
-      width: $size
-      height: $size
-      border-radius: 100%
-      user-select: none
-      z-index: 1
-      border: 1px solid variables.$background-color
-      background-color: variables.$background-color
-
-    &:not(:first-child)
-      margin-left: -($size /  5 * 3)
-
-    .Remove
-      position: absolute
-      +variables.absoluteExtend
-      background-color: rgba(#000, .5)
-      z-index: 2
-      opacity: 0
-      width: $size
-      height: $size
-      border-radius: 100%
-      transition: all .23s ease-in-out
-
-      svg
-        position: absolute
-        color: #fff
-        +variables.absoluteCenter
-
-    &:hover .Remove
-      opacity: 1
-
-  &:hover .Collaborator:not(:first-child)
-    margin-left: .2rem
+  +variables.collaborators
 
 .SearchPopover
   .SearchUser

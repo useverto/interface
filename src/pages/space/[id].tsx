@@ -22,14 +22,19 @@ import {
   ChevronUpIcon,
   MaximizeIcon,
   MinimizeIcon,
+  TrashIcon,
 } from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserData } from "@verto/ui/dist/components/Card";
-import { randomEmoji, TokenType } from "../../utils/user";
-import { OrderBookInterface } from "@verto/js/dist/faces";
+import { fixUserImage, randomEmoji, TokenType } from "../../utils/user";
+import { OrderBookInterface, UserInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
-import { cardListAnimation, opacityAnimation } from "../../utils/animations";
+import {
+  cardAnimation,
+  cardListAnimation,
+  opacityAnimation,
+} from "../../utils/animations";
 import { run } from "ar-gql";
 import { CACHE_URL } from "../../utils/arweave";
 import { ExtendedUserInterface } from "../swap";
@@ -40,6 +45,7 @@ import Metas from "../../components/Metas";
 import dayjs from "dayjs";
 import tokenStyles from "../../styles/views/token.module.sass";
 import artStyles from "../../styles/views/art.module.sass";
+import collectionStyles from "../../styles/views/collection.module.sass";
 
 const client = new Verto();
 
@@ -51,14 +57,15 @@ interface PropTypes {
   type?: TokenType;
 }
 
-const Token = (props: PropTypes) => {
+const Token = (props) => {
   // TODO: custom layout
 
   return (
     <Page>
-      {(props.type === "community" && <Community {...props} />) || (
-        <Art {...props} />
-      )}
+      {(props.type === "community" && <Community {...props} />) ||
+        (props.type === "collection" && <Collection {...props} />) || (
+          <Art {...props} />
+        )}
     </Page>
   );
 };
@@ -1120,6 +1127,110 @@ const Art = (props: PropTypes) => {
   );
 };
 
+interface CollectionProps {
+  id: string;
+  name: string;
+  description: string;
+  collaborators: string[];
+  owner: UserInterface;
+  items: string[];
+  type: "collection";
+}
+
+const Collection = ({
+  name,
+  description,
+  collaborators,
+  items,
+}: CollectionProps) => {
+  const [collaboratorUsers, setCollaboratorUsers] = useState<UserInterface[]>(
+    []
+  );
+  const activeAddress = useSelector((state: RootState) => state.addressReducer);
+  const router = useRouter();
+
+  useEffect(() => {
+    (async () => {
+      const users: UserInterface[] = [];
+
+      for (const addr of collaborators) {
+        const user = await client.getUser(addr);
+
+        if (user && !users.find(({ username }) => username === user.username)) {
+          users.push(fixUserImage(user));
+        } else if (!user && !users.find(({ username }) => username === addr)) {
+          users.push({
+            username: addr,
+            name: "",
+            addresses: [addr],
+            image: randomEmoji(),
+          });
+        }
+      }
+
+      setCollaboratorUsers(users);
+    })();
+  }, [collaborators]);
+
+  return (
+    <>
+      <Head>
+        <title>Verto - {name}</title>
+        <Metas title={name} subtitle={description} />
+      </Head>
+      <Spacer y={3} />
+      <h1 className={"Title " + collectionStyles.Title}>{name}</h1>
+      <Spacer y={0.3} />
+      <p className={collectionStyles.Subtitle}>{description}</p>
+      <Spacer y={0.42} />
+      <div className={collectionStyles.Collaborators}>
+        <AnimatePresence>
+          {collaboratorUsers.map((user, i) => (
+            <motion.div
+              className={collectionStyles.Collaborator}
+              key={i}
+              {...opacityAnimation(i)}
+            >
+              <img src={user.image} draggable={false} alt="U" />
+              {!user.addresses.includes(activeAddress) && (
+                <div
+                  className={collectionStyles.Remove}
+                  onClick={() =>
+                    /*setCollaborators((val) =>
+                          val.filter((u) => u.username !== user.username)
+                        )*/
+                    {}
+                  }
+                >
+                  <TrashIcon />
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
+      <Spacer y={3} />
+      <div className={collectionStyles.Items}>
+        <AnimatePresence>
+          {collaboratorUsers.length > 0 &&
+            items.map((id, i) => (
+              <motion.div
+                className={collectionStyles.Item}
+                {...cardAnimation(i)}
+                key={i}
+              >
+                <Card.AssetClear
+                  image={`https://arweave.net/${id}`}
+                  onClick={() => router.push(`/space/${id}`)}
+                />
+              </motion.div>
+            ))}
+        </AnimatePresence>
+      </div>
+    </>
+  );
+};
+
 export async function getStaticPaths() {
   return {
     paths: [],
@@ -1129,27 +1240,40 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params: { id } }) {
   const {
-    data: { state },
-  } = await axios.get(`${CACHE_URL}/${id}`);
-  const res = await client.getPrice(id);
-  const {
     data: { type },
   } = await axios.get(`${CACHE_URL}/site/type/${id}`);
 
-  const { data: gecko } = await axios.get(
-    "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-  );
+  if (type === "collection") {
+    const { data } = await axios.get(`${CACHE_URL}/site/collection/${id}`);
 
-  return {
-    props: {
-      id,
-      name: state.name,
-      ticker: state.ticker,
-      price: res ? res.price * gecko.arweave.usd : "--",
-      type: type || "community",
-    },
-    revalidate: 1,
-  };
+    return {
+      props: {
+        ...data,
+        type: "collection",
+      },
+      revalidate: 1,
+    };
+  } else {
+    const {
+      data: { state },
+    } = await axios.get(`${CACHE_URL}/${id}`);
+    const res = await client.getPrice(id);
+
+    const { data: gecko } = await axios.get(
+      "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+    );
+
+    return {
+      props: {
+        id,
+        name: state.name,
+        ticker: state.ticker,
+        price: res ? res.price * gecko.arweave.usd : "--",
+        type: type || "community",
+      },
+      revalidate: 1,
+    };
+  }
 }
 
 export default Token;
