@@ -21,6 +21,8 @@ $title-font-size: 2.45em
 
 $mobile-screen: 720px
 
+$labelFontSize: 1.075em
+
 =sameSizeSvg
   font-size: 1.2em
   width: 1.2em
@@ -116,3 +118,20 @@ $mobile-screen: 720px
   &:hover .Collaborator:not(:first-child)
     @if $editable
       margin-left: .2rem
+
+=modalInput
+  div[class~=VertoInputWrapper]
+    width: calc(100% - 6px)
+
+    div[class~=VertoInputInlineLabel]
+      min-width: 160px
+      padding: 0
+
+=inputLabel
+  display: block
+  color: $light-text
+  text-transform: uppercase
+  margin: 0
+    bottom: .27em
+  font-weight: 500
+  font-size: $labelFontSize

@@ -2,7 +2,24 @@
 @use "../components/SearchPopover" as search
 
 .Title
+  display: flex
+  justify-content: space-between
+  align-items: center
   font-size: variables.$title-font-size + .25em
+
+  .EditIcon
+    font-size: .5em
+    width: 1em
+    height: 1em
+    color: variables.$light-text
+    cursor: pointer
+    transition: all .23s ease-in-out
+
+    &:hover
+      opacity: .8
+
+    &:active
+      transform: scale(.8)
 
 .Subtitle
   font-size: 1.07em
@@ -65,3 +82,12 @@
 
   &:hover
     opacity: .83
+
+.ModalInput
+  +variables.modalInput
+
+.ModalTextarea
+  +variables.modalTextarea
+
+.InputLabel
+  +variables.inputLabel

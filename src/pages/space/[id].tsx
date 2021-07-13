@@ -4,10 +4,12 @@ import {
   Card,
   Input,
   Loading,
+  Modal,
   Page,
   Popover,
   Spacer,
   useInput,
+  useModal,
   useTheme,
   useToasts,
 } from "@verto/ui";
@@ -25,6 +27,7 @@ import {
   MinimizeIcon,
   TrashIcon,
   PlusIcon,
+  EditIcon,
 } from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -1196,6 +1199,8 @@ const Collection = ({
     })();
   }, [id]);
 
+  const detailsModal = useModal();
+
   return (
     <>
       <Head>
@@ -1203,7 +1208,15 @@ const Collection = ({
         <Metas title={name} subtitle={description} />
       </Head>
       <Spacer y={3} />
-      <h1 className={"Title " + collectionStyles.Title}>{name}</h1>
+      <h1 className={"Title " + collectionStyles.Title}>
+        {name}
+        {collaborators.includes(activeAddress) && (
+          <EditIcon
+            className={collectionStyles.EditIcon}
+            onClick={() => detailsModal.setState(true)}
+          />
+        )}
+      </h1>
       <Spacer y={0.3} />
       <p className={collectionStyles.Subtitle}>{description}</p>
       <Spacer y={0.42} />
@@ -1222,31 +1235,34 @@ const Collection = ({
               {...opacityAnimation(i)}
             >
               <img src={user.image} draggable={false} alt="U" />
-              {!user.addresses.includes(activeAddress) && (
-                <div
-                  className={collectionStyles.Remove}
-                  onClick={() => {
-                    if (activeAddress !== creator) return;
-                    setCollaboratorUsers((val) =>
-                      val.filter((u) => u.username !== user.username)
-                    );
-                  }}
-                >
-                  <TrashIcon />
-                </div>
-              )}
+              {!user.addresses.includes(activeAddress) &&
+                activeAddress === creator && (
+                  <div
+                    className={collectionStyles.Remove}
+                    onClick={() => {
+                      if (activeAddress !== creator) return;
+                      setCollaboratorUsers((val) =>
+                        val.filter((u) => u.username !== user.username)
+                      );
+                    }}
+                  >
+                    <TrashIcon />
+                  </div>
+                )}
             </motion.div>
           ))}
         </AnimatePresence>
-        <div className={collectionStyles.Collaborator}>
-          <Popover
-            content={<>TODO</>}
-            position="right"
-            style={{ cursor: "auto" }}
-          >
-            <PlusIcon className={collectionStyles.AddCollaborator} />
-          </Popover>
-        </div>
+        {activeAddress === creator && (
+          <div className={collectionStyles.Collaborator}>
+            <Popover
+              content={<>TODO</>}
+              position="right"
+              style={{ cursor: "auto" }}
+            >
+              <PlusIcon className={collectionStyles.AddCollaborator} />
+            </Popover>
+          </div>
+        )}
       </div>
       <Spacer y={3} />
       <div className={collectionStyles.Items}>
@@ -1266,12 +1282,31 @@ const Collection = ({
             ))}
         </AnimatePresence>
       </div>
-      {activeAddress === creator && (
+      {collaborators.includes(activeAddress) && (
         <>
           <Spacer y={2.5} />
           <p className={collectionStyles.AddNew}>Add new</p>
         </>
       )}
+      <Modal {...detailsModal.bindings}>
+        <Modal.Title>Edit collection</Modal.Title>
+        <Modal.Content>
+          <Input
+            className={collectionStyles.ModalInput}
+            placeholder="Enter a name..."
+            label="Collection name"
+          />
+          <Spacer y={1} />
+          <p className={collectionStyles.InputLabel}>Description</p>
+          <div className={collectionStyles.ModalTextarea}>
+            <textarea placeholder="Enter a description for the collection..."></textarea>
+          </div>
+          <Spacer y={2} />
+          <Button small style={{ margin: "0 auto" }}>
+            Submit
+          </Button>
+        </Modal.Content>
+      </Modal>
     </>
   );
 };

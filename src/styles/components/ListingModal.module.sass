@@ -3,26 +3,13 @@
   
 .Modal
   .Input
-    div[class~=VertoInputWrapper]
-      width: calc(100% - 6px)
-
-      div[class~=VertoInputInlineLabel]
-        min-width: 160px
-        padding: 0
+    +variables.modalInput
 
   .Submit
     margin: 0 auto
 
-$labelFontSize: 1.075em
-
 .Label
-  display: block
-  color: variables.$light-text
-  text-transform: uppercase
-  margin: 0
-    bottom: .27em
-  font-weight: 500
-  font-size: $labelFontSize
+  +variables.inputLabel
 
 .TokenLayoutPicker
   display: grid
@@ -52,11 +39,11 @@ $labelFontSize: 1.075em
       &.Name
         color: variables.$light-text
         text-transform: uppercase
-        font-size: $labelFontSize + .15em
+        font-size: variables.$labelFontSize + .15em
 
       &.Description
         color: variables.$cec
-        font-size: $labelFontSize
+        font-size: variables.$labelFontSize
         line-height: 1.2em
 
     svg
