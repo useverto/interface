@@ -1,6 +1,17 @@
 @use "../variables"
 @use "../components/SearchPopover" as search
 
+=basicEditStyles
+  color: variables.$light-text
+  cursor: pointer
+  transition: all .23s ease-in-out
+
+  &:hover
+    opacity: .8
+
+  &:active
+    transform: scale(.8)
+      
 .Title
   display: flex
   justify-content: space-between
@@ -11,15 +22,7 @@
     font-size: .5em
     width: 1em
     height: 1em
-    color: variables.$light-text
-    cursor: pointer
-    transition: all .23s ease-in-out
-
-    &:hover
-      opacity: .8
-
-    &:active
-      transform: scale(.8)
+    +basicEditStyles
 
 .Subtitle
   font-size: 1.07em
@@ -58,6 +61,7 @@
 
   .Item
     $bottomMargin: 3.5em
+    position: relative
 
     &:nth-child(4n+4)
       margin-bottom: $bottomMargin
@@ -67,6 +71,30 @@
 
     @media screen and (max-width: variables.$mobile-screen)
       margin-bottom: $bottomMargin
+
+    .MinusIcon
+      $size: 2em
+      position: absolute
+      background-color: #ff0000
+      top: -($size / 3)
+      right: -($size / 3)
+      color: #fff
+      border-radius: 100%
+      cursor: pointer
+      display: flex
+      align-items: center
+      justify-content: center
+      box-shadow: variables.$lighter-shadow
+      z-index: 100
+      transition: all .23s ease-in-out
+
+      &:active
+        transform: scale(.8)
+
+      svg
+        font-size: 1.3em
+        width: 1em
+        height: 1em
 
 .SearchPopover
   +search.SearchPopover
@@ -91,3 +119,17 @@
 
 .InputLabel
   +variables.inputLabel
+
+.ActionSheet
+  display: flex
+  align-items: center
+  justify-content: flex-end
+
+  .ActionIcon
+    width: 1.35em
+    height: 1.35em
+    margin-left: .45em
+    +basicEditStyles
+
+    &:first-child
+      margin-left: 0

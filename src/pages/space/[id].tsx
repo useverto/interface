@@ -28,6 +28,9 @@ import {
   TrashIcon,
   PlusIcon,
   EditIcon,
+  CheckIcon,
+  MinusIcon,
+  CloseIcon,
 } from "@iconicicons/react";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -41,7 +44,7 @@ import {
   opacityAnimation,
 } from "../../utils/animations";
 import { run } from "ar-gql";
-import { CACHE_URL, client as arweave } from "../../utils/arweave";
+import { CACHE_URL, client as arweave, isAddress } from "../../utils/arweave";
 import { ExtendedUserInterface } from "../swap";
 import { smartweave } from "smartweave";
 import Verto from "@verto/js";
@@ -1155,6 +1158,7 @@ const Collection = ({
   );
   const activeAddress = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
+  const [collectionItems, setCollectionItems] = useState(items);
 
   useEffect(() => {
     (async () => {
@@ -1213,6 +1217,7 @@ const Collection = ({
 
   const { setToast } = useToasts();
 
+  // update name and description
   async function saveDetails() {
     if (nameInput.state === "") return nameInput.setStatus("error");
 
@@ -1247,6 +1252,56 @@ const Collection = ({
     }
 
     setLoading(false);
+  }
+
+  const [editingItems, setEditingItems] = useState(false);
+  const addItemModal = useModal();
+  const addItemInput = useInput("");
+
+  useEffect(() => {
+    addItemInput.setState("");
+    addItemInput.setStatus(undefined);
+  }, [addItemModal.state]);
+
+  // add item by it's ID to the collection
+  function addItem() {
+    if (
+      addItemInput.state === "" ||
+      !isAddress(addItemInput.state) ||
+      collectionItems.includes(addItemInput.state)
+    )
+      return addItemInput.setStatus("error");
+
+    setCollectionItems((val) => [...val, addItemInput.state]);
+    addItemModal.setState(false);
+    setToast({
+      description: "Added item. Click the tick icon to save",
+      type: "info",
+      duration: 4300,
+    });
+  }
+
+  async function saveItems() {
+    setToast({ description: "Saving items...", type: "info", duration: 2200 });
+
+    try {
+      await smartweave.interactWrite(arweave, "use_wallet", id, {
+        function: "updateItems",
+        items: collectionItems,
+      });
+
+      setToast({
+        description: "Updated collection items",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Could not save items",
+        type: "error",
+        duration: 3200,
+      });
+    }
   }
 
   return (
@@ -1313,15 +1368,65 @@ const Collection = ({
         )}
       </div>
       <Spacer y={3} />
+      {collaboratorUsers.length > 0 && collaborators.includes(activeAddress) && (
+        <>
+          <div className={collectionStyles.ActionSheet}>
+            {(editingItems && (
+              <>
+                <PlusIcon
+                  className={collectionStyles.ActionIcon}
+                  onClick={() => addItemModal.setState(true)}
+                />
+                <CloseIcon
+                  className={collectionStyles.ActionIcon}
+                  onClick={() => {
+                    setCollectionItems(items);
+                    setEditingItems(false);
+                  }}
+                />
+                <CheckIcon
+                  className={collectionStyles.ActionIcon}
+                  onClick={() => {
+                    saveItems();
+                    setEditingItems(false);
+                  }}
+                />
+              </>
+            )) || (
+              <EditIcon
+                className={collectionStyles.ActionIcon}
+                onClick={() => setEditingItems(true)}
+              />
+            )}
+          </div>
+          <Spacer y={1} />
+        </>
+      )}
       <div className={collectionStyles.Items}>
         <AnimatePresence>
           {collaboratorUsers.length > 0 &&
-            items.map((id, i) => (
+            collectionItems.map((id, i) => (
               <motion.div
                 className={collectionStyles.Item}
                 {...cardAnimation(i)}
                 key={i}
+                onClick={() => {
+                  if (!editingItems) return;
+                  setCollectionItems((val) =>
+                    val.filter((item) => item !== id)
+                  );
+                }}
               >
+                <AnimatePresence>
+                  {editingItems && (
+                    <motion.div
+                      className={collectionStyles.MinusIcon}
+                      {...opacityAnimation()}
+                    >
+                      <MinusIcon />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 <Card.AssetClear
                   image={`https://arweave.net/${id}`}
                   onClick={() => router.push(`/space/${id}`)}
@@ -1330,12 +1435,6 @@ const Collection = ({
             ))}
         </AnimatePresence>
       </div>
-      {collaboratorUsers.length > 0 && collaborators.includes(activeAddress) && (
-        <>
-          <Spacer y={2.5} />
-          <p className={collectionStyles.AddNew}>Add new</p>
-        </>
-      )}
       <Modal {...detailsModal.bindings}>
         <Modal.Title>Edit collection</Modal.Title>
         <Modal.Content>
@@ -1363,6 +1462,21 @@ const Collection = ({
             onClick={saveDetails}
           >
             Save
+          </Button>
+        </Modal.Content>
+      </Modal>
+      <Modal {...addItemModal.bindings}>
+        <Modal.Title>Add item</Modal.Title>
+        <Modal.Content>
+          <Input
+            className={collectionStyles.ModalInput}
+            placeholder="Enter art ID..."
+            label="Art id"
+            {...addItemInput.bindings}
+          />
+          <Spacer y={2} />
+          <Button small style={{ margin: "0 auto" }} onClick={addItem}>
+            Add to collection
           </Button>
         </Modal.Content>
       </Modal>
