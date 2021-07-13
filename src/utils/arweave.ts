@@ -17,7 +17,7 @@ export const CACHE_URL = "https://v2.cache.verto.exchange";
 export const COMMUNITY_CONTRACT = "Wgp3SpOtWXGCi1SardwQAwrOsQeW6aQn36ooo6eo8nc";
 export const INVITE_CONTRACT = ""; // TODO
 export const COLLECTION_CONTRACT_SRC =
-  "yBY5nhbOAmsz0ztFE1ieM7jNP2pFU_ytUizicPJBTvQ";
+  "dwsIDa8RaPQJUKJhgm5iNrrvxLcXbpIi4Mea0PjMGuY";
 
 export const balanceHistory = async (
   address: string
