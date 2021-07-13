@@ -41,8 +41,9 @@ import {
   opacityAnimation,
 } from "../../utils/animations";
 import { run } from "ar-gql";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, client as arweave } from "../../utils/arweave";
 import { ExtendedUserInterface } from "../swap";
+import { smartweave } from "smartweave";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -1200,6 +1201,53 @@ const Collection = ({
   }, [id]);
 
   const detailsModal = useModal();
+  const nameInput = useInput(name);
+  const [descriptionText, setDescriptionText] = useState(description);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    nameInput.setState(name);
+    nameInput.setStatus(undefined);
+    setDescriptionText(description);
+  }, [detailsModal.state]);
+
+  const { setToast } = useToasts();
+
+  async function saveDetails() {
+    if (nameInput.state === "") return nameInput.setStatus("error");
+
+    if (descriptionText === "")
+      return setToast({
+        description: "Please add a description",
+        type: "error",
+        duration: 3450,
+      });
+
+    setLoading(true);
+
+    try {
+      await smartweave.interactWrite(arweave, "use_wallet", id, {
+        function: "updateDetails",
+        name: nameInput.state,
+        description: descriptionText,
+      });
+
+      detailsModal.setState(false);
+      setToast({
+        description: "Updated collection details",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Could not save details",
+        type: "error",
+        duration: 3200,
+      });
+    }
+
+    setLoading(false);
+  }
 
   return (
     <>
@@ -1282,7 +1330,7 @@ const Collection = ({
             ))}
         </AnimatePresence>
       </div>
-      {collaborators.includes(activeAddress) && (
+      {collaboratorUsers.length > 0 && collaborators.includes(activeAddress) && (
         <>
           <Spacer y={2.5} />
           <p className={collectionStyles.AddNew}>Add new</p>
@@ -1295,15 +1343,26 @@ const Collection = ({
             className={collectionStyles.ModalInput}
             placeholder="Enter a name..."
             label="Collection name"
+            {...nameInput.bindings}
           />
           <Spacer y={1} />
           <p className={collectionStyles.InputLabel}>Description</p>
           <div className={collectionStyles.ModalTextarea}>
-            <textarea placeholder="Enter a description for the collection..."></textarea>
+            <textarea
+              placeholder="Enter a description for the collection..."
+              onChange={(e) => setDescriptionText(e.target.value)}
+            >
+              {descriptionText}
+            </textarea>
           </div>
           <Spacer y={2} />
-          <Button small style={{ margin: "0 auto" }}>
-            Submit
+          <Button
+            small
+            style={{ margin: "0 auto" }}
+            loading={loading}
+            onClick={saveDetails}
+          >
+            Save
           </Button>
         </Modal.Content>
       </Modal>
