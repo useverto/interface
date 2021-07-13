@@ -1282,6 +1282,15 @@ const Collection = ({
   }
 
   async function saveItems() {
+    const isSame = () => {
+      for (const item of collectionItems)
+        if (!items.includes(item)) return false;
+
+      return true;
+    };
+
+    if (isSame()) return;
+
     setToast({ description: "Saving items...", type: "info", duration: 2200 });
 
     try {
