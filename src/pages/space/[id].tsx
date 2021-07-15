@@ -12,6 +12,7 @@ import {
   useModal,
   useTheme,
   useToasts,
+  Tooltip,
 } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
@@ -1313,6 +1314,50 @@ const Collection = ({
     }
   }
 
+  // did the collaborators get updated ?
+  function collaboratorsChanged() {
+    for (const addr of collaborators)
+      if (!collaboratorUsers.find(({ addresses }) => addresses.includes(addr)))
+        return true;
+
+    for (const { addresses } of collaboratorUsers)
+      for (const addr of addresses)
+        if (!collaborators.includes(addr)) return true;
+
+    return false;
+  }
+
+  async function saveCollaborators() {
+    if (!collaboratorsChanged()) return;
+
+    setToast({
+      description: "Updating collaborators",
+      type: "info",
+      duration: 3200,
+    });
+
+    try {
+      await smartweave.interactWrite(arweave, "use_wallet", id, {
+        function: "updateCollaborators",
+        collaborators: collaboratorUsers
+          .map(({ addresses }) => addresses)
+          .flat(1),
+      });
+
+      setToast({
+        description: "Updated collaborators",
+        type: "success",
+        duration: 4500,
+      });
+    } catch {
+      setToast({
+        description: "Could not update collaborators",
+        type: "error",
+        duration: 3200,
+      });
+    }
+  }
+
   return (
     <>
       <Head>
@@ -1373,6 +1418,13 @@ const Collection = ({
             >
               <PlusIcon className={collectionStyles.AddCollaborator} />
             </Popover>
+          </div>
+        )}
+        {collaboratorsChanged() && (
+          <div className={collectionStyles.SaveCollaborators}>
+            <Tooltip text="Save">
+              <CheckIcon onClick={() => saveCollaborators()} />
+            </Tooltip>
           </div>
         )}
       </div>

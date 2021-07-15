@@ -31,6 +31,7 @@
   margin: 0
 
 .Collaborators
+  position: relative
   +variables.collaborators($editable: false)
 
   &.EditCollaborators
@@ -49,6 +50,18 @@
 
   &:hover .AddCollaborator
     opacity: 1
+
+  .SaveCollaborators
+    position: absolute
+    right: 0
+    top: 50%
+    transform: translateY(-50%)
+
+    svg
+      font-size: 1em
+      width: 1.5em
+      height: 1.5em
+      +basicEditStyles
 
 .Items
   display: grid
