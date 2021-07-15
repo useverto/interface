@@ -18,6 +18,7 @@
     "ar-gql": "^0.0.6",
     "arconnect": "^0.2.9",
     "ardb": "^1.0.8",
+    "arverify": "^0.0.11",
     "arweave": "^1.10.13",
     "axios": "^0.21.1",
     "capture-website": "^1.4.0",

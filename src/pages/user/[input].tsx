@@ -27,6 +27,7 @@ import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
 import { CACHE_URL, isAddress } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
+import { getVerification, Threshold } from "arverify";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -146,6 +147,30 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     if (notMobile) return addr;
     else return formatAddress(addr, 12);
   }
+
+  // TODO
+  const [verified, setVerified] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (!props.user) {
+        const verification = await getVerification(
+          props.input,
+          Threshold.MEDIUM
+        );
+        setVerified(verification.verified);
+      } else {
+        for (const addr of props.user.addresses) {
+          const verification = await getVerification(addr, Threshold.MEDIUM);
+
+          if (verification.verified) {
+            setVerified(true);
+            break;
+          }
+        }
+      }
+    })();
+  }, [props.input]);
 
   return (
     <Page>
