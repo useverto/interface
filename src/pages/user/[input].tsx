@@ -148,7 +148,6 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     else return formatAddress(addr, 12);
   }
 
-  // TODO
   const [verified, setVerified] = useState(false);
 
   useEffect(() => {
@@ -204,6 +203,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
               name={props.user.name}
               size="large-inline"
               className={styles.Avatar}
+              verified={verified}
             />
             {isCurrentUser && (
               <Button small onClick={() => setupModal.setState(true)}>
@@ -232,6 +232,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             name={walletName}
             size="large-inline"
             className={styles.Avatar}
+            verified={verified}
           />
           {isCurrentUser && (
             <Button small onClick={() => setupModal.setState(true)}>
