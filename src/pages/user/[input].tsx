@@ -169,7 +169,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         }
       }
     })();
-  }, [props.input]);
+  }, [props.input, props.user]);
 
   return (
     <Page>
