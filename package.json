@@ -14,7 +14,7 @@
     "@iconicicons/react": "^1.5.0",
     "@primer/octicons-react": "^13.0.0",
     "@verto/js": "^0.0.0-alpha.18",
-    "@verto/ui": "^2.1.19-alpha",
+    "@verto/ui": "^2.1.20-alpha",
     "ar-gql": "^0.0.6",
     "arconnect": "^0.2.9",
     "ardb": "^1.0.8",
