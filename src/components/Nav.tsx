@@ -26,12 +26,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../utils/format";
-import { randomEmoji } from "../utils/user";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import {
-  CACHE_URL,
   INVITE_CONTRACT,
   client as arweave,
   isAddress,
@@ -42,7 +40,6 @@ import Link from "next/link";
 import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
 import Search, { useSearch } from "./Search";
-import axios from "axios";
 import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
@@ -98,7 +95,7 @@ const Nav = () => {
     if (!address || user) return;
     setNoIDUser((val) => ({
       ...val,
-      avatar: randomEmoji(),
+      avatar: undefined,
     }));
 
     (async () => {

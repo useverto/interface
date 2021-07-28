@@ -36,7 +36,7 @@ import {
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserData } from "@verto/ui/dist/components/Card";
-import { fixUserImage, randomEmoji, TokenType } from "../../utils/user";
+import { fixUserImage, TokenType } from "../../utils/user";
 import { OrderBookInterface, UserInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
 import {
@@ -501,7 +501,7 @@ const Art = (props: PropTypes) => {
         usertag: data.owner.username,
         avatar: data.owner.image
           ? `https://arweave.net/${data.owner.image}`
-          : randomEmoji(),
+          : undefined,
       });
     })();
   }, []);
@@ -567,13 +567,13 @@ const Art = (props: PropTypes) => {
                   ? {
                       name: userData.name,
                       usertag: userData.username,
-                      avatar: userData.image ?? randomEmoji(),
+                      avatar: userData.image,
                     }
                   : {
                       name: undefined,
                       usertag: order.addr,
                       displaytag: formatAddress(order.addr, 10),
-                      avatar: randomEmoji(),
+                      avatar: undefined,
                     },
               };
             }
@@ -1073,7 +1073,7 @@ const Art = (props: PropTypes) => {
                               avatar:
                                 (user?.image &&
                                   `https://arweave.net/${user.image}`) ||
-                                randomEmoji(),
+                                undefined,
                               usertag: user?.username || order.addr,
                               // @ts-ignore
                               displaytag:
@@ -1175,7 +1175,7 @@ const Collection = ({
             username: addr,
             name: "",
             addresses: [addr],
-            image: randomEmoji(),
+            image: undefined,
           });
         }
       }

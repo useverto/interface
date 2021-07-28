@@ -20,7 +20,6 @@ import {
   useTheme,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { randomEmoji } from "../utils/user";
 import { formatAddress } from "../utils/format";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
@@ -539,7 +538,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                   user={{
                     avatar:
                       (user?.image && `https://arweave.net/${user.image}`) ||
-                      randomEmoji(),
+                      undefined,
                     usertag: user?.username || order.addr,
                     // @ts-ignore
                     displaytag: user?.username || formatAddress(order.addr, 10),

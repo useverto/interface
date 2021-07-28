@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+// TODO: gradient
 import { randomEmoji } from "../../utils/user";
 import { CACHE_URL } from "../../utils/arweave";
 import captureWebsite from "capture-website";

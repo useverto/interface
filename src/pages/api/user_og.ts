@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+// TODO: gradient
 import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
 import captureWebsite from "capture-website";

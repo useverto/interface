@@ -2,9 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
-import { useTheme, Spacer } from "@verto/ui";
+import { useTheme, Spacer, generateAvatarGradient } from "@verto/ui";
 import { CACHE_URL } from "../utils/arweave";
-import { randomEmoji } from "../utils/user";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
@@ -44,10 +43,12 @@ export default function Search({ open, setOpen }) {
 
     data = data.map((val) => ({
       ...val,
-      image:
-        (val.image && `https://arweave.net/${val.image}`) ||
-        (val.type === "user" && randomEmoji()) ||
-        "/arweave.png",
+      image: (val.image && `https://arweave.net/${val.image}`) || undefined,
+      gradient:
+        (!val.image &&
+          val.type === "user" &&
+          generateAvatarGradient(val.username || val.usertag || "")) ||
+        undefined,
     }));
 
     setPage((val) => val + 1);
@@ -111,18 +112,38 @@ export default function Search({ open, setOpen }) {
                           onClick={() => setOpen(false)}
                         >
                           <div className={styles.TokenData}>
-                            {(item.type !== "collection" && (
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                draggable={false}
-                                className={
-                                  item.type === "user" ? styles.UserAvatar : ""
-                                }
-                              />
-                            )) || (
-                              <MenuIcon className={styles.CollectionIcon} />
-                            )}
+                            {(item.type !== "collection" &&
+                              (item.image || item.type !== "user") && (
+                                <img
+                                  src={item.image ?? "/arweave.png"}
+                                  alt={item.name}
+                                  draggable={false}
+                                  className={
+                                    item.type === "user"
+                                      ? styles.UserAvatar
+                                      : ""
+                                  }
+                                  key={i}
+                                />
+                              )) ||
+                              (item.type === "user" &&
+                                !item.image &&
+                                item.gradient && (
+                                  <div
+                                    className={styles.NoAvatar}
+                                    style={{
+                                      background: item.gradient?.gradient ?? "",
+                                    }}
+                                  >
+                                    <span>
+                                      {(item.username || "")
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                    </span>
+                                  </div>
+                                )) || (
+                                <MenuIcon className={styles.CollectionIcon} />
+                              )}
                             <div>
                               <h1>{item.name}</h1>
                               <h2

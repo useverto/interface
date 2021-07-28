@@ -7,7 +7,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
-import { randomEmoji } from "../utils/user";
 import { CACHE_URL } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/faces";
 import { getType } from "../utils/order";
@@ -61,7 +60,7 @@ const Home = ({ artwork }: { artwork: any }) => {
           ...val.owner,
           image: val.owner.image
             ? `https://arweave.net/${artwork.owner.image}`
-            : randomEmoji(),
+            : undefined,
         },
         price: (res.price * gecko.arweave.usd).toFixed(2),
       }));
@@ -180,7 +179,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                   <Card.Asset
                     name={arworkData.name}
                     userData={{
-                      avatar: arworkData.owner.image,
+                      avatar: arworkData.owner?.image,
                       name: arworkData.owner.name,
                       usertag: arworkData.owner.username,
                     }}

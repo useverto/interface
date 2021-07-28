@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { arPrice, CACHE_URL, isAddress } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
-import { Art, randomEmoji } from "../../../utils/user";
+import { Art } from "../../../utils/user";
 import axios from "axios";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -39,8 +39,7 @@ const Owns = (props: {
       );
       const price = (await arPrice()) * (await client.getPrice(id)).price;
 
-      if (!artworkData.owner.image) artworkData.owner.image = randomEmoji();
-      else
+      if (artworkData.owner.image)
         artworkData.owner.image = `https://arweave.net/${artworkData.owner.image}`;
 
       arts.push({
@@ -146,8 +145,8 @@ export async function getStaticProps({ params: { input } }) {
       let { data } = await axios.get(`${CACHE_URL}/site/artwork/${id}`);
       const price = (await arPrice()) * (await client.getPrice(id)).price;
 
-      if (!data.owner.image) data.owner.image = randomEmoji();
-      else data.owner.image = `https://arweave.net/${data.owner.image}`;
+      if (data.owner.image)
+        data.owner.image = `https://arweave.net/${data.owner.image}`;
 
       owns.push({
         ...data,

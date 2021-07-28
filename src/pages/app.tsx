@@ -24,7 +24,6 @@ import {
   ArrowRightIcon,
 } from "@iconicicons/react";
 import { arPrice, CACHE_URL } from "../utils/arweave";
-import { randomEmoji } from "../utils/user";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
@@ -76,7 +75,7 @@ const App = () => {
                 ...data.owner,
                 image: data.owner.image
                   ? `https://arweave.net/${data.owner.image}`
-                  : randomEmoji(),
+                  : undefined,
               },
               price:
                 (await arPrice()) * (await client.getPrice(artoworkID)).price,
@@ -247,7 +246,7 @@ const App = () => {
           {owned.length === 0 && (
             <Card.Asset
               name=""
-              userData={{ avatar: randomEmoji(), usertag: "...", name: "..." }}
+              userData={{ avatar: undefined, usertag: "...", name: "..." }}
               price={0}
               image={"/logo_dark.svg"}
               style={{ opacity: 0 }}

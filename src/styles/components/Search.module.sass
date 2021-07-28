@@ -74,15 +74,29 @@
         .TokenData
           +variables.flexCenterWithSpace
 
-          img, .CollectionIcon
-            width: 64px
-            height: 64px
+          img, .CollectionIcon, .NoAvatar
+            $avatarWidth: 64px
+            width: $avatarWidth
+            height: $avatarWidth
             user-select: none
             margin-right: $sidePadding
             color: variables.$light-text
 
-            &.UserAvatar
+            &.UserAvatar, &.NoAvatar
               border-radius: 100%
+
+            &.NoAvatar
+              position: relative
+
+              span
+                position: absolute
+                top: 50%
+                left: 50%
+                color: #fff
+                font-size: $avatarWidth / 3 * 2
+                font-weight: 500
+                text-align: center
+                transform: translate(-50%, -50%)
 
           h1, h2
             margin: 0

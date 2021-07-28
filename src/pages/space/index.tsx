@@ -14,7 +14,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
-import { Art, randomEmoji, TokenType } from "../../utils/user";
+import { Art, TokenType } from "../../utils/user";
 import { arPrice, CACHE_URL } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
@@ -63,7 +63,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
           ...val.owner,
           image: val.owner.image
             ? `https://arweave.net/${val.owner.image}`
-            : randomEmoji(),
+            : undefined,
         },
       }));
     },
@@ -166,8 +166,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 
       const price = (await arPrice()) * (await client.getPrice(token.id)).price;
 
-      if (!token.owner.image) token.owner.image = randomEmoji();
-      else token.owner.image = `https://arweave.net/${token.owner.image}`;
+      if (token.owner.image)
+        token.owner.image = `https://arweave.net/${token.owner.image}`;
 
       items.push({
         ...token,
@@ -418,15 +418,10 @@ export async function getStaticProps() {
   );
 
   let { data: arts } = await axios.get(`${CACHE_URL}/site/artworks/random`);
-  arts = arts.map((val) => ({
-    ...val,
-    owner: {
-      ...val.owner,
-      image: val.owner.image
-        ? `https://arweave.net/${val.owner.image}`
-        : randomEmoji(),
-    },
-  }));
+
+  for (let i = 0; i < arts.length; i++)
+    if (arts[i].owner.image)
+      arts[i].owner.image = `https://arweave.net/${arts[i].owner.image}`;
 
   return { props: { tokens, featured, arts }, revalidate: 1 };
 }

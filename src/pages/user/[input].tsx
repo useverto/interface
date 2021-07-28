@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from "react";
 import { cardAnimation, cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
-import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
 import { ArrowRightIcon } from "@iconicicons/react";
 import { UsernametoURL as usernameToURL } from "social-username-url";
@@ -59,7 +58,6 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const [walletName, setWalletName] = useState("");
   const cancelModal = useModal();
   const [cancelID, setCancelID] = useState("");
-  const [randomAvatar] = useState(randomEmoji());
   const { setToast } = useToasts();
   const [cancelled, setCancelled] = useState<string[]>([]);
   const setupModal = useModal();
@@ -197,7 +195,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
               avatar={
                 props.user.image
                   ? `https://arweave.net/${props.user.image}`
-                  : randomAvatar
+                  : undefined
               }
               usertag={props.user.username}
               name={props.user.name}
@@ -226,7 +224,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       )) || (
         <div className={styles.AvatarSection}>
           <Avatar
-            avatar={randomAvatar}
+            avatar={undefined}
             usertag={props.input}
             displaytag={formatAddress(props.input, 14)}
             name={walletName}
