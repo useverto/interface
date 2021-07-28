@@ -41,8 +41,9 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Link from "next/link";
 import Metas from "../components/Metas";
-import styles from "../styles/views/swap.module.sass";
 import useSWR from "swr";
+import axios from "axios";
+import styles from "../styles/views/swap.module.sass";
 
 const client = new Verto();
 
@@ -181,6 +182,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   const permissionModal = useModal();
 
+  const [blockedCountry, setBlockedCountry] = useState(false);
+
   /**
    * Prepare a swap and display confirmation modal
    */
@@ -195,6 +198,13 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       return output.setStatus("error");
 
     if (inputUnit.state === "..." || outputUnit.state === "...") return;
+
+    if (blockedCountry)
+      return setToast({
+        description: "Your country is limited",
+        type: "error",
+        duration: 4000,
+      });
 
     setCreatingSwap(true);
 
@@ -285,6 +295,13 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
    * Submit the swap for the protocol to process
    */
   async function submit() {
+    if (blockedCountry)
+      return setToast({
+        description: "Your country is limited",
+        type: "error",
+        duration: 4000,
+      });
+
     setSubmittingSwap(true);
 
     try {
@@ -372,6 +389,19 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     );
   }
 
+  useEffect(() => {
+    (async () => {
+      const {
+        data: { ip },
+      } = await axios.get("https://api.my-ip.io/ip.json");
+      const { data } = await axios.get(`https://ipwhois.app/json/${ip}`);
+
+      if (data.country_code === "US") setBlockedCountry(true);
+
+      console.log(data.country_code);
+    })();
+  }, []);
+
   return (
     <Page>
       <Head>
@@ -430,6 +460,27 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           />
         </div>
         <Card className={styles.SwapForm}>
+          <AnimatePresence>
+            {blockedCountry && (
+              <motion.div
+                className={
+                  styles.BlockedCountry +
+                  " " +
+                  (theme === "Dark" ? styles.BlockedCountryDark : "")
+                }
+              >
+                <div>
+                  <h1>Your country is limited 😢</h1>
+                  <Spacer y={1} />
+                  <p>
+                    We are really sorry, but it looks like you are located in a
+                    country where we cannot provide our services as of now, due
+                    to legal reasons.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <Input
             label="You send"
             inlineLabel={
