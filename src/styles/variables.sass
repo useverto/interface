@@ -74,6 +74,19 @@ $labelFontSize: 1.075em
     &::placeholder
       opacity: .45
 
+=gradientAvatar($avatarWidth)
+  position: relative
+
+  span
+    position: absolute
+    top: 50%
+    left: 50%
+    color: #fff
+    font-size: $avatarWidth / 3 * 2
+    font-weight: 500
+    text-align: center
+    transform: translate(-50%, -50%)
+
 =collaborators($editable: true)
   .Collaborator
     $size: 32px
@@ -84,7 +97,7 @@ $labelFontSize: 1.075em
     @if $editable
       cursor: pointer
 
-    img, .AddCollaborator
+    img, .AddCollaborator, .Gradient
       width: $size
       height: $size
       border-radius: 100%
@@ -92,6 +105,16 @@ $labelFontSize: 1.075em
       z-index: 1
       border: 1px solid $background-color
       background-color: $background-color
+
+    .Gradient
+      +gradientAvatar($avatarWidth: $size)
+
+    &.GradientBg::before
+      position: absolute
+      +absoluteExtend
+      content: ""
+      background-color: $background-color
+      border-radius: 100%
 
     &:not(:first-child)
       margin-left: -($size /  5 * 3)

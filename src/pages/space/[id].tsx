@@ -13,6 +13,7 @@ import {
   useTheme,
   useToasts,
   Tooltip,
+  generateAvatarGradient,
 } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { Line } from "react-chartjs-2";
@@ -1147,6 +1148,10 @@ interface CollectionProps {
   type: "collection";
 }
 
+type UserInterfaceWithGradient = Omit<UserInterface, "image"> & {
+  image?: ReturnType<typeof generateAvatarGradient> | string;
+};
+
 const Collection = ({
   id,
   name,
@@ -1154,16 +1159,16 @@ const Collection = ({
   collaborators,
   items,
 }: CollectionProps) => {
-  const [collaboratorUsers, setCollaboratorUsers] = useState<UserInterface[]>(
-    []
-  );
+  const [collaboratorUsers, setCollaboratorUsers] = useState<
+    UserInterfaceWithGradient[]
+  >([]);
   const activeAddress = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
   const [collectionItems, setCollectionItems] = useState(items);
 
   useEffect(() => {
     (async () => {
-      const users: UserInterface[] = [];
+      const users: UserInterfaceWithGradient[] = [];
 
       for (const addr of collaborators) {
         const user = await client.getUser(addr);
@@ -1175,7 +1180,7 @@ const Collection = ({
             username: addr,
             name: "",
             addresses: [addr],
-            image: undefined,
+            image: generateAvatarGradient(addr || ""),
           });
         }
       }
@@ -1387,11 +1392,29 @@ const Collection = ({
         <AnimatePresence>
           {collaboratorUsers.map((user, i) => (
             <motion.div
-              className={collectionStyles.Collaborator}
+              className={
+                collectionStyles.Collaborator +
+                " " +
+                (typeof user.image !== "string"
+                  ? collectionStyles.GradientBg
+                  : "")
+              }
               key={i}
               {...opacityAnimation(i)}
             >
-              <img src={user.image} draggable={false} alt="U" />
+              {(typeof user.image !== "string" && (
+                <div
+                  className={collectionStyles.Gradient}
+                  style={{ background: user.image?.gradient }}
+                >
+                  <span>
+                    {(user.name || user.username || "").charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )) ||
+                (typeof user.image === "string" && (
+                  <img src={user.image} draggable={false} alt="U" />
+                ))}
               {!user.addresses.includes(activeAddress) &&
                 activeAddress === creator && (
                   <div
