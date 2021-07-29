@@ -468,12 +468,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                 }
               >
                 <div>
-                  <h1>Your country is limited 😢</h1>
+                  <h1>We do not offer services in your location 😢</h1>
                   <Spacer y={1} />
                   <p>
-                    We are really sorry, but it looks like you are located in a
-                    country where we cannot provide our services as of now, due
-                    to legal reasons.
+                    We apologize for the inconvenience but Verto & th8ta do not
+                    currently offer services to users in your country or
+                    location.
                   </p>
                 </div>
               </motion.div>
