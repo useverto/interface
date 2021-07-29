@@ -397,8 +397,6 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       const { data } = await axios.get(`https://ipwhois.app/json/${ip}`);
 
       if (data.country_code === "US") setBlockedCountry(true);
-
-      console.log(data.country_code);
     })();
   }, []);
 

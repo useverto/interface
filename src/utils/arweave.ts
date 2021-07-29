@@ -35,6 +35,7 @@ export const balanceHistory = async (
 
   const txs = inTxs
     .concat(outTxs)
+    .filter(({ node }) => !!node?.block?.timestamp)
     .sort((a, b) => b.node.block.timestamp - a.node.block.timestamp)
     .slice(0, 100);
   let balance = parseFloat(
