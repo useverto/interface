@@ -9,6 +9,7 @@ import {
   Popover,
   useTheme,
   Tooltip,
+  generateAvatarGradient,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
@@ -128,7 +129,9 @@ export default function ListingModal(props: Props) {
   const collectionModal = useModal();
   const collectionNameInput = useInput<string>("");
   const [collectionDescription, setCollectionDescription] = useState("");
-  const [collaborators, setCollaborators] = useState<UserInterface[]>([]);
+  const [collaborators, setCollaborators] = useState<
+    UserInterfaceWithGradient[]
+  >([]);
   const [items, setItems] = useState<string[]>([]);
   const activeAddress = useSelector((state: RootState) => state.addressReducer);
 
@@ -144,7 +147,7 @@ export default function ListingModal(props: Props) {
       .then((user) => setCollaborators([fixUserImage(user)]));
   }, [collectionModal.state]);
 
-  interface UserWithDisplayTagInterface extends UserInterface {
+  interface UserWithDisplayTagInterface extends UserInterfaceWithGradient {
     displaytag?: string;
   }
 
@@ -172,7 +175,7 @@ export default function ListingModal(props: Props) {
           username: userQuery,
           name: "",
           addresses: [userQuery],
-          image: undefined,
+          image: generateAvatarGradient(userQuery),
           displaytag: formatAddress(userQuery, 12),
         });
 
@@ -517,7 +520,21 @@ export default function ListingModal(props: Props) {
                           );
                         }}
                       >
-                        <img src={user.image} alt="u" draggable={false} />
+                        {(typeof user.image !== "string" && (
+                          <div
+                            className={styles.GradientAvatar}
+                            style={{ background: user.image?.gradient }}
+                          >
+                            <span>
+                              {(user.name || user.username || "")
+                                .charAt(0)
+                                .toUpperCase()}
+                            </span>
+                          </div>
+                        )) ||
+                          (typeof user.image === "string" && (
+                            <img src={user.image} draggable={false} alt="U" />
+                          ))}
                         <div className={styles.ResultInfo}>
                           {user.name !== "" && <h1>{user.name}</h1>}
                           <h2>@{user.displaytag ?? user.username}</h2>
@@ -549,11 +566,29 @@ export default function ListingModal(props: Props) {
             <AnimatePresence>
               {collaborators.map((user, i) => (
                 <motion.div
-                  className={styles.Collaborator}
+                  className={
+                    styles.Collaborator +
+                    " " +
+                    (typeof user.image !== "string" ? styles.GradientBg : "")
+                  }
                   key={i}
                   {...opacityAnimation(i)}
                 >
-                  <img src={user.image} draggable={false} alt="U" />
+                  {(typeof user.image !== "string" && (
+                    <div
+                      className={styles.Gradient}
+                      style={{ background: user.image?.gradient }}
+                    >
+                      <span>
+                        {(user.name || user.username || "")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </span>
+                    </div>
+                  )) ||
+                    (typeof user.image === "string" && (
+                      <img src={user.image} draggable={false} alt="U" />
+                    ))}
                   {!user.addresses.includes(activeAddress) && (
                     <div
                       className={styles.Remove}
@@ -773,3 +808,7 @@ const CustomSkeleton = () => (
     </defs>
   </svg>
 );
+
+type UserInterfaceWithGradient = Omit<UserInterface, "image"> & {
+  image?: ReturnType<typeof generateAvatarGradient> | string;
+};

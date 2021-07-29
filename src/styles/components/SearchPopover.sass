@@ -54,9 +54,11 @@
       img, .UserInfo
         opacity: .8
 
-    img
-      width: 32px
-      height: 32px
+    $avatarSize: 32px
+
+    img, .GradientAvatar
+      width: $avatarSize
+      height: $avatarSize
       border-radius: 100%
       user-select: none
       margin-right: .45em
@@ -64,6 +66,9 @@
 
       &.Square
         border-radius: 4px
+
+    .GradientAvatar
+      +variables.gradientAvatar($avatarWidth: $avatarSize)
 
     .ResultInfo
       transition: all .23s ease-in-out
