@@ -312,6 +312,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         type: "success",
         duration: 5000,
       });
+      confirmationModal.setState(false);
     } catch {
       setToast({
         description: "Could not submit your order",
@@ -322,6 +323,15 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
     setSubmittingSwap(false);
   }
+
+  const [hangOn, setHangOn] = useState(false);
+
+  useEffect(() => {
+    if (!submittingSwap) return setHangOn(false);
+    const handle = setTimeout(() => setHangOn(true), 4000);
+
+    return () => clearTimeout(handle);
+  }, [submittingSwap]);
 
   // selected PST price in AR
   const [selectedPrice, setSelectedPrice] = useState(0);
@@ -648,6 +658,12 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             >
               Submit
             </Button>
+            {hangOn && (
+              <>
+                <Spacer y={1.75} />
+                <p style={{ margin: 0 }}>Hang on for a bit...</p>
+              </>
+            )}
           </Modal.Content>
         </Modal>
       )}
