@@ -42,7 +42,7 @@ import Head from "next/head";
 import Link from "next/link";
 import Metas from "../components/Metas";
 import useSWR from "swr";
-import axios from "axios";
+import useGeofence from "../utils/geofence";
 import styles from "../styles/views/swap.module.sass";
 
 const client = new Verto();
@@ -182,7 +182,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
 
   const permissionModal = useModal();
 
-  const [blockedCountry, setBlockedCountry] = useState(false);
+  const blockedCountry = useGeofence();
 
   /**
    * Prepare a swap and display confirmation modal
@@ -388,17 +388,6 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       })
     );
   }
-
-  useEffect(() => {
-    (async () => {
-      const {
-        data: { ip },
-      } = await axios.get("https://api.my-ip.io/ip.json");
-      const { data } = await axios.get(`https://ipwhois.app/json/${ip}`);
-
-      if (data.country_code === "US") setBlockedCountry(true);
-    })();
-  }, []);
 
   return (
     <Page>

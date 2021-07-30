@@ -54,6 +54,7 @@ import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import dayjs from "dayjs";
+import useGeofence from "../../utils/geofence";
 import tokenStyles from "../../styles/views/token.module.sass";
 import artStyles from "../../styles/views/art.module.sass";
 import collectionStyles from "../../styles/views/collection.module.sass";
@@ -735,43 +736,53 @@ const Art = (props: PropTypes) => {
     })();
   }, [orderBook]);
 
+  const arAmountInput = useInput<number>(0);
+  const blockedCountry = useGeofence();
+
+  useEffect(() => {
+    if (view === "buy") arAmountInput.setState(bitsPrice.ar);
+  }, [bitsPrice.ar]);
+
   const [loading, setLoading] = useState(false);
   const { setToast } = useToasts();
 
   async function order(mode: "buy" | "sell") {
+    if (blockedCountry)
+      return setToast({
+        description: "Your country is limited",
+        type: "error",
+        duration: 4000,
+      });
+
     if (
-      bitsAmountInput.state <= 0 &&
-      bitsAmountInput.state > bitsAvailable &&
+      (bitsAmountInput.state <= 0 || bitsAmountInput.state > bitsAvailable) &&
       mode === "buy"
     )
       return bitsAmountInput.setStatus("error");
 
     if (
-      bitsAmountInput.state <= 0 &&
-      bitsAmountInput.state > ownedAmount &&
+      (bitsAmountInput.state <= 0 || bitsAmountInput.state > ownedAmount) &&
       mode === "sell"
     )
       return bitsAmountInput.setStatus("error");
 
     setLoading(true);
 
-    // TODO: remove disabled from buy/sell buttons after this is ready
-
     try {
-      // TODO: create swap
-      /**
-      const swapItem = await client.createSwap(
-        { amount: Number(input.state), unit: inputUnit.state },
+      const swap = await client.createSwap(
         {
-          amount: inputUnit.state === "AR" ? undefined : Number(output.state),
-          unit: outputUnit.state,
+          amount: bitsAmountInput.state,
+          unit: mode === "buy" ? "AR" : props.id,
+        },
+        {
+          amount: mode === "buy" ? undefined : arAmountInput.state,
+          unit: mode === "buy" ? props.id : "AR",
         },
         await client.recommendPost()
       );
-      */
 
       try {
-        // TODO: submit swap
+        await client.sendSwap(swap.transactions);
 
         setToast({
           description: "Your order has been submitted",
@@ -796,6 +807,16 @@ const Art = (props: PropTypes) => {
     setLoading(false);
     bitsAmountInput.setStatus(undefined);
   }
+
+  useEffect(() => {
+    if (view === "preview") return;
+    if (blockedCountry)
+      setToast({
+        description: "Your country is limited",
+        type: "error",
+        duration: 3250,
+      });
+  }, [view]);
 
   return (
     <>
@@ -887,9 +908,7 @@ const Art = (props: PropTypes) => {
                 <Button
                   className={artStyles.FormBtn}
                   onClick={() => setView("buy")}
-                  // disabled={!address || bitsAvailable === 0}
-                  // TODO: remove disabled below
-                  disabled
+                  disabled={!address || bitsAvailable === 0}
                 >
                   Buy
                 </Button>
@@ -898,9 +917,7 @@ const Art = (props: PropTypes) => {
                   className={artStyles.FormBtn}
                   type="outlined"
                   onClick={() => setView("sell")}
-                  // disabled={!address || ownedAmount === 0}
-                  // TODO: remove disabled below
-                  disabled
+                  disabled={!address || ownedAmount === 0}
                 >
                   Sell
                 </Button>
@@ -919,18 +936,18 @@ const Art = (props: PropTypes) => {
                 />
                 <Spacer y={1.25} />
                 <Input
+                  {...arAmountInput.bindings}
+                  readOnly={view === "buy"}
+                  type="number"
+                  inlineLabel="AR"
+                />
+                <Spacer y={1.25} />
+                <Input
                   readOnly
                   currency="$"
                   type="number"
                   value={bitsPrice.usd}
                   inlineLabel="USD"
-                />
-                <Spacer y={1.25} />
-                <Input
-                  readOnly
-                  type="number"
-                  value={bitsPrice.ar}
-                  inlineLabel="AR"
                 />
                 <Spacer y={1.25} />
                 {view === "buy" && (
@@ -945,49 +962,38 @@ const Art = (props: PropTypes) => {
                   </>
                 )}
               </div>
-              {(view === "buy" && (
-                <div>
+              <div>
+                {(view === "buy" && (
                   <Button
                     className={artStyles.FormBtn}
                     onClick={() => order("buy")}
                     loading={loading}
+                    disabled={blockedCountry}
                   >
                     Add to collection
                   </Button>
-                  <Spacer y={0.85} />
-                  <Button
-                    className={artStyles.FormBtn}
-                    type="secondary"
-                    onClick={() => {
-                      if (loading) return;
-                      setView("preview");
-                    }}
-                  >
-                    Back
-                  </Button>
-                </div>
-              )) || (
-                <div>
+                )) || (
                   <Button
                     className={artStyles.FormBtn}
                     onClick={() => order("sell")}
                     loading={loading}
+                    disabled={blockedCountry}
                   >
                     Sell bits
                   </Button>
-                  <Spacer y={0.85} />
-                  <Button
-                    className={artStyles.FormBtn}
-                    type="secondary"
-                    onClick={() => {
-                      if (loading) return;
-                      setView("preview");
-                    }}
-                  >
-                    Back
-                  </Button>
-                </div>
-              )}
+                )}
+                <Spacer y={0.85} />
+                <Button
+                  className={artStyles.FormBtn}
+                  type="secondary"
+                  onClick={() => {
+                    if (loading) return;
+                    setView("preview");
+                  }}
+                >
+                  Back
+                </Button>
+              </div>
             </>
           )}
         </Card>
