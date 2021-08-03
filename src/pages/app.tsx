@@ -1,12 +1,15 @@
 import { BalanceInterface, UserInterface } from "@verto/js/dist/faces";
 import {
   Card,
+  Modal,
   Page,
   Spacer,
   Tooltip,
   useModal,
   useTheme,
   useToasts,
+  Avatar,
+  Button,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
@@ -22,9 +25,18 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
   ArrowRightIcon,
+  ChevronRightIcon,
 } from "@iconicicons/react";
-import { arPrice, CACHE_URL } from "../utils/arweave";
+import {
+  arPrice,
+  CACHE_URL,
+  INVITE_CONTRACT,
+  isAddress,
+  client as arweave,
+} from "../utils/arweave";
 import { useRouter } from "next/router";
+import { formatAddress } from "../utils/format";
+import { interactWrite } from "smartweave";
 import Balance from "../components/Balance";
 import Verto from "@verto/js";
 import Head from "next/head";
@@ -112,6 +124,62 @@ const App = () => {
         );
     })();
   }, [address]);
+
+  //
+  // INVITES
+  //
+
+  const inviteModal = useModal();
+  const [inviteAddress, setInviteAddress] = useState("");
+
+  /**
+
+  useEffect(() => {
+    (async () => {
+      if(!router.query.invite || !isAddress(router.query.invite.toString())) return;
+      setInviteAddress(router.query.invite.toString());
+
+      const { data } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
+      const invitesLeft = data.invites?.[address] ?? 0;
+
+      if(invitesLeft < 1 || data.balances?.[address] > 0) return;
+
+      inviteModal.setState(true);
+    })();
+  }, [router.query]);
+
+  */
+
+  const [loadingInvite, setLoadingInvite] = useState(false);
+
+  async function inviteUser() {
+    if (!isAddress(inviteAddress)) return;
+
+    setLoadingInvite(true);
+    try {
+      await interactWrite(arweave, "use_wallet", INVITE_CONTRACT, {
+        function: "invite",
+        target: inviteAddress,
+      });
+
+      inviteModal.setState(false);
+      setToast({
+        description: `${formatAddress(
+          inviteAddress,
+          20
+        )} has been sent an invite.`,
+        type: "success",
+        duration: 2400,
+      });
+    } catch {
+      setToast({
+        description: "Error inviting address",
+        type: "error",
+        duration: 2300,
+      });
+    }
+    setLoadingInvite(false);
+  }
 
   return (
     <Page>
@@ -255,6 +323,43 @@ const App = () => {
         </div>
       </div>
       <ListingModal {...listModal.bindings} />
+      <Modal {...inviteModal.bindings}>
+        <Modal.Title>Invite someone</Modal.Title>
+        <Modal.Content>
+          <p className={styles.InviteModalText}>
+            Do you want to invite this address to the beta testing?
+          </p>
+          <Spacer y={2} />
+          <div className={styles.InviteModalUser}>
+            <Avatar
+              displaytag={formatAddress(inviteAddress, 12)}
+              usertag={inviteAddress}
+              name=""
+            />
+            <a
+              className={styles.ViewBlock}
+              href={`https://viewblock.io/arweave/address/${inviteAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ChevronRightIcon />
+            </a>
+          </div>
+          <Spacer y={3} />
+          <div className={styles.InviteModalActions}>
+            <Button small onClick={inviteUser} loading={loadingInvite}>
+              Invite
+            </Button>
+            <Button
+              small
+              type="secondary"
+              onClick={() => inviteModal.setState(false)}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Modal.Content>
+      </Modal>
     </Page>
   );
 };
