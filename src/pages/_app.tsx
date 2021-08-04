@@ -292,8 +292,6 @@ const BetaAlert = () => {
 
     if (stored === "true") return;
     setShow(true);
-
-    if (currentAddress) localStorage.setItem("beta_alert_shown", "true");
   }, []);
 
   return (
@@ -313,7 +311,11 @@ const BetaAlert = () => {
           </p>
           <CloseIcon
             className={betaAlertStyles.Close}
-            onClick={() => setShow(false)}
+            onClick={() => {
+              setShow(false);
+              if (currentAddress)
+                localStorage.setItem("beta_alert_shown", "true");
+            }}
           />
         </motion.div>
       )}
