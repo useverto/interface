@@ -188,12 +188,14 @@ const Nav = () => {
       const userData = await client.getUser(address);
       const addresses = userData?.addresses ?? [address];
 
-      for (const addr of addresses)
-        if(data.balances?.[addr] > 0)
-          return; // one of the user's addresses is invited
+      for (const addr of addresses) if (data.balances?.[addr] > 0) return; // one of the user's addresses is invited
 
       // no invited addresses found, log out the user
-      setToast({ description: "You are not yet invited to the beta testing", type: "error", duration: 4750 });
+      setToast({
+        description: "You are not yet invited to the beta testing",
+        type: "error",
+        duration: 4750,
+      });
       await signOut();
     })();
   }, [address]);

@@ -43,6 +43,7 @@ import Link from "next/link";
 import Metas from "../components/Metas";
 import useSWR from "swr";
 import useGeofence from "../utils/geofence";
+import axios from "axios";
 import styles from "../styles/views/swap.module.sass";
 
 const client = new Verto();
@@ -290,6 +291,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
   }
 
   const [submittingSwap, setSubmittingSwap] = useState(false);
+  const [swapStatus, setSwapStatus] = useState("");
 
   /**
    * Submit the swap for the protocol to process
@@ -305,7 +307,27 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     setSubmittingSwap(true);
 
     try {
-      await client.sendSwap(swap.transactions);
+      let txID = "";
+
+      for (let i = 0; i < swap.transactions.length; i++) {
+        setSwapStatus(
+          `Signing transaction ${i + 1}/${swap.transactions.length}...`
+        );
+        await arweave.transactions.sign(swap.transactions[i].transaction);
+
+        setSwapStatus(
+          `Posting transaction ${i + 1}/${swap.transactions.length}...`
+        );
+        await arweave.transactions.post(swap.transactions[i].transaction);
+
+        if (swap.transactions[i].type !== "fee")
+          txID = swap.transactions[i].transaction.id;
+      }
+
+      setSwapStatus("Finalizing swap...");
+      await axios.post(
+        `https://hook.verto.exchange/api/transaction?id=${txID}`
+      );
 
       setToast({
         description: "Submitted your order",
@@ -313,7 +335,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         duration: 5000,
       });
       confirmationModal.setState(false);
-    } catch {
+    } catch (e) {
+      console.log(e);
       setToast({
         description: "Could not submit your order",
         type: "error",
@@ -322,16 +345,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     }
 
     setSubmittingSwap(false);
+    setSwapStatus("");
   }
-
-  const [hangOn, setHangOn] = useState(false);
-
-  useEffect(() => {
-    if (!submittingSwap) return setHangOn(false);
-    const handle = setTimeout(() => setHangOn(true), 4000);
-
-    return () => clearTimeout(handle);
-  }, [submittingSwap]);
 
   // selected PST price in AR
   const [selectedPrice, setSelectedPrice] = useState(0);
@@ -658,10 +673,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             >
               Submit
             </Button>
-            {hangOn && (
+            {swapStatus !== "" && (
               <>
                 <Spacer y={1.75} />
-                <p style={{ margin: 0 }}>Hang on for a bit...</p>
+                <p style={{ margin: 0 }}>{swapStatus}</p>
               </>
             )}
           </Modal.Content>

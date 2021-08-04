@@ -134,13 +134,14 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      if(!router.query.invite || !isAddress(router.query.invite.toString())) return;
+      if (!router.query.invite || !isAddress(router.query.invite.toString()))
+        return;
       setInviteAddress(router.query.invite.toString());
 
       const { data } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
       const invitesLeft = data.invites?.[address] ?? 0;
 
-      if(invitesLeft < 1 || data.balances?.[address] > 0) return;
+      if (invitesLeft < 1 || data.balances?.[address] > 0) return;
 
       inviteModal.setState(true);
     })();
