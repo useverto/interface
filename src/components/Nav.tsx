@@ -176,8 +176,6 @@ const Nav = () => {
   const { setToast } = useToasts();
   const [loadingInvite, setLoadingInvite] = useState(false);
 
-  /**
-
   // get invite count
   useEffect(() => {
     if (!address) return;
@@ -199,8 +197,6 @@ const Nav = () => {
       await signOut();
     })();
   }, [address]);
-
-  **/
 
   async function invite() {
     if (!isAddress(target.state)) return target.setStatus("error");

@@ -132,8 +132,6 @@ const App = () => {
   const inviteModal = useModal();
   const [inviteAddress, setInviteAddress] = useState("");
 
-  /**
-
   useEffect(() => {
     (async () => {
       if(!router.query.invite || !isAddress(router.query.invite.toString())) return;
@@ -147,8 +145,6 @@ const App = () => {
       inviteModal.setState(true);
     })();
   }, [router.query]);
-
-  */
 
   const [loadingInvite, setLoadingInvite] = useState(false);
 
