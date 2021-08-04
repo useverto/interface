@@ -138,10 +138,12 @@ const App = () => {
         return;
       setInviteAddress(router.query.invite.toString());
 
-      const { data } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
-      const invitesLeft = data.invites?.[address] ?? 0;
+      const {
+        data: { state },
+      } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
+      const invitesLeft = state.invites?.[address] ?? 0;
 
-      if (invitesLeft < 1 || data.balances?.[address] > 0) return;
+      if (invitesLeft < 1 || state.balances?.[address] > 0) return;
 
       inviteModal.setState(true);
     })();
