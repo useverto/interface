@@ -33,6 +33,7 @@ import {
   INVITE_CONTRACT,
   client as arweave,
   isAddress,
+  CACHE_URL,
 } from "../utils/arweave";
 import { interactWrite } from "smartweave";
 import useArConnect from "use-arconnect";
