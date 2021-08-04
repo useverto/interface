@@ -206,7 +206,7 @@ const Nav = () => {
 
   async function invite() {
     if (!isAddress(target.state)) return target.setStatus("error");
-    if (invites > 1)
+    if (invites < 1)
       return setToast({
         description: "No invites left",
         type: "error",
@@ -222,6 +222,7 @@ const Nav = () => {
 
       setInvites((val) => val - 1);
       inviteModal.setState(false);
+      target.setState("");
       setToast({
         description: `${formatAddress(
           target.state.toString(),
