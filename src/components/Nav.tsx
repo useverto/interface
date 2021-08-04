@@ -177,6 +177,8 @@ const Nav = () => {
   const target = useInput<string>();
   const { setToast } = useToasts();
   const [loadingInvite, setLoadingInvite] = useState(false);
+  const requestInviteModal = useModal();
+  const [inviteAddress, setInviteAddress] = useState("");
 
   // get invite count
   useEffect(() => {
@@ -200,6 +202,8 @@ const Nav = () => {
         type: "error",
         duration: 4750,
       });
+      setInviteAddress(address);
+      requestInviteModal.setState(true);
       await signOut();
     })();
   }, [address]);
@@ -490,6 +494,27 @@ const Nav = () => {
           <Button small onClick={signOut} className={styles.SignOutBtn}>
             Sign Out
           </Button>
+        </Modal.Content>
+      </Modal>
+      <Modal {...requestInviteModal.bindings}>
+        <Modal.Title>Beta Testing</Modal.Title>
+        <Modal.Content>
+          <p className={styles.SignOutAlert}>
+            You are not yet invited to the new Verto UI's Beta testing. You can{" "}
+            <a
+              href={`https://twitter.com/intent/tweet?text=I%27d%20like%20an%20invite%20NFT%20to%20access%20the%20new%20%23vertoexchange%20UI!%20%0A%0Ahttps://verto.exchange/app?invite=${inviteAddress}`}
+              style={{
+                color: "var(--foreground-color)",
+                fontWeight: 600,
+                textDecoration: "none",
+              }}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              tweet
+            </a>{" "}
+            to request an invite from someone.
+          </p>
         </Modal.Content>
       </Modal>
       <SetupModal {...setupModal.bindings} />
