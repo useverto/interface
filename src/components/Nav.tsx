@@ -40,6 +40,7 @@ import Link from "next/link";
 import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
 import Search, { useSearch } from "./Search";
+import axios from "axios";
 import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
