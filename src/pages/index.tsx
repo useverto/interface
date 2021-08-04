@@ -62,7 +62,7 @@ const Home = ({ artwork }: { artwork: any }) => {
             ? `https://arweave.net/${artwork.owner.image}`
             : undefined,
         },
-        price: (res.price * gecko.arweave.usd).toFixed(2),
+        price: res?.price ? (res.price * gecko.arweave.usd).toFixed(2) : null,
       }));
     })();
   }, []);
@@ -183,7 +183,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                       name: arworkData.owner.name,
                       usertag: arworkData.owner.username,
                     }}
-                    price={arworkData.price ?? 0}
+                    price={arworkData.price || null}
                     image={`https://arweave.net/${arworkData.id}`}
                     onClick={() => router.push(`/space/${arworkData.id}`)}
                   />
