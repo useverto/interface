@@ -5,6 +5,7 @@ import {
   useModal,
   useToasts,
   VertoProvider,
+  useTheme,
 } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -17,6 +18,9 @@ import { RootState } from "../store/reducers";
 import { updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
+import { AnimatePresence, motion } from "framer-motion";
+import { opacityAnimation } from "../utils/animations";
+import { CloseIcon } from "@iconicicons/react";
 import {
   ignorePermissionWarning,
   theme as themeStorageName,
@@ -29,6 +33,7 @@ import Nav from "../components/Nav";
 import Head from "next/head";
 import axios from "axios";
 import * as Fathom from "fathom-client";
+import betaAlertStyles from "../styles/components/BetaAlert.module.sass";
 import "../styles/global.sass";
 import "../styles/progress.sass";
 
@@ -140,6 +145,7 @@ export default function App({ Component, pageProps }) {
           <Nav />
           <Component {...pageProps} />
           <Footer />
+          <BetaAlert />
           <Modal {...permissionsModal.bindings}>
             <Modal.Title>Missing permissions</Modal.Title>
             <Modal.Content style={{ textAlign: "justify" }}>
@@ -272,4 +278,45 @@ const StatusChecker = ({ children }) => {
   }, []);
 
   return <>{children}</>;
+};
+
+const BetaAlert = () => {
+  const [show, setShow] = useState(false);
+  const theme = useTheme();
+  const currentAddress = useSelector(
+    (state: RootState) => state.addressReducer
+  );
+
+  useEffect(() => {
+    const stored = localStorage.getItem("beta_alert_shown");
+
+    if (stored === "true") return;
+    setShow(true);
+
+    if (currentAddress) localStorage.setItem("beta_alert_shown", "true");
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.div
+          className={
+            betaAlertStyles.Alert +
+            " " +
+            (theme === "Dark" ? betaAlertStyles.Dark : "")
+          }
+          {...opacityAnimation()}
+        >
+          <p>
+            This is Verto's new Beta UI. Click{" "}
+            <a href="https://alpha.verto.exchange">here</a> to visit the old UI.
+          </p>
+          <CloseIcon
+            className={betaAlertStyles.Close}
+            onClick={() => setShow(false)}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 };
