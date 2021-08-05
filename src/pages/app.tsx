@@ -134,7 +134,11 @@ const App = () => {
 
   useEffect(() => {
     (async () => {
-      if (!router.query.invite || !isAddress(router.query.invite.toString()))
+      if (
+        !router.query.invite ||
+        !isAddress(router.query.invite.toString()) ||
+        !address
+      )
         return;
       setInviteAddress(router.query.invite.toString());
 
@@ -143,16 +147,30 @@ const App = () => {
       } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
       const invitesLeft = state.invites?.[address] ?? 0;
 
-      if (invitesLeft < 1 || state.balances?.[address] > 0) return;
+      if (invitesLeft < 1 || state.balances?.[inviteAddress] > 0) return;
 
       inviteModal.setState(true);
     })();
-  }, [router.query]);
+  }, [router.query, address]);
 
   const [loadingInvite, setLoadingInvite] = useState(false);
 
   async function inviteUser() {
     if (!isAddress(inviteAddress)) return;
+
+    const {
+      data: { state },
+    } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
+
+    if (state.balances?.[inviteAddress] > 0) {
+      inviteModal.setState(false);
+      setToast({
+        description: "User already invited",
+        type: "error",
+        duration: 3200,
+      });
+      return;
+    }
 
     setLoadingInvite(true);
     try {

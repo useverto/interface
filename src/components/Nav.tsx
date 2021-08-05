@@ -217,6 +217,20 @@ const Nav = () => {
         duration: 4750,
       });
 
+    const {
+      data: { state },
+    } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
+
+    if (state.balances?.[target.state] > 0) {
+      target.setState("");
+      setToast({
+        description: "User already invited",
+        type: "error",
+        duration: 3200,
+      });
+      return;
+    }
+
     setLoadingInvite(true);
     try {
       await interactWrite(arweave, "use_wallet", INVITE_CONTRACT, {
