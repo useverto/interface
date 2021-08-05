@@ -6,6 +6,7 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
+import { useMediaPredicate } from "react-media-hook";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { CACHE_URL } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/faces";
@@ -89,6 +90,8 @@ const Home = ({ artwork }: { artwork: any }) => {
     }[];
   };
   const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);
+
+  const mobile = useMediaPredicate("(max-width: 720px)");
 
   useEffect(() => {
     (async () => {
@@ -199,6 +202,9 @@ const Home = ({ artwork }: { artwork: any }) => {
             {latestActivity.map((activity, i) => (
               <motion.div key={i} {...cardListAnimation(i)}>
                 <Card.Order
+                  style={
+                    mobile ? { justifyContent: "center", minWidth: "0px" } : {}
+                  }
                   type={getType(activity.input)}
                   orderID={activity.id}
                   status={activity.status}
