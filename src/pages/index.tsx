@@ -92,7 +92,7 @@ const Home = ({ artwork }: { artwork: any }) => {
   const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);
 
   const mobile = useMediaPredicate("(max-width: 720px)");
-  console.log(mobile);
+
   useEffect(() => {
     (async () => {
       const { data: activities } = await axios.get(
