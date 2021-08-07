@@ -19,6 +19,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { interactWrite } from "smartweave";
 import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
+import { AnimatePresence, motion } from "framer-motion";
+import { opacityAnimation } from "../utils/animations";
 import Instagram from "./icons/Instagram";
 import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";
@@ -84,6 +86,18 @@ export default function SetupModal(props: Props) {
         description: "Username or display name is missing",
         type: "error",
         duration: 3750,
+      });
+    }
+
+    if (
+      Object.values(socialLinks).filter((val) =>
+        val.match(/^((https?:\/\/)|@)/)
+      ).length > 0
+    ) {
+      return setToast({
+        description: "A social profile username is invalid",
+        type: "error",
+        duration: 4000,
       });
     }
 
@@ -204,6 +218,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Twitter />}
                 value={socialLinks.twitter ?? ""}
+                matchPattern={/^(?!((https?:\/\/)|@)).+/}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, twitter: e.target.value }))
                 }
@@ -215,6 +230,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Instagram />}
                 value={socialLinks.instagram ?? ""}
+                matchPattern={/^(?!((https?:\/\/)|@)).+/}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -229,6 +245,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Facebook />}
                 value={socialLinks.facebook ?? ""}
+                matchPattern={/^(?!((https?:\/\/)|@)).+/}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -243,10 +260,23 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Github />}
                 value={socialLinks.github ?? ""}
+                matchPattern={/^(?!((https?:\/\/)|@)).+/}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, github: e.target.value }))
                 }
               />
+              <AnimatePresence>
+                {Object.values(socialLinks).filter((val) =>
+                  val.match(/^((https?:\/\/)|@)/)
+                ).length > 0 && (
+                  <motion.div {...opacityAnimation()}>
+                    <Spacer y={2} />
+                    <p style={{ color: "#ff0000" }}>
+                      Please only enter your username (no URLs or "@"s)!
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </>
           )) ||
           (page === 2 && (
