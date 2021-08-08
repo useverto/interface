@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "fmt": "prettier --write ."
+    "fmt": "prettier --write .",
+    "fmt:check": "prettier --check ."
   },
   "gitHooks": {
     "pre-commit": "prettier --write . && git add -A"

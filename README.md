@@ -41,6 +41,7 @@ yarn build
 - [Sam Williams](https://twitter.com/samecwilliams)
 - [Cedrik Boudreau](https://github.com/cedriking)
 - [Aidan O'Kelly](https://github.com/aidanok)
+- [John Letey](https://github.com/johnletey)
 
 ## License
 
