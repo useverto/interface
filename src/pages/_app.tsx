@@ -136,16 +136,6 @@ export default function App({ Component, pageProps }) {
       }
   }
 
-  const changelogModal = useModal();
-
-  useEffect(() => {
-    if (!window) return;
-    const storedVersion = localStorage.getItem(lastViewedChangelog);
-
-    if (!valid(storedVersion) || gt(pkg.version, storedVersion))
-      changelogModal.setState(true);
-  }, []);
-
   return (
     <ReduxProvider store={store}>
       <Theme>
@@ -205,7 +195,7 @@ export default function App({ Component, pageProps }) {
               </div>
             </Modal.Content>
           </Modal>
-          <ChangelogModal {...changelogModal.bindings} />
+          <Changelog />
         </StatusChecker>
       </Theme>
     </ReduxProvider>
@@ -336,4 +326,19 @@ const BetaAlert = () => {
       )}
     </AnimatePresence>
   );
+};
+
+const Changelog = () => {
+  const changelogModal = useModal();
+  const address = useSelector((state: RootState) => state.addressReducer);
+
+  useEffect(() => {
+    if (!window || !address) return;
+    const storedVersion = localStorage.getItem(lastViewedChangelog);
+
+    if (!valid(storedVersion) || gt(pkg.version, storedVersion))
+      changelogModal.setState(true);
+  }, [address]);
+
+  return <ChangelogModal {...changelogModal.bindings} />;
 };
