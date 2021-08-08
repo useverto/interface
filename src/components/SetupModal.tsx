@@ -143,7 +143,7 @@ export default function SetupModal(props: Props) {
         addresses,
         image,
         bio,
-        links: socialLinks,
+        links: socialLinks === "" ? {} : socialLinks,
       });
 
       setToast({ description: "Updated ID", type: "success", duration: 4500 });
