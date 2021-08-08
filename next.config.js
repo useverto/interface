@@ -13,6 +13,25 @@ module.exports = {
       });
     }
 
+    Object.assign(config.externals, {
+      fs: "fs",
+    });
+    Object.assign(config.module, {
+      rules: config.module.rules.concat([
+        {
+          test: /\.md$/,
+          loader: "emit-file-loader",
+          options: {
+            name: "dist/[path][name].[ext]",
+          },
+        },
+        {
+          test: /\.md$/,
+          loader: "raw-loader",
+        },
+      ]),
+    });
+
     return config;
   },
   async redirects() {
