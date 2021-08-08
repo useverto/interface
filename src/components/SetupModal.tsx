@@ -29,6 +29,8 @@ import useArConnect from "use-arconnect";
 import Verto from "@verto/js";
 import styles from "../styles/components/SetupModal.module.sass";
 
+const socialProfileRegex = /^((?!((https?:\/\/)|@))[^\s]+|(?![\s\S]))$/;
+
 export default function SetupModal(props: Props) {
   const nameInput = useInput<string>();
   const usernameInput = useInput<string>();
@@ -82,23 +84,26 @@ export default function SetupModal(props: Props) {
       if (nameInput.state === "") nameInput.setStatus("error");
       if (usernameInput.state === "") usernameInput.setStatus("error");
 
-      return setToast({
+      setPage(0);
+      setToast({
         description: "Username or display name is missing",
         type: "error",
         duration: 3750,
       });
+      return;
     }
 
     if (
-      Object.values(socialLinks).filter((val) =>
-        val.match(/^((https?:\/\/)|@)/)
-      ).length > 0
+      Object.values(socialLinks).filter((val) => !val.match(socialProfileRegex))
+        .length > 0
     ) {
-      return setToast({
+      setPage(1);
+      setToast({
         description: "A social profile username is invalid",
         type: "error",
         duration: 4000,
       });
+      return;
     }
 
     setLoading(true);
@@ -218,7 +223,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Twitter />}
                 value={socialLinks.twitter ?? ""}
-                matchPattern={/^(?!((https?:\/\/)|@)).+/}
+                matchPattern={socialProfileRegex}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, twitter: e.target.value }))
                 }
@@ -230,7 +235,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Instagram />}
                 value={socialLinks.instagram ?? ""}
-                matchPattern={/^(?!((https?:\/\/)|@)).+/}
+                matchPattern={socialProfileRegex}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -245,7 +250,7 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Facebook />}
                 value={socialLinks.facebook ?? ""}
-                matchPattern={/^(?!((https?:\/\/)|@)).+/}
+                matchPattern={socialProfileRegex}
                 onChange={(e) =>
                   setSocialLinks((val) => ({
                     ...val,
@@ -260,19 +265,20 @@ export default function SetupModal(props: Props) {
                 leftInlineLabel={true}
                 inlineLabel={<Github />}
                 value={socialLinks.github ?? ""}
-                matchPattern={/^(?!((https?:\/\/)|@)).+/}
+                matchPattern={socialProfileRegex}
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, github: e.target.value }))
                 }
               />
               <AnimatePresence>
-                {Object.values(socialLinks).filter((val) =>
-                  val.match(/^((https?:\/\/)|@)/)
+                {Object.values(socialLinks).filter(
+                  (val) => !val.match(socialProfileRegex)
                 ).length > 0 && (
                   <motion.div {...opacityAnimation()}>
                     <Spacer y={2} />
                     <p style={{ color: "#ff0000" }}>
-                      Please only enter your username (no URLs or "@"s)!
+                      Please only enter your username (no URLs or "@"s, no
+                      whitespaces)!
                     </p>
                   </motion.div>
                 )}
