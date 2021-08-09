@@ -52,13 +52,15 @@
 .SideAction
   color: variables.$light-text
   text-align: center
-  text-decoration: underline
   margin: 0
-  cursor: pointer
-  transition: all .23s ease-in-out
 
-  &:hover
-    opacity: .8
+  span
+    text-decoration: underline
+    cursor: pointer
+    transition: all .23s ease-in-out
+
+    &:hover
+      opacity: .8
 
 .Textarea
   +variables.modalTextarea

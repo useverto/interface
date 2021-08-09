@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
 import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
 import CollectionModal from "./CollectionModal";
+import MintCollectible from "./MintCollectible";
 import styles from "../styles/components/ListingModal.module.sass";
 
 export default function ListingModal(props: Props) {
@@ -100,6 +101,7 @@ export default function ListingModal(props: Props) {
   }
 
   const collectionModal = useModal();
+  const mintModal = useModal();
 
   return (
     <>
@@ -162,18 +164,29 @@ export default function ListingModal(props: Props) {
             Add to space
           </Button>
           <Spacer y={1.5} />
-          <p
-            className={styles.SideAction}
-            onClick={() => {
-              collectionModal.setState(true);
-              props.onClose();
-            }}
-          >
-            Create collection
+          <p className={styles.SideAction}>
+            <span
+              onClick={() => {
+                collectionModal.setState(true);
+                props.onClose();
+              }}
+            >
+              Create collection
+            </span>{" "}
+            or{" "}
+            <span
+              onClick={() => {
+                mintModal.setState(true);
+                props.onClose();
+              }}
+            >
+              Mint collectible
+            </span>
           </p>
         </Modal.Content>
       </Modal>
       <CollectionModal {...collectionModal.bindings} />
+      <MintCollectible {...mintModal.bindings} />
     </>
   );
 }
