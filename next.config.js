@@ -31,10 +31,12 @@ module.exports = {
         source: "/roadmap",
         destination:
           "https://www.notion.so/verto/48f99dfb0ba744f5b5257185f53ad7c4",
+        permanent: true,
       },
       {
         source: "/feedback",
         destination: "https://forms.gle/m3TJDfg1HRpV994Y8",
+        permanent: true,
       },
     ];
   },
