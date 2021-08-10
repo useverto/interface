@@ -190,7 +190,7 @@ const MintCollectible = (props) => {
           allowMinting: allowMintingCheckbox.state,
           balances: JSON.parse(balancesObj),
           contentType: file.type,
-          createdAt: Math.floor(Date.now() / 1000).toString().length,
+          createdAt: Math.floor(Date.now() / 1000).toString(),
         })
       );
 
