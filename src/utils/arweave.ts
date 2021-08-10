@@ -18,6 +18,8 @@ export const COMMUNITY_CONTRACT = "t9T7DIOGxx4VWXoCEeYYarFYeERTpWIC1V3y-BPZgKE";
 export const INVITE_CONTRACT = "8X7JO-F6sumwynRXbi5YhXHuqKbGlMLPE6zMOR_rWXc";
 export const COLLECTION_CONTRACT_SRC =
   "dwsIDa8RaPQJUKJhgm5iNrrvxLcXbpIi4Mea0PjMGuY";
+export const COLLECTIBLE_CONTRACT_SRC =
+  "K2s2nciTrl4pk2Nvlvzba-DnWrkm45bo4qMPR7zFpzI";
 
 export const balanceHistory = async (
   address: string
