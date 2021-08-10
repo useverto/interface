@@ -173,6 +173,7 @@ $labelFontSize: 1.075em
     border-color: #ff0000
 
   p
+    position: relative
     font-size: 1em
     color: $light-text
     font-weight: 500
@@ -180,6 +181,14 @@ $labelFontSize: 1.075em
     z-index: 1
     margin: 0
     max-width: 60%
+
+    video, img
+      $size: 100px
+      position: absolute
+      top: 50%
+      left: calc(#{-$size} - .35em)
+      width: $size
+      transform: translateY(-50%)
 
   input
     position: absolute
