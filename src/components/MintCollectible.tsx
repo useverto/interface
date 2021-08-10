@@ -12,6 +12,12 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
+import { interactWrite } from "smartweave";
+import {
+  client,
+  COLLECTIBLE_CONTRACT_SRC,
+  COMMUNITY_CONTRACT,
+} from "../utils/arweave";
 import styles from "../styles/components/SetupModal.module.sass";
 
 const MintCollectible = (props) => {
@@ -139,10 +145,90 @@ const MintCollectible = (props) => {
 
     setLoading(true);
 
+    let id = "";
+    let data: ArrayBuffer;
+
+    const loadFile = (f: File) =>
+      new Promise<ProgressEvent<FileReader>>((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.readAsArrayBuffer(f);
+        reader.onload = (e) => resolve(e);
+        reader.onerror = (e) => reject(e);
+        reader.onabort = (e) => reject(e);
+      });
+
     try {
+      data = (await loadFile(file)).target.result as ArrayBuffer;
+    } catch {
+      setToast({
+        description: "Could load file",
+        type: "error",
+        duration: 3000,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const contractTx = await client.createTransaction({ data });
+
+      contractTx.addTag("Content-Type", file.type);
+      contractTx.addTag("Exchange", "Verto");
+      contractTx.addTag("Action", "marketplace/create");
+      contractTx.addTag("App-Name", "SmartWeaveContract");
+      contractTx.addTag("App-Version", "0.3.0");
+      contractTx.addTag("Contract-Src", COLLECTIBLE_CONTRACT_SRC);
+      contractTx.addTag(
+        "Init-State",
+        JSON.stringify({
+          name: nameInput.state,
+          ticker: tickerInput.state,
+          title: titleInput.state,
+          description,
+          owner: address,
+          allowMinting: allowMintingCheckbox.state,
+          balances: JSON.parse(balancesObj),
+          contentType: file.type,
+          createdAt: Math.floor(Date.now() / 1000).toString().length,
+        })
+      );
+
+      await client.transactions.sign(contractTx);
+
+      let uploader = await client.transactions.getUploader(contractTx);
+
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+      }
+
+      id = contractTx.id;
     } catch {
       setToast({
         description: "Could not mint token",
+        type: "error",
+        duration: 3000,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
+        function: "list",
+        id,
+        type: "art",
+      });
+
+      setToast({
+        description: "Token minted and listed",
+        type: "success",
+        duration: 4500,
+      });
+      props.onClose();
+    } catch {
+      setToast({
+        description: "Could not list token",
         type: "error",
         duration: 3000,
       });
