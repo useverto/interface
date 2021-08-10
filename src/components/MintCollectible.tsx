@@ -7,6 +7,7 @@ import {
   Button,
   useCheckbox,
   Checkbox,
+  useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -54,6 +55,11 @@ const MintCollectible = (props) => {
     titleInput.setState(nameInput.state);
   }, [nameInput.state]);
 
+  useEffect(() => {
+    if (!advancedView) return;
+    setAllowAdvanced(true);
+  }, [advancedView]);
+
   const address = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
@@ -69,6 +75,82 @@ const MintCollectible = (props) => {
     );
   }, [address, advancedView, props.open]);
 
+  const [loading, setLoading] = useState(false);
+  const { setToast } = useToasts();
+
+  async function mint() {
+    // checks
+    if (nameInput.state === "") return; // TODO: make reset reset the status as well
+
+    if (description === "")
+      return setToast({
+        description: "Please provide a description",
+        type: "error",
+        duration: 3000,
+      });
+
+    if (!file)
+      return setToast({
+        description: "Please upload a file",
+        type: "error",
+        duration: 3000,
+      });
+
+    if (
+      tickerInput.state === "" ||
+      titleInput.state === "" ||
+      !tickerInput.state.match(/^[A-Z0-9]+$/)
+    )
+      return setAdvancedView(true);
+
+    if (balancesObj === "") {
+      setAdvancedView(true);
+      setToast({
+        description: "Please add a balances object",
+        type: "error",
+        duration: 3000,
+      });
+      return;
+    }
+
+    try {
+      const balances = JSON.parse(balancesObj);
+
+      if (Object.keys(balances).length < 1) {
+        setAdvancedView(true);
+        setToast({
+          description: "Please add at least on holder to the balances object",
+          type: "error",
+          duration: 3450,
+        });
+        return;
+      }
+    } catch {
+      setAdvancedView(true);
+      setToast({
+        description: "Invalid JSON in balances",
+        type: "error",
+        duration: 3400,
+      });
+      return;
+    }
+
+    // inputs are verified, create transaction
+
+    setLoading(true);
+
+    try {
+    } catch {
+      setToast({
+        description: "Could not mint token",
+        type: "error",
+        duration: 3000,
+      });
+    }
+
+    setLoading(false);
+  }
+
   return (
     <Modal {...props}>
       <Modal.Title>Mint a new collectible</Modal.Title>
@@ -80,6 +162,7 @@ const MintCollectible = (props) => {
               placeholder="Name of the collectible..."
               label="Name"
               className={styles.Input}
+              matchPattern={/^(.+)$/}
             />
             <Spacer y={2} />
             <p className={styles.Label}>Description</p>
@@ -127,17 +210,19 @@ const MintCollectible = (props) => {
               </Checkbox>
               <span
                 className={styles.Advanced}
-                onClick={() => {
-                  setAllowAdvanced(true);
-                  setAdvancedView(true);
-                }}
+                onClick={() => setAdvancedView(true)}
               >
                 Advanced
                 <ChevronRightIcon />
               </span>
             </div>
             <Spacer y={1} />
-            <Button small style={{ margin: "0 auto" }}>
+            <Button
+              small
+              style={{ margin: "0 auto" }}
+              loading={loading}
+              onClick={mint}
+            >
               Mint
             </Button>
           </>
@@ -148,6 +233,7 @@ const MintCollectible = (props) => {
               placeholder="Token ticker..."
               label="Ticker"
               className={styles.Input}
+              matchPattern={/^[A-Z0-9]+$/}
             />
             <Spacer y={2} />
             <Input
@@ -155,6 +241,7 @@ const MintCollectible = (props) => {
               placeholder="Title of the collectible..."
               label="Title"
               className={styles.Input}
+              matchPattern={/^(.+)$/}
             />
             <Spacer y={2} />
             <p className={styles.Label}>Balances object</p>
