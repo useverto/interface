@@ -30,7 +30,7 @@ The UI is written in React/Next.js. Before building it, you will need to install
 yarn install
 ```
 
-...than build from source:
+...then build from source:
 
 ```sh
 yarn build
