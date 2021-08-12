@@ -17,5 +17,7 @@
 ## `1.0.0-1`
 
 - Allow minting new collectibles on Verto
+- Layout fixes
+- Price details in the swap page
 - Add changelogs
 - Refactor workspace

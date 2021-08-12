@@ -32,7 +32,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { swapItems } from "../utils/storage_names";
-import { client as arweave } from "../utils/arweave";
+import { arPrice, client as arweave } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { permissions } from "../utils/arconnect";
@@ -335,8 +335,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
         duration: 5000,
       });
       confirmationModal.setState(false);
-    } catch (e) {
-      console.log(e);
+    } catch {
       setToast({
         description: "Could not submit your order",
         type: "error",
@@ -414,6 +413,21 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     );
   }
 
+  const [arweavePrice, setArweavePrice] = useState("0");
+
+  useEffect(() => {
+    (async () => {
+      const price = await arPrice();
+
+      setArweavePrice(
+        price.toLocaleString(undefined, {
+          maximumFractionDigits: 2,
+          minimumFractionDigits: 2,
+        })
+      );
+    })();
+  }, []);
+
   return (
     <Page>
       <Head>
@@ -432,16 +446,29 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
               key={loadingGraph.toString()}
             >
               {(loadingGraph && <Loading.Spinner />) || (
-                <Select
-                  small
-                  //@ts-ignore
-                  onChange={(ev) => setGraphMode(ev.target.value)}
-                  // @ts-ignore
-                  value={graphMode}
-                >
-                  <option value="price">Price</option>
-                  <option value="volume">Volume</option>
-                </Select>
+                <>
+                  <div className={styles.PriceData}>
+                    <span>
+                      1 {selectedPST.ticker} ={" "}
+                      {selectedPrice.toLocaleString(undefined, {
+                        maximumFractionDigits: 2,
+                        minimumFractionDigits: 2,
+                      })}{" "}
+                      AR
+                    </span>
+                    <span>1 AR = ${arweavePrice} USD</span>
+                  </div>
+                  <Select
+                    small
+                    //@ts-ignore
+                    onChange={(ev) => setGraphMode(ev.target.value)}
+                    // @ts-ignore
+                    value={graphMode}
+                  >
+                    <option value="price">Price</option>
+                    <option value="volume">Volume</option>
+                  </Select>
+                </>
               )}
             </motion.div>
           </AnimatePresence>
