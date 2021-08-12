@@ -227,6 +227,7 @@ export default function SetupModal(props: Props) {
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, twitter: e.target.value }))
                 }
+                placeholder="@username"
               />
               <Spacer y={2} />
               <Input
@@ -242,6 +243,7 @@ export default function SetupModal(props: Props) {
                     instagram: e.target.value,
                   }))
                 }
+                placeholder="@username"
               />
               <Spacer y={2} />
               <Input
@@ -257,6 +259,7 @@ export default function SetupModal(props: Props) {
                     facebook: e.target.value,
                   }))
                 }
+                placeholder="@username"
               />
               <Spacer y={2} />
               <Input
@@ -269,6 +272,7 @@ export default function SetupModal(props: Props) {
                 onChange={(e) =>
                   setSocialLinks((val) => ({ ...val, github: e.target.value }))
                 }
+                placeholder="@username"
               />
               <AnimatePresence>
                 {Object.values(socialLinks).filter(

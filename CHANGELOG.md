@@ -19,5 +19,7 @@
 - Allow minting new collectibles on Verto
 - Layout fixes
 - Price details in the swap page
+- Make setup modal username fields more obvious
+- Verify usernames in setup modal
 - Add changelogs
 - Refactor workspace
