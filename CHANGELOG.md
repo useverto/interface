@@ -13,3 +13,9 @@
 - Invite system
 - Library refactor
 - Caching
+
+## `1.0.0-1`
+
+- Allow minting new collectibles on Verto
+- Add changelogs
+- Refactor workspace
