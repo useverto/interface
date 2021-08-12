@@ -1,5 +1,5 @@
 import { Page } from "@verto/ui";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, isAddress } from "../../utils/arweave";
 import Verto from "@verto/js";
 import axios from "axios";
 import Community from "../../components/space/Community";
@@ -29,9 +29,25 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { id } }) {
+  if (!isAddress(id))
+    return {
+      redirect: {
+        destination: "/404",
+        permanent: false,
+      },
+    };
+
   const {
-    data: { type },
+    data: { type, id: returnedID },
   } = await axios.get(`${CACHE_URL}/site/type/${id}`);
+
+  if (!type && !returnedID)
+    return {
+      redirect: {
+        destination: "/404",
+        permanent: false,
+      },
+    };
 
   if (type === "collection") {
     const { data } = await axios.get(`${CACHE_URL}/site/collection/${id}`);

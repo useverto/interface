@@ -22,5 +22,6 @@
 - Make setup modal username fields more obvious
 - Verify usernames in setup modal
 - Warn users about tx mining delay for Verto ID to save
+- Fix space erroring on not found tokens
 - Add changelogs
 - Refactor workspace
