@@ -1,10 +1,11 @@
 @use "../variables"
 
 .SearchInput
-  $padding: .55em 1.15em
+  $sidePadding: 1.15em
+  $topPadding: .55em
   position: relative
   +variables.flexCenterWithSpace
-  padding: $padding
+  padding: $topPadding $sidePadding
   border-radius: 2.5em
   border: 3.5px solid variables.$foreground-color
   background-color: variables.$background-color
@@ -24,7 +25,8 @@
   input
     position: absolute
     +variables.absoluteExtend
-    padding: $padding
+    padding: $topPadding $sidePadding
+    width: calc(100% - #{$sidePadding * 2})
     outline: none
     background-color: transparent
     border: none
