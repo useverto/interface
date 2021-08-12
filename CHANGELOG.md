@@ -21,5 +21,6 @@
 - Price details in the swap page
 - Make setup modal username fields more obvious
 - Verify usernames in setup modal
+- Warn users about tx mining delay for Verto ID to save
 - Add changelogs
 - Refactor workspace

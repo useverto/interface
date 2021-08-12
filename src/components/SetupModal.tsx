@@ -151,7 +151,16 @@ export default function SetupModal(props: Props) {
         links: socialLinks === "" ? {} : socialLinks,
       });
 
-      setToast({ description: "Updated ID", type: "success", duration: 4500 });
+      setToast({
+        description: "Saved Verto ID",
+        type: "success",
+        duration: 3000,
+      });
+      setToast({
+        description: "It might take some time for this to update",
+        type: "warning",
+        duration: 4500,
+      });
       props.onClose();
     } catch {
       setToast({
