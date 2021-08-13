@@ -15,7 +15,6 @@ const gql = new ArDB(client);
 export const ROOT_URL = "https://verto.exchange";
 export const CACHE_URL = "https://v2.cache.verto.exchange";
 export const COMMUNITY_CONTRACT = "t9T7DIOGxx4VWXoCEeYYarFYeERTpWIC1V3y-BPZgKE";
-export const INVITE_CONTRACT = "8X7JO-F6sumwynRXbi5YhXHuqKbGlMLPE6zMOR_rWXc";
 export const COLLECTION_CONTRACT_SRC =
   "dwsIDa8RaPQJUKJhgm5iNrrvxLcXbpIi4Mea0PjMGuY";
 export const COLLECTIBLE_CONTRACT_SRC =

@@ -29,12 +29,7 @@ import { formatAddress } from "../utils/format";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
-import {
-  INVITE_CONTRACT,
-  client as arweave,
-  isAddress,
-  CACHE_URL,
-} from "../utils/arweave";
+import { client as arweave, isAddress, CACHE_URL } from "../utils/arweave";
 import { interactWrite } from "smartweave";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
@@ -64,7 +59,6 @@ const Nav = () => {
     avatar: "",
     name: "",
   });
-  const inviteModal = useModal();
   const signOutModal = useModal();
   const dispatch = useDispatch();
   const theme = useSelector((state: RootState) => state.themeReducer);
@@ -167,96 +161,6 @@ const Nav = () => {
     } catch {
       dispatch(updateAddress(null));
     }
-  }
-
-  //
-  // INVITES
-  //
-
-  const [invites, setInvites] = useState(0);
-  const target = useInput<string>();
-  const { setToast } = useToasts();
-  const [loadingInvite, setLoadingInvite] = useState(false);
-  const requestInviteModal = useModal();
-  const [inviteAddress, setInviteAddress] = useState("");
-
-  // get invite count
-  useEffect(() => {
-    if (!address) return;
-    (async () => {
-      const {
-        data: { state },
-      } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
-
-      setInvites(state.invites?.[address] ?? 0);
-
-      // sign out if the user is not invited
-      const userData = await client.getUser(address);
-      const addresses = userData?.addresses ?? [address];
-
-      for (const addr of addresses) if (state.balances?.[addr] > 0) return; // one of the user's addresses is invited
-
-      // no invited addresses found, log out the user
-      setToast({
-        description: "You are not yet invited to the beta testing",
-        type: "error",
-        duration: 4750,
-      });
-      setInviteAddress(address);
-      requestInviteModal.setState(true);
-      await signOut();
-    })();
-  }, [address]);
-
-  async function invite() {
-    if (!isAddress(target.state)) return target.setStatus("error");
-    if (invites < 1)
-      return setToast({
-        description: "No invites left",
-        type: "error",
-        duration: 4750,
-      });
-
-    const {
-      data: { state },
-    } = await axios.get(`${CACHE_URL}/${INVITE_CONTRACT}`);
-
-    if (state.balances?.[target.state] > 0) {
-      target.setState("");
-      setToast({
-        description: "User already invited",
-        type: "error",
-        duration: 3200,
-      });
-      return;
-    }
-
-    setLoadingInvite(true);
-    try {
-      await interactWrite(arweave, "use_wallet", INVITE_CONTRACT, {
-        function: "invite",
-        target: target.state,
-      });
-
-      setInvites((val) => val - 1);
-      inviteModal.setState(false);
-      target.setState("");
-      setToast({
-        description: `${formatAddress(
-          target.state.toString(),
-          20
-        )} has been sent an invite.`,
-        type: "success",
-        duration: 2400,
-      });
-    } catch {
-      setToast({
-        description: "Error inviting address",
-        type: "error",
-        duration: 2300,
-      });
-    }
-    setLoadingInvite(false);
   }
 
   const search = useSearch();
@@ -362,22 +266,6 @@ const Nav = () => {
                     " " +
                     (displayTheme === "Dark" ? styles.Dark : "") +
                     " " +
-                    (invites < 1 ? styles.DisabledMenuItem : "")
-                  }
-                  onClick={() => {
-                    if (invites < 1) return;
-                    inviteModal.setState(true);
-                  }}
-                >
-                  <UserPlusIcon />
-                  Invites
-                </div>
-                <div
-                  className={
-                    styles.MenuItem +
-                    " " +
-                    (displayTheme === "Dark" ? styles.Dark : "") +
-                    " " +
                     styles.DisabledMenuItem
                   }
                 >
@@ -475,31 +363,6 @@ const Nav = () => {
           </div>
         )}
       </motion.div>
-      <Modal {...inviteModal.bindings}>
-        <Modal.Title>Invite someone</Modal.Title>
-        <Modal.Content>
-          <p className={styles.SignOutAlert}>
-            You have {invites} invite{invites === 1 ? "" : "s"} left
-          </p>
-          <Input
-            label="Address"
-            type="text"
-            {...target.bindings}
-            placeholder="Enter target address..."
-            className={styles.ModalInput}
-          />
-          <Spacer y={2.5} />
-          <Button
-            small
-            onClick={invite}
-            className={styles.SignOutBtn}
-            loading={loadingInvite}
-            disabled={invites < 1}
-          >
-            Send Invite
-          </Button>
-        </Modal.Content>
-      </Modal>
       <Modal {...signOutModal.bindings}>
         <Modal.Title>Are you sure?</Modal.Title>
         <Modal.Content>
@@ -508,27 +371,6 @@ const Nav = () => {
           <Button small onClick={signOut} className={styles.SignOutBtn}>
             Sign Out
           </Button>
-        </Modal.Content>
-      </Modal>
-      <Modal {...requestInviteModal.bindings}>
-        <Modal.Title>Beta Testing</Modal.Title>
-        <Modal.Content>
-          <p className={styles.SignOutAlert}>
-            You are not yet invited to the new Verto UI's Beta testing. You can{" "}
-            <a
-              href={`https://twitter.com/intent/tweet?text=I%27d%20like%20an%20invite%20NFT%20to%20access%20the%20new%20%23vertoexchange%20UI!%20%0A%0Ahttps://verto.exchange/app?invite=${inviteAddress}`}
-              style={{
-                color: "var(--foreground-color)",
-                fontWeight: 600,
-                textDecoration: "none",
-              }}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              tweet
-            </a>{" "}
-            to request an invite from someone.
-          </p>
         </Modal.Content>
       </Modal>
       <SetupModal {...setupModal.bindings} />

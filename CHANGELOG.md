@@ -24,4 +24,5 @@
 - Warn users about tx mining delay for Verto ID to save
 - Fix space erroring on not found tokens
 - Add changelogs
+- Full beta release to the public
 - Refactor workspace
