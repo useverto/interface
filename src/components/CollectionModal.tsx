@@ -273,7 +273,7 @@ const CollectionModal = (props: Props) => {
         await uploader.uploadChunk();
       }
 
-      // listing the collection via it's contract ID
+      // listing the collection via its contract ID
       try {
         await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
           function: "list",

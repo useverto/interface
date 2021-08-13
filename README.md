@@ -6,7 +6,7 @@
   <h3 align="center">Verto</h3>
 
   <p align="center">
-    A decentralized PST exchange for Arweave
+    A decentralized token exchange protocol on Arweave
   </p>
 
   <!--<p align="center">
@@ -24,7 +24,7 @@
 
 ## Building the UI
 
-The UI is written in React/Next.js. Before building it, you will need to install [Node](https://nodejs.org/), then [Yarn](https://yarnpkg.com/). After that you can install the dependencies:
+The UI is written in React/Next.js. Before building it, you will need to install [Node](https://nodejs.org/), then [Yarn](https://yarnpkg.com/). After that you can install the dependencies from the repository root:
 
 ```sh
 yarn install

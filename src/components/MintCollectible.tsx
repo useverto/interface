@@ -125,7 +125,7 @@ const MintCollectible = (props) => {
       if (Object.keys(balances).length < 1) {
         setAdvancedView(true);
         setToast({
-          description: "Please add at least on holder to the balances object",
+          description: "Please add at least on holder to the balances",
           type: "error",
           duration: 3450,
         });
@@ -162,7 +162,7 @@ const MintCollectible = (props) => {
       data = (await loadFile(file)).target.result as ArrayBuffer;
     } catch {
       setToast({
-        description: "Could load file",
+        description: "Could not load file",
         type: "error",
         duration: 3000,
       });

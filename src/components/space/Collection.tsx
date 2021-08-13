@@ -154,7 +154,7 @@ const Collection = ({
     addItemInput.setStatus(undefined);
   }, [addItemModal.state]);
 
-  // add item by it's ID to the collection
+  // add item by its ID to the collection
   function addItem() {
     if (
       addItemInput.state === "" ||
