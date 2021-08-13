@@ -149,10 +149,7 @@ const Collection = ({
   const addItemModal = useModal();
   const addItemInput = useInput("");
 
-  useEffect(() => {
-    addItemInput.setState("");
-    addItemInput.setStatus(undefined);
-  }, [addItemModal.state]);
+  useEffect(() => addItemInput.reset(), [addItemModal.state]);
 
   // add item by its ID to the collection
   function addItem() {

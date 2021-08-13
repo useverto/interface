@@ -86,7 +86,7 @@ const MintCollectible = (props) => {
 
   async function mint() {
     // checks
-    if (nameInput.state === "") return; // TODO: make reset reset the status as well
+    if (nameInput.state === "") return;
 
     if (description === "")
       return setToast({
