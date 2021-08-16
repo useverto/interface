@@ -89,6 +89,11 @@ export default function ListingModal(props: Props) {
         type: "success",
         duration: 4500,
       });
+      setToast({
+        description: "Expect a delay before seeing your token listed",
+        type: "warning",
+        duration: 3850,
+      });
       props.onClose();
     } catch {
       setToast({
