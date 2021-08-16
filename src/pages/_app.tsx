@@ -146,6 +146,7 @@ export default function App({ Component, pageProps }) {
               href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
               type="image/svg"
             />
+            <link rel="manifest" href="/manifest.json" />
           </Head>
           <Nav />
           <Component {...pageProps} />
