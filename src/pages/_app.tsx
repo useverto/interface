@@ -22,15 +22,20 @@ import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { CloseIcon } from "@iconicicons/react";
 import {
+  betaAlertShown,
   ignorePermissionWarning,
+  lastViewedChangelog,
   theme as themeStorageName,
 } from "../utils/storage_names";
 import { CACHE_URL } from "../utils/arweave";
+import { gt, valid } from "semver";
+import pkg from "../../package.json";
 import store from "../store";
 import Progress from "nprogress";
 import Footer from "../components/Footer";
 import Nav from "../components/Nav";
 import Head from "next/head";
+import ChangelogModal from "../components/ChangelogModal";
 import axios from "axios";
 import * as Fathom from "fathom-client";
 import betaAlertStyles from "../styles/components/BetaAlert.module.sass";
@@ -141,6 +146,7 @@ export default function App({ Component, pageProps }) {
               href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
               type="image/svg"
             />
+            <link rel="manifest" href="/manifest.json" />
           </Head>
           <Nav />
           <Component {...pageProps} />
@@ -190,6 +196,7 @@ export default function App({ Component, pageProps }) {
               </div>
             </Modal.Content>
           </Modal>
+          <Changelog />
         </StatusChecker>
       </Theme>
     </ReduxProvider>
@@ -288,7 +295,7 @@ const BetaAlert = () => {
   );
 
   useEffect(() => {
-    const stored = localStorage.getItem("beta_alert_shown");
+    const stored = localStorage.getItem(betaAlertShown);
 
     if (stored === "true") return;
     setShow(true);
@@ -313,12 +320,26 @@ const BetaAlert = () => {
             className={betaAlertStyles.Close}
             onClick={() => {
               setShow(false);
-              if (currentAddress)
-                localStorage.setItem("beta_alert_shown", "true");
+              if (currentAddress) localStorage.setItem(betaAlertShown, "true");
             }}
           />
         </motion.div>
       )}
     </AnimatePresence>
   );
+};
+
+const Changelog = () => {
+  const changelogModal = useModal();
+  const address = useSelector((state: RootState) => state.addressReducer);
+
+  useEffect(() => {
+    if (!window || !address) return;
+    const storedVersion = localStorage.getItem(lastViewedChangelog);
+
+    if (!valid(storedVersion) || gt(pkg.version, storedVersion))
+      changelogModal.setState(true);
+  }, [address]);
+
+  return <ChangelogModal {...changelogModal.bindings} />;
 };

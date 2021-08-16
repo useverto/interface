@@ -1,0 +1,38 @@
+@use "../variables"
+  
+.Ok
+  margin: 0 auto
+
+.ChangelogContainer
+  position: relative
+  height: 47.5vh
+  overflow-y: auto
+
+  h1, h2, h3, h4
+    color: variables.$foreground-color
+    font-weight: 600
+
+  a
+    text-decoration: underline
+    color: variables.$foreground-color
+
+  p
+    font-size: 1em
+    color: variables.$light-text
+    font-weight: 500
+
+  &::-webkit-scrollbar
+    width: 4px
+
+  &::-webkit-scrollbar-thumb
+    background-color: rgba(#000, .25)
+    border-radius: 2px
+
+    &:hover
+      background-color: rgba(#000, .4)
+
+  &.Dark::-webkit-scrollbar-thumb
+    background-color: rgba(#fff, .25)
+
+    &:hover
+      background-color: rgba(#fff, .4)
