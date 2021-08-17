@@ -296,13 +296,30 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { addr } }) {
-  const { data: stats } = await axios.get(`${CACHE_URL}/posts/${addr}/stats`);
+  try {
+    const { data: stats } = await axios.get(`${CACHE_URL}/posts/${addr}/stats`);
 
-  const { data: orders } = await axios.get(
-    `${CACHE_URL}/posts/${addr}/orders?limit=10`
-  );
+    const { data: orders } = await axios.get(
+      `${CACHE_URL}/posts/${addr}/orders?limit=10`
+    );
 
-  return { props: { addr, stats, orders }, revalidate: 1 };
+    return { props: { addr, stats, orders }, revalidate: 1 };
+  } catch (e) {
+    if (e?.response?.status === 404)
+      return {
+        redirect: {
+          destination: "/404",
+          permanent: false,
+        },
+      };
+
+    return {
+      redirect: {
+        destination: "/500",
+        permanent: false,
+      },
+    };
+  }
 }
 
 export default Post;
