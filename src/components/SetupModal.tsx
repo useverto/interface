@@ -21,6 +21,7 @@ import { interactWrite } from "smartweave";
 import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
+import { UserInterface } from "@verto/js/dist/faces";
 import Instagram from "./icons/Instagram";
 import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";
@@ -54,6 +55,9 @@ export default function SetupModal(props: Props) {
   const [avatar, setAvatar] = useState<File>();
   const [initialImage, setInitialImage] = useState<string>();
 
+  const [user, setUser] = useState<UserInterface>();
+  const [addedAddresses, setAddedAddresses] = useState<string[]>([]);
+
   useEffect(() => {
     (async () => {
       if (!arconnect || !currentAddress) return;
@@ -61,6 +65,8 @@ export default function SetupModal(props: Props) {
       const verto = new Verto();
       const userData = await verto.getUser(currentAddress);
       const arconnectAddresses = await arconnect.getAllAddresses();
+
+      setUser(userData);
 
       nameInput.setState(userData?.name ?? "");
       nameInput.setStatus(undefined);
@@ -70,7 +76,18 @@ export default function SetupModal(props: Props) {
       setPage(0);
       // @ts-ignore
       setSocialLinks(userData?.links ?? "");
-      setAddresses(userData?.addresses ?? arconnectAddresses);
+      setAddresses((val) => {
+        val = userData?.addresses ?? [];
+
+        for (const addr of arconnectAddresses) {
+          if (!val.includes(addr)) {
+            val.push(addr);
+            setAddedAddresses((val) => [...val, addr]);
+          }
+        }
+
+        return val;
+      });
       setInitialImage(userData?.image);
       setCurrentPfpName(undefined);
       setLoading(false);
@@ -328,7 +345,16 @@ export default function SetupModal(props: Props) {
               <Spacer y={2} />
               {addresses.map((addr, i) => (
                 <div className={styles.Address} key={i}>
-                  <p>{formatAddress(addr)}</p>
+                  <p>
+                    {formatAddress(addr)}
+                    {addedAddresses.includes(addr) && (
+                      <Tooltip text="Address added from ArConnect">
+                        <span style={{ color: "#02d43a", marginLeft: ".3em" }}>
+                          (JUST ADDED)
+                        </span>
+                      </Tooltip>
+                    )}
+                  </p>
                   <Tooltip text="Remove">
                     <CloseIcon
                       onClick={() =>
