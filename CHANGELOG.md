@@ -26,3 +26,9 @@
 - Add changelogs
 - Full beta release to the public
 - Refactor workspace
+
+## `1.0.0-2`
+
+- Support markdown descriptions for collectibles and bios
+- Fix 404 errors incorrectly displayed on Orbit
+- Custom 500 error page

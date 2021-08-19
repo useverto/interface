@@ -32,6 +32,7 @@ import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
+import marked from "marked";
 import useGeofence from "../../utils/geofence";
 import styles from "../../styles/views/art.module.sass";
 
@@ -409,6 +410,17 @@ const Art = (props: PropTypes) => {
       });
   }, [view]);
 
+  const [formattedDescription, setFormattedDescription] = useState("");
+
+  useEffect(() => {
+    const desc =
+      state?.description ||
+      state?.settings?.communityDescription ||
+      "No description available...";
+
+    setFormattedDescription(marked(desc));
+  }, [state]);
+
   return (
     <>
       <Head>
@@ -487,11 +499,10 @@ const Art = (props: PropTypes) => {
                 />
                 <Spacer y={0.85} />
                 <p className={styles.FormTitle}>Description</p>
-                <p style={{ textAlign: "justify" }}>
-                  {state?.description ||
-                    state?.settings?.communityDescription ||
-                    "No description."}
-                </p>
+                <div
+                  className={styles.Description}
+                  dangerouslySetInnerHTML={{ __html: formattedDescription }}
+                ></div>
               </div>
               <div>
                 <Button
