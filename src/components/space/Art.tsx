@@ -512,7 +512,7 @@ const Art = (props: PropTypes) => {
                   // disabled={!address || bitsAvailable === 0}
                   disabled
                   // @ts-ignore
-                  title="Swapping is temporary disabled due to gateway issues"
+                  title="Swapping is temporarily disabled due to gateway issues, but we'll have this resolved ASAP!"
                 >
                   Buy
                 </Button>
@@ -525,7 +525,7 @@ const Art = (props: PropTypes) => {
                   // disabled={!address || ownedAmount === 0}
                   disabled
                   // @ts-ignore
-                  title="Swapping is temporary disabled due to gateway issues"
+                  title="Swapping is temporarily disabled due to gateway issues, but we'll have this resolved ASAP!"
                 >
                   Sell
                 </Button>
