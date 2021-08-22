@@ -420,10 +420,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
       const price = await arPrice();
 
       setArweavePrice(
-        price?.toLocaleString(undefined, {
+        price.toLocaleString(undefined, {
           maximumFractionDigits: 2,
           minimumFractionDigits: 2,
-        }) ?? "0"
+        })
       );
     })();
   }, []);
@@ -450,7 +450,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                   <div className={styles.PriceData}>
                     <span>
                       1 {selectedPST.ticker} ={" "}
-                      {selectedPrice.toLocaleString(undefined, {
+                      {(selectedPrice ?? 0).toLocaleString(undefined, {
                         maximumFractionDigits: 2,
                         minimumFractionDigits: 2,
                       })}{" "}
