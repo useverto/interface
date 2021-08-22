@@ -508,7 +508,11 @@ const Art = (props: PropTypes) => {
                 <Button
                   className={styles.FormBtn}
                   onClick={() => setView("buy")}
-                  disabled={!address || bitsAvailable === 0}
+                  // TODO: remove disabled and add back the one below after gateway fix
+                  // disabled={!address || bitsAvailable === 0}
+                  disabled
+                  // @ts-ignore
+                  title="Swapping is temporary disabled due to gateway issues"
                 >
                   Buy
                 </Button>
@@ -517,7 +521,11 @@ const Art = (props: PropTypes) => {
                   className={styles.FormBtn}
                   type="outlined"
                   onClick={() => setView("sell")}
-                  disabled={!address || ownedAmount === 0}
+                  // TODO: remove disabled and add back the one below after gateway fix
+                  // disabled={!address || ownedAmount === 0}
+                  disabled
+                  // @ts-ignore
+                  title="Swapping is temporary disabled due to gateway issues"
                 >
                   Sell
                 </Button>

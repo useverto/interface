@@ -575,6 +575,9 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             style={{ width: "100%" }}
             loading={creatingSwap}
             onClick={prepareSwap}
+            disabled
+            // @ts-ignore
+            title="Swapping is temporary disabled due to gateway issues"
           >
             Swap
           </Button>
