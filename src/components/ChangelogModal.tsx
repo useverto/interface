@@ -1,19 +1,22 @@
 import { Button, Modal, useTheme } from "@verto/ui";
 import { lastViewedChangelog } from "../utils/storage_names";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import marked from "marked";
 import changelog from "../../CHANGELOG.md";
-import ReactMarkdown from "react-markdown";
 import pkg from "../../package.json";
 import styles from "../styles/components/ChangelogModal.module.sass";
 
 const ChangelogModal = (props) => {
   const changelogRef = useRef<HTMLDivElement>();
   const theme = useTheme();
+  const [formattedChangelog, setFormattedChangelog] = useState("");
 
   useEffect(() => {
-    if (!changelogRef.current) return;
+    if (!changelogRef.current || formattedChangelog === "") return;
     changelogRef.current.scrollTop = changelogRef.current.scrollHeight;
-  }, [changelogRef.current, props.open]);
+  }, [changelogRef.current, props.open, formattedChangelog]);
+
+  useEffect(() => setFormattedChangelog(marked(changelog)), [changelog]);
 
   return (
     <Modal {...props}>
@@ -26,9 +29,8 @@ const ChangelogModal = (props) => {
             (theme === "Dark" ? styles.Dark : "")
           }
           ref={changelogRef}
-        >
-          <ReactMarkdown children={changelog} />
-        </div>
+          dangerouslySetInnerHTML={{ __html: formattedChangelog }}
+        ></div>
         <Button
           small
           className={styles.Ok}

@@ -450,7 +450,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
                   <div className={styles.PriceData}>
                     <span>
                       1 {selectedPST.ticker} ={" "}
-                      {selectedPrice.toLocaleString(undefined, {
+                      {(selectedPrice ?? 0).toLocaleString(undefined, {
                         maximumFractionDigits: 2,
                         minimumFractionDigits: 2,
                       })}{" "}
@@ -575,6 +575,9 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             style={{ width: "100%" }}
             loading={creatingSwap}
             onClick={prepareSwap}
+            disabled
+            // @ts-ignore
+            title="Swapping is temporarily disabled due to gateway issues, but we'll have this resolved ASAP!"
           >
             Swap
           </Button>

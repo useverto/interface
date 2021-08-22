@@ -10,7 +10,7 @@
   width: max-content
   transform: translate(-50%, -50%)
 
-  .Title, .Subtitle
+  .Title, .Subtitle, p
     text-align: center
     margin: 0 auto
     line-height: .94em
@@ -30,3 +30,13 @@
 
     @media screen and (max-width: variables.$mobile-screen)
       width: 70vw
+
+  p
+    font-size: 1.1em
+    font-weight: 400
+    color: variables.$light-text
+
+    a
+      color: variables.$foreground-color
+      text-decoration: none
+      font-weight: 500

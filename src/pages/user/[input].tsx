@@ -38,6 +38,7 @@ import Twitter from "../../components/icons/Twitter";
 import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
+import marked from "marked";
 import styles from "../../styles/views/user.module.sass";
 
 const client = new Verto();
@@ -169,6 +170,13 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     })();
   }, [props.input, props.user]);
 
+  const [formattedBio, setFormattedBio] = useState("");
+
+  useEffect(() => {
+    if (!props?.user?.bio) return;
+    setFormattedBio(marked(props.user.bio));
+  }, [props?.user?.bio]);
+
   return (
     <Page>
       <Head>
@@ -210,7 +218,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             )}
           </div>
           <Spacer y={2} />
-          {props.user.bio && <p className={styles.Bio}>{props.user.bio}</p>}
+          <div
+            className={styles.Bio}
+            dangerouslySetInnerHTML={{ __html: formattedBio }}
+          ></div>
           {props.user.links && Object.keys(props.user.links).length > 0 && (
             <div className={styles.Links}>
               {Object.entries(props.user.links).map(

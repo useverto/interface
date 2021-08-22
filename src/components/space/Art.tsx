@@ -32,6 +32,7 @@ import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
+import marked from "marked";
 import useGeofence from "../../utils/geofence";
 import styles from "../../styles/views/art.module.sass";
 
@@ -409,6 +410,17 @@ const Art = (props: PropTypes) => {
       });
   }, [view]);
 
+  const [formattedDescription, setFormattedDescription] = useState("");
+
+  useEffect(() => {
+    const desc =
+      state?.description ||
+      state?.settings?.communityDescription ||
+      "No description available...";
+
+    setFormattedDescription(marked(desc));
+  }, [state]);
+
   return (
     <>
       <Head>
@@ -487,17 +499,20 @@ const Art = (props: PropTypes) => {
                 />
                 <Spacer y={0.85} />
                 <p className={styles.FormTitle}>Description</p>
-                <p style={{ textAlign: "justify" }}>
-                  {state?.description ||
-                    state?.settings?.communityDescription ||
-                    "No description."}
-                </p>
+                <div
+                  className={styles.Description}
+                  dangerouslySetInnerHTML={{ __html: formattedDescription }}
+                ></div>
               </div>
               <div>
                 <Button
                   className={styles.FormBtn}
                   onClick={() => setView("buy")}
-                  disabled={!address || bitsAvailable === 0}
+                  // TODO: remove disabled and add back the one below after gateway fix
+                  // disabled={!address || bitsAvailable === 0}
+                  disabled
+                  // @ts-ignore
+                  title="Swapping is temporarily disabled due to gateway issues, but we'll have this resolved ASAP!"
                 >
                   Buy
                 </Button>
@@ -506,7 +521,11 @@ const Art = (props: PropTypes) => {
                   className={styles.FormBtn}
                   type="outlined"
                   onClick={() => setView("sell")}
-                  disabled={!address || ownedAmount === 0}
+                  // TODO: remove disabled and add back the one below after gateway fix
+                  // disabled={!address || ownedAmount === 0}
+                  disabled
+                  // @ts-ignore
+                  title="Swapping is temporarily disabled due to gateway issues, but we'll have this resolved ASAP!"
                 >
                   Sell
                 </Button>

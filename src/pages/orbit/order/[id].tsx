@@ -85,9 +85,26 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { id } }) {
-  const { data: order } = await axios.get(`${CACHE_URL}/order/${id}`);
+  try {
+    const { data: order } = await axios.get(`${CACHE_URL}/order/${id}`);
 
-  return { props: { order, id }, revalidate: 1 };
+    return { props: { order, id }, revalidate: 1 };
+  } catch (e) {
+    if (e?.response?.status === 404)
+      return {
+        redirect: {
+          destination: "/404",
+          permanent: false,
+        },
+      };
+
+    return {
+      redirect: {
+        destination: "/500",
+        permanent: false,
+      },
+    };
+  }
 }
 
 export default Order;

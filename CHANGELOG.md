@@ -26,3 +26,12 @@
 - Add changelogs
 - Full beta release to the public
 - Refactor workspace
+
+## `1.0.0-2`
+
+- Support markdown descriptions for collectibles and bios
+- Fixup ID setup not updating addresses
+- Fixup collection contract owner bug
+- Fix error on swap when the initial token does not have a price
+- Fix 404 errors incorrectly displayed on Orbit
+- Custom 500 error page
