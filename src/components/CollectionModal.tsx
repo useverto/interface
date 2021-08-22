@@ -241,6 +241,7 @@ const CollectionModal = (props: Props) => {
       const initialState = {
         name: collectionNameInput.state,
         description: collectionDescription,
+        owner: activeAddress,
         collaborators: [],
         items,
       };

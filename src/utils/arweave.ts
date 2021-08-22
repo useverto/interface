@@ -16,7 +16,7 @@ export const ROOT_URL = "https://verto.exchange";
 export const CACHE_URL = "https://v2.cache.verto.exchange";
 export const COMMUNITY_CONTRACT = "t9T7DIOGxx4VWXoCEeYYarFYeERTpWIC1V3y-BPZgKE";
 export const COLLECTION_CONTRACT_SRC =
-  "dwsIDa8RaPQJUKJhgm5iNrrvxLcXbpIi4Mea0PjMGuY";
+  "HGV5DRY45TPTUJ0GERYgaaJoTXdMpU_lhtnI0ehJbe4";
 export const COLLECTIBLE_CONTRACT_SRC =
   "K2s2nciTrl4pk2Nvlvzba-DnWrkm45bo4qMPR7zFpzI";
 
