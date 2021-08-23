@@ -13,7 +13,7 @@ const Footer = () => {
       </h1>
       <div className={styles.Links}>
         <a
-          href="https://chat.verto.exchange"
+          href="https://verto.exchange/chat"
           target="_blank"
           rel="noopener noreferrer"
         >
