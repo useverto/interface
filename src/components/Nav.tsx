@@ -288,6 +288,7 @@ const Nav = () => {
                       variant: "auto",
                       swapAsset: "Arweave_AR",
                       userAddress: address,
+                      hostApiKey: "vzszc8sq8z8ksrdxds6asctz2az8k6wx72xazdwb",
                     }).show();
                   }}
                 >
