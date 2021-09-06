@@ -34,6 +34,19 @@ module.exports = {
 
     return config;
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Community-Contract",
+            value: "usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
