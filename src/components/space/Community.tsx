@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { CACHE_URL } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
+import isTomorrow from "dayjs/plugin/isTomorrow";
 import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
@@ -25,6 +26,7 @@ import dayjs from "dayjs";
 import styles from "../../styles/views/community.module.sass";
 
 const client = new Verto();
+dayjs.extend(isTomorrow);
 
 const Community = (props: PropTypes) => {
   const router = useRouter();
@@ -59,6 +61,8 @@ const Community = (props: PropTypes) => {
     (async () => {
       const priceHistory = await client.getPriceHistory(props.id);
       const filterDates = (date) => {
+        if (dayjs(new Date(date)).isTomorrow()) return false;
+
         const timeType =
           (selectedPeriod === "24h" && "day") ||
           (selectedPeriod === "1w" && "week") ||

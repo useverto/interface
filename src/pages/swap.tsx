@@ -41,12 +41,15 @@ import Verto from "@verto/js";
 import Head from "next/head";
 import Link from "next/link";
 import Metas from "../components/Metas";
+import dayjs from "dayjs";
+import isTomorrow from "dayjs/plugin/isTomorrow";
 import useSWR from "swr";
 import useGeofence from "../utils/geofence";
 import axios from "axios";
 import styles from "../styles/views/swap.module.sass";
 
 const client = new Verto();
+dayjs.extend(isTomorrow);
 
 const Swap = (props: { tokens: TokenInterface[] }) => {
   const { data: tokens } = useSWR("getTokens", () => client.getTokens(true), {
@@ -428,6 +431,17 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, []);
 
+  function filterGraphData() {
+    let dates = Object.keys(graphData[graphMode]).reverse();
+
+    dates = dates.filter((date) => !dayjs(new Date(date)).isTomorrow());
+
+    return {
+      dates,
+      values: dates.map((date) => graphData[graphMode][date]),
+    };
+  }
+
   return (
     <Page>
       <Head>
@@ -474,10 +488,10 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           </AnimatePresence>
           <Line
             data={{
-              labels: Object.keys(graphData[graphMode]).reverse(),
+              labels: filterGraphData().dates,
               datasets: [
                 {
-                  data: Object.values(graphData[graphMode]).reverse(),
+                  data: filterGraphData().values,
                   ...GraphDataConfig,
                   borderColor: theme === "Light" ? "#000000" : "#ffffff",
                 },
