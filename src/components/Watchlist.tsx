@@ -22,7 +22,7 @@ import {
 } from "../utils/storage_names";
 import Verto from "@verto/js";
 import dayjs from "dayjs";
-import isToday from "dayjs/plugin/isToday";
+import isTomorrow from "dayjs/plugin/isTomorrow";
 import axios from "axios";
 import styles from "../styles/components/Watchlist.module.sass";
 
@@ -33,7 +33,7 @@ type WatchlistItem = PriceInterface & {
     [date: string]: number;
   };
 };
-dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
 
 const Watchlist = () => {
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
@@ -176,6 +176,8 @@ const Watchlist = () => {
         <AnimatePresence>
           {items.map((item, i) => {
             const filterDates = (date) => {
+              if (dayjs(new Date(date)).isTomorrow()) return false;
+
               const timeType =
                 (selectedPeriod === "24h" && "day") ||
                 (selectedPeriod === "1w" && "week") ||

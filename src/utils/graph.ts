@@ -1,4 +1,8 @@
 import { DisplayTheme } from "@verto/ui/dist/types";
+import dayjs from "dayjs";
+import isTomorrow from "dayjs/plugin/isTomorrow";
+
+dayjs.extend(isTomorrow);
 
 export const GraphDataConfig = {
   borderColor: "#000000",
@@ -98,4 +102,15 @@ interface IGraphOptions {
   tooltipText?: (tooltipItem?: any) => string;
   tickText?: (value: string, index: number) => string;
   theme: DisplayTheme;
+}
+
+export function filterGraphData(data: { [date: string]: number }) {
+  let dates = Object.keys(data).reverse();
+
+  dates = dates.filter((date) => !dayjs(new Date(date)).isTomorrow());
+
+  return {
+    dates,
+    values: dates.map((date) => data[date]),
+  };
 }
