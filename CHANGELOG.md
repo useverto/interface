@@ -35,3 +35,7 @@
 - Fix error on swap when the initial token does not have a price
 - Fix 404 errors incorrectly displayed on Orbit
 - Custom 500 error page
+
+## `1.0.0-3`
+
+- Show USD price of PSC tokens on their graphs
