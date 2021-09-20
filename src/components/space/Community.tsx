@@ -57,8 +57,27 @@ const Community = (props: PropTypes) => {
     }[]
   >();
 
+  const [arPrices, setArPrices] = useState<[number, number][]>([]);
+  const [todayPrices, setTodayPrices] = useState<[number, number][]>([]);
+
   useEffect(() => {
     (async () => {
+      const { data: arHistory } = await axios.get(
+        `https://api.coingecko.com/api/v3/coins/arweave/market_chart?vs_currency=usd&days=max&interval=daily`
+      );
+      const { data: arTodayHistory } = await axios.get(
+        `https://api.coingecko.com/api/v3/coins/arweave/market_chart?vs_currency=usd&days=1&interval=hourly`
+      );
+
+      setArPrices(arHistory.prices);
+      setTodayPrices(arTodayHistory.prices);
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (!arPrices.length) return;
+
       const priceHistory = await client.getPriceHistory(props.id);
       const filterDates = (date) => {
         if (dayjs(new Date(date)).isTomorrow()) return false;
@@ -76,14 +95,27 @@ const Community = (props: PropTypes) => {
         .filter((date) => filterDates(date))
         .map((key) => ({
           date: key,
-          price: priceHistory[key],
+          price:
+            priceHistory[key] *
+              arPrices.find(
+                ([date]) => dayjs(new Date(date)).format("MMM DD, YYYY") === key
+              )?.[1] ?? 0,
         }))
         .sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
       setHistory(prices);
+
+      if (selectedPeriod === "24h" && !!todayPrices.length) {
+        setHistory(
+          todayPrices.map(([time, price]) => ({
+            date: dayjs(new Date(time)).format("hh:mm A"),
+            price: priceHistory[dayjs().format("MMM DD, YYYY")] * price,
+          }))
+        );
+      }
     })();
-  }, [selectedPeriod]);
+  }, [selectedPeriod, arPrices, todayPrices]);
 
   const [metrics, setMetrics] = useState(null);
 
@@ -221,10 +253,10 @@ const Community = (props: PropTypes) => {
                     options={GraphOptions({
                       theme,
                       tooltipText: ({ value }) =>
-                        `${Number(value).toLocaleString(undefined, {
+                        `$${Number(value).toLocaleString(undefined, {
                           maximumFractionDigits: 2,
                           minimumFractionDigits: 2,
-                        })} AR`,
+                        })} USD`,
                     })}
                   />
                 )}
