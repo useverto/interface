@@ -428,6 +428,8 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
     })();
   }, []);
 
+  const wipSwapModal = useModal(true);
+
   return (
     <Page>
       <Head>
@@ -731,6 +733,25 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
             style={{ margin: "0 auto" }}
           >
             Allow
+          </Button>
+        </Modal.Content>
+      </Modal>
+      <Modal {...wipSwapModal.bindings}>
+        <Modal.Title>We are working on this!</Modal.Title>
+        <Modal.Content style={{ textAlign: "justify" }}>
+          The Verto Protocol is currently in the process of transitioning to a
+          SmartWeave based exchange. This is a slow process, but we are working
+          hard to bring you this new, more secure system.
+          <Spacer y={1} />
+          Until the new release, <b>swapping is disabled</b>. Please bear with
+          us while we finish this 😃
+          <Spacer y={1.5} />
+          <Button
+            onClick={() => wipSwapModal.setState(false)}
+            small
+            style={{ margin: "0 auto" }}
+          >
+            I Understand
           </Button>
         </Modal.Content>
       </Modal>
