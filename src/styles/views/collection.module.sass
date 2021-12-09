@@ -64,27 +64,9 @@
       +basicEditStyles
 
 .Items
-  display: grid
-  justify-content: space-between
-  grid-template-columns: auto auto auto auto
-
-  @media screen and (max-width: variables.$mobile-screen)
-    justify-content: center
-    grid-template-columns: auto
+  +variables.cardGrid
 
   .Item
-    $bottomMargin: 3.5em
-    position: relative
-
-    &:nth-child(4n+4)
-      margin-bottom: $bottomMargin
-
-    &:last-child
-      margin-bottom: 0
-
-    @media screen and (max-width: variables.$mobile-screen)
-      margin-bottom: $bottomMargin
-
     .MinusIcon
       $size: 2em
       position: absolute

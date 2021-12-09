@@ -55,25 +55,7 @@
     margin-left: 0
 
 .Creations
-  display: grid
-  justify-content: space-between
-  grid-template-columns: auto auto auto auto
-
-  @media screen and (max-width: variables.$mobile-screen)
-    justify-content: center
-    grid-template-columns: auto
-
-  .CreationItem
-    $bottomMarginCreationItem: 3.5em
-
-    &:nth-child(4n+4)
-      margin-bottom: $bottomMarginCreationItem
-
-    &:last-child
-      margin-bottom: 0
-
-    @media screen and (max-width: variables.$mobile-screen)
-      margin-bottom: $bottomMarginCreationItem
+  +variables.cardGrid($itemName: "CreationItem")
 
 .Transactions
   width: 100%
