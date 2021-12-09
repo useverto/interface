@@ -57,15 +57,6 @@ class MyDocument extends Document {
                       "name": "Space",
                       "description": "The place for all Arweave tokens"
                     }
-                  },
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "item": {
-                      "@id": "${ROOT_URL}/orbit",
-                      "name": "Orbit",
-                      "description": "The Verto Protocol explorer"
-                    }
                   }
                 ]
               }

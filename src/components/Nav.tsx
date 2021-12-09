@@ -45,7 +45,7 @@ const Nav = () => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const arconnect = useArConnect();
   const router = useRouter();
-  const items: Item[] = ["app", "space", "swap", "orbit"];
+  const items: Item[] = ["app", "space", "swap"];
   const [selectedItem, setSelectedItem] = useState<Item>();
   const [selectionPos, setSelectionPos] = useState<{
     x: number;
@@ -215,14 +215,6 @@ const Nav = () => {
                   Swap
                 </a>
               </Link>
-              <Link href="/orbit">
-                <a
-                  className={selectedItem === "orbit" ? styles.Selected : ""}
-                  ref={(el) => updateSelectionPos(el, "orbit")}
-                >
-                  Orbit
-                </a>
-              </Link>
               <AnimatePresence>
                 {selectedItem && selectionPos.width !== 0 && (
                   <motion.div
@@ -379,6 +371,6 @@ const Nav = () => {
   );
 };
 
-type Item = "app" | "space" | "swap" | "orbit";
+type Item = "app" | "space" | "swap";
 
 export default Nav;

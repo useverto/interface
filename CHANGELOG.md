@@ -1,5 +1,10 @@
 # Changelog
 
+## `1.0.1`
+
+- Remove Orbit
+- Orderbook contract integration
+
 ## `1.0.0-0`
 
 - Initial Beta Release
