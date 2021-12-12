@@ -14,7 +14,11 @@ import { permissions as requiredPermissions } from "../utils/arconnect";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { AnimatePresence, motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
-import { ChevronDownIcon, InformationIcon } from "@iconicicons/react";
+import {
+  ChevronDownIcon,
+  CloseCircleIcon,
+  InformationIcon,
+} from "@iconicicons/react";
 import { OrderType } from "../utils/order";
 import { opacityAnimation } from "../utils/animations";
 import Balance from "../components/Balance";
@@ -55,7 +59,13 @@ const Swap = () => {
   // geofence
   const blockedCountry = useGeofence();
 
+  // type of the order that the user will submit
   const [orderType, setOrderType] = useState<OrderType>("limit");
+
+  // token selector type ("from", "to" or hidden = undefined)
+  const [tokenSelector, setTokenSelector] = useState<
+    "from" | "to" | undefined
+  >();
 
   return (
     <Page>
@@ -111,10 +121,13 @@ const Swap = () => {
             {blockedCountry && (
               <motion.div
                 className={
+                  styles.SwapOverlay +
+                  " " +
                   styles.BlockedCountry +
                   " " +
-                  (theme === "Dark" ? styles.BlockedCountryDark : "")
+                  (theme === "Dark" ? styles.SwapOverlayDark : "")
                 }
+                {...opacityAnimation()}
               >
                 <div>
                   <h1>We do not offer services in your location 😢</h1>
@@ -128,6 +141,29 @@ const Swap = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          <AnimatePresence>
+            {/** If the token selector is not undefined, we display the token selector overlay */}
+            {tokenSelector && (
+              <motion.div
+                className={
+                  styles.SwapOverlay +
+                  " " +
+                  (theme === "Dark" ? styles.SwapOverlayDark : "") +
+                  " " +
+                  styles.SelectToken
+                }
+                {...opacityAnimation()}
+              >
+                <h1 className={styles.TokenSelectTitle}>
+                  Select Token
+                  <CloseCircleIcon
+                    className={styles.CloseTokenSelect}
+                    onClick={() => setTokenSelector(undefined)}
+                  />
+                </h1>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className={styles.SwapWrapper}>
             <div
               className={
@@ -136,19 +172,21 @@ const Swap = () => {
             >
               <div className={styles.HeadText}>
                 I have
-                <div className={styles.Select}>
-                  <select>
-                    <option value="ARDRIVE">ARDRIVE</option>
-                  </select>
+                <div
+                  className={styles.Select}
+                  onClick={() => setTokenSelector("from")}
+                >
+                  <p>Ardrive</p>
                   <ChevronDownIcon className={styles.Arrow} />
                 </div>
               </div>
               <div className={styles.HeadText}>
                 I want
-                <div className={styles.Select}>
-                  <select>
-                    <option value="VRT">VRT</option>
-                  </select>
+                <div
+                  className={styles.Select}
+                  onClick={() => setTokenSelector("to")}
+                >
+                  <p>VRT</p>
                   <ChevronDownIcon className={styles.Arrow} />
                 </div>
               </div>

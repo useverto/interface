@@ -48,32 +48,62 @@
       height: 100%
       width: 100%
 
-    .BlockedCountry
+    .SwapOverlay
       position: absolute
-      display: flex
       +variables.absoluteExtend
       z-index: 100
-      background-color: rgba(#fff, .5)
+      background-color: rgba(#fff, .67)
       padding: $sidePadding
-      align-items: center
-      justify-content: center
       backdrop-filter: blur(5px)
 
-      &.BlockedCountryDark
+      &.BlockedCountry
+        display: flex
+        align-items: center
+        justify-content: center
+
+        h1, p
+          text-align: center
+          margin: 0
+          color: variables.$foreground-color
+
+        h1
+          font-size: 2em
+          font-weight: 700
+
+        p
+          font-size: 1.05em
+          font-weight: 500
+
+      &.SelectToken
+        background-color: rgba(#fff, .85)
+
+        h1.TokenSelectTitle
+          color: variables.$foreground-color
+          font-size: 2.2em
+          font-weight: 400
+          display: flex
+          align-items: center
+          justify-content: space-between
+          padding-bottom: .45em
+          margin: 0
+          border-bottom: 1px dashed #878787
+
+          .CloseTokenSelect
+            font-size: 1em
+            width: .8em
+            height: .8em
+            color: variables.$light-text
+            cursor: pointer
+            transition: all .23s ease-in-out
+
+            &:hover
+              opacity: .77
+
+            &:active
+              transform: scale(.8)
+
+      &.SwapOverlayDark
         background-color: rgba(#030a23, .67)
-
-      h1, p
-        text-align: center
-        margin: 0
-        color: variables.$foreground-color
-
-      h1
-        font-size: 2em
-        font-weight: 700
-
-      p
-        font-size: 1.05em
-        font-weight: 500
 
     .Head
       padding: 2em $sidePadding 1.7em
@@ -95,6 +125,8 @@
         .Select
           position: relative
           margin-left: .5em
+          display: inline-block
+          cursor: pointer
           $selectSidePadding: .42em
 
           .Arrow
@@ -108,20 +140,15 @@
             z-index: 5
             transform: translateY(-50%)
 
-          select
-            display: inline-block
+          p
             font-size: $headFontSize
             font-weight: 400
             text-transform: uppercase
             background-color: rgba(#fff, .17)
             color: variables.$background-color
-            outline: none
-            border: none
             border-radius: 10px
             padding: .2em ($selectSidePadding * 2 + $headFontSize) .2em $selectSidePadding
-            -moz-appearance: none
-            -webkit-appearance: none
-            appearance: none
+            margin: 0
 
       &.DarkHead
         .HeadText
@@ -136,7 +163,7 @@
       justify-content: space-between
       margin: 0 $sidePadding
       padding: 1.55em 0 1.32em
-      border-bottom: 1px dotted variables.$cec
+      border-bottom: 1px dashed variables.$cec
 
       .OrderTypeInfo
         display: flex
