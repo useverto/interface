@@ -41,6 +41,13 @@
     width: 39%
     padding: 0
 
+    .SwapWrapper
+      display: flex
+      flex-direction: column
+      justify-content: space-between
+      height: 100%
+      width: 100%
+
     .BlockedCountry
       position: absolute
       display: flex
@@ -164,6 +171,52 @@
           height: $fontSize * 1.75
           background-color: variables.$cec
           margin: 0 .85em
+
+    .SwapInputs
+      padding: $sidePadding
+
+    .SwapBottom
+      padding: $sidePadding
+
+      .ProgressBar
+        position: relative
+        display: flex
+        align-items: center
+        justify-content: space-between
+        padding: 0 $sidePadding / 2
+        $barSize: 6px
+
+        .Bar
+          position: absolute
+          top: 50%
+          left: 50%
+          width: 85%
+          height: $barSize
+          background-color: variables.$cec
+          transform: translate(-50%, -50%)
+
+          .Filled
+            position: absolute
+            left: 0
+            top: 0
+            bottom: 0
+            background-color: variables.$foreground-color
+            transition: all .23s ease-in-out
+
+        .Circle
+          border-radius: 100%
+          z-index: 5
+          width: $barSize
+          height: $barSize
+          border: $barSize solid variables.$cec
+          background-color: variables.$background-color
+          transition: all .23s ease-in-out
+
+          &.FilledCircle
+            border-color: variables.$foreground-color
+
+      .SwapButton
+        width: 100%
 
 .DepthSelect
   font-size: #{1em / variables.$title-font-size}em

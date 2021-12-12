@@ -16,6 +16,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
 import { ChevronDownIcon, InformationIcon } from "@iconicicons/react";
 import { OrderType } from "../utils/order";
+import { opacityAnimation } from "../utils/animations";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
@@ -127,52 +128,88 @@ const Swap = () => {
               </motion.div>
             )}
           </AnimatePresence>
-          <div
-            className={
-              styles.Head + " " + (theme === "Dark" ? styles.DarkHead : "")
-            }
-          >
-            <div className={styles.HeadText}>
-              I have
-              <div className={styles.Select}>
-                <select>
-                  <option value="ARDRIVE">ARDRIVE</option>
-                </select>
-                <ChevronDownIcon className={styles.Arrow} />
+          <div className={styles.SwapWrapper}>
+            <div
+              className={
+                styles.Head + " " + (theme === "Dark" ? styles.DarkHead : "")
+              }
+            >
+              <div className={styles.HeadText}>
+                I have
+                <div className={styles.Select}>
+                  <select>
+                    <option value="ARDRIVE">ARDRIVE</option>
+                  </select>
+                  <ChevronDownIcon className={styles.Arrow} />
+                </div>
+              </div>
+              <div className={styles.HeadText}>
+                I want
+                <div className={styles.Select}>
+                  <select>
+                    <option value="VRT">VRT</option>
+                  </select>
+                  <ChevronDownIcon className={styles.Arrow} />
+                </div>
               </div>
             </div>
-            <div className={styles.HeadText}>
-              I want
-              <div className={styles.Select}>
-                <select>
-                  <option value="VRT">VRT</option>
-                </select>
-                <ChevronDownIcon className={styles.Arrow} />
+            <div className={styles.OrderType}>
+              <div className={styles.Selector}>
+                <p
+                  className={
+                    orderType === "market" ? styles.SelectedOrderType : ""
+                  }
+                  onClick={() => setOrderType("market")}
+                >
+                  Market Order
+                </p>
+                <div className={styles.Separator} />
+                <p
+                  className={
+                    orderType === "limit" ? styles.SelectedOrderType : ""
+                  }
+                  onClick={() => setOrderType("limit")}
+                >
+                  Limit Order
+                </p>
+              </div>
+              <div className={styles.OrderTypeInfo}>
+                <InformationIcon />
               </div>
             </div>
-          </div>
-          <div className={styles.OrderType}>
-            <div className={styles.Selector}>
-              <p
-                className={
-                  orderType === "market" ? styles.SelectedOrderType : ""
-                }
-                onClick={() => setOrderType("market")}
-              >
-                Market Order
-              </p>
-              <div className={styles.Separator} />
-              <p
-                className={
-                  orderType === "limit" ? styles.SelectedOrderType : ""
-                }
-                onClick={() => setOrderType("limit")}
-              >
-                Limit Order
-              </p>
+            <div className={styles.SwapInputs}>
+              {(orderType === "market" && (
+                <>
+                  <p>
+                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                    Iste voluptate ex provident dolores quae? Ad vero totam,
+                    enim beatae porro, vel quibusdam asperiores blanditiis
+                    voluptatem delectus, eius veritatis natus a!
+                  </p>
+                </>
+              )) || (
+                <>
+                  <p>
+                    Aliquid esse quidem ipsum alias possimus sunt reprehenderit
+                    hic quisquam, eius similique dignissimos voluptate error
+                    repellendus libero ducimus laudantium eos quo minima.
+                  </p>
+                </>
+              )}
             </div>
-            <div className={styles.OrderTypeInfo}>
-              <InformationIcon />
+            <div className={styles.SwapBottom}>
+              <div className={styles.ProgressBar}>
+                <div className={styles.Bar}>
+                  <div className={styles.Filled} style={{ width: "50%" }} />
+                </div>
+                <div className={styles.Circle + " " + styles.FilledCircle} />
+                <div className={styles.Circle + " " + styles.FilledCircle} />
+                <div className={styles.Circle + " " + styles.FilledCircle} />
+                <div className={styles.Circle} />
+                <div className={styles.Circle} />
+              </div>
+              <Spacer y={2} />
+              <Button className={styles.SwapButton}>Swap</Button>
             </div>
           </div>
         </Card>
