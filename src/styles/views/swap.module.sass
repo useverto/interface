@@ -123,6 +123,48 @@
           select
             background-color: rgba(#000, .17)
 
+    .OrderType
+      display: flex
+      align-items: center
+      justify-content: space-between
+      margin: 0 $sidePadding
+      padding: 1.55em 0 1.32em
+      border-bottom: 1px dotted variables.$cec
+
+      .OrderTypeInfo
+        display: flex
+        align-items: center
+
+        svg
+          font-size: 1.3em
+          width: 1em
+          height: 1em
+
+      .Selector
+        display: flex
+        align-items: center
+        $fontSize: 1.1em
+
+        p
+          font-size: $fontSize
+          font-weight: 400
+          color: variables.$foreground-color
+          cursor: pointer
+          padding: 0
+          transition: opacity .23s ease-in-out
+
+          &.SelectedOrderType
+            font-weight: 500
+
+          &:hover:not(.SelectedOrderType)
+            opacity: .7
+
+        .Separator
+          width: 3px
+          height: $fontSize * 1.75
+          background-color: variables.$cec
+          margin: 0 .85em
+
 .DepthSelect
   font-size: #{1em / variables.$title-font-size}em
   line-height: 1em

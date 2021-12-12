@@ -35,3 +35,5 @@ export const getCancelledOrders = (): string[] => {
 
   return JSON.parse(stored);
 };
+
+export type OrderType = "market" | "limit";

@@ -9,12 +9,13 @@ import {
   useTheme,
   Card,
 } from "@verto/ui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { AnimatePresence, motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
-import { ChevronDownIcon } from "@iconicicons/react";
+import { ChevronDownIcon, InformationIcon } from "@iconicicons/react";
+import { OrderType } from "../utils/order";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
@@ -52,6 +53,8 @@ const Swap = () => {
 
   // geofence
   const blockedCountry = useGeofence();
+
+  const [orderType, setOrderType] = useState<OrderType>("limit");
 
   return (
     <Page>
@@ -146,6 +149,30 @@ const Swap = () => {
                 </select>
                 <ChevronDownIcon className={styles.Arrow} />
               </div>
+            </div>
+          </div>
+          <div className={styles.OrderType}>
+            <div className={styles.Selector}>
+              <p
+                className={
+                  orderType === "market" ? styles.SelectedOrderType : ""
+                }
+                onClick={() => setOrderType("market")}
+              >
+                Market Order
+              </p>
+              <div className={styles.Separator} />
+              <p
+                className={
+                  orderType === "limit" ? styles.SelectedOrderType : ""
+                }
+                onClick={() => setOrderType("limit")}
+              >
+                Limit Order
+              </p>
+            </div>
+            <div className={styles.OrderTypeInfo}>
+              <InformationIcon />
             </div>
           </div>
         </Card>
