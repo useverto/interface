@@ -1,0 +1,81 @@
+@use "../variables"
+  
+=normalTextStyles
+  font-size: 1.1em
+  font-weight: 500
+
+.SwapInput
+  position: relative
+  background-color: variables.$skeleton
+  border: 1px solid variables.$skeleton
+  cursor: text
+  overflow: hidden
+  border-radius: 12px
+  z-index: 1
+  transition: all .23s ease-in-out
+  $sidePadding: 1.2em
+  $topPadding: 1.14em
+  $largeSidePadding: 5.1em
+
+  input
+    display: block
+    outline: none
+    border: none
+    width: calc(100% - #{$largeSidePadding} * 2)
+    color: variables.$foreground-color
+    padding: $topPadding $largeSidePadding
+    text-align: right
+    background-color: transparent
+    z-index: 10
+    +normalTextStyles
+
+  .Placeholder
+    position: absolute
+    top: 50%
+    left: $largeSidePadding
+    right: $largeSidePadding
+    display: flex
+    align-items: center
+    justify-content: space-between
+    z-index: -1
+    transform: translateY(-50%)
+    transition: opacity .23s ease-in-out
+
+    p
+      +normalTextStyles
+      color: variables.$foreground-color
+      margin: 0
+
+      &:last-child
+        color: variables.$light-text
+        text-align: right
+
+  &.Focus, &:focus-within
+    background-color: variables.$skeleton-shine
+    border-color: variables.$light-text
+
+  &.NormalPadding
+    input
+      padding: $topPadding $sidePadding
+      width: calc(100% - #{$sidePadding} * 2)
+      text-align: left
+
+    .Placeholder
+      left: $sidePadding
+      right: $sidePadding
+
+  input:not(:placeholder-shown) + .Placeholder
+    opacity: 0
+
+  &.Status_error
+    border-color: variables.$error
+
+  &.Status_warning
+    border-color: variables.$warning
+
+  &.Status_success
+    border-color: variables.$success
+
+  &.Disabled
+    opacity: .9
+    cursor: not-allowed

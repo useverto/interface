@@ -8,6 +8,7 @@ import {
   Modal,
   useTheme,
   Card,
+  useInput,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
@@ -27,6 +28,7 @@ import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
 import styles from "../styles/views/swap.module.sass";
+import SwapInput from "../components/SwapInput";
 
 const Swap = () => {
   // arconnect helper
@@ -66,6 +68,9 @@ const Swap = () => {
   const [tokenSelector, setTokenSelector] = useState<
     "from" | "to" | undefined
   >();
+
+  // the token search input controller
+  const tokenSearchInput = useInput("");
 
   return (
     <Page>
@@ -161,6 +166,10 @@ const Swap = () => {
                     onClick={() => setTokenSelector(undefined)}
                   />
                 </h1>
+                <Spacer y={1.25} />
+                <SwapInput {...tokenSearchInput.bindings}>
+                  <p>Search for token or contract address</p>
+                </SwapInput>
               </motion.div>
             )}
           </AnimatePresence>
