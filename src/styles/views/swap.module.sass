@@ -39,42 +39,7 @@
     $sidePadding: 1.5em
     position: relative
     width: 39%
-    padding: $sidePadding
-
-    .SwapLogo
-      cursor: pointer
-      width: max-content
-      margin:
-        left: auto
-        right: 2em
-      transition: all .23s ease-in-out
-
-      &:hover
-        opacity: .7
-
-      svg
-        color: variables.$foreground-color
-        font-size: 1.6em
-        width: 1em
-        height: 1em
-        transform: rotate(90deg)
-
-    .SwapInput
-      div[class~=VertoInputWrapper]
-        width: calc(100% - 6px)
-
-        div[class~=VertoInputInlineLabel]
-          min-width: 160px
-          padding: 0
-
-      .UnitSelect
-        width: 100%
-
-        div[class~=VertoSelectWrapper]
-          width: 100%
-
-        span[class~=VertoSelectArrow]
-          right: 0
+    padding: 0
 
     .BlockedCountry
       position: absolute
@@ -102,6 +67,61 @@
       p
         font-size: 1.05em
         font-weight: 500
+
+    .Head
+      padding: 2em $sidePadding 1.7em
+      background-color: variables.$foreground-color
+      display: flex
+      align-items: center
+      justify-content: space-between
+
+      .HeadText
+        $headFontSize: 1.1em
+        font-size: $headFontSize
+        font-weight: 400
+        text-transform: uppercase
+        color: #676767
+        display: flex
+        align-items: center
+        margin: 0
+
+        .Select
+          position: relative
+          margin-left: .5em
+          $selectSidePadding: .42em
+
+          .Arrow
+            position: absolute
+            font-size: $headFontSize
+            width: $headFontSize
+            height: $headFontSize
+            color: variables.$background-color
+            top: 50%
+            right: $selectSidePadding
+            z-index: 5
+            transform: translateY(-50%)
+
+          select
+            display: inline-block
+            font-size: $headFontSize
+            font-weight: 400
+            text-transform: uppercase
+            background-color: rgba(#fff, .17)
+            color: variables.$background-color
+            outline: none
+            border: none
+            border-radius: 10px
+            padding: .2em ($selectSidePadding * 2 + $headFontSize) .2em $selectSidePadding
+            -moz-appearance: none
+            -webkit-appearance: none
+            appearance: none
+
+      &.DarkHead
+        .HeadText
+          color: #313131
+
+          select
+            background-color: rgba(#000, .17)
 
 .DepthSelect
   font-size: #{1em / variables.$title-font-size}em
