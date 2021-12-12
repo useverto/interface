@@ -25,6 +25,9 @@ $detailsWidth: 62.5%
   line-height: 1em
   margin: 0
 
+  @media screen and (max-width: variables.$mobile-screen)
+    font-size: variables.$title-font-size-mobile
+
   span
     color: variables.$light-text
     text-transform: uppercase
@@ -36,6 +39,9 @@ $detailsWidth: 62.5%
   color: variables.$foreground-color
   line-height: 1em
   margin: 0
+
+  @media screen and (max-width: variables.$mobile-screen)
+    font-size: variables.$title-font-size-mobile
 
 .PeriodMenu
   +PeriodMenu.periodMenu

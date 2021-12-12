@@ -16,9 +16,11 @@ export default function SwapInput({
   className,
   style,
   disabled = false,
+  readonly = false,
   status,
   matchPattern,
   extraPadding = false,
+  focusTheme = false,
   ...props
 }: PropsWithChildren<Props>) {
   const [val, setVal] = useState(value);
@@ -37,10 +39,19 @@ export default function SwapInput({
   return (
     <div
       className={
-        styles.SwapInput + " " + (!extraPadding && styles.NormalPadding) ||
-        "" + " " + (inputStatus && styles[`Status_${inputStatus}`]) ||
-        "" + (disabled && styles.Disabled) ||
-        "" + " " + (className || "")
+        styles.SwapInput +
+        " " +
+        ((!extraPadding && styles.NormalPadding) || "") +
+        " " +
+        ((inputStatus && styles[`Status_${inputStatus}`]) || "") +
+        " " +
+        ((disabled && styles.Disabled) || "") +
+        " " +
+        ((readonly && styles.ReadOnly) || "") +
+        " " +
+        ((focusTheme && styles.Focus) || "") +
+        " " +
+        (className || "")
       }
       style={style}
       {...props}
@@ -59,6 +70,16 @@ export default function SwapInput({
         }}
         value={val}
         disabled={disabled}
+        readOnly={readonly}
+        style={
+          (extraPadding &&
+            typeof extraPadding !== "boolean" && {
+              paddingLeft: extraPadding.left,
+              paddingRight: extraPadding.right,
+              width: `calc(100% - ${extraPadding.left} - ${extraPadding.right})`,
+            }) ||
+          undefined
+        }
       />
     </div>
   );
@@ -72,7 +93,14 @@ interface Props {
   disabled?: boolean;
   status?: InputStatus;
   matchPattern?: RegExp;
-  extraPadding?: boolean;
+  extraPadding?:
+    | boolean
+    | {
+        left: string;
+        right: string;
+      };
+  readonly?: boolean;
+  focusTheme?: boolean;
 }
 
 type InputStatus = undefined | "error" | "warning" | "success";

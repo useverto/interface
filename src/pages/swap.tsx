@@ -21,7 +21,7 @@ import {
   InformationIcon,
 } from "@iconicicons/react";
 import { OrderType } from "../utils/order";
-import { opacityAnimation } from "../utils/animations";
+import { expandAnimation, opacityAnimation } from "../utils/animations";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
@@ -62,7 +62,7 @@ const Swap = () => {
   const blockedCountry = useGeofence();
 
   // type of the order that the user will submit
-  const [orderType, setOrderType] = useState<OrderType>("limit");
+  const [orderType, setOrderType] = useState<OrderType>("market");
 
   // token selector type ("from", "to" or hidden = undefined)
   const [tokenSelector, setTokenSelector] = useState<
@@ -71,6 +71,16 @@ const Swap = () => {
 
   // the token search input controller
   const tokenSearchInput = useInput("");
+
+  // set token search input value to default
+  // when the token selector appears / disappears
+  useEffect(() => tokenSearchInput.reset(), [tokenSelector]);
+
+  // input for the token amount sent
+  const amountInput = useInput<number>(0);
+
+  // input for the price for one
+  const priceInput = useInput<number>(0);
 
   return (
     <Page>
@@ -174,75 +184,85 @@ const Swap = () => {
             )}
           </AnimatePresence>
           <div className={styles.SwapWrapper}>
-            <div
-              className={
-                styles.Head + " " + (theme === "Dark" ? styles.DarkHead : "")
-              }
-            >
-              <div className={styles.HeadText}>
-                I have
-                <div
-                  className={styles.Select}
-                  onClick={() => setTokenSelector("from")}
-                >
-                  <p>Ardrive</p>
-                  <ChevronDownIcon className={styles.Arrow} />
+            <div>
+              <div
+                className={
+                  styles.Head + " " + (theme === "Dark" ? styles.DarkHead : "")
+                }
+              >
+                <div className={styles.HeadText}>
+                  I have
+                  <div
+                    className={styles.Select}
+                    onClick={() => setTokenSelector("from")}
+                  >
+                    <p>Ardrive</p>
+                    <ChevronDownIcon className={styles.Arrow} />
+                  </div>
+                </div>
+                <div className={styles.HeadText}>
+                  I want
+                  <div
+                    className={styles.Select}
+                    onClick={() => setTokenSelector("to")}
+                  >
+                    <p>VRT</p>
+                    <ChevronDownIcon className={styles.Arrow} />
+                  </div>
                 </div>
               </div>
-              <div className={styles.HeadText}>
-                I want
-                <div
-                  className={styles.Select}
-                  onClick={() => setTokenSelector("to")}
-                >
-                  <p>VRT</p>
-                  <ChevronDownIcon className={styles.Arrow} />
+              <div className={styles.OrderType}>
+                <div className={styles.Selector}>
+                  <p
+                    className={
+                      orderType === "market" ? styles.SelectedOrderType : ""
+                    }
+                    onClick={() => setOrderType("market")}
+                  >
+                    Market Order
+                  </p>
+                  <div className={styles.Separator} />
+                  <p
+                    className={
+                      orderType === "limit" ? styles.SelectedOrderType : ""
+                    }
+                    onClick={() => setOrderType("limit")}
+                  >
+                    Limit Order
+                  </p>
+                </div>
+                <div className={styles.OrderTypeInfo}>
+                  <InformationIcon />
                 </div>
               </div>
-            </div>
-            <div className={styles.OrderType}>
-              <div className={styles.Selector}>
-                <p
-                  className={
-                    orderType === "market" ? styles.SelectedOrderType : ""
-                  }
-                  onClick={() => setOrderType("market")}
-                >
-                  Market Order
-                </p>
-                <div className={styles.Separator} />
-                <p
-                  className={
-                    orderType === "limit" ? styles.SelectedOrderType : ""
-                  }
-                  onClick={() => setOrderType("limit")}
-                >
-                  Limit Order
-                </p>
+              <div className={styles.SwapInputs}>
+                <AnimatePresence>
+                  {orderType === "limit" && (
+                    <motion.div
+                      style={{ overflow: "hidden" }}
+                      {...expandAnimation()}
+                    >
+                      <SwapInput
+                        {...priceInput.bindings}
+                        extraPadding={{ right: "8.6em", left: "6em" }}
+                      >
+                        <p>Price</p>
+                        <p>VRT / ARDRIVE</p>
+                      </SwapInput>
+                      <Spacer y={2} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <SwapInput {...amountInput.bindings} extraPadding>
+                  <p>Amount</p>
+                  <p style={{ textTransform: "uppercase" }}>Ardrive</p>
+                </SwapInput>
+                <Spacer y={2} />
+                <SwapInput value="" extraPadding readonly focusTheme>
+                  <p>Total</p>
+                  <p>xxxxxx</p>
+                </SwapInput>
               </div>
-              <div className={styles.OrderTypeInfo}>
-                <InformationIcon />
-              </div>
-            </div>
-            <div className={styles.SwapInputs}>
-              {(orderType === "market" && (
-                <>
-                  <p>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                    Iste voluptate ex provident dolores quae? Ad vero totam,
-                    enim beatae porro, vel quibusdam asperiores blanditiis
-                    voluptatem delectus, eius veritatis natus a!
-                  </p>
-                </>
-              )) || (
-                <>
-                  <p>
-                    Aliquid esse quidem ipsum alias possimus sunt reprehenderit
-                    hic quisquam, eius similique dignissimos voluptate error
-                    repellendus libero ducimus laudantium eos quo minima.
-                  </p>
-                </>
-              )}
             </div>
             <div className={styles.SwapBottom}>
               <div className={styles.ProgressBar}>

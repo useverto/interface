@@ -10,6 +10,7 @@ import { Tooltip, useTheme, useToasts } from "@verto/ui";
 import { useCountUp } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
+import { useMediaPredicate } from "react-media-hook";
 import copy from "copy-to-clipboard";
 import styles from "../styles/components/Balance.module.sass";
 
@@ -40,6 +41,8 @@ const Balance = () => {
     setHistory(await balanceHistory(address));
   }
 
+  const mobile = useMediaPredicate("(max-width: 720px)");
+
   return (
     <div className={styles.Balance}>
       <div className={styles.Data}>
@@ -52,7 +55,7 @@ const Balance = () => {
           <b>AR</b>
         </h1>
         <p className={styles.Address}>
-          Wallet: {formatAddress(address ?? "...")}
+          Wallet: {formatAddress(address ?? "...", mobile ? 12 : 26)}
           <Tooltip text="Copy address">
             <button
               onClick={() => {

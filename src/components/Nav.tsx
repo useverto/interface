@@ -1,14 +1,11 @@
 import {
   Avatar,
   Button,
-  Input,
   Modal,
   Popover,
   Spacer,
-  useInput,
   useModal,
   useTheme,
-  useToasts,
 } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions } from "../utils/arconnect";
@@ -19,8 +16,9 @@ import {
   MoonIcon,
   SunIcon,
   UserIcon,
-  UserPlusIcon,
   SearchIcon,
+  HomeIcon,
+  MapIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -29,14 +27,13 @@ import { formatAddress } from "../utils/format";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
-import { client as arweave, isAddress, CACHE_URL } from "../utils/arweave";
-import { interactWrite } from "smartweave";
+import { useMediaPredicate } from "react-media-hook";
+import { ArrowSwitchIcon } from "@primer/octicons-react";
+import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
-import Search, { useSearch } from "./Search";
-import axios from "axios";
 import styles from "../styles/components/Nav.module.sass";
 
 const client = new Verto();
@@ -165,6 +162,8 @@ const Nav = () => {
 
   const search = useSearch();
 
+  const mobile = useMediaPredicate("(max-width: 720px)");
+
   return (
     <>
       <motion.div
@@ -240,6 +239,50 @@ const Nav = () => {
             closeOnClick
             content={
               <>
+                {/**
+                 * If the user is on mobile, we put the menu items into
+                 * the profile dropdown for a more responsive layout
+                 */}
+                {mobile && (
+                  <>
+                    <Link href="/app">
+                      <a
+                        className={
+                          styles.MenuItem +
+                          " " +
+                          (displayTheme === "Dark" ? styles.Dark : "")
+                        }
+                      >
+                        <HomeIcon />
+                        Home
+                      </a>
+                    </Link>
+                    <Link href="/space">
+                      <a
+                        className={
+                          styles.MenuItem +
+                          " " +
+                          (displayTheme === "Dark" ? styles.Dark : "")
+                        }
+                      >
+                        <MapIcon />
+                        Space
+                      </a>
+                    </Link>
+                    <Link href="/swap">
+                      <a
+                        className={
+                          styles.MenuItem +
+                          " " +
+                          (displayTheme === "Dark" ? styles.Dark : "")
+                        }
+                      >
+                        <ArrowSwitchIcon />
+                        Swap
+                      </a>
+                    </Link>
+                  </>
+                )}
                 <Link href={`/@${user ? user.username : address}`}>
                   <a
                     className={

@@ -15,6 +15,9 @@
       margin: 0
         bottom: .25em
 
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: .75em
+
       &.Address
         display: flex
         align-items: center
@@ -46,6 +49,9 @@
       margin: 0
       line-height: 1em
 
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: variables.$title-font-size-mobile
+
       b
         font-size: .52em
         text-transform: uppercase
@@ -56,4 +62,4 @@
     max-width: 250px
 
     @media screen and (max-width: variables.$mobile-screen)
-      max-width: 170px
+      max-width: 160px

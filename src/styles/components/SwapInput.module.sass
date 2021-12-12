@@ -4,6 +4,9 @@
   font-size: 1.1em
   font-weight: 500
 
+  @media screen and (max-width: variables.$mobile-screen)
+    font-size: .9em
+
 .SwapInput
   position: relative
   background-color: variables.$skeleton
@@ -15,7 +18,7 @@
   transition: all .23s ease-in-out
   $sidePadding: 1.2em
   $topPadding: 1.14em
-  $largeSidePadding: 5.1em
+  $largeSidePadding: 6em
 
   input
     display: block
@@ -29,11 +32,17 @@
     z-index: 10
     +normalTextStyles
 
+    &[type="number"]
+      &::-webkit-inner-spin-button, &::-webkit-inner-spin-button
+        -webkit-appearance: none
+        -moz-appearance: none
+        appearance: none
+
   .Placeholder
     position: absolute
     top: 50%
-    left: $largeSidePadding
-    right: $largeSidePadding
+    left: $sidePadding
+    right: $sidePadding
     display: flex
     align-items: center
     justify-content: space-between
@@ -45,24 +54,24 @@
       +normalTextStyles
       color: variables.$foreground-color
       margin: 0
+      text-overflow: ellipsis
+      overflow: hidden
+      white-space: nowrap
 
       &:last-child
         color: variables.$light-text
         text-align: right
 
   &.Focus, &:focus-within
-    background-color: variables.$skeleton-shine
-    border-color: variables.$light-text
+    &:not(.Disabled):not(.ReadOnly), &.Focus
+      background-color: variables.$skeleton-shine
+      border-color: #ABABAB
 
   &.NormalPadding
     input
       padding: $topPadding $sidePadding
       width: calc(100% - #{$sidePadding} * 2)
       text-align: left
-
-    .Placeholder
-      left: $sidePadding
-      right: $sidePadding
 
   input:not(:placeholder-shown) + .Placeholder
     opacity: 0
