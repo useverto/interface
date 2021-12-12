@@ -22,13 +22,14 @@ import {
 } from "@iconicicons/react";
 import { OrderType } from "../utils/order";
 import { expandAnimation, opacityAnimation } from "../utils/animations";
+import { useMediaPredicate } from "react-media-hook";
+import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
 import styles from "../styles/views/swap.module.sass";
-import SwapInput from "../components/SwapInput";
 
 const Swap = () => {
   // arconnect helper
@@ -81,6 +82,9 @@ const Swap = () => {
 
   // input for the price for one
   const priceInput = useInput<number>(0);
+
+  // is the device size = mobile
+  const mobile = useMediaPredicate("(max-width: 720px)");
 
   return (
     <Page>
@@ -282,12 +286,41 @@ const Swap = () => {
         </Card>
       </div>
       <Spacer y={4} />
-      <h1 className="Title">
-        Orderbook
+      <div className={"Title " + styles.OrderBookTitle}>
+        <h1>
+          Orderbook
+          <span className={styles.PairTitle}>ARDRIVE / VRT</span>
+        </h1>
         <Select label="DEPTH" small className={styles.DepthSelect}>
           <option value="0">0</option>
         </Select>
-      </h1>
+      </div>
+      <Spacer y={2} />
+      <div className={styles.OrderBook}>
+        <Card className={styles.OrderBookCard}>
+          <h1>Buy Orders</h1>
+          <table>
+            <thead>
+              <th>Side</th>
+              <th>Price (VRT)</th>
+              <th>Amount</th>
+              <th>Total</th>
+            </thead>
+          </table>
+        </Card>
+        {mobile && <Spacer y={3.5} />}
+        <Card className={styles.OrderBookCard}>
+          <h1>Sell Orders</h1>
+          <table>
+            <thead>
+              <th>Side</th>
+              <th>Price (ARDRIVE)</th>
+              <th>Amount</th>
+              <th>Total</th>
+            </thead>
+          </table>
+        </Card>
+      </div>
       <Spacer y={2} />
       <Modal {...permissionModal.bindings}>
         <Modal.Title>Missing permissions</Modal.Title>
