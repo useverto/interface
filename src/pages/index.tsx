@@ -8,9 +8,13 @@ import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMediaPredicate } from "react-media-hook";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
-import { CACHE_URL } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/faces";
 import { getType } from "../utils/order";
+import {
+  fetchContract,
+  fetchRandomArtwork,
+  fetchUsers,
+} from "verto-cache-interface";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -46,7 +50,7 @@ const Home = ({ artwork }: { artwork: any }) => {
     };
   }, []);
 
-  const [arworkData, setArtworkData] = useState(artwork);
+  const [artworkData, setArtworkData] = useState(artwork);
 
   useEffect(() => {
     (async () => {
@@ -89,11 +93,11 @@ const Home = ({ artwork }: { artwork: any }) => {
       match?: string;
     }[];
   };
-  const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);
+  /*const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);*/
 
   const mobile = useMediaPredicate("(max-width: 720px)");
 
-  useEffect(() => {
+  /*useEffect(() => {
     (async () => {
       const { data: activities } = await axios.get(
         `${CACHE_URL}/latest-activity`
@@ -123,7 +127,7 @@ const Home = ({ artwork }: { artwork: any }) => {
         )
       );
     })();
-  }, []);
+  }, []);*/
 
   return (
     <>
@@ -177,24 +181,40 @@ const Home = ({ artwork }: { artwork: any }) => {
           </div>
           <div className={styles.FeaturedToken}>
             <AnimatePresence>
-              {Object.keys(arworkData).length > 0 && (
+              {Object.keys(artworkData).length > 0 && (
                 <motion.div {...opacityAnimation()}>
-                  <Card.Asset
-                    name={arworkData.name}
-                    userData={{
-                      avatar: arworkData.owner?.image,
-                      name: arworkData.owner.name,
-                      usertag: arworkData.owner.username,
-                    }}
-                    price={arworkData.price || null}
-                    image={`https://arweave.net/${arworkData.id}`}
-                    onClick={() => router.push(`/space/${arworkData.id}`)}
-                  />
+                  {(artworkData.type === "collection" && (
+                    <Card.Collection
+                      name={artworkData.name}
+                      images={artworkData.images.map(
+                        (txID) => `https://arweave.net/${txID}`
+                      )}
+                      userData={{
+                        avatar: artworkData.owner?.image,
+                        name: artworkData.owner.name,
+                        usertag: artworkData.owner.username,
+                      }}
+                      onClick={() => router.push(`/space/${artworkData.id}`)}
+                    />
+                  )) || (
+                    <Card.Asset
+                      name={artworkData.name}
+                      userData={{
+                        avatar: artworkData.owner?.image,
+                        name: artworkData.owner.name,
+                        usertag: artworkData.owner.username,
+                      }}
+                      price={artworkData.price || null}
+                      image={`https://arweave.net/${artworkData.id}`}
+                      onClick={() => router.push(`/space/${artworkData.id}`)}
+                    />
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </div>
+        {/** 
         <Spacer y={5} />
         <div className={styles.Section}>
           <h1 className={styles.Title}>Latest Activity</h1>
@@ -215,6 +235,8 @@ const Home = ({ artwork }: { artwork: any }) => {
             ))}
           </AnimatePresence>
         </div>
+        */}
+        <Spacer y={3} />
         <Spacer y={5} />
         <div className={styles.Section + " " + styles.PSTs}>
           <div className={styles.Text}>
@@ -286,7 +308,22 @@ const Home = ({ artwork }: { artwork: any }) => {
 };
 
 export async function getServerSideProps() {
-  const { data } = await axios.get(`${CACHE_URL}/site/artwork`);
+  const artwork = (await fetchRandomArtwork(1))?.entities?.[0];
+
+  if (!artwork) throw new Error();
+
+  const state = (await fetchContract(artwork.contractId)).state;
+  const owner = (await fetchUsers()).find(
+    (user) => user.username === artwork.lister
+  );
+
+  const data = {
+    id: artwork.contractId,
+    name: state.name,
+    type: artwork.type,
+    images: (artwork.type === "collection" && state.items.slice(0, 3)) || [],
+    owner,
+  };
 
   return { props: { artwork: data } };
 }
