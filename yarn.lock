@@ -366,10 +366,10 @@
     axios "^0.21.1"
     smartweave "^0.4.29"
 
-"@verto/ui@^2.1.24-alpha":
-  version "2.1.24-alpha"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.24-alpha.tgz#a98497ca761a617a06297befb05a8de1d4a35206"
-  integrity sha512-EJR6zJv4634UMDIekWtN54BiKMF3rb6/GDN7dT6c8A7CqZ2V9tX4qLoQXO4TJwi8eF75ZKFpPVlHOcSZV2XXvA==
+"@verto/ui@^2.1.25-alpha":
+  version "2.1.25-alpha"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-2.1.25-alpha.tgz#0b3530e7eff1b9ed07a9cec725c2343d8c06e413"
+  integrity sha512-KmhZhpjZyEXsI99ed1GKiofV95ZBgqY4YECmd2bPkP14sV4LyLcgS2Cu91cJKH7Z3aIYlipGwypfodzYmq2/BA==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     color-hash "^2.0.1"
@@ -557,6 +557,13 @@ axios@^0.21.1:
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
   dependencies:
     follow-redirects "^1.10.0"
+
+axios@^0.23.0:
+  version "0.23.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.23.0.tgz#b0fa5d0948a8d1d75e3d5635238b6c4625b05149"
+  integrity sha512-NmvAE4i0YAv5cKq8zlDoPd1VLKAqX5oLuZKs8xkJa4qi6RGn0uhCYFjWtHHC9EM/MwOwYWOs53W+V0aqEXq1sg==
+  dependencies:
+    follow-redirects "^1.14.4"
 
 "babel-plugin-styled-components@>= 1.12.0":
   version "1.12.0"
@@ -1468,6 +1475,11 @@ follow-redirects@^1.10.0:
   version "1.13.3"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
   integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
+
+follow-redirects@^1.14.4:
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.6.tgz#8cfb281bbc035b3c067d6cd975b0f6ade6e855cd"
+  integrity sha512-fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==
 
 foreach@^2.0.5:
   version "2.0.5"
@@ -3457,6 +3469,13 @@ util@^0.11.0:
   integrity sha512-HShAsny+zS2TZfaXxD9tYj4HQGlBezXZMZuM/S5PKLLoZkShZiGk9o5CzukI1LVHZvjdvZ2Sj1aW/Ndn2NB/HQ==
   dependencies:
     inherits "2.0.3"
+
+verto-cache-interface@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.0.7.tgz#91725f6acd2666261c9bab60b30ec65959b5ff69"
+  integrity sha512-rlUwnWzqLPXsSeXiM9Dm95La0SqDDiTUs80Skd5dJXmB1xXlazVJAgBPzwNOrZPJKusQBypP+T1AGEaNwSj0wg==
+  dependencies:
+    axios "^0.23.0"
 
 vm-browserify@1.1.2, vm-browserify@^1.0.1:
   version "1.1.2"
