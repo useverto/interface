@@ -21,7 +21,9 @@ import {
   UserIcon,
   UserPlusIcon,
   SearchIcon,
+  DollarIcon,
 } from "@iconicicons/react";
+import { RampInstantSDK } from "@ramp-network/ramp-instant-sdk";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { UserInterface } from "@verto/js/dist/faces";
@@ -271,6 +273,27 @@ const Nav = () => {
                 >
                   <BellIcon />
                   Notifications
+                </div>
+                <div
+                  className={
+                    styles.MenuItem +
+                    " " +
+                    (displayTheme === "Dark" ? styles.Dark : "")
+                  }
+                  onClick={() => {
+                    new RampInstantSDK({
+                      hostAppName: "Verto",
+                      hostLogoUrl:
+                        "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgdmlld0JveD0iMCAwIDUwMCA1MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMzE2Ljg0IDkuMTUxMThDNDQ5Ljc2OCA0Ni4wNDEgNTI3LjczOSAxODMuOTEyIDQ5MC44NDkgMzE2Ljg0QzQ1My45NTkgNDQ5Ljc2OCAzMTYuMDg4IDUyNy43MzkgMTgzLjE2IDQ5MC44NDlDNTAuMjMxOSA0NTMuOTU5IC0yNy43MzkgMzE2LjA4OCA5LjE1MTE4IDE4My4xNkM0Ni4wNDEgNTAuMjMxOSAxODMuOTEyIC0yNy43MzkgMzE2Ljg0IDkuMTUxMThaTTI4Mi41MjggMjc4LjE3MkMzMzcuNTY1IDI5My40MDggMzcwLjE0MSAzNTAuMDQzIDM1NS42MzkgNDA1LjI3OEMzNDEuMTM3IDQ2MC41MTIgMjg0LjkzOSA0OTMuODQgMjI5LjUxNyA0ODAuMDczQzIyOS4xMTIgNDc5Ljk2NCAyMjguNzA2IDQ3OS44NTYgMjI4LjMgNDc5Ljc0OEMyMjcuMzcyIDQ3OS41IDIyNi40NDIgNDc5LjI1MSAyMjUuNTEzIDQ3OC45OTRDMTMzLjczOSA0NTMuNTI1IDgyLjk3MTYgMzQzLjk4MyAxMDYuOTY0IDIyOS40NUwyODIuNTI4IDI3OC4xNzJaTTE0NC4zNjIgOTQuNzIyQzEyOS44NiAxNDkuOTU3IDE2Mi40MzcgMjA2LjU5MiAyMTcuNDczIDIyMS44MjhMMzkzLjAzNyAyNzAuNTVDNDE3LjAzIDE1Ni4wMTcgMzY2LjI2MiA0Ni40NzU0IDI3NC40ODggMjEuMDA2M0MyNzMuNTQ1IDIwLjc0NDYgMjcyLjYwMSAyMC40OTI2IDI3MS42NTkgMjAuMjQxMUMyNzEuMjY3IDIwLjEzNjUgMjcwLjg3NSAyMC4wMzIgMjcwLjQ4NCAxOS45MjY5QzIxNS4wNjIgNi4xNjA1MyAxNTguODY1IDM5LjQ4NzQgMTQ0LjM2MiA5NC43MjJaIiBmaWxsPSJibGFjayIvPgo8L3N2Zz4K",
+                      variant: "auto",
+                      swapAsset: "Arweave_AR",
+                      userAddress: address,
+                      hostApiKey: "vzszc8sq8z8ksrdxds6asctz2az8k6wx72xazdwb",
+                    }).show();
+                  }}
+                >
+                  <DollarIcon />
+                  Buy AR
                 </div>
                 <div
                   className={
