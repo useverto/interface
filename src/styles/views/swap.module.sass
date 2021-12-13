@@ -341,26 +341,29 @@
       border-radius: 1.5em
       padding: .4em .8em
       margin:
-        left: $sidePadding
+        left: $sidePadding / 2
         bottom: $topPadding
       width: max-content
 
       @media screen and (max-width: variables.$mobile-screen)
         font-size: 1.3em
+        margin-bottom: $topPadding / 2
 
     table
       width: 100%
-      border-collapse: collapse
+      border-collapse: separate
+      border-spacing: 0 .5em
 
       thead
-        border-bottom: 1px dashed variables.$cec
-
         th
+          $topPadding: .5em
           color: variables.$light-text
           font-weight: 400
           font-size: 1.05em
-          padding: .5em 0
+          padding: $topPadding 0
           text-align: center
+          border-bottom: 1px dashed variables.$cec
+          margin-bottom: $topPadding
 
           @media screen and (max-width: variables.$mobile-screen)
             font-size: .9em

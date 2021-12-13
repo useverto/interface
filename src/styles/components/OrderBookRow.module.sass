@@ -1,0 +1,52 @@
+@use "../variables"
+
+.OrberBookRow
+  position: relative
+  $buyTheme: #5EDBAF
+  $sellTheme: #FE157D
+
+  td
+    text-align: center
+    font-size: 1.2em
+    font-weight: 400
+    line-height: 1em
+    padding: .5em 1.5em
+    color: variables.$light-text
+    margin: .15em 0
+    z-index: 5
+
+    @media screen and (max-width: variables.$mobile-screen)
+      padding: .2em 1.2em
+      font-size: .85em
+
+    &.OrderType
+      text-align: left
+      font-weight: 600
+      text-transform: capitalize
+
+    &.Total
+      text-align: right
+
+  .Fill
+    position: absolute
+    z-index: 1
+    right: 0
+    top: 0
+    bottom: 0
+    border-top-left-radius: 7px
+    border-bottom-left-radius: 7px
+    transition: all .23s ease-in-out
+
+  &.Theme_buy
+    td.OrderType
+      color: $buyTheme
+
+    .Fill
+      background-color: rgba($buyTheme, .3)
+
+  &.Theme_sell
+    td.OrderType
+      color: $sellTheme
+    
+    .Fill
+      background-color: rgba($sellTheme, .2)
