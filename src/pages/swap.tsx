@@ -185,6 +185,23 @@ const Swap = () => {
                 <SwapInput {...tokenSearchInput.bindings}>
                   <p>Search for token or contract address</p>
                 </SwapInput>
+                <Spacer y={2} />
+                <div className={styles.TokenSelectList}>
+                  <div className={styles.TokenItem}>
+                    <img
+                      src="https://verto.exchange/logo_light.svg"
+                      alt="token-icon"
+                    />
+                    <Spacer x={1.25} />
+                    <div>
+                      <h1>Verto</h1>
+                      <p>
+                        <span>VRT</span> · ljeWncmsS...WLsnwqp
+                      </p>
+                    </div>
+                  </div>
+                  <Spacer y={0.75} />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

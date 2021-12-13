@@ -112,8 +112,45 @@
             &:active
               transform: scale(.8)
 
+        .TokenSelectList
+          overflow-y: auto
+
+          .TokenItem
+            display: flex
+            align-items: center
+            cursor: pointer
+            padding: .7em 1em
+            border-radius: 12px
+            transition: all .23s ease-in-out
+
+            &:hover
+              background-color: rgba(#000, .1)
+
+            &:active
+              transform: scale(.975)
+            
+            img
+              width: 2.6em
+
+            h1
+              font-size: 1.75em
+              color: variables.$foreground-color
+              font-weight: 500
+              line-height: 1em
+              margin: 0
+                bottom: .05em
+
+            p
+              font-size: .96em
+              color: variables.$light-text
+              font-weight: 500
+              margin: 0
+
       &.SwapOverlayDark
         background-color: rgba(#030a23, .67)
+
+        &.SelectToken .TokenSelectList .TokenItem:hover
+          background-color: rgba(#fff, .1)
 
     .Head
       padding: 2em $sidePadding 1.7em
