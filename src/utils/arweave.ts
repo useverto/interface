@@ -3,12 +3,14 @@ import Arweave from "arweave";
 import axios from "axios";
 import moment from "moment";
 import ArDB from "ardb";
+import Verto from "@verto/js";
 
 export const client = new Arweave({
   host: "arweave.net",
   port: 443,
   protocol: "https",
 });
+export const verto = new Verto("use_wallet", client);
 
 const gql = new ArDB(client);
 
@@ -19,6 +21,7 @@ export const COLLECTION_CONTRACT_SRC =
   "HGV5DRY45TPTUJ0GERYgaaJoTXdMpU_lhtnI0ehJbe4";
 export const COLLECTIBLE_CONTRACT_SRC =
   "K2s2nciTrl4pk2Nvlvzba-DnWrkm45bo4qMPR7zFpzI";
+export const VERTO_CONTRACT_PST = "usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A";
 
 export const balanceHistory = async (
   address: string

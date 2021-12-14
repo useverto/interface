@@ -15,7 +15,7 @@ import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { Art, TokenType } from "../../utils/user";
-import { arPrice, CACHE_URL } from "../../utils/arweave";
+import { arPrice, CACHE_URL, verto as client } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
@@ -23,14 +23,11 @@ import { SearchIcon } from "@iconicicons/react";
 import Search, { useSearch } from "../../components/Search";
 import useSWR from "swr";
 import axios from "axios";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
 import useInfiniteScroll from "../../utils/infinite_scroll";
 import styles from "../../styles/views/space.module.sass";
-
-const client = new Verto();
 
 const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: tokens } = useSWR(
@@ -143,7 +140,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 
   useEffect(() => {
     (async () => {
-      const user = (await client.getUser(address)) ?? null;
+      const user = (await client.user.getUser(address)) ?? null;
       setUserData(user);
     })();
   }, []);

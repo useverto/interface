@@ -28,14 +28,16 @@ import { fixUserImage } from "../../utils/user";
 import { UserInterface } from "@verto/js/dist/faces";
 import { cardAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
-import { client as arweave, isAddress } from "../../utils/arweave";
+import {
+  client as arweave,
+  isAddress,
+  verto as client,
+} from "../../utils/arweave";
 import { smartweave } from "smartweave";
 import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import styles from "../../styles/views/collection.module.sass";
-
-const client = new Verto();
 
 const Collection = ({
   id,
@@ -56,7 +58,7 @@ const Collection = ({
       const users: UserInterfaceWithGradient[] = [];
 
       for (const addr of collaborators) {
-        const user = await client.getUser(addr);
+        const user = await client.user.getUser(addr);
 
         if (user && !users.find(({ username }) => username === user.username)) {
           users.push(fixUserImage(user));

@@ -34,3 +34,29 @@ export function formatArweave(val: number | string = 0, short = false) {
   }
   return val.slice(0, 10);
 }
+
+/**
+ * Get the date today
+ *
+ * @returns First milisecond date of today
+ */
+export function today() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return today;
+}
+
+/**
+ * Get the next day for a date
+ *
+ * @param today The date to get the next day for
+ * @returns The next day
+ */
+export function nextDay(today: Date) {
+  const date = new Date(today);
+  date.setHours(0, 0, 0, 0);
+  date.setDate(new Date(date).getDate() + 1);
+
+  return date;
+}

@@ -1,5 +1,6 @@
 import { CheckIcon, EditIcon, PlusIcon } from "@iconicicons/react";
-import { PriceInterface, TokenInterface } from "@verto/js/dist/faces";
+import { TokenInterface, TokenType } from "@verto/js/dist/faces";
+import { verto as client, VERTO_CONTRACT_PST } from "../utils/arweave";
 import {
   Button,
   Modal,
@@ -16,23 +17,27 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardAnimation, opacityAnimation } from "../utils/animations";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
+import { nextDay, today } from "../utils/format";
 import {
   watchlist as store_name,
   watchlistPeriod,
 } from "../utils/storage_names";
-import Verto from "@verto/js";
 import dayjs from "dayjs";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import axios from "axios";
 import styles from "../styles/components/Watchlist.module.sass";
+import { fetchTokenStateMetadata } from "verto-cache-interface";
 
-const client = new Verto();
-type WatchlistItem = PriceInterface & {
+interface WatchlistItem {
   id: string;
   priceHistory: {
     [date: string]: number;
   };
-};
+  price: number;
+  name: string;
+  ticker: string;
+  type: TokenType;
+}
 dayjs.extend(isTomorrow);
 
 const Watchlist = () => {
@@ -95,10 +100,22 @@ const Watchlist = () => {
           continue;
         }
         try {
+          const metadata = await fetchTokenStateMetadata(id);
           const data: WatchlistItem = {
             id,
-            ...(await client.getPrice(id)),
-            priceHistory: await client.getPriceHistory(id),
+            // price in VRT
+            price: await client.token.getPrice(
+              [id, VERTO_CONTRACT_PST],
+              [today(), nextDay(today())]
+            ),
+            // TODO
+            priceHistory: await client.token.getPriceHistory([
+              id,
+              VERTO_CONTRACT_PST,
+            ]),
+            name: metadata.name,
+            ticker: metadata.ticker,
+            type: await client.token.getTokenType(id),
           };
 
           setItems((val) => [...val, data]);
@@ -120,7 +137,7 @@ const Watchlist = () => {
   // load all tokens
   useEffect(() => {
     (async () => {
-      const res = await client.getTokens(true);
+      const res = await client.token.getTokens("community");
       setTokens([
         { id: "AR", name: "Arweave", ticker: "AR" },
         { id: "ETH", name: "Ethereum", ticker: "ETH" },

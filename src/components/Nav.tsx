@@ -29,14 +29,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
+import { verto as client } from "../utils/arweave";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
-import Verto from "@verto/js";
 import SetupModal from "./SetupModal";
 import styles from "../styles/components/Nav.module.sass";
-
-const client = new Verto();
 
 const Nav = () => {
   const address = useSelector((state: RootState) => state.addressReducer);
@@ -122,7 +120,7 @@ const Nav = () => {
 
   useEffect(() => {
     if (address) {
-      client.getUser(address).then((res) => setUser(res));
+      client.user.getUser(address).then((res) => setUser(res));
       window.addEventListener("walletSwitch", syncAddress);
     }
 
@@ -137,7 +135,7 @@ const Nav = () => {
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
     await syncAddress();
 
-    const user = await client.getUser(
+    const user = await client.user.getUser(
       await window.arweaveWallet.getActiveAddress()
     );
     if (!user) setupModal.setState(true);

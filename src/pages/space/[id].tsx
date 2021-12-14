@@ -1,12 +1,10 @@
 import { Page } from "@verto/ui";
-import { CACHE_URL, isAddress } from "../../utils/arweave";
+import { CACHE_URL, isAddress, verto as client } from "../../utils/arweave";
 import Verto from "@verto/js";
 import axios from "axios";
 import Community from "../../components/space/Community";
 import Collection from "../../components/space/Collection";
 import Art from "../../components/space/Art";
-
-const client = new Verto();
 
 const Token = (props) => {
   // TODO: custom layout

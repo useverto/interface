@@ -18,7 +18,7 @@ import { formatAddress } from "../utils/format";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { interactWrite } from "smartweave";
-import { client, COMMUNITY_CONTRACT } from "../utils/arweave";
+import { client, COMMUNITY_CONTRACT, verto } from "../utils/arweave";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { UserInterface } from "@verto/js/dist/faces";
@@ -27,7 +27,6 @@ import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";
 import Github from "./icons/Github";
 import useArConnect from "use-arconnect";
-import Verto from "@verto/js";
 import styles from "../styles/components/SetupModal.module.sass";
 
 const socialProfileRegex = /^((?!((https?:\/\/)|@))[^\s]+|(?![\s\S]))$/;
@@ -62,8 +61,7 @@ export default function SetupModal(props: Props) {
     (async () => {
       if (!arconnect || !currentAddress) return;
 
-      const verto = new Verto();
-      const userData = await verto.getUser(currentAddress);
+      const userData = await verto.user.getUser(currentAddress);
       const arconnectAddresses = await arconnect.getAllAddresses();
 
       setUser(userData);

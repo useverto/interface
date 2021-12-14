@@ -15,7 +15,7 @@ import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, verto as client } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import Verto from "@verto/js";
@@ -25,7 +25,6 @@ import Metas from "../../components/Metas";
 import dayjs from "dayjs";
 import styles from "../../styles/views/community.module.sass";
 
-const client = new Verto();
 dayjs.extend(isTomorrow);
 
 const Community = (props: PropTypes) => {
@@ -129,8 +128,10 @@ const Community = (props: PropTypes) => {
 
     if (target.state === "") return target.setStatus("error");
 
-    const balances = await client.getBalances(address);
-    const tokenBalance = balances.find(({ id }) => id === props.id);
+    const balances = await client.user.getBalances(address);
+    const tokenBalance = balances.find(
+      ({ contractId }) => contractId === props.id
+    );
 
     if (!tokenBalance || tokenBalance.balance < amount.state)
       return amount.setStatus("error");
@@ -138,7 +139,7 @@ const Community = (props: PropTypes) => {
     setTransferring(true);
 
     try {
-      await client.transfer(amount.state, props.id, target.state);
+      await client.token.transfer(amount.state, props.id, target.state);
       setToast({
         description: `Transferring ${amount.state.toLocaleString()} ${
           props.ticker

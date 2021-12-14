@@ -24,13 +24,12 @@ import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
-import { CACHE_URL, isAddress } from "../../utils/arweave";
+import { CACHE_URL, isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
-import Verto from "@verto/js";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
 import Instagram from "../../components/icons/Instagram";
@@ -40,8 +39,6 @@ import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
 import marked from "marked";
 import styles from "../../styles/views/user.module.sass";
-
-const client = new Verto();
 
 const User = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
@@ -115,10 +112,11 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
       if (props.user) {
         for (const address of props.user.addresses) {
-          res.push(...(await client.getOrders(address)));
+          res.push(...(await client.user.getOrders(address)));
         }
-      } else res.push(...(await client.getOrders(props.input)));
+      } else res.push(...(await client.user.getOrders(props.input)));
 
+      // TODO: add timestamp to order
       setOrders(res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5));
     })();
   }, []);
@@ -411,7 +409,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           small
           onClick={async () => {
             try {
-              await client.cancel(cancelID);
+              await client.exchange.cancel(cancelID);
               setCancelID("");
               cancelModal.setState(false);
               addToCancel(cancelID);

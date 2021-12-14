@@ -22,21 +22,17 @@ import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { UserData } from "@verto/ui/dist/components/Card";
 import { TokenType } from "../../utils/user";
-import { OrderBookInterface } from "@verto/js/dist/faces";
 import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, verto as client } from "../../utils/arweave";
 import { ExtendedUserInterface } from "../../pages/swap";
-import Verto from "@verto/js";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import marked from "marked";
 import useGeofence from "../../utils/geofence";
 import styles from "../../styles/views/art.module.sass";
-
-const client = new Verto();
 
 const Art = (props: PropTypes) => {
   const [fullScreen, setFullScreen] = useState(false);

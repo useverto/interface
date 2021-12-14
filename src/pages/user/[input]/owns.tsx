@@ -1,18 +1,20 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useRouter } from "next/router";
-import { arPrice, CACHE_URL, isAddress } from "../../../utils/arweave";
+import {
+  arPrice,
+  CACHE_URL,
+  isAddress,
+  verto as client,
+} from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { Art } from "../../../utils/user";
 import axios from "axios";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
 import styles from "../../../styles/views/user.module.sass";
-
-const client = new Verto();
 
 const Owns = (props: {
   user: UserInterface | null;
@@ -124,7 +126,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { input } }) {
-  const user = (await client.getUser(input)) ?? null;
+  const user = (await client.user.getUser(input)) ?? null;
   const owns: Art[] = [];
 
   // redirect if the user cannot be found and if it is not and address either

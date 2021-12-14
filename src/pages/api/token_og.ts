@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // TODO: gradient
 import { randomEmoji } from "../../utils/user";
-import { CACHE_URL } from "../../utils/arweave";
+import { CACHE_URL, verto as client } from "../../utils/arweave";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
-import Verto from "@verto/js";
 import axios from "axios";
 
 export default async function TokenOG(
@@ -15,8 +14,6 @@ export default async function TokenOG(
 
   if (!id || typeof id !== "string")
     return res.status(400).send("Missing or invalid token ID");
-
-  const client = new Verto();
 
   const priceHistory = await client.getPriceHistory(id);
   const { data: gecko } = await axios.get(

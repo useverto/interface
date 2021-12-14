@@ -1,15 +1,12 @@
-import { BalanceInterface, UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/faces";
 import {
   Card,
-  Modal,
   Page,
   Spacer,
   Tooltip,
   useModal,
   useTheme,
   useToasts,
-  Avatar,
-  Button,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { RootState } from "../store/reducers";
@@ -25,19 +22,11 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
   ArrowRightIcon,
-  ChevronRightIcon,
 } from "@iconicicons/react";
-import {
-  arPrice,
-  CACHE_URL,
-  isAddress,
-  client as arweave,
-} from "../utils/arweave";
+import { arPrice, CACHE_URL, verto as client } from "../utils/arweave";
+import { UserBalance } from "verto-cache-interface";
 import { useRouter } from "next/router";
-import { formatAddress } from "../utils/format";
-import { interactWrite } from "smartweave";
 import Balance from "../components/Balance";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import Watchlist from "../components/Watchlist";
@@ -46,10 +35,8 @@ import Link from "next/link";
 import ListingModal from "../components/ListingModal";
 import styles from "../styles/views/app.module.sass";
 
-const client = new Verto();
-
 const App = () => {
-  const [balances, setBalances] = useState<BalanceInterface[]>([]);
+  const [balances, setBalances] = useState<UserBalance[]>([]);
   const address = useSelector((state: RootState) => state.addressReducer);
   const [showMorePsts, setShowMorePsts] = useState(false);
   const theme = useTheme();
@@ -67,7 +54,7 @@ const App = () => {
     setLoadingOwned(true);
 
     (async () => {
-      const user = (await client.getUser(address)) ?? null;
+      const user = (await client.user.getUser(address)) ?? null;
       setUserData(user);
 
       const { data: ownedCollectibles } = await axios.get(
@@ -98,27 +85,34 @@ const App = () => {
 
       if (user) {
         for (const addr of user.addresses) {
-          const addressBalances = await client.getBalances(addr);
+          const addressBalances = await client.user.getBalances(addr);
 
           setBalances((val) =>
             [
               ...val.filter(
                 (existingBalance) =>
-                  !addressBalances.find(({ id }) => id === existingBalance.id)
+                  !addressBalances.find(
+                    ({ contractId }) =>
+                      contractId === existingBalance.contractId
+                  )
               ),
               ...addressBalances.map((addBalance) => ({
                 ...addBalance,
                 balance:
                   addBalance.balance +
-                  (val.find(({ id }) => id === addBalance.id)?.balance ?? 0),
+                  (val.find(
+                    ({ contractId }) => contractId === addBalance.contractId
+                  )?.balance ?? 0),
               })),
-            ].filter(({ id }) => !ownedCollectibles.includes(id))
+            ].filter(
+              ({ contractId }) => !ownedCollectibles.includes(contractId)
+            )
           );
         }
       } else
         setBalances(
-          (await client.getBalances(address)).filter(
-            ({ id }) => !ownedCollectibles.includes(id)
+          (await client.user.getBalances(address)).filter(
+            ({ contractId }) => !ownedCollectibles.includes(contractId)
           )
         );
     })();
@@ -163,7 +157,7 @@ const App = () => {
             (showMorePsts || i < 4) && (
               <motion.div key={i} {...cardListAnimation(i)}>
                 <Card.Balance
-                  id={item.id}
+                  id={item.contractId}
                   name={item.name}
                   // @ts-ignore
                   ticker={item.ticker ?? ""}

@@ -7,9 +7,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMediaPredicate } from "react-media-hook";
-import { cardListAnimation, opacityAnimation } from "../utils/animations";
+import { opacityAnimation } from "../utils/animations";
+import { verto as client } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/faces";
-import { getType } from "../utils/order";
 import {
   fetchContract,
   fetchRandomArtwork,
@@ -18,13 +18,10 @@ import {
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
 import styles from "../styles/views/home.module.sass";
-
-const client = new Verto();
 
 const Home = ({ artwork }: { artwork: any }) => {
   const address = useSelector((state: RootState) => state.addressReducer);
@@ -54,7 +51,8 @@ const Home = ({ artwork }: { artwork: any }) => {
 
   useEffect(() => {
     (async () => {
-      const res = await client.getPrice(artwork.id);
+      // TODO
+      // const res = await client.getPrice(artwork.id);
       const { data: gecko } = await axios.get(
         "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
       );
@@ -67,7 +65,8 @@ const Home = ({ artwork }: { artwork: any }) => {
             ? `https://arweave.net/${artwork.owner.image}`
             : undefined,
         },
-        price: res?.price ? (res.price * gecko.arweave.usd).toFixed(2) : null,
+        //price: res?.price ? (res.price * gecko.arweave.usd).toFixed(2) : null,
+        price: 0 ? (0 * gecko.arweave.usd).toFixed(2) : null,
       }));
     })();
   }, []);
@@ -80,7 +79,7 @@ const Home = ({ artwork }: { artwork: any }) => {
     const activeAddress = await window.arweaveWallet.getActiveAddress();
     dispatch(updateAddress(activeAddress));
 
-    const user = await client.getUser(activeAddress);
+    const user = await client.user.getUser(activeAddress);
 
     if (!user) setupModal.setState(true);
   }
@@ -313,9 +312,7 @@ export async function getServerSideProps() {
   if (!artwork) throw new Error();
 
   const state = (await fetchContract(artwork.contractId)).state;
-  const owner = (await fetchUsers()).find(
-    (user) => user.username === artwork.lister
-  );
+  const owner = client.user.getUser(artwork.lister);
 
   const data = {
     id: artwork.contractId,

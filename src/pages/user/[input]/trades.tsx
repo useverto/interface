@@ -15,12 +15,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store/reducers";
 import { addToCancel, getCancelledOrders } from "../../../utils/order";
 import { useRouter } from "next/router";
-import { isAddress } from "../../../utils/arweave";
-import Verto from "@verto/js";
+import { isAddress, verto as client } from "../../../utils/arweave";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
-
-const client = new Verto();
 
 const Trades = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
@@ -43,10 +40,11 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
 
       if (props.user) {
         for (const address of props.user.addresses) {
-          res.push(...(await client.getOrders(address)));
+          res.push(...(await client.user.getOrders(address)));
         }
-      } else res.push(...(await client.getOrders(props.input)));
+      } else res.push(...(await client.user.getOrders(props.input)));
 
+      // TODO
       setOrders(res.sort((a, b) => b.timestamp - a.timestamp));
     })();
   }, []);
@@ -138,7 +136,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
           small
           onClick={async () => {
             try {
-              await client.cancel(cancelID);
+              await client.exchange.cancel(cancelID);
               setCancelID("");
               cancelModal.setState(false);
               addToCancel(cancelID);
@@ -172,7 +170,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { input } }) {
-  const user = (await client.getUser(input)) ?? null;
+  const user = (await client.user.getUser(input)) ?? null;
 
   // redirect if the user cannot be found and if it is not and address either
   if (!isAddress(input) && !user)

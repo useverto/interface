@@ -356,15 +356,15 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^0.0.0-alpha.19":
-  version "0.0.0-alpha.19"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-0.0.0-alpha.19.tgz#c78e9245be04005d12af1806c245857465b98a22"
-  integrity sha512-NQVikolsmohvmJlSmxRiJC8lX6QASFbVnVF79g77TkOVVGH/uaBlYe8MS+ZlsMJDB9c4B+OBp2ARjrEhWzSIKQ==
+"@verto/js@^1.0.0-beta-1":
+  version "1.0.0-beta-1"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-1.tgz#8463650a8df56883b1ccad900925464704eb56a0"
+  integrity sha512-Z48TboMvBlme1/GNmItK39dAVSuSEngWS3Hs6stCjphjWFaMrhruaNktYW2EEi/P1XgXLXaaMT0E5tA40ccpqQ==
   dependencies:
-    ardb "^1.0.8"
-    arweave "^1.10.13"
-    axios "^0.21.1"
-    smartweave "^0.4.29"
+    ar-gql "^0.0.6"
+    arweave "^1.10.18"
+    axios "^0.24.0"
+    verto-cache-interface "^1.0.7"
 
 "@verto/ui@^2.1.25-alpha":
   version "2.1.25-alpha"
@@ -511,6 +511,17 @@ arweave@^1.10.15, arweave@^1.9.1:
     base64-js "^1.3.1"
     bignumber.js "^9.0.1"
 
+arweave@^1.10.18:
+  version "1.10.18"
+  resolved "https://registry.yarnpkg.com/arweave/-/arweave-1.10.18.tgz#3042edd1afa52b7c3caeacf88271758232c7b866"
+  integrity sha512-i3pKBkLtU1Jl9RtJ9A6zgz8QqF5FZy7YA+qGQ9i2Zug171p29FTDZhN+KlRcVBg8sEgd1DKyecCCYJZ3K6Jdfg==
+  dependencies:
+    arconnect "^0.2.8"
+    asn1.js "^5.4.1"
+    axios "^0.22.0"
+    base64-js "^1.3.1"
+    bignumber.js "^9.0.1"
+
 asn1.js@^5.2.0, asn1.js@^5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/asn1.js/-/asn1.js-5.4.1.tgz#11a980b84ebb91781ce35b0fdc2ee294e3783f07"
@@ -558,10 +569,24 @@ axios@^0.21.1:
   dependencies:
     follow-redirects "^1.10.0"
 
+axios@^0.22.0:
+  version "0.22.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.22.0.tgz#bf702c41fb50fbca4539589d839a077117b79b25"
+  integrity sha512-Z0U3uhqQeg1oNcihswf4ZD57O3NrR1+ZXhxaROaWpDmsDTx7T2HNBV2ulBtie2hwJptu8UvgnJoK+BIqdzh/1w==
+  dependencies:
+    follow-redirects "^1.14.4"
+
 axios@^0.23.0:
   version "0.23.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.23.0.tgz#b0fa5d0948a8d1d75e3d5635238b6c4625b05149"
   integrity sha512-NmvAE4i0YAv5cKq8zlDoPd1VLKAqX5oLuZKs8xkJa4qi6RGn0uhCYFjWtHHC9EM/MwOwYWOs53W+V0aqEXq1sg==
+  dependencies:
+    follow-redirects "^1.14.4"
+
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
   dependencies:
     follow-redirects "^1.14.4"
 
@@ -2936,25 +2961,6 @@ smartweave@^0.4.10:
     "@types/inquirer" "^7.3.1"
     "@weavery/clarity" "^0.1.5"
     arweave "^1.10.15"
-    bignumber.js "^9.0.1"
-    chalk "^4.1.0"
-    clui "^0.3.6"
-    figlet "^1.5.0"
-    inquirer "^7.3.3"
-    json-beautify "^1.1.1"
-    loglevel "^1.7.0"
-    sentencer "^0.2.1"
-    yargs "^16.2.0"
-
-smartweave@^0.4.29:
-  version "0.4.29"
-  resolved "https://registry.yarnpkg.com/smartweave/-/smartweave-0.4.29.tgz#81b375f6b9aee8efbe6865e454a294727836be16"
-  integrity sha512-NscAXWBtsdhHFWzgmxP8UxdoRJ4kl3hcRJr4uVDw7W5WHoJCc/fiirFbeXKq7+hvfCTtFCjvv7cNUOtUbkbXYg==
-  dependencies:
-    "@types/clui" "^0.3.0"
-    "@types/inquirer" "^7.3.1"
-    "@weavery/clarity" "^0.1.5"
-    arweave "^1.10.11"
     bignumber.js "^9.0.1"
     chalk "^4.1.0"
     clui "^0.3.6"

@@ -16,8 +16,8 @@ import {
   CACHE_URL,
   client,
   COLLECTION_CONTRACT_SRC,
-  COMMUNITY_CONTRACT,
   isAddress,
+  verto,
 } from "../utils/arweave";
 import {
   PlusIcon,
@@ -37,8 +37,6 @@ import Verto from "@verto/js";
 import axios from "axios";
 import styles from "../styles/components/ListingModal.module.sass";
 
-const verto = new Verto();
-
 const CollectionModal = (props: Props) => {
   const { setToast } = useToasts();
   const collectionNameInput = useInput<string>("");
@@ -56,7 +54,7 @@ const CollectionModal = (props: Props) => {
     setCollaborators([]);
     setItems([]);
     setUserQuery("");
-    verto
+    verto.user
       .getUser(activeAddress)
       .then((user) => setCollaborators([fixUserImage(user)]));
   }, [props.open]);
@@ -253,7 +251,7 @@ const CollectionModal = (props: Props) => {
       // the current user, we make sure to add it here
       // as well
       if (!initialState.collaborators.includes(activeAddress)) {
-        const currentUser = await verto.getUser(activeAddress);
+        const currentUser = await verto.user.getUser(activeAddress);
         initialState.collaborators.push(...currentUser.addresses);
       }
 
@@ -276,11 +274,7 @@ const CollectionModal = (props: Props) => {
 
       // listing the collection via its contract ID
       try {
-        await interactWrite(client, "use_wallet", COMMUNITY_CONTRACT, {
-          function: "list",
-          id: contractTx.id,
-          type: "collection",
-        });
+        await verto.token.list(contractTx.id, "collection");
 
         setToast({
           description: "Collection created and listed",

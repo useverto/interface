@@ -3,16 +3,13 @@ import { TransactionInterface, UserInterface } from "@verto/js/dist/faces";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useRouter } from "next/router";
-import { isAddress } from "../../../utils/arweave";
+import { isAddress, verto as client } from "../../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { formatAddress } from "../../../utils/format";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
 import styles from "../../../styles/views/user.module.sass";
-
-const client = new Verto();
 
 const Transactions = (props: {
   user: UserInterface | null;
@@ -127,7 +124,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { input } }) {
-  const user = (await client.getUser(input)) ?? null;
+  const user = (await client.user.getUser(input)) ?? null;
   let txs = [];
 
   // redirect if the user cannot be found and if it is not and address either
@@ -149,8 +146,8 @@ export async function getStaticProps({ params: { input } }) {
 
   if (user) {
     for (const address of user.addresses)
-      txs.push(...(await client.getTransactions(address)));
-  } else txs.push(...(await client.getTransactions(input)));
+      txs.push(...(await client.user.getTransactions(address)));
+  } else txs.push(...(await client.user.getTransactions(input)));
 
   return { props: { user, input, txs }, revalidate: 1 };
 }
