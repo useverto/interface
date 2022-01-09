@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // TODO: gradient
 import { randomEmoji } from "../../utils/user";
-import { CACHE_URL, verto as client } from "../../utils/arweave";
+import { verto as client } from "../../utils/arweave";
+import { fetchContract } from "verto-cache-interface";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
 import axios from "axios";
@@ -24,9 +25,7 @@ export default async function TokenOG(
     (Object.values(priceHistory)?.[Object.values(priceHistory).length - 1] ??
       0);
 
-  let {
-    data: { state },
-  } = await axios.get(`${CACHE_URL}/${id}`);
+  let { state } = await fetchContract(id);
 
   if (state.settings)
     state.settings = Object.fromEntries(new Map(state.settings));

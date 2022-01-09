@@ -15,7 +15,7 @@ import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { Art, TokenType } from "../../utils/user";
-import { arPrice, CACHE_URL, verto as client } from "../../utils/arweave";
+import { arPrice, verto as client } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
@@ -148,6 +148,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 
   async function loadMore() {
     const items: UnifiedTokenInterface[] = [];
+    // TODO: tokens with pagination
     const { data } = await axios.get(
       `${CACHE_URL}/site/tokens/${allTokens.length}`
     );

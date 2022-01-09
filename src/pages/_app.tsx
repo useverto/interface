@@ -27,7 +27,6 @@ import {
   lastViewedChangelog,
   theme as themeStorageName,
 } from "../utils/storage_names";
-import { CACHE_URL } from "../utils/arweave";
 import { gt, valid } from "semver";
 import pkg from "../../package.json";
 import store from "../store";
@@ -260,7 +259,8 @@ const StatusChecker = ({ children }) => {
 
   // check cache
   useEffect(() => {
-    (async () => {
+    // TODO: cache ping
+    /*(async () => {
       try {
         const { data } = await axios({
           method: "GET",
@@ -281,7 +281,7 @@ const StatusChecker = ({ children }) => {
           duration: 7000,
         });
       }
-    })();
+    })();*/
   }, []);
 
   return <>{children}</>;

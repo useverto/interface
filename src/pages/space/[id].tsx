@@ -1,6 +1,10 @@
 import { Page } from "@verto/ui";
-import { CACHE_URL, isAddress, verto as client } from "../../utils/arweave";
-import Verto from "@verto/js";
+import { isAddress, verto as client } from "../../utils/arweave";
+import {
+  fetchCollectionById,
+  fetchContract,
+  fetchUserByUsername,
+} from "verto-cache-interface";
 import axios from "axios";
 import Community from "../../components/space/Community";
 import Collection from "../../components/space/Collection";
@@ -35,11 +39,9 @@ export async function getStaticProps({ params: { id } }) {
       },
     };
 
-  const {
-    data: { type, id: returnedID },
-  } = await axios.get(`${CACHE_URL}/site/type/${id}`);
+  const type = await client.token.getTokenType(id);
 
-  if (!type && !returnedID)
+  if (!type)
     return {
       redirect: {
         destination: "/404",
@@ -48,19 +50,19 @@ export async function getStaticProps({ params: { id } }) {
     };
 
   if (type === "collection") {
-    const { data } = await axios.get(`${CACHE_URL}/site/collection/${id}`);
+    const data = await fetchCollectionById(id);
+    const ownerData = await fetchUserByUsername(data.owner);
 
     return {
       props: {
         ...data,
         type: "collection",
+        owner: ownerData,
       },
       revalidate: 1,
     };
   } else {
-    const {
-      data: { state },
-    } = await axios.get(`${CACHE_URL}/${id}`);
+    const { state } = await fetchContract(id);
     const res = await client.getPrice(id);
 
     const { data: gecko } = await axios.get(

@@ -24,7 +24,7 @@ import {
   ArrowRightIcon,
 } from "@iconicicons/react";
 import { arPrice, CACHE_URL, verto as client } from "../utils/arweave";
-import { UserBalance } from "verto-cache-interface";
+import { fetchArtworkMetadata, UserBalance } from "verto-cache-interface";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
 import Head from "next/head";
@@ -57,6 +57,7 @@ const App = () => {
       const user = (await client.user.getUser(address)) ?? null;
       setUserData(user);
 
+      // TODO: use new cache
       const { data: ownedCollectibles } = await axios.get(
         `${CACHE_URL}/user/${user?.username ?? address}/owns`
       );
@@ -64,14 +65,13 @@ const App = () => {
       setOwned(
         await Promise.all(
           ownedCollectibles.map(async (artoworkID: string) => {
-            const { data } = await axios.get(
-              `${CACHE_URL}/site/artwork/${artoworkID}`
-            );
+            const data = await fetchArtworkMetadata(artoworkID);
+
             return {
               ...data,
               owner: {
-                ...data.owner,
-                image: data.owner.image
+                ...data.lister,
+                image: data.lister.image
                   ? `https://arweave.net/${data.owner.image}`
                   : undefined,
               },

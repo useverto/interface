@@ -11,7 +11,6 @@ import {
   generateAvatarGradient,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { interactWrite } from "smartweave";
 import {
   CACHE_URL,
   client,

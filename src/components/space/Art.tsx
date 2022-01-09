@@ -24,8 +24,9 @@ import { UserData } from "@verto/ui/dist/components/Card";
 import { TokenType } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
+import { fetchArtworkMetadata, fetchContract } from "verto-cache-interface";
 import { run } from "ar-gql";
-import { CACHE_URL, verto as client } from "../../utils/arweave";
+import { verto as client } from "../../utils/arweave";
 import { ExtendedUserInterface } from "../../pages/swap";
 import axios from "axios";
 import Head from "next/head";
@@ -70,8 +71,7 @@ const Art = (props: PropTypes) => {
   const [state, setState] = useState(null);
 
   useEffect(() => {
-    axios.get(`${CACHE_URL}/${props.id}`).then(({ data }) => {
-      let state = data.state;
+    fetchContract(props.id).then(({ state }) => {
       if (state.settings)
         state.settings = Object.fromEntries(new Map(state.settings));
 
@@ -84,13 +84,13 @@ const Art = (props: PropTypes) => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await axios.get(`${CACHE_URL}/site/artwork/${props.id}`);
+      const data = await fetchArtworkMetadata(props.id);
 
       setUserData({
-        name: data.owner.name,
-        usertag: data.owner.username,
-        avatar: data.owner.image
-          ? `https://arweave.net/${data.owner.image}`
+        name: data.lister.name,
+        usertag: data.lister.username,
+        avatar: data.lister.image
+          ? `https://arweave.net/${data.lister.image}`
           : undefined,
       });
     })();

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
-import { CACHE_URL } from "../utils/arweave";
-import axios from "axios";
+import { fetchRandomCommunitiesWithMetadata } from "verto-cache-interface";
 import styles from "../styles/components/PSTSwitcher.module.sass";
 
 const PSTSwitcher = () => {
@@ -28,9 +27,7 @@ const PSTSwitcher = () => {
   const router = useRouter();
 
   const fetch = async (index: number): Promise<boolean> => {
-    const { data: res } = await axios.get(
-      `${CACHE_URL}/site/communities/random`
-    );
+    const res = await fetchRandomCommunitiesWithMetadata();
 
     let imgs: typeof images;
     setImages((val) => {

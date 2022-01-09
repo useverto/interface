@@ -15,11 +15,10 @@ import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { CACHE_URL, verto as client } from "../../utils/arweave";
+import { verto as client } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
+import { fetchContract } from "verto-cache-interface";
 import isTomorrow from "dayjs/plugin/isTomorrow";
-import Verto from "@verto/js";
-import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import dayjs from "dayjs";
@@ -40,8 +39,7 @@ const Community = (props: PropTypes) => {
   const address = useSelector((state: RootState) => state.addressReducer);
 
   useEffect(() => {
-    axios.get(`${CACHE_URL}/${props.id}`).then(({ data }) => {
-      let state = data.state;
+    fetchContract(props.id).then(({ state }) => {
       if (state.settings)
         state.settings = Object.fromEntries(new Map(state.settings));
 

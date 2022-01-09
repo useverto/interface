@@ -24,7 +24,7 @@ import { RootState } from "../../store/reducers";
 import { useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
-import { CACHE_URL, isAddress, verto as client } from "../../utils/arweave";
+import { isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
 import SetupModal from "../../components/SetupModal";
@@ -39,6 +39,7 @@ import Facebook from "../../components/icons/Facebook";
 import axios from "axios";
 import marked from "marked";
 import styles from "../../styles/views/user.module.sass";
+import { fetchUserCreations } from "verto-cache-interface";
 
 const User = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
@@ -91,14 +92,14 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
   // load creations
   useEffect(() => {
-    axios
-      .get(`${CACHE_URL}/user/${props.input}/creations`)
-      .then(({ data }) => setCreations(data.slice(0, 4)))
+    fetchUserCreations(props.input)
+      .then((val) => setCreations(val.slice(0, 4)))
       .catch();
   }, []);
 
   // load owned
   useEffect(() => {
+    // TODO: owned (arts), not all tokens
     axios
       .get(`${CACHE_URL}/user/${props.input}/owns`)
       .then(({ data }) => setOwned(data.slice(0, 4)))
