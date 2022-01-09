@@ -10,11 +10,7 @@ import { useMediaPredicate } from "react-media-hook";
 import { opacityAnimation } from "../utils/animations";
 import { verto as client } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/faces";
-import {
-  fetchContract,
-  fetchRandomArtwork,
-  fetchUsers,
-} from "verto-cache-interface";
+import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
@@ -307,22 +303,13 @@ const Home = ({ artwork }: { artwork: any }) => {
 };
 
 export async function getServerSideProps() {
-  const artwork = (await fetchRandomArtwork(1))?.entities?.[0];
+  const artwork = await fetchRandomArtworkWithUser(1);
 
-  if (!artwork) throw new Error();
-
-  const state = (await fetchContract(artwork.contractId)).state;
-  const owner = client.user.getUser(artwork.lister);
-
-  const data = {
-    id: artwork.contractId,
-    name: state.name,
-    type: artwork.type,
-    images: (artwork.type === "collection" && state.items.slice(0, 3)) || [],
-    owner,
+  return {
+    props: {
+      artwork,
+    },
   };
-
-  return { props: { artwork: data } };
 }
 
 export default Home;

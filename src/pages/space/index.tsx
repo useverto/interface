@@ -20,6 +20,11 @@ import { UserInterface } from "@verto/js/dist/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { SearchIcon } from "@iconicicons/react";
+import {
+  fetchRandomArtworkWithUser,
+  fetchRandomCommunitiesWithMetadata,
+  fetchTopCommunities,
+} from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
 import useSWR from "swr";
 import axios from "axios";
@@ -30,22 +35,12 @@ import useInfiniteScroll from "../../utils/infinite_scroll";
 import styles from "../../styles/views/space.module.sass";
 
 const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
-  const { data: tokens } = useSWR(
-    "getTokens",
-    async () => {
-      const { data } = await axios.get(`${CACHE_URL}/site/communities/top`);
-      return data;
-    },
-    {
-      initialData: props.tokens,
-    }
-  );
+  const { data: tokens } = useSWR("getTokens", fetchTopCommunities, {
+    initialData: props.tokens,
+  });
   const { data: featured } = useSWR(
     "getFeatured",
-    async () => {
-      const { data } = await axios.get(`${CACHE_URL}/site/communities/random`);
-      return data;
-    },
+    fetchRandomCommunitiesWithMetadata,
     {
       initialData: props.featured,
     }
@@ -53,7 +48,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const { data: arts } = useSWR(
     "getArts",
     async () => {
-      const { data } = await axios.get(`${CACHE_URL}/site/artworks/random`);
+      const data = await fetchRandomArtworkWithUser(4);
       return data.map((val) => ({
         ...val,
         owner: {
@@ -409,12 +404,11 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 };
 
 export async function getStaticProps() {
-  const { data: tokens } = await axios.get(`${CACHE_URL}/site/communities/top`);
-  const { data: featured } = await axios.get(
-    `${CACHE_URL}/site/communities/random`
-  );
+  const tokens = await fetchTopCommunities();
+  const featured = await fetchRandomCommunitiesWithMetadata();
 
-  let { data: arts } = await axios.get(`${CACHE_URL}/site/artworks/random`);
+  // TODO: @ap
+  let arts = await fetchRandomArtworkWithUser(4);
 
   for (let i = 0; i < arts.length; i++)
     if (arts[i].owner.image)

@@ -1,4 +1,4 @@
-import { Spacer, useTheme } from "@verto/ui";
+import { useTheme } from "@verto/ui";
 import styles from "../styles/components/Footer.module.sass";
 
 const Footer = () => {
