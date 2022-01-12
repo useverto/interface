@@ -1,4 +1,4 @@
-import { UserInterface } from "@verto/js/dist/faces";
+import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
 import {
   Button,
   Page,
@@ -23,16 +23,18 @@ import {
 import { OrderType } from "../utils/order";
 import { expandAnimation, opacityAnimation } from "../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
+import { fetchTopCommunities } from "verto-cache-interface";
+import { verto } from "../utils/arweave";
 import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
-import styles from "../styles/views/swap.module.sass";
 import OrderBookRow from "../components/OrderBookRow";
+import styles from "../styles/views/swap.module.sass";
 
-const Swap = () => {
+const Swap = ({ defaultPair }) => {
   // arconnect helper
   const arconnect = useArConnect();
 
@@ -86,6 +88,23 @@ const Swap = () => {
 
   // is the device size = mobile
   const mobile = useMediaPredicate("(max-width: 720px)");
+
+  // the currently selected token pair
+  const [pair, setPair] = useState<{
+    from: ExtendedTokenInterface;
+    to: ExtendedTokenInterface;
+  }>(defaultPair);
+
+  // orderbook for the current pair
+  const [orderbook, setOrderbook] = useState<OrderInterface[]>();
+
+  useEffect(() => {
+    (async () => {
+      setOrderbook(
+        await verto.exchange.getOrderBook([pair.from.id, pair.to.id])
+      );
+    })();
+  }, []);
 
   return (
     <Page>
@@ -218,7 +237,7 @@ const Swap = () => {
                     className={styles.Select}
                     onClick={() => setTokenSelector("from")}
                   >
-                    <p>Ardrive</p>
+                    <p>{pair.from.ticker}</p>
                     <ChevronDownIcon className={styles.Arrow} />
                   </div>
                 </div>
@@ -228,7 +247,7 @@ const Swap = () => {
                     className={styles.Select}
                     onClick={() => setTokenSelector("to")}
                   >
-                    <p>VRT</p>
+                    <p>{pair.to.ticker}</p>
                     <ChevronDownIcon className={styles.Arrow} />
                   </div>
                 </div>
@@ -269,7 +288,9 @@ const Swap = () => {
                         extraPadding={{ right: "8.6em", left: "6em" }}
                       >
                         <p>Price</p>
-                        <p>VRT / ARDRIVE</p>
+                        <p>
+                          {pair.to.ticker} / {pair.from.ticker}
+                        </p>
                       </SwapInput>
                       <Spacer y={2} />
                     </motion.div>
@@ -277,7 +298,9 @@ const Swap = () => {
                 </AnimatePresence>
                 <SwapInput {...amountInput.bindings} extraPadding>
                   <p>Amount</p>
-                  <p style={{ textTransform: "uppercase" }}>Ardrive</p>
+                  <p style={{ textTransform: "uppercase" }}>
+                    {pair.from.ticker}
+                  </p>
                 </SwapInput>
                 <Spacer y={2} />
                 <SwapInput value="" extraPadding readonly focusTheme>
@@ -307,7 +330,9 @@ const Swap = () => {
       <div className={"Title " + styles.OrderBookTitle}>
         <h1>
           Orderbook
-          <span className={styles.PairTitle}>ARDRIVE / VRT</span>
+          <span className={styles.PairTitle}>
+            {pair.from.ticker} / {pair.to.ticker}
+          </span>
         </h1>
         <Select label="DEPTH" small className={styles.DepthSelect}>
           <option value="0">0</option>
@@ -320,7 +345,7 @@ const Swap = () => {
           <table>
             <thead>
               <th>Side</th>
-              <th>Price (VRT)</th>
+              <th>Price ({pair.to.ticker})</th>
               <th>Amount</th>
               <th>Total</th>
             </thead>
@@ -390,7 +415,7 @@ const Swap = () => {
           <table>
             <thead>
               <th>Side</th>
-              <th>Price (ARDRIVE)</th>
+              <th>Price ({pair.from.ticker})</th>
               <th>Amount</th>
               <th>Total</th>
             </thead>
@@ -482,9 +507,33 @@ const Swap = () => {
   );
 };
 
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+}
+
 export async function getStaticProps() {
-  return { props: {}, revalidate: 1 };
+  const topCommunities = await fetchTopCommunities(2);
+
+  return {
+    props: {
+      defaultPair: {
+        from: topCommunities[0],
+        to: topCommunities[1],
+      },
+    },
+    revalidate: 1,
+  };
 }
 
 export default Swap;
+
 export type ExtendedUserInterface = UserInterface & { baseAddress: string };
+export type ExtendedTokenInterface = {
+  id: string;
+  name: string;
+  ticker: string;
+  logo: string;
+};
