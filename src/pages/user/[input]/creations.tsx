@@ -1,17 +1,14 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useRouter } from "next/router";
-import {
-  arPrice,
-  CACHE_URL,
-  isAddress,
-  verto as client,
-} from "../../../utils/arweave";
+import { arPrice, isAddress, verto as client } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
+import {
+  fetchArtworkMetadata,
+  fetchUserCreations,
+} from "verto-cache-interface";
 import { Art } from "../../../utils/user";
-import axios from "axios";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import useInfiniteScroll from "../../../utils/infinite_scroll";
@@ -21,6 +18,7 @@ const Creations = (props: {
   user: UserInterface | null;
   input: string;
   creations: Art[];
+  ids: string[];
 }) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
@@ -28,26 +26,19 @@ const Creations = (props: {
   const { loading, data } = useInfiniteScroll<Art>(loadMore, props.creations);
 
   async function loadMore(): Promise<Art[]> {
-    let arts = [];
+    let arts: Art[] = [];
 
-    const { data: ids } = await axios.get(
-      `${CACHE_URL}/user/${props.user?.username ?? props.input}/creations/${
-        data.length
-      }`
-    );
-
-    for (const id of ids) {
-      let { data: artworkData } = await axios.get(
-        `${CACHE_URL}/site/artwork/${id}`
-      );
+    for (const id of props.ids.slice(data.length, data.length + 8)) {
+      const data = await fetchArtworkMetadata(id);
       const price = (await arPrice()) * (await client.getPrice(id)).price;
 
-      if (artworkData.owner.image)
-        artworkData.owner.image = `https://arweave.net/${artworkData.owner.image}`;
+      if (data.lister.image)
+        data.lister.image = `https://arweave.net/${data.lister.image}`;
 
       arts.push({
-        ...artworkData,
+        ...data,
         price,
+        owner: data.lister,
       });
     }
 
@@ -135,26 +126,23 @@ export async function getStaticProps({ params: { input } }) {
       },
     };
 
-  for (let i = 0; i < 2; i++) {
-    const { data: ids } = await axios.get(
-      `${CACHE_URL}/user/${input}/creations/${i * 4}`
-    );
+  const ids = await fetchUserCreations(input);
 
-    for (const id of ids) {
-      let { data } = await axios.get(`${CACHE_URL}/site/artwork/${id}`);
-      const price = (await arPrice()) * (await client.getPrice(id)).price;
+  for (const id of ids.slice(0, 8)) {
+    const data = await fetchArtworkMetadata(id);
+    const price = (await arPrice()) * (await client.getPrice(id)).price;
 
-      if (data.owner.image)
-        data.owner.image = `https://arweave.net/${data.owner.image}`;
+    if (data.lister.image)
+      data.lister.image = `https://arweave.net/${data.lister.image}`;
 
-      creations.push({
-        ...data,
-        price,
-      });
-    }
+    creations.push({
+      ...data,
+      price,
+      owner: data.lister,
+    });
   }
 
-  return { props: { creations, user, input }, revalidate: 1 };
+  return { props: { creations, user, input, ids }, revalidate: 1 };
 }
 
 export default Creations;
