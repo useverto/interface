@@ -350,62 +350,18 @@ const Swap = ({ defaultPair }) => {
               <th>Total</th>
             </thead>
             <tbody>
-              <OrderBookRow
-                id={1}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={2200}
-              />
-              <OrderBookRow
-                id={2}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={3338.4}
-              />
-              <OrderBookRow
-                id={3}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={2550}
-              />
-              <OrderBookRow
-                id={4}
-                type="buy"
-                price={1.63}
-                amount={1300}
-                total={2000}
-              />
-              <OrderBookRow
-                id={5}
-                type="buy"
-                price={1.63}
-                amount={3310}
-                total={3310}
-              />
-              <OrderBookRow
-                id={6}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={3338.4}
-              />
-              <OrderBookRow
-                id={7}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={3011.2}
-              />
-              <OrderBookRow
-                id={8}
-                type="buy"
-                price={1.63}
-                amount={2048}
-                total={2422}
-              />
+              {orderbook
+                .filter((order) => order.pair[0] === pair.from.id)
+                .map((order, i) => (
+                  <OrderBookRow
+                    key={i}
+                    id={i + 1}
+                    type="buy"
+                    price={order.price}
+                    amount={order.filled}
+                    total={order.quantity}
+                  />
+                ))}
             </tbody>
           </table>
         </Card>
@@ -420,62 +376,18 @@ const Swap = ({ defaultPair }) => {
               <th>Total</th>
             </thead>
             <tbody>
-              <OrderBookRow
-                id={1}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={2200}
-              />
-              <OrderBookRow
-                id={2}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={3338.4}
-              />
-              <OrderBookRow
-                id={3}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={2550}
-              />
-              <OrderBookRow
-                id={4}
-                type="sell"
-                price={1.63}
-                amount={1300}
-                total={2000}
-              />
-              <OrderBookRow
-                id={5}
-                type="sell"
-                price={1.63}
-                amount={3310}
-                total={3310}
-              />
-              <OrderBookRow
-                id={6}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={3338.4}
-              />
-              <OrderBookRow
-                id={7}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={3011.2}
-              />
-              <OrderBookRow
-                id={8}
-                type="sell"
-                price={1.63}
-                amount={2048}
-                total={2422}
-              />
+              {orderbook
+                .filter((order) => order.pair[1] === pair.to.id)
+                .map((order, i) => (
+                  <OrderBookRow
+                    key={i}
+                    id={i + 1}
+                    type="sell"
+                    price={order.price}
+                    amount={order.filled}
+                    total={order.quantity}
+                  />
+                ))}
             </tbody>
           </table>
         </Card>
