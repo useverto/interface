@@ -68,11 +68,11 @@
       transition: all .13s ease-in-out
 
       &.Selected
-        color: variables.$foreground-reverse-color
+        color: #fff
 
     .Selection
       position: absolute
-      background-color: variables.$foreground-color
+      background-color: rgb(variables.$primary-color)
       border-radius: 8px
       box-shadow: variables.$standard-shadow
       height: $menuItemFontSize * 2.23
@@ -80,7 +80,10 @@
       z-index: 1
       top: 50%
       transform: translateY(-50%)
-      transition: all .17s ease-in-out    
+      transition: all .17s ease-in-out
+
+  &.DarkNav .Menu .Selection
+    box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
 
 .UserPopover
   padding: .4em .5em !important

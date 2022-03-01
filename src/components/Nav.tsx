@@ -165,7 +165,9 @@ const Nav = () => {
   return (
     <>
       <motion.div
-        className={styles.Nav}
+        className={
+          styles.Nav + " " + ((displayTheme === "Dark" && styles.DarkNav) || "")
+        }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.44, ease: "easeInOut" }}
