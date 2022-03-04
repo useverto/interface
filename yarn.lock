@@ -3530,10 +3530,10 @@ verto-cache-interface@^1.0.7:
   dependencies:
     axios "^0.23.0"
 
-verto-cache-interface@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.1.0.tgz#26db34ba3220330488b93af96fe7d11918a8ed65"
-  integrity sha512-ZRKV0aG/D69Ccp6eqFdFgSA6AKQsjTiv38tYW6c7+N8lY9Bg81f+UwSr2QICX57jfj7IuwFiIGo8kGEb/c3ZBg==
+verto-cache-interface@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.1.1.tgz#cea2bd20e5d940091e87fa50080e5a240a7b921d"
+  integrity sha512-oOu3KIwW2+mNoySUsslcCV9/j6qd4mXcddhQLe2AKz9zpmuU7dbN4y262HGnWbOWIegJRiiUFFFfNFE1ib19CQ==
   dependencies:
     axios "^0.23.0"
 

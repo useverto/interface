@@ -27,6 +27,11 @@ import { useRouter } from "next/router";
 import { isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
+import {
+  fetchBalancesForAddress,
+  fetchUserCreations,
+  fetchBalancesByUsername,
+} from "verto-cache-interface";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -36,10 +41,8 @@ import Instagram from "../../components/icons/Instagram";
 import Twitter from "../../components/icons/Twitter";
 import Github from "../../components/icons/Github";
 import Facebook from "../../components/icons/Facebook";
-import axios from "axios";
 import marked from "marked";
 import styles from "../../styles/views/user.module.sass";
-import { fetchUserCreations } from "verto-cache-interface";
 
 const User = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
@@ -99,10 +102,13 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
   // load owned
   useEffect(() => {
-    // TODO: owned (arts), not all tokens
-    axios
-      .get(`${CACHE_URL}/user/${props.input}/owns`)
-      .then(({ data }) => setOwned(data.slice(0, 4)))
+    (props.user ? fetchBalancesByUsername : fetchBalancesForAddress)(
+      props.input,
+      "art"
+    )
+      .then((val) =>
+        setOwned(val.slice(0, 4).map(({ contractId }) => contractId))
+      )
       .catch();
   }, []);
 
@@ -117,8 +123,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         }
       } else res.push(...(await client.user.getOrders(props.input)));
 
-      // TODO: add timestamp to order
-      setOrders(res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5));
+      setOrders(res.reverse().slice(0, 5));
     })();
   }, []);
 
@@ -129,9 +134,9 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
       if (props.user) {
         for (const address of props.user.addresses) {
-          res.push(...(await client.getTransactions(address)));
+          res.push(...(await client.user.getTransactions(address)));
         }
-      } else res.push(...(await client.getTransactions(props.input)));
+      } else res.push(...(await client.user.getTransactions(props.input)));
 
       setTransactions(
         res.sort((a, b) => b.timestamp - a.timestamp).slice(0, 5)
@@ -300,7 +305,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <Spacer y={2} />
       <h1 className="Title">Trades</h1>
       <Spacer y={2} />
-      {orders.map((order, i) => (
+      {/*orders.map((order, i) => (
         <motion.div key={i} {...cardListAnimation(i)}>
           <Card.Trade
             type={(() => {
@@ -345,7 +350,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           />
           <Spacer y={1} />
         </motion.div>
-      ))}
+          ))*/}
       {(orders.length > 0 && (
         <>
           <Spacer y={2} />
@@ -471,7 +476,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { input } }) {
-  const user = (await client.getUser(input)) ?? null;
+  const user = (await client.user.getUser(input)) ?? null;
 
   // redirect if the user cannot be found and if it is not and address either
   if (!isAddress(input) && !user)

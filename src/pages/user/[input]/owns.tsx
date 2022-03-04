@@ -39,7 +39,8 @@ const Owns = (props: {
       let { data: artworkData } = await axios.get(
         `${CACHE_URL}/site/artwork/${id}`
       );
-      const price = (await arPrice()) * (await client.getPrice(id)).price;
+      //const price = (await arPrice()) * (await client.getPrice(id)).price;
+      const price = 1;
 
       if (artworkData.owner.image)
         artworkData.owner.image = `https://arweave.net/${artworkData.owner.image}`;
@@ -145,7 +146,8 @@ export async function getStaticProps({ params: { input } }) {
 
     for (const id of ids) {
       let { data } = await axios.get(`${CACHE_URL}/site/artwork/${id}`);
-      const price = (await arPrice()) * (await client.getPrice(id)).price;
+      //const price = (await arPrice()) * (await client.getPrice(id)).price;
+      const price = 1;
 
       if (data.owner.image)
         data.owner.image = `https://arweave.net/${data.owner.image}`;
