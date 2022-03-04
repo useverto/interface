@@ -72,11 +72,11 @@ const App = () => {
               owner: {
                 ...data.lister,
                 image: data.lister.image
-                  ? `https://arweave.net/${data.owner.image}`
+                  ? `https://arweave.net/${data.lister.image}`
                   : undefined,
               },
-              price:
-                (await arPrice()) * (await client.getPrice(artoworkID)).price,
+              price: 1,
+              // (await arPrice()) * (await client.getPrice(artoworkID)).price,
             };
           })
         )
@@ -104,16 +104,18 @@ const App = () => {
                     ({ contractId }) => contractId === addBalance.contractId
                   )?.balance ?? 0),
               })),
-            ].filter(
-              ({ contractId }) => !ownedCollectibles.includes(contractId)
-            )
+            ]
+              .filter(
+                ({ contractId }) => !ownedCollectibles.includes(contractId)
+              )
+              .sort((a, b) => b.balance - a.balance)
           );
         }
       } else
         setBalances(
-          (await client.user.getBalances(address)).filter(
-            ({ contractId }) => !ownedCollectibles.includes(contractId)
-          )
+          (await client.user.getBalances(address))
+            .filter(({ contractId }) => !ownedCollectibles.includes(contractId))
+            .sort((a, b) => b.balance - a.balance)
         );
     })();
   }, [address]);
@@ -163,9 +165,8 @@ const App = () => {
                   ticker={item.ticker ?? ""}
                   balance={item.balance}
                   logo={{
-                    light: item.logo
-                      ? `https://arweave.net/${item.logo}`
-                      : "/arweave.png",
+                    dark: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=dark`,
+                    light: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=light`,
                   }}
                 />
                 <Spacer y={1.5} />
