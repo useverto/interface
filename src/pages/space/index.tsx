@@ -95,13 +95,13 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       const arweavePrice = await arPrice();
 
       for (const { id } of [...tokens, ...featured, ...arts]) {
-        const res = await client.getPrice(id);
-
-        if (res.price)
+        // TODO
+        //const res = await client.getPrice(id);
+        /*if (res.price)
           setPrices((val) => ({
             ...val,
             [id]: (res.price * arweavePrice).toFixed(2),
-          }));
+          }));*/
       }
     })();
   }, []);
@@ -109,6 +109,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   useEffect(() => {
     (async () => {
       for (const { id } of featured) {
+        // TODO
+        /*
         const res = await client.getPriceHistory(id);
 
         if (Object.keys(res).length) {
@@ -116,7 +118,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
             ...val,
             [id]: res,
           }));
-        }
+        }*/
       }
     })();
   }, []);
@@ -157,7 +159,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       if ([...tokens, ...items, ...allTokens].find(({ id }) => id === token.id))
         continue;
 
-      const price = (await arPrice()) * (await client.getPrice(token.id)).price;
+      //const price = (await arPrice()) * (await client.getPrice(token.id)).price;
+      const price = null;
 
       if (token.owner.image)
         token.owner.image = `https://arweave.net/${token.owner.image}`;
