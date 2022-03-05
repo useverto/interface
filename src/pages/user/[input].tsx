@@ -17,21 +17,23 @@ import {
 import { useEffect, useState } from "react";
 import { cardAnimation, cardListAnimation } from "../../utils/animations";
 import { motion } from "framer-motion";
-import { formatAddress } from "../../utils/format";
+import { formatAddress, shuffleArray } from "../../utils/format";
 import { ArrowRightIcon } from "@iconicicons/react";
 import { UsernametoURL as usernameToURL } from "social-username-url";
 import { RootState } from "../../store/reducers";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
 import { isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
+import { resetNavTheme, updateNavTheme } from "../../store/actions";
 import {
   fetchBalancesForAddress,
   fetchUserCreations,
   fetchBalancesByUsername,
 } from "verto-cache-interface";
+import FastAverageColor from "fast-average-color";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -180,6 +182,28 @@ const User = (props: { user: UserInterface | null; input: string }) => {
     if (!props?.user?.bio) return;
     setFormattedBio(marked(props.user.bio));
   }, [props?.user?.bio]);
+
+  const [thumbnail, setThumbnail] = useState<string>();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        if (!owned[0]) return;
+
+        const shuffled = shuffleArray(owned);
+        const fac = new FastAverageColor();
+        const avColor = await fac.getColorAsync(
+          `https://arweave.net/${shuffled[0]}`
+        );
+
+        setThumbnail(shuffled[0]);
+        dispatch(updateNavTheme(avColor.isDark ? "BlurDark" : "BlurLight"));
+      } catch {
+        dispatch(resetNavTheme());
+      }
+    })();
+  }, [owned]);
 
   return (
     <Page>

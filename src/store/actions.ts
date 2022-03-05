@@ -1,5 +1,6 @@
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { IAddressAction } from "./reducers/address";
+import { INavThemeAction, NavTheme } from "./reducers/nav_theme";
 import { IThemeAction } from "./reducers/theme";
 
 export function updateAddress(address: string): IAddressAction {
@@ -21,5 +22,23 @@ export function updateTheme(theme: DisplayTheme | "System"): IThemeAction {
 export function signOutClear() {
   return {
     type: "USER_SIGNOUT",
+  };
+}
+
+export function updateNavTheme(theme: NavTheme): INavThemeAction {
+  return {
+    type: "UPDATE_NAV_THEME",
+    payload: {
+      theme,
+    },
+  };
+}
+
+export function resetNavTheme(): INavThemeAction {
+  return {
+    type: "UPDATE_NAV_THEME",
+    payload: {
+      theme: "Default",
+    },
   };
 }

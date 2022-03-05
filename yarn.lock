@@ -290,6 +290,11 @@
   resolved "https://registry.yarnpkg.com/@types/nprogress/-/nprogress-0.2.0.tgz#86c593682d4199212a0509cc3c4d562bbbd6e45f"
   integrity sha512-1cYJrqq9GezNFPsWTZpFut/d4CjpZqA0vhqDUPFWYKF1oIyBz5qnoYMzR+0C/T96t3ebLAC1SSnwrVOm5/j74A==
 
+"@types/offscreencanvas@^2019.6.4":
+  version "2019.6.4"
+  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.6.4.tgz#64f6d120b53925028299c744fcdd32d2cd525963"
+  integrity sha512-u8SAgdZ8ROtkTF+mfZGOscl0or6BSj9A4g37e6nvxDc+YB/oDut0wHkK2PBBiC2bNR8TS0CPV+1gAk4fNisr1Q==
+
 "@types/prop-types@*":
   version "15.7.3"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
@@ -1471,6 +1476,13 @@ extract-zip@^2.0.0:
     yauzl "^2.10.0"
   optionalDependencies:
     "@types/yauzl" "^2.9.1"
+
+fast-average-color@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/fast-average-color/-/fast-average-color-7.1.0.tgz#8411161a524bddd613cadf7489da4ccdb0150507"
+  integrity sha512-eTc18sdbr2P2xZFMhvWmo+T7MJ403k4jSiapTMoOcvkptu7SWOU+TzN4tFL4B9sIKUSXA63Xu7Mpc4fmncDZ+Q==
+  dependencies:
+    "@types/offscreencanvas" "^2019.6.4"
 
 fast-deep-equal@^3.1.1:
   version "3.1.3"

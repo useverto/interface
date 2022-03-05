@@ -60,3 +60,20 @@ export function nextDay(today: Date) {
 
   return date;
 }
+
+/**
+ * Shuffle an array
+ *
+ * @param array Array to shuffle
+ * @returns Random ordered array
+ */
+export function shuffleArray<T>(array: T[]): T[] {
+  let copy = [...array];
+
+  for (let i = copy.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+
+  return copy;
+}
