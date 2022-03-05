@@ -75,4 +75,4 @@ export const arPrice = async (): Promise<number> => {
   return gecko.arweave.usd;
 };
 
-export const isAddress = (addr: string) => /[a-z0-9_-]{43}/i.test(addr);
+export const isAddress = (addr: string) => /^[a-z0-9_-]{43}$/i.test(addr);
