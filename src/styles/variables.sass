@@ -217,11 +217,15 @@ $component-background: var(--component-background)
 =cardGrid($itemName: "Item", $space: 3.5em)
   display: grid
   justify-content: space-between
-  grid-template-columns: auto auto auto auto
+  grid-template-columns: repeat(4, 1fr)
+  justify-items: center
 
   @media screen and (max-width: $mobile-screen)
     justify-content: center
     grid-template-columns: auto
+
+  .CardGridItemWrapper
+    width: max-content
 
   .#{$itemName}
     position: relative

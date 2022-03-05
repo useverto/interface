@@ -30,14 +30,14 @@ const Creations = (props: {
 
     for (const id of props.ids.slice(data.length, data.length + 8)) {
       const data = await fetchArtworkMetadata(id);
-      const price = (await arPrice()) * (await client.getPrice(id)).price;
+      //const price = (await arPrice()) * (await client.getPrice(id)).price;
 
       if (data.lister.image)
         data.lister.image = `https://arweave.net/${data.lister.image}`;
 
       arts.push({
         ...data,
-        price,
+        price: null,
         owner: data.lister,
       });
     }
@@ -130,14 +130,14 @@ export async function getStaticProps({ params: { input } }) {
 
   for (const id of ids.slice(0, 8)) {
     const data = await fetchArtworkMetadata(id);
-    const price = (await arPrice()) * (await client.getPrice(id)).price;
+    //const price = (await arPrice()) * (await client.getPrice(id)).price;
 
     if (data.lister.image)
       data.lister.image = `https://arweave.net/${data.lister.image}`;
 
     creations.push({
       ...data,
-      price,
+      price: null,
       owner: data.lister,
     });
   }

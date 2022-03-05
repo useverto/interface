@@ -303,7 +303,7 @@ const Home = ({ artwork }: { artwork: any }) => {
 };
 
 export async function getServerSideProps() {
-  const artwork = await fetchRandomArtworkWithUser(1);
+  const artwork = (await fetchRandomArtworkWithUser(1))[0];
 
   return {
     props: {

@@ -56,7 +56,15 @@ const Community = (props: PropTypes) => {
 
   useEffect(() => {
     (async () => {
-      const priceHistory = await client.getPriceHistory(props.id);
+      // TODO: price history
+      //const priceHistory = await client.getPriceHistory(props.id);
+      const priceHistory = {
+        "2022.03.01": 10,
+        "2022.03.02": 5,
+        "2022.03.03": 3,
+        "2022.03.04": 7,
+        "2022.03.05": 12,
+      };
       const filterDates = (date) => {
         if (dayjs(new Date(date)).isTomorrow()) return false;
 

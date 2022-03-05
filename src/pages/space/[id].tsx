@@ -63,7 +63,8 @@ export async function getStaticProps({ params: { id } }) {
     };
   } else {
     const { state } = await fetchContract(id);
-    const res = await client.getPrice(id);
+    // TODO: price
+    //const res = await client.getPrice(id);
 
     const { data: gecko } = await axios.get(
       "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
@@ -74,7 +75,8 @@ export async function getStaticProps({ params: { id } }) {
         id,
         name: state.name,
         ticker: state.ticker,
-        price: res ? res.price * gecko.arweave.usd : "--",
+        //price: res ? res.price * gecko.arweave.usd : "--",
+        price: "--",
         type: type || "community",
       },
       revalidate: 1,
