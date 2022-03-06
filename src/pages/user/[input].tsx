@@ -198,7 +198,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
         );
 
         setThumbnail(shuffled[0]);
-        dispatch(updateNavTheme(avColor.isDark ? "BlurDark" : "BlurLight"));
+        dispatch(updateNavTheme(avColor.isDark ? "BlurLight" : "BlurDark"));
       } catch {
         dispatch(resetNavTheme());
       }

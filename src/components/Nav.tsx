@@ -56,8 +56,6 @@ const Nav = () => {
   });
   const signOutModal = useModal();
   const dispatch = useDispatch();
-  const theme = useSelector((state: RootState) => state.themeReducer);
-  const displayTheme = useTheme();
 
   useEffect(() => {
     router.events.on("routeChangeComplete", syncSelected);
@@ -162,11 +160,19 @@ const Nav = () => {
 
   const mobile = useMediaPredicate("(max-width: 720px)");
 
+  const theme = useSelector((state: RootState) => state.themeReducer);
+  const displayTheme = useTheme();
+  const blurTheme = useSelector((state: RootState) => state.navThemeReducer);
+
   return (
     <>
       <motion.div
         className={
-          styles.Nav + " " + ((displayTheme === "Dark" && styles.DarkNav) || "")
+          styles.Nav +
+          " " +
+          ((displayTheme === "Dark" && styles.DarkNav) || "") +
+          " " +
+          ((blurTheme !== "Default" && styles[blurTheme]) || "")
         }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -175,7 +181,11 @@ const Nav = () => {
         <Link href={address && router.asPath !== "/app" ? "/app" : "/"}>
           <a className={styles.Logo}>
             <img
-              src={`/logo_${displayTheme.toLowerCase()}.svg`}
+              src={`/logo_${
+                (blurTheme === "Default" && displayTheme.toLowerCase()) ||
+                (blurTheme === "BlurDark" && "light") ||
+                "dark"
+              }.svg`}
               alt="V"
               draggable={false}
             />
@@ -364,6 +374,7 @@ const Nav = () => {
                 left
                 //notification={true}
                 style={{ cursor: "pointer" }}
+                className={styles.UserAvatar}
               />
             ) : (
               <Avatar
@@ -376,6 +387,7 @@ const Nav = () => {
                 left
                 //notification={true}
                 style={{ cursor: "pointer" }}
+                className={styles.UserAvatar}
               />
             )}
           </Popover>

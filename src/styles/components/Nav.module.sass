@@ -85,6 +85,41 @@
   &.DarkNav .Menu .Selection
     box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
 
+  &.BlurLight, &.BlurDark
+    .Menu .Selection
+      backdrop-filter: blur(20px)
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, .2)
+
+    &.BlurLight
+      .SearchAndConnect .SearchIcon, .Menu a
+        color: #fff
+
+      .Menu 
+        a.Selected
+          color: #000
+
+        .Selection
+          background-color: rgba(#fff, .6)
+
+      .UserAvatar
+        h1
+          color: #fff
+
+    &.BlurDark
+      .SearchAndConnect .SearchIcon, .Menu a
+        color: #000
+
+      .Menu 
+        a.Selected
+          color: #fff
+
+        .Selection
+          background-color: rgba(#000, .6)
+
+      .UserAvatar
+        h1
+          color: #000
+
 .UserPopover
   padding: .4em .5em !important
   right: 0

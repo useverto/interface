@@ -15,7 +15,7 @@ import {
   useSelector,
 } from "react-redux";
 import { RootState } from "../store/reducers";
-import { updateTheme } from "../store/actions";
+import { updateNavTheme, updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
 import { AnimatePresence, motion } from "framer-motion";
@@ -231,6 +231,13 @@ const Theme = ({ children }) => {
       query.removeEventListener("change", updateScheme);
     };
   }, [theme]);
+
+  const router = useRouter();
+
+  // reset nav theme on page switch
+  useEffect(() => {
+    dispatch(updateNavTheme("Default"));
+  }, [router.asPath]);
 
   return <VertoProvider theme={displayTheme}>{children}</VertoProvider>;
 };
