@@ -2,12 +2,15 @@ import { Page, Spacer } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import styles from "../../styles/views/art.module.sass";
+import { RootState } from "../../store/reducers";
+import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 
 const Art = (props: PropTypes) => {
   // fullscreen stuff
@@ -38,6 +41,7 @@ const Art = (props: PropTypes) => {
   }>();
 
   const dispatch = useDispatch();
+  const navTheme = useSelector((state: RootState) => state.navThemeReducer);
 
   useEffect(() => {
     (async () => {
@@ -115,7 +119,12 @@ const Art = (props: PropTypes) => {
             />
           </video>
         ))}
-      <div className={styles.Preview} ref={previewEl}>
+      <div
+        className={
+          styles.Preview + " " + ((fullScreen && styles.FullScreenView) || "")
+        }
+        ref={previewEl}
+      >
         {(data?.tokenType === "image" && (
           <img src={data.source} alt="art" draggable={false} />
         )) ||
@@ -128,8 +137,31 @@ const Art = (props: PropTypes) => {
               <source src={data.source} type={data.contentType} />
             </video>
           ))}
+        <div
+          className={
+            styles.Actions +
+            " " +
+            ((navTheme === "BlurDark" && styles.DarkTone) ||
+              (navTheme === "BlurLight" && styles.LightTone))
+          }
+        >
+          {(data?.tokenType === "video" || data?.tokenType === "audio") && (
+            <div
+              className={styles.Action}
+              onClick={() => setVideoMuted((val) => !val)}
+            >
+              {(videoMuted && <MuteIcon size={24} />) || (
+                <UnmuteIcon size={24} />
+              )}
+            </div>
+          )}
+          <div className={styles.Action} onClick={toggleFullscreen}>
+            {(fullScreen && <MinimizeIcon />) || <MaximizeIcon />}
+          </div>
+        </div>
       </div>
       <Page className={styles.ArtData}>
+        <Spacer y={3} />
         <h1 className={styles.Title}>{props.name}</h1>
       </Page>
     </>

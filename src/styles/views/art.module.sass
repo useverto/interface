@@ -27,6 +27,57 @@
     user-select: none
     transform: translate(-50%, -50%)
 
+  .Actions
+    position: absolute
+    bottom: 0
+    right: 2em
+
+    .Action
+      position: relative
+      width: 34px
+      height: 34px
+      border-radius: 100%
+      background-color: variables.$foreground-color
+      color: variables.$foreground-reverse-color
+      cursor: pointer
+      -webkit-tap-highlight-color: transparent
+      transition: all .23s ease-in-out
+
+      &:not(:first-child)
+        margin-top: 1.6em
+
+      &:active
+        transform: scale(.9)
+
+      svg
+        position: absolute
+        top: 50%
+        left: 50%
+        font-size: 1em
+        width: 80%
+        height: 80%
+        transform: translate(-50%, -50%)
+
+    &.DarkTone .Action
+      background-color: rgba(#000, .4)
+      color: #fff
+
+    &.LightTone .Action
+      background-color: rgba(#fff, .4)
+      color: #000
+
+  &.FullScreenView
+    background-color: variables.$background-color
+
+    .Actions
+      bottom: 1em
+      right: 1em
+
+      &.DarkTone, &.LightTone
+        .Action
+          background-color: variables.$foreground-color
+          color: variables.$foreground-reverse-color
+
 .ArtData
   margin-top: 2em
   background-color: variables.$background-color
@@ -36,12 +87,12 @@
   .Title
     color: variables.$foreground-color
     font-weight: 600
-    font-size: variables.$title-font-size + .3em
+    font-size: variables.$title-font-size + .75em
     margin: 0
       bottom: .6em
 
     @media screen and (max-width: variables.$mobile-screen)
-      font-size: variables.$title-font-size-mobile + .1em
+      font-size: variables.$title-font-size-mobile + .25em
 
   p
     font-size: 1.05em
