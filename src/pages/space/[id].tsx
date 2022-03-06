@@ -14,12 +14,12 @@ const Token = (props) => {
   // TODO: custom layout
 
   return (
-    <Page>
+    <>
       {(props.type === "community" && <Community {...props} />) ||
         (props.type === "collection" && <Collection {...props} />) || (
           <Art {...props} />
         )}
-    </Page>
+    </>
   );
 };
 

@@ -10,6 +10,7 @@ import {
   useToasts,
   Tooltip,
   generateAvatarGradient,
+  Page,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -248,7 +249,7 @@ const Collection = ({
   }
 
   return (
-    <>
+    <Page>
       <Head>
         <title>Verto - {name}</title>
         <Metas title={name} subtitle={description} />
@@ -446,7 +447,7 @@ const Collection = ({
           </Button>
         </Modal.Content>
       </Modal>
-    </>
+    </Page>
   );
 };
 

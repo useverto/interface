@@ -13,3 +13,40 @@
   object-fit: cover
   filter: blur(20px)
 
+.Preview
+  position: relative
+  height: 66vh
+
+  img, video
+    position: absolute
+    top: 50%
+    left: 50%
+    max-width: 80%
+    max-height: 90%
+    box-shadow: variables.$lighter-shadow
+    user-select: none
+    transform: translate(-50%, -50%)
+
+.ArtData
+  margin-top: 2em
+  background-color: variables.$background-color
+  box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, .2)
+  min-height: unset !important
+
+  .Title
+    color: variables.$foreground-color
+    font-weight: 600
+    font-size: variables.$title-font-size + .3em
+    margin: 0
+      bottom: .6em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      font-size: variables.$title-font-size-mobile + .1em
+
+  p
+    font-size: 1.05em
+    color: variables.$foreground-color
+    text-align: justify
+    font-weight: 400
+    margin: 0
+      bottom: 1.2em

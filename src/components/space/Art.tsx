@@ -1,4 +1,4 @@
-import { Spacer } from "@verto/ui";
+import { Page, Spacer } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -102,7 +102,7 @@ const Art = (props: PropTypes) => {
         (data?.tokenType === "video" && (
           <video
             controls={false}
-            muted={videoMuted}
+            muted={true}
             autoPlay
             className={styles.Background}
           >
@@ -112,6 +112,23 @@ const Art = (props: PropTypes) => {
             />
           </video>
         ))}
+      <div className={styles.Preview} ref={previewEl}>
+        {(data?.tokenType === "image" && (
+          <img src={data.source} alt="art" draggable={false} />
+        )) ||
+          ((data?.tokenType === "video" || data?.tokenType === "audio") && (
+            <video
+              controls={data.tokenType === "audio"}
+              muted={videoMuted}
+              autoPlay
+            >
+              <source src={data.source} type={data.contentType} />
+            </video>
+          ))}
+      </div>
+      <Page className={styles.ArtData}>
+        <h1 className={styles.Title}>{props.name}</h1>
+      </Page>
     </>
   );
 };

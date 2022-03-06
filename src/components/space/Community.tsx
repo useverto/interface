@@ -3,6 +3,7 @@ import {
   Card,
   Input,
   Loading,
+  Page,
   Spacer,
   useInput,
   useTheme,
@@ -178,7 +179,7 @@ const Community = (props: PropTypes) => {
   };
 
   return (
-    <>
+    <Page>
       <Head>
         <title>Verto - {props.name}</title>
         <Metas title={props.name} localImage={`api/token_og?id=${props.id}`} />
@@ -395,7 +396,7 @@ const Community = (props: PropTypes) => {
           </Button>
         </Card>
       </div>
-    </>
+    </Page>
   );
 };
 
