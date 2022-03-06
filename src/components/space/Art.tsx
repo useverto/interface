@@ -69,7 +69,10 @@ const Art = (props: PropTypes) => {
       try {
         const fac = new FastAverageColor();
         const avColor = fac.getColorFromArray4(
-          new Uint8Array(await res.clone().arrayBuffer())
+          new Uint8Array(await res.clone().arrayBuffer()),
+          {
+            algorithm: "dominant",
+          }
         );
         const isLightScheme = tinycolor({
           r: avColor[0],
