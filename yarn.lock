@@ -421,10 +421,10 @@
     react-media-hook "^0.4.9"
     styled-components "^5.2.1"
 
-"@verto/ui@^3.5.6-beta":
-  version "3.5.6-beta"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-3.5.6-beta.tgz#d1d2c8d5d71ba34abe5156ce1a7e600cff1a6c47"
-  integrity sha512-lNrJjDfz9rWz6O+eR52NT2q6eadT1NU+uF4Z0gdYCCHpZZjiMBK+7TXOnuEafLZV3fw7DsfMY4cleUHyc6/4Fg==
+"@verto/ui@^3.5.7-beta":
+  version "3.5.7-beta"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-3.5.7-beta.tgz#5cdd6d89e7d0c3ecf8415cf23b689683a59b5889"
+  integrity sha512-lpcuviWXjCmA+qe0IH9xUpOlilUKYVh9+1tDGvb5hvz8IiFl/nT+xZ6VLWWBwKWWiSHSo7kNguGyB0SyHVnuxw==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     "@primer/octicons-react" "^16.3.0"

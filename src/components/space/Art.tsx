@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Card,
   generateAvatarGradient,
@@ -13,8 +14,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import {
+  CheckCircleIcon,
+  CloseCircleIcon,
   DollarIcon,
   EyeIcon,
+  InformationIcon,
   MaximizeIcon,
   MinimizeIcon,
   RefreshIcon,
@@ -31,15 +35,15 @@ import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/faces";
 import { gql, verto } from "../../utils/arweave";
+import { formatAddress } from "../../utils/format";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import marked from "marked";
-import styles from "../../styles/views/art.module.sass";
 import dayjs from "dayjs";
-import { formatAddress } from "../../utils/format";
+import styles from "../../styles/views/art.module.sass";
 
 const Art = (props: PropTypes) => {
   const { setToast } = useToasts();
@@ -211,7 +215,39 @@ const Art = (props: PropTypes) => {
     })();
   }, [props.id]);
 
+  // current address from arconnect
   const profile = useSelector((state: RootState) => state.addressReducer);
+
+  // load owners' datas
+  const [owners, setOwners] = useState<{ username: string; avatar?: string }[]>(
+    []
+  );
+
+  useEffect(() => {
+    (async () => {
+      if (!state || !state.balances) return;
+      setOwners([]);
+
+      // addresses with balances (> 0)
+      const holders = Object.keys(state.balances).filter(
+        (address) => !!state.balances[address]
+      );
+
+      // load each owner's username & avatar on the fly
+      for (let i = 0; i < holders.length; i++) {
+        // load only for max. 4 users
+        if (i > 4) break;
+
+        // get user from community contract
+        const user = await verto.user.getUser(holders[i]);
+
+        setOwners((val) => [
+          ...val,
+          { username: user?.username || holders[i], avatar: user?.image },
+        ]);
+      }
+    })();
+  }, [state]);
 
   return (
     <>
@@ -359,6 +395,34 @@ const Art = (props: PropTypes) => {
               Total supply: {supplyData.totalSupply.toLocaleString()}{" "}
               {props.ticker}
             </span>
+            {state?.allowMinting && (
+              <>
+                <Spacer y={0.25} />
+                <span className={styles.InfoLink}>
+                  <InformationIcon />
+                  Allows minting more
+                </span>
+              </>
+            )}
+            <Spacer y={0.25} />
+            <a
+              href="https://www.notion.so/Foreign-Call-Protocol-Specification-61e221e5118a40b980fcaade35a2a718"
+              className={styles.InfoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {(state?.invocations && state?.foreignCalls && (
+                <>
+                  <CheckCircleIcon />
+                  Supports FCP
+                </>
+              )) || (
+                <>
+                  <CloseCircleIcon />
+                  FCP not supported
+                </>
+              )}
+            </a>
             <Spacer y={0.25} />
             <a
               href={`https://viewblock.io/arweave/tx/${props.id}`}
@@ -391,7 +455,20 @@ const Art = (props: PropTypes) => {
                   {state && Object.values(state.balances).length > 1 && "s"}
                 </h1>
               </div>
-              {/** TODO: styles.Users */}
+              <Avatar.Group>
+                {owners.map((holder, i) => (
+                  <Avatar
+                    usertag={holder.username}
+                    avatar={
+                      holder.avatar
+                        ? `https://arweave.net/${holder.avatar}`
+                        : undefined
+                    }
+                    onlyProfilePicture
+                    key={i}
+                  />
+                ))}
+              </Avatar.Group>
             </Card>
             <Spacer y={3} />
             <h2>Offers</h2>
