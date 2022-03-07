@@ -1,4 +1,4 @@
-import { Page, Spacer } from "@verto/ui";
+import { Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -191,7 +191,7 @@ const Art = (props: PropTypes) => {
               <Spacer x={0.4} />
               (~12.25 AR)
             </p>
-            <Spacer y={1.5} />
+            <Spacer y={1.8} />
             <p className={styles.SubTitle}>Description</p>
             <Spacer y={0.1} />
             <p>
@@ -200,7 +200,7 @@ const Art = (props: PropTypes) => {
               culpa nam, suscipit voluptatibus distinctio ullam eaque! Eum
               inventore id deserunt aliquam.
             </p>
-            <Spacer y={1.5} />
+            <Spacer y={1.8} />
             <h2>Info</h2>
             <Spacer y={1} />
             <a
@@ -222,6 +222,17 @@ const Art = (props: PropTypes) => {
               <EyeIcon />
               Viewblock
             </a>
+          </div>
+          <div>
+            <Card className={styles.Owners}>
+              <div className={styles.LeftSide}>
+                <span className={styles.OwnerCount}>2</span>
+                <h1>Owners</h1>
+              </div>
+              {/** TODO: styles.Users */}
+            </Card>
+            <Spacer y={3} />
+            <h2>Offers</h2>
           </div>
         </div>
       </Page>

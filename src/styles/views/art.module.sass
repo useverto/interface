@@ -141,6 +141,9 @@
 
   h2
     font-size: 2em
+    display: flex
+    align-items: center
+    justify-content: space-between
 
   .DataContent
     display: flex
@@ -177,3 +180,35 @@
           font-size: 1em
           width: 1em
           height: 1em
+
+    .Owners
+      display: flex
+      align-items: center
+      justify-content: space-between
+      width: auto
+      border-radius: 13px
+      box-shadow: variables.$lighter-shadow !important
+      
+      .Users
+        +variables.collaborators($editable: false)
+
+      .LeftSide
+        display: flex
+
+        .OwnerCount
+          background-color: variables.$foreground-color
+          color: #fff
+          font-size: 1.25em
+          font-weight: 500
+          border-radius: 7.5px
+          box-shadow: variables.$standard-shadow
+          padding: .04em .58em
+          margin-right: .95em
+          display: flex
+          align-items: center
+
+        h1
+          color: variables.$foreground-color
+          font-weight: 500
+          margin: 0
+          line-height: 1.1em
