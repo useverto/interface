@@ -206,7 +206,7 @@ const Art = (props: PropTypes) => {
         });
       }
     })();
-  }, [props.id]);
+  }, [props.id, state]);
 
   // current address from arconnect
   const profile = useSelector((state: RootState) => state.addressReducer);
