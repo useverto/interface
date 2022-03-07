@@ -1,9 +1,13 @@
 const withImages = require("next-images");
 
+/** @type {import('next').NextConfig} */
 module.exports = {
   ...withImages(),
   future: {
     webpack5: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   webpack: (config, { dev, isServer }) => {
     if (!dev && !isServer) {
