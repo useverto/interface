@@ -163,7 +163,9 @@ const Art = (props: PropTypes) => {
   }, [state]);
 
   // minting data
-  const [minter, setMinter] = useState<UserInterface>();
+  const [minter, setMinter] = useState<
+    UserInterface & { isAddress?: boolean }
+  >();
   const [mintDate, setMintDate] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -187,9 +189,10 @@ const Art = (props: PropTypes) => {
         // fill with empty data
         else
           setMinter({
-            username: formatAddress(tx.owner.address, 7),
+            username: tx.owner.address,
             name: "",
             addresses: [],
+            isAddress: true,
           });
       } catch {
         setToast({
@@ -271,9 +274,10 @@ const Art = (props: PropTypes) => {
       </div>
       <Page className={styles.ArtData}>
         {minter && (
-          <Link href={`/@martonlederer`}>
+          <Link href={`/@${minter.username}`}>
             <a className={styles.UserChip}>
               <div className={styles.Avatar}>
+                {/** TODO: if minter image is not available, use gradient profile picture */}
                 {minter.image && (
                   <img
                     src={`https://arweave.net/${minter.image}`}
@@ -281,7 +285,11 @@ const Art = (props: PropTypes) => {
                   />
                 )}
               </div>
-              <span>@{minter.username}</span>
+              <span>
+                @
+                {(minter.isAddress && formatAddress(minter.username, 7)) ||
+                  minter.username}
+              </span>
             </a>
           </Link>
         )}
