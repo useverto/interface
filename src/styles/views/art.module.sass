@@ -221,3 +221,31 @@
 
       &:active
         transform: scale(.95)
+    
+    .OfferSelect
+      position: relative
+      display: flex
+      align-items: center
+
+      select
+        font-size: .8rem
+        color: variables.$light-text
+        outline: none
+        border: none
+        background-color: transparent
+        -webkit-appearance: none
+        -moz-appearance: none
+        padding-right: 1em
+        z-index: 1
+
+        &::-ms-expand
+          display: none
+
+      svg
+        position: absolute
+        right: 0
+        top: 50%
+        font-size: 1rem
+        color: variables.$light-text
+        z-index: 0
+        transform: translateY(-50%)

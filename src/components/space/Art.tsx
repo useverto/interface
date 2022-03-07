@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import {
   CheckCircleIcon,
+  ChevronDownIcon,
   CloseCircleIcon,
   DollarIcon,
   EyeIcon,
@@ -452,7 +453,17 @@ const Art = (props: PropTypes) => {
               </Avatar.Group>
             </Card>
             <Spacer y={3} />
-            <h2>Offers</h2>
+            <h2>
+              Offers
+              <div className={styles.OfferSelect}>
+                <select>
+                  <option value="recent">Most recent</option>
+                  <option value="cheapest">Cheapest</option>
+                  <option value="most">Most amount</option>
+                </select>
+                <ChevronDownIcon />
+              </div>
+            </h2>
             <Spacer y={1.7} />
             <AnimatePresence>
               <motion.div
