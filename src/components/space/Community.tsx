@@ -19,6 +19,10 @@ import { RootState } from "../../store/reducers";
 import { verto as client } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
 import { fetchContract } from "verto-cache-interface";
+import {
+  calculateCirculatingSupply,
+  calculateTotalSupply,
+} from "../../utils/supply";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -94,34 +98,21 @@ const Community = (props: PropTypes) => {
   const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
-    if (state) {
-      const circulatingSupply = Object.values(state.balances).reduce(
-        (a: number, b: number) => a + b,
-        0
-      ) as number;
+    if (!state) return;
+    const totalSupply = calculateTotalSupply(state);
+    const marketCap =
+      props.price === "--"
+        ? 0
+        : (totalSupply * props.price).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
 
-      let totalSupply: number = circulatingSupply;
-      if (state.vault)
-        for (const vault of Object.values(state.vault) as any) {
-          totalSupply += vault
-            .map((a: any) => a.balance)
-            .reduce((a: number, b: number) => a + b, 0);
-        }
-
-      const marketCap =
-        props.price === "--"
-          ? 0
-          : (totalSupply * props.price).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            });
-
-      setMetrics({
-        marketCap,
-        circulatingSupply: circulatingSupply.toLocaleString(),
-        totalSupply: totalSupply.toLocaleString(),
-      });
-    }
+    setMetrics({
+      marketCap,
+      circulatingSupply: calculateCirculatingSupply(state).toLocaleString(),
+      totalSupply: totalSupply.toLocaleString(),
+    });
   }, [state]);
 
   const amount = useInput<number>();

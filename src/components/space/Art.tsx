@@ -3,12 +3,22 @@ import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
 import { useDispatch, useSelector } from "react-redux";
+import { AnimatePresence, motion } from "framer-motion";
+import { cardListAnimation } from "../../utils/animations";
 import {
+  DollarIcon,
   EyeIcon,
   MaximizeIcon,
   MinimizeIcon,
+  RefreshIcon,
   ShareIcon,
 } from "@iconicicons/react";
+import { fetchContract } from "verto-cache-interface";
+import {
+  BaseTokenState,
+  calculateCirculatingSupply,
+  calculateTotalSupply,
+} from "../../utils/supply";
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import Link from "next/link";
@@ -17,8 +27,6 @@ import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import styles from "../../styles/views/art.module.sass";
-import { AnimatePresence, motion } from "framer-motion";
-import { cardListAnimation } from "../../utils/animations";
 
 const Art = (props: PropTypes) => {
   // fullscreen stuff
@@ -110,7 +118,30 @@ const Art = (props: PropTypes) => {
     })();
   }, [props.id]);
 
-  //
+  // state
+
+  const [state, setState] = useState<BaseTokenState>();
+
+  useEffect(() => {
+    (async () => {
+      setState((await fetchContract(props.id)).state);
+    })();
+  }, [props.id]);
+
+  // supply
+  const [supplyData, setSupplyData] = useState({
+    totalSupply: 0,
+    circulatingSupply: 0,
+  });
+
+  useEffect(() => {
+    if (!state) return;
+
+    setSupplyData({
+      totalSupply: calculateTotalSupply(state),
+      circulatingSupply: calculateCirculatingSupply(state),
+    });
+  }, [state]);
 
   return (
     <>
@@ -217,6 +248,18 @@ const Art = (props: PropTypes) => {
             <Spacer y={1.8} />
             <h2>Info</h2>
             <Spacer y={1} />
+            <span className={styles.InfoLink}>
+              <RefreshIcon />
+              Circulating supply:{" "}
+              {supplyData.circulatingSupply.toLocaleString()} {props.ticker}
+            </span>
+            <Spacer y={0.25} />
+            <span className={styles.InfoLink}>
+              <DollarIcon />
+              Total supply: {supplyData.totalSupply.toLocaleString()}{" "}
+              {props.ticker}
+            </span>
+            <Spacer y={0.25} />
             <a
               href={`https://viewblock.io/arweave/tx/${props.id}`}
               className={styles.InfoLink}
@@ -241,6 +284,7 @@ const Art = (props: PropTypes) => {
             <Card className={styles.Owners}>
               <div className={styles.LeftSide}>
                 <span className={styles.OwnerCount}>2</span>
+                {/** TODO: if owners === 1 => single form */}
                 <h1>Owners</h1>
               </div>
               {/** TODO: styles.Users */}

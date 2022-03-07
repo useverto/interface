@@ -171,6 +171,7 @@
           margin-right: .4em
 
       .InfoLink
+        display: flex
         color: variables.$light-text
         align-items: center
         text-decoration: none
@@ -181,6 +182,12 @@
           font-size: 1em
           width: 1em
           height: 1em
+
+      a.InfoLink
+        transition: all .23s ease-in-out
+
+        &:hover
+          color: variables.$foreground-color
 
     .Owners
       display: flex
