@@ -120,7 +120,7 @@ const Art = (props: PropTypes) => {
         const avColor = fac.getColorFromArray4(
           new Uint8Array(await res.clone().arrayBuffer()),
           {
-            algorithm: "dominant",
+            algorithm: content_type === "image/gif" ? "sqrt" : "dominant",
           }
         );
         const isLightScheme = tinycolor({
@@ -130,7 +130,7 @@ const Art = (props: PropTypes) => {
           a: avColor[3],
         }).isLight();
 
-        dispatch(updateNavTheme(isLightScheme ? "BlurLight" : "BlurDark"));
+        dispatch(updateNavTheme(isLightScheme ? "BlurDark" : "BlurLight"));
       } catch {}
     })();
   }, [props.id]);
@@ -259,7 +259,6 @@ const Art = (props: PropTypes) => {
       const creations = shuffleArray(
         await fetchUserCreations(minter.username)
       ).slice(0, 4);
-      console.log(creations, suggestions);
 
       for (const id of creations) {
         const metadata = await fetchArtworkMetadata(id);
