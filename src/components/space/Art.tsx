@@ -39,6 +39,18 @@ const Art = (props: PropTypes) => {
     return () => document.removeEventListener("fullscreenchange", handler);
   }, []);
 
+  // fullscreen on "F" key
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "f") return;
+      setFullScreen((val) => !val);
+      toggleFullscreen();
+    };
+    window.addEventListener("keypress", handler);
+
+    return () => window.removeEventListener("keypress", handler);
+  }, []);
+
   // content type
   const [videoMuted, setVideoMuted] = useState(true);
 
