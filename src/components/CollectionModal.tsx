@@ -273,6 +273,8 @@ const CollectionModal = (props: Props) => {
 
       // listing the collection via its contract ID
       try {
+        // TODO
+        // @ts-ignore
         await verto.token.list(contractTx.id, "collection");
 
         setToast({
