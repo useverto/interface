@@ -79,15 +79,53 @@
           color: variables.$foreground-reverse-color
 
 .ArtData
+  position: relative
   margin-top: 2em
   background-color: variables.$background-color
   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, .2)
   min-height: unset !important
 
+  .UserChip
+    position: absolute
+    top: -2em
+    display: flex
+    align-items: center
+    cursor: pointer
+    background-color: variables.$background-color
+    box-shadow: variables.$lighter-shadow
+    padding: 1em 1.45em
+    text-align: center
+    text-decoration: none
+    width: min-content
+    border-radius: 2em
+    transition: all .23s ease-in-out
+
+    .Avatar
+      box-shadow: variables.$standard-shadow
+      width: 2em
+      height: 2em
+      border-radius: 100%
+      overflow: hidden
+      margin-right: .75em
+
+      img
+        width: 100%
+        height: 100%
+        user-select: none
+
+    span
+      font-size: 1.05em
+      line-height: 1em
+      font-weight: 500
+      color: variables.$foreground-color
+
+    &:active
+      transform: scale(.97)
+
   .Title
     color: variables.$foreground-color
     font-weight: 600
-    font-size: variables.$title-font-size + .75em
+    font-size: variables.$title-font-size + 1em
     margin: 0
       bottom: .6em
 

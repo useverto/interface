@@ -4,13 +4,14 @@ import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
+import { RootState } from "../../store/reducers";
+import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
+import Link from "next/link";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import styles from "../../styles/views/art.module.sass";
-import { RootState } from "../../store/reducers";
-import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 
 const Art = (props: PropTypes) => {
   // fullscreen stuff
@@ -161,7 +162,19 @@ const Art = (props: PropTypes) => {
         </div>
       </div>
       <Page className={styles.ArtData}>
-        <Spacer y={3} />
+        {/** TODO */}
+        <Link href={`/@martonlederer`}>
+          <a className={styles.UserChip}>
+            <div className={styles.Avatar}>
+              <img
+                src="https://arweave.net/mzv2LMPSpoYcCPNtfq-IvB5pgnfk2k4_5XCCBefkZ_A"
+                alt="avatar"
+              />
+            </div>
+            <span>@martonlederer</span>
+          </a>
+        </Link>
+        <Spacer y={4.1} />
         <h1 className={styles.Title}>{props.name}</h1>
       </Page>
     </>
