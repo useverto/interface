@@ -81,6 +81,7 @@
 .ArtData
   position: relative
   margin-top: 2em
+  padding-bottom: 5em !important
   background-color: variables.$background-color
   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, .2)
   min-height: unset !important
@@ -199,10 +200,11 @@
           background-color: variables.$foreground-color
           color: #fff
           font-size: 1.25em
+          line-height: 1em
           font-weight: 500
           border-radius: 7.5px
           box-shadow: variables.$standard-shadow
-          padding: .04em .58em
+          padding: 0 .58em
           margin-right: .95em
           display: flex
           align-items: center
@@ -212,3 +214,10 @@
           font-weight: 500
           margin: 0
           line-height: 1.1em
+
+    .OfferItem div[class~=VertoCard]
+      cursor: pointer
+      transition: all .23s ease-in-out
+
+      &:active
+        transform: scale(.95)

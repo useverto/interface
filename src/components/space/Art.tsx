@@ -1,4 +1,4 @@
-import { Card, Page, Spacer } from "@verto/ui";
+import { Button, Card, Page, Spacer } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -17,6 +17,8 @@ import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import styles from "../../styles/views/art.module.sass";
+import { AnimatePresence, motion } from "framer-motion";
+import { cardListAnimation } from "../../utils/animations";
 
 const Art = (props: PropTypes) => {
   // fullscreen stuff
@@ -233,6 +235,48 @@ const Art = (props: PropTypes) => {
             </Card>
             <Spacer y={3} />
             <h2>Offers</h2>
+            <Spacer y={1.7} />
+            <AnimatePresence>
+              <motion.div
+                {...cardListAnimation(0)}
+                key={0}
+                className={styles.OfferItem}
+              >
+                <Card.Bits
+                  quantity={17}
+                  price={{ usd: 10.23, qty: 22, ticker: "VRT" }}
+                />
+                <Spacer y={1.4} />
+              </motion.div>
+              <motion.div
+                {...cardListAnimation(1)}
+                key={1}
+                className={styles.OfferItem}
+              >
+                <Card.Bits
+                  quantity={6}
+                  price={{ usd: 8.23, qty: 17, ticker: "ARDRIVE" }}
+                />
+                <Spacer y={1.4} />
+              </motion.div>
+              <motion.div
+                {...cardListAnimation(2)}
+                key={2}
+                className={styles.OfferItem}
+              >
+                <Card.Bits
+                  quantity={23}
+                  price={{ usd: 18.95, qty: 33, ticker: "VRT" }}
+                />
+                <Spacer y={1.4} />
+              </motion.div>
+            </AnimatePresence>
+            <Button
+              type="outlined"
+              style={{ width: "100%", marginTop: "2.1em" }}
+            >
+              Sell
+            </Button>
           </div>
         </div>
       </Page>
