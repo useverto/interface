@@ -17,7 +17,12 @@ import {
   RefreshIcon,
   ShareIcon,
 } from "@iconicicons/react";
-import { fetchContract } from "verto-cache-interface";
+import {
+  fetchArtworkMetadata,
+  fetchContract,
+  fetchUserCreations,
+} from "verto-cache-interface";
+import { ArtworkMetadata } from "verto-cache-interface/dist/calls/types/artwork-metadata";
 import {
   BaseTokenState,
   calculateCirculatingSupply,
@@ -28,7 +33,8 @@ import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/faces";
 import { gql, verto } from "../../utils/arweave";
-import { formatAddress } from "../../utils/format";
+import { formatAddress, shuffleArray } from "../../utils/format";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
@@ -241,6 +247,30 @@ const Art = (props: PropTypes) => {
       }
     })();
   }, [state]);
+
+  // load suggestions
+  const [suggestions, setSuggestions] = useState<ArtworkMetadata[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      if (!minter || suggestions.length !== 0) return;
+      setSuggestions([]);
+
+      const creations = shuffleArray(
+        await fetchUserCreations(minter.username)
+      ).slice(0, 4);
+      console.log(creations, suggestions);
+
+      for (const id of creations) {
+        const metadata = await fetchArtworkMetadata(id);
+
+        if (!metadata) continue;
+        setSuggestions((val) => [...val, metadata]);
+      }
+    })();
+  }, [minter]);
+
+  const router = useRouter();
 
   return (
     <>
@@ -459,7 +489,7 @@ const Art = (props: PropTypes) => {
                 <select>
                   <option value="recent">Most recent</option>
                   <option value="cheapest">Cheapest</option>
-                  <option value="most">Most amount</option>
+                  <option value="qty">Highest quantity</option>
                 </select>
                 <ChevronDownIcon />
               </div>
@@ -514,6 +544,52 @@ const Art = (props: PropTypes) => {
             </AnimatePresence>
           </div>
         </div>
+      </Page>
+      <Page className={styles.Suggestions}>
+        <Spacer y={2} />
+        <h1
+          className={styles.SuggestionTitle}
+          style={{
+            color:
+              (navTheme === "BlurDark" && "#000") ||
+              (navTheme === "BlurLight" && "#fff") ||
+              undefined,
+          }}
+        >
+          Suggested assets
+        </h1>
+        <Spacer y={2.5} />
+        <div className={styles.SuggestedArts}>
+          <AnimatePresence>
+            {suggestions.slice(0, 4).map(
+              (suggestion, i) =>
+                suggestion?.name && (
+                  <motion.div
+                    className={styles.Item}
+                    {...opacityAnimation(i)}
+                    key={i}
+                  >
+                    <Card.Asset
+                      name={suggestion.name}
+                      userData={{
+                        avatar: minter.image
+                          ? `https://arweave.net/${minter.image}`
+                          : undefined,
+                        name: minter.name,
+                        usertag: minter.username,
+                      }}
+                      // @ts-ignore
+                      /** TODO */
+                      price={undefined}
+                      image={`https://arweave.net/${suggestion.id}`}
+                      onClick={() => router.push(`/space/${suggestion.id}`)}
+                    />
+                  </motion.div>
+                )
+            )}
+          </AnimatePresence>
+        </div>
+        <Spacer y={2.35} />
       </Page>
     </>
   );

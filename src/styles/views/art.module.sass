@@ -236,7 +236,8 @@
         background-color: transparent
         -webkit-appearance: none
         -moz-appearance: none
-        padding-right: 1em
+        padding-right: 1.85em
+        text-align: right
         z-index: 1
 
         &::-ms-expand
@@ -250,3 +251,19 @@
         color: variables.$light-text
         z-index: 0
         transform: translateY(-50%)
+
+.Suggestions
+  min-height: unset !important
+  
+  .SuggestionTitle
+    font-size: variables.$title-font-size
+    margin: 0
+    line-height: 1.1em
+    font-weight: 500
+    color: variables.$foreground-color
+
+  .SuggestedArts
+    +variables.cardGrid
+
+    .Item
+      display: block
