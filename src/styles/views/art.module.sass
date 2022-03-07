@@ -132,10 +132,48 @@
     @media screen and (max-width: variables.$mobile-screen)
       font-size: variables.$title-font-size-mobile + .25em
 
-  p
-    font-size: 1.05em
+  .Price, h2
+    font-size: 2.4em
     color: variables.$foreground-color
-    text-align: justify
-    font-weight: 400
+    font-weight: 500
     margin: 0
-      bottom: 1.2em
+    line-height: 1.1em
+
+  h2
+    font-size: 2em
+
+  .DataContent
+    display: flex
+    align-items: flex-start
+    justify-content: space-between
+
+    .Texts
+      width: 59%
+      margin-right: 2em
+
+      p, .InfoLink
+        display: flex
+        font-size: 1.15em
+        color: variables.$foreground-color
+        text-align: justify
+        font-weight: 400
+        margin: 0
+
+        &.SubTitle
+          color: variables.$light-text
+          font-weight: 500
+
+        .Price
+          margin-right: .4em
+
+      .InfoLink
+        color: variables.$light-text
+        align-items: center
+        text-decoration: none
+
+        svg
+          margin-right: .45em
+          font-weight: 500
+          font-size: 1em
+          width: 1em
+          height: 1em

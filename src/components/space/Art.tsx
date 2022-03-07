@@ -3,7 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
 import { useDispatch, useSelector } from "react-redux";
-import { MaximizeIcon, MinimizeIcon } from "@iconicicons/react";
+import {
+  EyeIcon,
+  MaximizeIcon,
+  MinimizeIcon,
+  ShareIcon,
+} from "@iconicicons/react";
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import Link from "next/link";
@@ -176,6 +181,49 @@ const Art = (props: PropTypes) => {
         </Link>
         <Spacer y={4.1} />
         <h1 className={styles.Title}>{props.name}</h1>
+        <Spacer y={2} />
+        <div className={styles.DataContent}>
+          <div className={styles.Texts}>
+            <p className={styles.SubTitle}>Lowest price:</p>
+            <p className={styles.SubTitle} style={{ alignItems: "flex-end" }}>
+              <span className={styles.Price}>$92.22</span>
+              /bit
+              <Spacer x={0.4} />
+              (~12.25 AR)
+            </p>
+            <Spacer y={1.5} />
+            <p className={styles.SubTitle}>Description</p>
+            <Spacer y={0.1} />
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
+              voluptatem dicta explicabo illum fugit, voluptatum soluta et harum
+              culpa nam, suscipit voluptatibus distinctio ullam eaque! Eum
+              inventore id deserunt aliquam.
+            </p>
+            <Spacer y={1.5} />
+            <h2>Info</h2>
+            <Spacer y={1} />
+            <a
+              href={`https://viewblock.io/arweave/tx/${props.id}`}
+              className={styles.InfoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ShareIcon />
+              Minted on May 10, 2022
+            </a>
+            <Spacer y={0.25} />
+            <a
+              href={`https://viewblock.io/arweave/address/${props.id}`}
+              className={styles.InfoLink}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <EyeIcon />
+              Viewblock
+            </a>
+          </div>
+        </div>
       </Page>
     </>
   );
