@@ -1,4 +1,11 @@
-import { Button, Card, Page, Spacer, useToasts } from "@verto/ui";
+import {
+  Button,
+  Card,
+  generateAvatarGradient,
+  Page,
+  Spacer,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -276,14 +283,26 @@ const Art = (props: PropTypes) => {
         {minter && (
           <Link href={`/@${minter.username}`}>
             <a className={styles.UserChip}>
-              <div className={styles.Avatar}>
-                {/** TODO: if minter image is not available, use gradient profile picture */}
-                {minter.image && (
+              <div
+                className={
+                  styles.Avatar +
+                  " " +
+                  ((!minter.image && styles.Gradient) || "")
+                }
+                style={{
+                  background:
+                    (!minter.image &&
+                      generateAvatarGradient(minter?.username || "")
+                        .gradient) ||
+                    undefined,
+                }}
+              >
+                {(minter.image && (
                   <img
                     src={`https://arweave.net/${minter.image}`}
                     alt="avatar"
                   />
-                )}
+                )) || <span>{minter.username[0].toUpperCase()}</span>}
               </div>
               <span>
                 @
