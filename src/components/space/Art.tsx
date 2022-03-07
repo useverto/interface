@@ -11,7 +11,7 @@ import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { AnimatePresence, motion } from "framer-motion";
-import { cardListAnimation } from "../../utils/animations";
+import { cardListAnimation, opacityAnimation } from "../../utils/animations";
 import {
   DollarIcon,
   EyeIcon,
@@ -210,6 +210,8 @@ const Art = (props: PropTypes) => {
       }
     })();
   }, [props.id]);
+
+  const profile = useSelector((state: RootState) => state.addressReducer);
 
   return (
     <>
@@ -429,12 +431,18 @@ const Art = (props: PropTypes) => {
                 <Spacer y={1.4} />
               </motion.div>
             </AnimatePresence>
-            <Button
-              type="outlined"
-              style={{ width: "100%", marginTop: "2.1em" }}
-            >
-              Sell
-            </Button>
+            <AnimatePresence>
+              {state && state?.balances?.[profile] && (
+                <motion.div {...opacityAnimation()}>
+                  <Button
+                    type="outlined"
+                    style={{ width: "100%", marginTop: "2.1em" }}
+                  >
+                    Sell
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </Page>
