@@ -12,7 +12,7 @@ export const client = new Arweave({
 });
 export const verto = new Verto("use_wallet", client);
 
-const gql = new ArDB(client);
+export const gql = new ArDB(client);
 
 export const ROOT_URL = "https://verto.exchange";
 export const CACHE_URL = "https://v2.cache.verto.exchange";

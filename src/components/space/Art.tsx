@@ -1,4 +1,4 @@
-import { Button, Card, Page, Spacer } from "@verto/ui";
+import { Button, Card, Page, Spacer, useToasts } from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -21,16 +21,23 @@ import {
 } from "../../utils/supply";
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
+import { GQLTransactionInterface } from "ardb/lib/faces/gql";
+import { UserInterface } from "@verto/js/dist/faces";
+import { gql, verto } from "../../utils/arweave";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
+import marked from "marked";
 import styles from "../../styles/views/art.module.sass";
+import dayjs from "dayjs";
+import { formatAddress } from "../../utils/format";
 
 const Art = (props: PropTypes) => {
-  // fullscreen stuff
+  const { setToast } = useToasts();
 
+  // fullscreen stuff
   const [fullScreen, setFullScreen] = useState(false);
   const previewEl = useRef<HTMLDivElement>();
 
@@ -143,6 +150,57 @@ const Art = (props: PropTypes) => {
     });
   }, [state]);
 
+  // description
+  const [formattedDescription, setFormattedDescription] = useState("");
+
+  useEffect(() => {
+    const desc =
+      state?.description ||
+      state?.settings?.communityDescription ||
+      "No description available...";
+
+    setFormattedDescription(marked(desc));
+  }, [state]);
+
+  // minting data
+  const [minter, setMinter] = useState<UserInterface>();
+  const [mintDate, setMintDate] = useState<Date>(new Date());
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // load tx info
+        const tx = (await gql
+          .search("transaction")
+          .id(props.id)
+          .find()) as GQLTransactionInterface;
+
+        if (tx?.block?.timestamp) {
+          // multiply by 1000 to get Date API compatible value
+          setMintDate(new Date(tx.block.timestamp * 1000));
+        }
+
+        // get minter
+        const user = await verto.user.getUser(tx.owner.address);
+
+        if (user) setMinter(user);
+        // fill with empty data
+        else
+          setMinter({
+            username: formatAddress(tx.owner.address, 7),
+            name: "",
+            addresses: [],
+          });
+      } catch {
+        setToast({
+          type: "error",
+          description: "Failed to load mint data",
+          duration: 2000,
+        });
+      }
+    })();
+  }, [props.id]);
+
   return (
     <>
       <Head>
@@ -212,18 +270,21 @@ const Art = (props: PropTypes) => {
         </div>
       </div>
       <Page className={styles.ArtData}>
-        {/** TODO */}
-        <Link href={`/@martonlederer`}>
-          <a className={styles.UserChip}>
-            <div className={styles.Avatar}>
-              <img
-                src="https://arweave.net/mzv2LMPSpoYcCPNtfq-IvB5pgnfk2k4_5XCCBefkZ_A"
-                alt="avatar"
-              />
-            </div>
-            <span>@martonlederer</span>
-          </a>
-        </Link>
+        {minter && (
+          <Link href={`/@martonlederer`}>
+            <a className={styles.UserChip}>
+              <div className={styles.Avatar}>
+                {minter.image && (
+                  <img
+                    src={`https://arweave.net/${minter.image}`}
+                    alt="avatar"
+                  />
+                )}
+              </div>
+              <span>@{minter.username}</span>
+            </a>
+          </Link>
+        )}
         <Spacer y={4.1} />
         <h1 className={styles.Title}>{props.name}</h1>
         <Spacer y={2} />
@@ -231,20 +292,30 @@ const Art = (props: PropTypes) => {
           <div className={styles.Texts}>
             <p className={styles.SubTitle}>Lowest price:</p>
             <p className={styles.SubTitle} style={{ alignItems: "flex-end" }}>
-              <span className={styles.Price}>$92.22</span>
+              <span className={styles.Price}>
+                {(props.price !== "--" && (
+                  <>
+                    $
+                    {props.price.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 2,
+                    })}
+                  </>
+                )) ||
+                  props.price}
+              </span>
               /bit
               <Spacer x={0.4} />
+              {/** TODO */}
               (~12.25 AR)
             </p>
             <Spacer y={1.8} />
             <p className={styles.SubTitle}>Description</p>
             <Spacer y={0.1} />
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda
-              voluptatem dicta explicabo illum fugit, voluptatum soluta et harum
-              culpa nam, suscipit voluptatibus distinctio ullam eaque! Eum
-              inventore id deserunt aliquam.
-            </p>
+            <div
+              className={styles.Description}
+              dangerouslySetInnerHTML={{ __html: formattedDescription }}
+            ></div>
             <Spacer y={1.8} />
             <h2>Info</h2>
             <Spacer y={1} />
@@ -267,7 +338,7 @@ const Art = (props: PropTypes) => {
               rel="noopener noreferrer"
             >
               <ShareIcon />
-              Minted on May 10, 2022
+              Minted on {dayjs(mintDate).format("MMMM DD, YYYY")}
             </a>
             <Spacer y={0.25} />
             <a
@@ -283,9 +354,13 @@ const Art = (props: PropTypes) => {
           <div>
             <Card className={styles.Owners}>
               <div className={styles.LeftSide}>
-                <span className={styles.OwnerCount}>2</span>
-                {/** TODO: if owners === 1 => single form */}
-                <h1>Owners</h1>
+                <span className={styles.OwnerCount}>
+                  {(state && Object.values(state.balances).length) || "0"}
+                </span>
+                <h1>
+                  Owner
+                  {state && Object.values(state.balances).length > 1 && "s"}
+                </h1>
               </div>
               {/** TODO: styles.Users */}
             </Card>
