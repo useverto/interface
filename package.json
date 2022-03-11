@@ -50,7 +50,7 @@
     "tinycolor2": "^1.4.2",
     "typed.js": "^2.0.12",
     "use-arconnect": "^1.0.1",
-    "verto-cache-interface": "^1.1.1"
+    "verto-cache-interface": "^1.2.0"
   },
   "devDependencies": {
     "@types/marked": "^2.0.4",

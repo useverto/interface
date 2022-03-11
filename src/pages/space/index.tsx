@@ -27,11 +27,9 @@ import {
 } from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
 import useSWR from "swr";
-import axios from "axios";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
-import useInfiniteScroll from "../../utils/infinite_scroll";
 import styles from "../../styles/views/space.module.sass";
 
 const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
@@ -78,7 +76,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     const timeout = setTimeout(() => {
       // @ts-ignore
       setCurrentPage((val) => {
-        if (val === 4) return 1;
+        if (val === 4 || val === featured.length) return 1;
         else return val + 1;
       });
     }, 5000);
@@ -87,7 +85,10 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   }, [currentPage]);
 
   useEffect(() => {
-    setCurrentTokenData(featured[currentPage - 1]);
+    const next = featured[currentPage - 1];
+
+    if (next) setCurrentTokenData(next);
+    else setCurrentPage(1);
   }, [currentPage]);
 
   useEffect(() => {
@@ -126,8 +127,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   // preload logos of featured items
   useEffect(() => {
     for (const psc of featured) {
-      const logo = new Image();
-      logo.src = `https://arweave.net/${psc.logo}`;
+      fetch(`https://meta.viewblock.io/AR.${psc.contractID}/logo?t=dark`);
     }
   }, []);
 
@@ -141,38 +141,6 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       setUserData(user);
     })();
   }, []);
-
-  // all tokens
-  const {
-    loading: loadingAllTokens,
-    data: allTokens,
-  } = useInfiniteScroll<UnifiedTokenInterface>(loadMore);
-
-  async function loadMore() {
-    const items: UnifiedTokenInterface[] = [];
-    // TODO: tokens with pagination
-    const { data } = await axios.get(
-      `${CACHE_URL}/site/tokens/${allTokens.length}`
-    );
-
-    for (const token of data) {
-      if ([...tokens, ...items, ...allTokens].find(({ id }) => id === token.id))
-        continue;
-
-      //const price = (await arPrice()) * (await client.getPrice(token.id)).price;
-      const price = null;
-
-      if (token.owner.image)
-        token.owner.image = `https://arweave.net/${token.owner.image}`;
-
-      items.push({
-        ...token,
-        price,
-      });
-    }
-
-    return items;
-  }
 
   const search = useSearch();
 
@@ -199,11 +167,13 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
               x: { type: "spring", stiffness: 300, damping: 30 },
               opacity: { duration: 0.2 },
             }}
-            onClick={() => router.push(`/space/${currentTokenData.id}`)}
+            onClick={() => router.push(`/space/${currentTokenData?.id || ""}`)}
           >
             <div className={styles.TokenInfo}>
               <img
-                src={`https://arweave.net/${currentTokenData.logo}`}
+                src={`https://meta.viewblock.io/AR.${
+                  currentTokenData?.id || ""
+                }/logo?t=dark`}
                 alt="token-logo"
                 draggable={false}
               />
@@ -276,7 +246,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       <div className={styles.Cards}>
         {arts.map((art, i) => (
           <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
-            {(art.items && (
+            {(art.type === "collection" && (
               <Card.Collection
                 name={art.name}
                 userData={{
@@ -284,7 +254,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
                   name: art.owner.name,
                   usertag: art.owner.username,
                 }}
-                images={art.items.map((txID) => `https://arweave.net/${txID}`)}
+                images={art.images.map((txID) => `https://arweave.net/${txID}`)}
                 onClick={() => router.push(`/space/${art.id}`)}
               />
             )) || (
@@ -343,63 +313,17 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         </div>
       </h1>
       <Spacer y={2} />
-      <div className={styles.Cards}>
-        {allTokens.map((token, i) => (
-          <motion.div
-            key={i}
-            {...cardAnimation(i)}
-            className={styles.Card + " " + styles.AllTokensCard}
-          >
-            {(token.type === "community" && (
-              <Card.Asset
-                name={token.name}
-                // @ts-ignore
-                price={token.price ?? " ??"}
-                image={`https://arweave.net/${token.logo}`}
-                ticker={token.ticker}
-                onClick={() => router.push(`/space/${token.id}`)}
-              />
-            )) ||
-              (token.type === "collection" && (
-                <Card.Collection
-                  name={token.name}
-                  userData={{
-                    avatar: token.owner.image,
-                    name: token.owner.name,
-                    usertag: token.owner.username,
-                  }}
-                  images={token.items.map((id) => `https://arweave.net/${id}`)}
-                  onClick={() => router.push(`/space/${token.id}`)}
-                />
-              )) || (
-                <Card.Asset
-                  name={token.name}
-                  userData={{
-                    avatar: token.owner.image,
-                    name: token.owner.name,
-                    usertag: token.owner.username,
-                  }}
-                  // @ts-ignore
-                  price={token.price ?? " ??"}
-                  image={`https://arweave.net/${token.id}`}
-                  onClick={() => router.push(`/space/${token.id}`)}
-                />
-              )}
-          </motion.div>
-        ))}
-      </div>
+      <div className={styles.Cards}>{/** TODO */}</div>
       <AnimatePresence>
-        {loadingAllTokens && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ ease: "easeInOut", duration: 0.22 }}
-          >
-            <Spacer y={2} />
-            <Loading.Spinner style={{ margin: "0 auto" }} />
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ ease: "easeInOut", duration: 0.22 }}
+        >
+          <Spacer y={2} />
+          <Loading.Spinner style={{ margin: "0 auto" }} />
+        </motion.div>
       </AnimatePresence>
       <ListingModal {...listModal.bindings} />
       <Search {...search} />
@@ -411,7 +335,6 @@ export async function getStaticProps() {
   const tokens = await fetchTopCommunities();
   const featured = await fetchRandomCommunitiesWithMetadata();
 
-  // TODO: @ap
   let arts = await fetchRandomArtworkWithUser(4);
 
   for (let i = 0; i < arts.length; i++)
