@@ -23,7 +23,7 @@ import { SearchIcon } from "@iconicicons/react";
 import {
   fetchRandomArtworkWithUser,
   fetchRandomCommunitiesWithMetadata,
-  fetchTopCommunities,
+  RandomCommunities,
 } from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
 import useSWR from "swr";
@@ -32,10 +32,11 @@ import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
 import styles from "../../styles/views/space.module.sass";
 
-const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
-  const { data: tokens } = useSWR("getTokens", fetchTopCommunities, {
-    initialData: props.tokens,
-  });
+const Space = (props: {
+  featured: RandomCommunities[];
+  arts: Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>;
+}) => {
+  // featured tokens
   const { data: featured } = useSWR(
     "getFeatured",
     fetchRandomCommunitiesWithMetadata,
@@ -43,6 +44,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
       initialData: props.featured,
     }
   );
+
+  // featured arts
   const { data: arts } = useSWR(
     "getArts",
     async () => {
@@ -72,6 +75,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   const theme = useTheme();
   const listModal = useModal();
 
+  // switch featured token page
   useEffect(() => {
     const timeout = setTimeout(() => {
       // @ts-ignore
@@ -84,6 +88,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
+  // swtich current token data that is displayed
+  // for the featured token
   useEffect(() => {
     const next = featured[currentPage - 1];
 
@@ -91,11 +97,12 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     else setCurrentPage(1);
   }, [currentPage]);
 
+  // fetch price for freatured tokens & arts
   useEffect(() => {
     (async () => {
       const arweavePrice = await arPrice();
 
-      for (const { id } of [...tokens, ...featured, ...arts]) {
+      for (const { id } of [...featured, ...arts]) {
         // TODO
         //const res = await client.getPrice(id);
         /*if (res.price)
@@ -107,6 +114,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     })();
   }, []);
 
+  // fetch price history for featured tokens
   useEffect(() => {
     (async () => {
       for (const { id } of featured) {
@@ -127,10 +135,11 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   // preload logos of featured items
   useEffect(() => {
     for (const psc of featured) {
-      fetch(`https://meta.viewblock.io/AR.${psc.contractID}/logo?t=dark`);
+      fetch(`https://meta.viewblock.io/AR.${psc.id}/logo?t=dark`);
     }
   }, []);
 
+  // load Verto ID for the user
   const [userData, setUserData] = useState<UserInterface>();
   const address = useSelector((state: RootState) => state.addressReducer);
   const { setToast } = useToasts();
@@ -142,6 +151,7 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
     })();
   }, []);
 
+  // search
   const search = useSearch();
 
   return (
@@ -275,23 +285,6 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
         ))}
       </div>
       <Spacer y={4} />
-      <h1 className="Title">Communities</h1>
-      <Spacer y={2} />
-      <div className={styles.Cards}>
-        {tokens.map((token, i) => (
-          <motion.div key={i} {...cardAnimation(i + 4)} className={styles.Card}>
-            <Card.Asset
-              name={token.name}
-              // @ts-ignore
-              price={prices[token.id] ?? " ??"}
-              image={`https://arweave.net/${token.logo}`}
-              ticker={token.ticker}
-              onClick={() => router.push(`/space/${token.id}`)}
-            />
-          </motion.div>
-        ))}
-      </div>
-      <Spacer y={4} />
       <h1 className="Title">
         All
         <div className="ActionSheet">
@@ -332,16 +325,14 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
 };
 
 export async function getStaticProps() {
-  const tokens = await fetchTopCommunities();
   const featured = await fetchRandomCommunitiesWithMetadata();
-
   let arts = await fetchRandomArtworkWithUser(4);
 
   for (let i = 0; i < arts.length; i++)
     if (arts[i].owner.image)
       arts[i].owner.image = `https://arweave.net/${arts[i].owner.image}`;
 
-  return { props: { tokens, featured, arts }, revalidate: 1 };
+  return { props: { featured, arts }, revalidate: 1 };
 }
 
 export default Space;
