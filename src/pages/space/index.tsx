@@ -21,8 +21,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { SearchIcon } from "@iconicicons/react";
 import {
+  fetchPaginated,
   fetchRandomArtworkWithUser,
   fetchRandomCommunitiesWithMetadata,
+  PaginatedToken,
   RandomCommunities,
 } from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
@@ -30,6 +32,7 @@ import useSWR from "swr";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
+import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../styles/views/space.module.sass";
 
 const Space = (props: {
@@ -88,7 +91,7 @@ const Space = (props: {
     return () => clearTimeout(timeout);
   }, [currentPage]);
 
-  // swtich current token data that is displayed
+  // switch current token data that is displayed
   // for the featured token
   useEffect(() => {
     const next = featured[currentPage - 1];
@@ -154,6 +157,29 @@ const Space = (props: {
   // search
   const search = useSearch();
 
+  // all tokens
+  const [tokens, setTokens] = useState<PaginatedToken[]>([]);
+  const [currentTokensPage, setCurrentTokensPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  // fetch all tokens paginated
+  async function fetchMore() {
+    if (!hasMore) return;
+
+    const fetchedTokens = await fetchPaginated<PaginatedToken>(
+      "tokens",
+      8,
+      currentTokensPage
+    );
+
+    if (tokens.find((val) => fetchedTokens.items[0].id === val.id)) {
+      setHasMore(false);
+    } else {
+      setTokens(fetchedTokens.items);
+      setCurrentTokensPage((val) => val + 1);
+    }
+  }
+
   return (
     <Page>
       <Head>
@@ -188,7 +214,7 @@ const Space = (props: {
                 draggable={false}
               />
               <div>
-                <h1>{currentTokenData.name}</h1>
+                <h1>{currentTokenData.name || ""}</h1>
                 <h2>{currentTokenData.ticker}</h2>
                 <p>
                   {currentTokenData.description?.slice(0, 70)}
@@ -306,18 +332,66 @@ const Space = (props: {
         </div>
       </h1>
       <Spacer y={2} />
-      <div className={styles.Cards}>{/** TODO */}</div>
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ ease: "easeInOut", duration: 0.22 }}
-        >
-          <Spacer y={2} />
-          <Loading.Spinner style={{ margin: "0 auto" }} />
-        </motion.div>
-      </AnimatePresence>
+      <InfiniteScroll
+        className={styles.Cards}
+        dataLength={tokens.length}
+        next={fetchMore}
+        hasMore={hasMore}
+        loader={
+          <>
+            <Spacer y={2} />
+            <Loading.Spinner style={{ margin: "0 auto" }} />
+          </>
+        }
+      >
+        <AnimatePresence>
+          {tokens.map((token, i) => (
+            <motion.div
+              key={i}
+              {...cardAnimation(i)}
+              className={styles.Card + " " + styles.AllTokensCard}
+            >
+              {(token.type === "community" && (
+                <Card.Asset
+                  name={token.name}
+                  // @ts-ignore
+                  price={token.price ?? " ??"}
+                  image={`https://arweave.net/${token.logo}`}
+                  ticker={token.ticker}
+                  onClick={() => router.push(`/space/${token.id}`)}
+                />
+              )) ||
+                (token.type === "collection" && (
+                  <Card.Collection
+                    name={token.name}
+                    userData={{
+                      avatar: token.lister.image,
+                      name: token.lister.name,
+                      usertag: token.lister.username,
+                    }}
+                    images={token.items.map(
+                      (id) => `https://arweave.net/${id}`
+                    )}
+                    onClick={() => router.push(`/space/${token.id}`)}
+                  />
+                )) || (
+                  <Card.Asset
+                    name={token.name}
+                    userData={{
+                      avatar: token.lister.image,
+                      name: token.lister.name,
+                      usertag: token.lister.username,
+                    }}
+                    // @ts-ignore
+                    price={token.price ?? " ??"}
+                    image={`https://arweave.net/${token.id}`}
+                    onClick={() => router.push(`/space/${token.id}`)}
+                  />
+                )}
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </InfiniteScroll>
       <ListingModal {...listModal.bindings} />
       <Search {...search} />
     </Page>

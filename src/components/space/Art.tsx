@@ -49,7 +49,6 @@ import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
-import InfiniteScroll from "react-infinite-scroll-component";
 import dayjs from "dayjs";
 import styles from "../../styles/views/art.module.sass";
 
