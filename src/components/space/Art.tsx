@@ -35,12 +35,12 @@ import { UserInterface } from "@verto/js/dist/faces";
 import { gql, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
+import marked, { Renderer } from "marked";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
-import marked from "marked";
 import dayjs from "dayjs";
 import styles from "../../styles/views/art.module.sass";
 
@@ -141,6 +141,7 @@ const Art = (props: PropTypes) => {
 
   useEffect(() => {
     (async () => {
+      // load contract state
       setState((await fetchContract(props.id)).state);
     })();
   }, [props.id]);
@@ -169,7 +170,16 @@ const Art = (props: PropTypes) => {
       state?.settings?.communityDescription ||
       "No description available...";
 
-    setFormattedDescription(marked(desc));
+    // create custom renderer
+    const renderer = new Renderer();
+
+    // custom link renderer to open all
+    // markdown links in a new tab
+    renderer.link = (href, title, text) =>
+      `<a target="_blank" href="${href}" title="${title}">${text}</a>`;
+
+    // render the description
+    setFormattedDescription(marked(desc, { renderer }));
   }, [state]);
 
   // minting data
