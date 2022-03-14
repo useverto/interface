@@ -1,4 +1,12 @@
-import { Avatar, Button, Card, Page, Spacer, useToasts } from "@verto/ui";
+import {
+  Avatar,
+  Button,
+  Card,
+  Page,
+  Spacer,
+  useTheme,
+  useToasts,
+} from "@verto/ui";
 import { useEffect, useRef, useState } from "react";
 import { TokenType } from "../../utils/user";
 import { updateNavTheme } from "../../store/actions";
@@ -32,7 +40,7 @@ import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
 import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/faces";
-import { gql, verto } from "../../utils/arweave";
+import { arPrice, gql, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
 import marked, { Renderer } from "marked";
@@ -41,6 +49,7 @@ import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
+import InfiniteScroll from "react-infinite-scroll-component";
 import dayjs from "dayjs";
 import styles from "../../styles/views/art.module.sass";
 
@@ -87,6 +96,7 @@ const Art = (props: PropTypes) => {
 
   const dispatch = useDispatch();
   const navTheme = useSelector((state: RootState) => state.navThemeReducer);
+  const displayTheme = useTheme();
 
   useEffect(() => {
     (async () => {
@@ -281,6 +291,15 @@ const Art = (props: PropTypes) => {
 
   const router = useRouter();
 
+  // load arweave price
+  const [arweavePrice, setArweavePrice] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      setArweavePrice(await arPrice());
+    })();
+  }, [props.price]);
+
   return (
     <>
       <Head>
@@ -392,8 +411,11 @@ const Art = (props: PropTypes) => {
               </span>
               /bit
               <Spacer x={0.4} />
-              {/** TODO */}
-              (~12.25 AR)
+              {(typeof props.price !== "string" &&
+                `(~${(props.price / arweavePrice).toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })} AR)`) ||
+                ""}
             </p>
             <Spacer y={1.8} />
             <p className={styles.SubTitle}>Description</p>
@@ -468,7 +490,13 @@ const Art = (props: PropTypes) => {
           <div>
             <Card className={styles.Owners}>
               <div className={styles.LeftSide}>
-                <span className={styles.OwnerCount}>
+                <span
+                  className={
+                    styles.OwnerCount +
+                    " " +
+                    (displayTheme === "Dark" ? styles.DarkOwnerCount : "")
+                  }
+                >
                   {(state && Object.values(state.balances).length) || "0"}
                 </span>
                 <h1>
