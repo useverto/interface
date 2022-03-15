@@ -172,11 +172,17 @@ const Space = (props: {
       currentTokensPage
     );
 
-    if (tokens.find((val) => fetchedTokens.items[0].id === val.id)) {
-      setHasMore(false);
-    } else {
-      setTokens(fetchedTokens.items);
-      setCurrentTokensPage((val) => val + 1);
+    // if there are not tokens returned, quit
+    if (fetchedTokens.isEmpty()) return setHasMore(false);
+    else {
+      // get if there is a next page
+      const hasNextPage = fetchedTokens.hasNextPage();
+
+      setHasMore(hasNextPage);
+      setTokens((val) => [...val, ...fetchedTokens.items]);
+
+      // if there is a next page, update the page counter
+      if (hasNextPage) setCurrentTokensPage((val) => val + 1);
     }
   }
 
@@ -343,6 +349,7 @@ const Space = (props: {
             <Loading.Spinner style={{ margin: "0 auto" }} />
           </>
         }
+        style={{ overflow: "unset !important" }}
       >
         <AnimatePresence>
           {tokens.map((token, i) => (
@@ -365,7 +372,9 @@ const Space = (props: {
                   <Card.Collection
                     name={token.name}
                     userData={{
-                      avatar: token.lister.image,
+                      avatar: token.lister?.image
+                        ? `https://arweave.net/${token.lister.image}`
+                        : undefined,
                       name: token.lister.name,
                       usertag: token.lister.username,
                     }}
@@ -378,7 +387,9 @@ const Space = (props: {
                   <Card.Asset
                     name={token.name}
                     userData={{
-                      avatar: token.lister.image,
+                      avatar: token.lister?.image
+                        ? `https://arweave.net/${token.lister.image}`
+                        : undefined,
                       name: token.lister.name,
                       usertag: token.lister.username,
                     }}
