@@ -9,7 +9,7 @@ import {
   Loading,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { cardAnimation } from "../../utils/animations";
+import { cardAnimation, opacityAnimation } from "../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
@@ -343,12 +343,7 @@ const Space = (props: {
         dataLength={tokens.length}
         next={fetchMore}
         hasMore={hasMore}
-        loader={
-          <>
-            <Spacer y={2} />
-            <Loading.Spinner style={{ margin: "0 auto" }} />
-          </>
-        }
+        loader={<></>}
         style={{ overflow: "unset !important" }}
       >
         <AnimatePresence>
@@ -403,6 +398,14 @@ const Space = (props: {
           ))}
         </AnimatePresence>
       </InfiniteScroll>
+      <AnimatePresence>
+        {hasMore && (
+          <motion.div {...opacityAnimation()}>
+            <Spacer y={2} />
+            <Loading.Spinner style={{ margin: "0 auto" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <ListingModal {...listModal.bindings} />
       <Search {...search} />
     </Page>
