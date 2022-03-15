@@ -1,4 +1,4 @@
-import { Loading, Page, Spacer, Tooltip } from "@verto/ui";
+import { Loading, Page, Select, Spacer, Tooltip, useSelect } from "@verto/ui";
 import { TransactionInterface, UserInterface } from "@verto/js/dist/faces";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
@@ -6,9 +6,10 @@ import { useRouter } from "next/router";
 import { isAddress, verto as client } from "../../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { formatAddress } from "../../../utils/format";
+import { useEffect, useState } from "react";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
-import useInfiniteScroll from "../../../utils/infinite_scroll";
+import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
 const Transactions = (props: {
@@ -19,29 +20,36 @@ const Transactions = (props: {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  const { loading, data } = useInfiniteScroll<TransactionInterface>(
-    loadMore,
-    props.txs
-  );
+  // active address select
+  const activeAddress = useSelect(props.user?.addresses?.[0] ?? props.input);
 
-  async function loadMore() {
-    if (data.length === 0) return [];
+  // transactions infinite loading
+  const [transactions, setTransactions] = useState(props.txs);
+  const [hasMore, setHasMore] = useState(true);
+
+  // reset everything on address change
+  useEffect(() => {
+    setTransactions([]);
+    setHasMore(true);
+    loadMore(true);
+  }, [activeAddress.state]);
+
+  async function loadMore(reload = false) {
+    if ((transactions.length === 0 && !reload) || !hasMore) return;
     let res: TransactionInterface[] = [];
 
-    if (props.user) {
-      for (const address of props.user.addresses) {
-        res.push(
-          // @ts-ignore
-          ...(await client.getTransactions(address, data[data.length - 1].id))
-        );
-      }
-    } else
-      res.push(
-        // @ts-ignore
-        ...(await client.getTransactions(props.input, data[data.length - 1].id))
-      );
+    // push txs
+    res.push(
+      ...(await client.user.getTransactions(
+        activeAddress.state,
+        reload ? undefined : transactions[transactions.length - 1].id
+      ))
+    );
 
-    return res;
+    // if there are no more txs, return
+    if (res.length === 0) return setHasMore(false);
+
+    setTransactions((val) => [...val, ...res]);
   }
 
   const notMobile = useMediaPredicate("(min-width: 720px)");
@@ -69,38 +77,63 @@ const Transactions = (props: {
         />
       </Head>
       <Spacer y={3} />
-      <h1 className="Title">All Transactions</h1>
+      <h1 className="Title">
+        All Transactions
+        {props.user && (
+          <Select
+            {...activeAddress.bindings}
+            small
+            className={styles.AddressSelect}
+          >
+            {props.user.addresses.map((address, i) => (
+              <option value={address} key={i}>
+                {formatAddress(address, 12)}
+              </option>
+            ))}
+          </Select>
+        )}
+      </h1>
       <Spacer y={3} />
-      <table className={styles.Transactions}>
-        {data.map((transaction, i) => (
-          <motion.tr key={i} {...cardListAnimation(i)}>
-            <td className={styles.TxType}>{transaction.type}</td>
-            <td className={styles.TxID}>
-              <a
-                href={`https://viewblock.io/arweave/tx/${transaction.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {shortOnMobile(transaction.id)}
-              </a>
-              <Tooltip
-                text={transaction.status}
-                position="right"
-                className={styles.StatusTooltip}
-              >
-                <span
-                  className={
-                    styles.Status + " " + styles[`Status_${transaction.status}`]
-                  }
-                />
-              </Tooltip>
-            </td>
-            <td className={styles.TxAmount}>{transaction.amount}</td>
-          </motion.tr>
-        ))}
-      </table>
+      <InfiniteScroll
+        dataLength={transactions.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<></>}
+        style={{ overflow: "unset !important" }}
+      >
+        <table className={styles.Transactions}>
+          {transactions.map((transaction, i) => (
+            <motion.tr key={i} {...cardListAnimation(i)}>
+              <td className={styles.TxType}>{transaction.type}</td>
+              <td className={styles.TxID}>
+                <a
+                  href={`https://viewblock.io/arweave/tx/${transaction.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {shortOnMobile(transaction.id)}
+                </a>
+                <Tooltip
+                  text={transaction.status}
+                  position="right"
+                  className={styles.StatusTooltip}
+                >
+                  <span
+                    className={
+                      styles.Status +
+                      " " +
+                      styles[`Status_${transaction.status}`]
+                    }
+                  />
+                </Tooltip>
+              </td>
+              <td className={styles.TxAmount}>{transaction.amount}</td>
+            </motion.tr>
+          ))}
+        </table>
+      </InfiniteScroll>
       <AnimatePresence>
-        {loading && (
+        {hasMore && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
