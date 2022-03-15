@@ -398,6 +398,11 @@ const Space = (props: {
           ))}
         </AnimatePresence>
       </InfiniteScroll>
+      {/**
+       * We need to put the loading outside of the
+       * infinite loading component, because we don't
+       * want it to be inside the grid layout.
+       */}
       <AnimatePresence>
         {hasMore && (
           <motion.div {...opacityAnimation()}>
