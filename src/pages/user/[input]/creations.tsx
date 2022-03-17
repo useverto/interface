@@ -26,7 +26,9 @@ const Creations = (props: {
 
   // artworks infinite loading
   const [creations, setCreations] = useState<Art[]>(props.creations);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(
+    props.ids.length > props.creations.length
+  );
 
   async function loadMore() {
     if (!hasMore) return;

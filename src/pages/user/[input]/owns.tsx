@@ -1,57 +1,61 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/faces";
 import { useRouter } from "next/router";
-import {
-  arPrice,
-  CACHE_URL,
-  isAddress,
-  verto as client,
-} from "../../../utils/arweave";
+import { arPrice, isAddress, verto as client } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { Art } from "../../../utils/user";
-import axios from "axios";
+import { useState } from "react";
+import {
+  fetchArtworkMetadata,
+  fetchBalancesByUsername,
+  fetchBalancesForAddress,
+  UserBalance,
+} from "verto-cache-interface";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
-import useInfiniteScroll from "../../../utils/infinite_scroll";
+import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
 const Owns = (props: {
   user: UserInterface | null;
   input: string;
-  owns: Art[];
+  owned: Art[];
+  balances: UserBalance[];
 }) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  const { loading, data } = useInfiniteScroll<Art>(loadMore, props.owns);
+  // owned arts infinite loading
+  const [owned, setOwned] = useState(props.owned);
+  const [hasMore, setHasMore] = useState(
+    props.balances.length > props.owned.length
+  );
 
-  async function loadMore(): Promise<Art[]> {
-    let arts = [];
+  async function loadMore() {
+    if (!hasMore) return;
 
-    const { data: ids } = await axios.get(
-      `${CACHE_URL}/user/${props.user?.username ?? props.input}/owns/${
-        data.length
-      }`
-    );
+    let arts: Art[] = [];
+    const nextArtsToLoad = props.balances.slice(owned.length, owned.length + 8);
 
-    for (const id of ids) {
-      let { data: artworkData } = await axios.get(
-        `${CACHE_URL}/site/artwork/${id}`
-      );
+    if (nextArtsToLoad.length <= 0) return setHasMore(false);
+
+    for (const token of nextArtsToLoad) {
+      const data = await fetchArtworkMetadata(token.contractId);
       //const price = (await arPrice()) * (await client.getPrice(id)).price;
-      const price = 1;
 
-      if (artworkData.owner.image)
-        artworkData.owner.image = `https://arweave.net/${artworkData.owner.image}`;
+      if (data.lister.image)
+        data.lister.image = `https://arweave.net/${data.lister.image}`;
 
-      arts.push({
-        ...artworkData,
-        price,
+      owned.push({
+        id: token.contractId,
+        name: token.name,
+        lister: data.lister,
+        price: null,
       });
     }
 
-    return arts;
+    setOwned((val) => [...val, ...arts]);
   }
 
   return (
@@ -78,32 +82,37 @@ const Owns = (props: {
       <Spacer y={3} />
       <h1 className="Title">Owned art {"&"} collectibles</h1>
       <Spacer y={3} />
-      <div className={styles.Creations}>
-        <AnimatePresence>
-          {data.map((art, i) => (
-            <motion.div
-              key={i}
-              {...cardAnimation(i)}
-              className={styles.CreationItem}
-            >
-              <Card.Asset
-                name={art.name}
-                userData={{
-                  avatar: art.owner.image,
-                  name: art.owner.name,
-                  usertag: art.owner.username,
-                }}
-                // @ts-ignore
-                price={art.price ?? " ??"}
-                image={`https://arweave.net/${art.id}`}
-                onClick={() => router.push(`/space/${art.id}`)}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      <InfiniteScroll
+        dataLength={owned.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<></>}
+        className={styles.Creations}
+        style={{ overflow: "unset !important" }}
+      >
+        {owned.map((art, i) => (
+          <motion.div
+            key={i}
+            {...cardAnimation(i)}
+            className={styles.CreationItem}
+          >
+            <Card.Asset
+              name={art.name}
+              userData={{
+                avatar: art.lister.image,
+                name: art.lister.name,
+                usertag: art.lister.username,
+              }}
+              // @ts-ignore
+              price={art.price ?? " ??"}
+              image={`https://arweave.net/${art.id}`}
+              onClick={() => router.push(`/space/${art.id}`)}
+            />
+          </motion.div>
+        ))}
+      </InfiniteScroll>
       <AnimatePresence>
-        {loading && (
+        {hasMore && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -128,7 +137,6 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params: { input } }) {
   const user = (await client.user.getUser(input)) ?? null;
-  const owns: Art[] = [];
 
   // redirect if the user cannot be found and if it is not and address either
   if (!isAddress(input) && !user)
@@ -139,27 +147,46 @@ export async function getStaticProps({ params: { input } }) {
       },
     };
 
-  for (let i = 0; i < 2; i++) {
-    const { data: ids } = await axios.get(
-      `${CACHE_URL}/user/${input}/owns/${i * 4}`
-    );
+  // load balances for all addresses and
+  // filter them to sort out repeating owned
+  // tokens
+  const balances: UserBalance[] = [];
 
-    for (const id of ids) {
-      let { data } = await axios.get(`${CACHE_URL}/site/artwork/${id}`);
-      //const price = (await arPrice()) * (await client.getPrice(id)).price;
-      const price = 1;
+  for (const balance of await (user
+    ? fetchBalancesByUsername
+    : fetchBalancesForAddress)(input, "art")) {
+    // continue if this token has already been added to the balances array
+    if (balances.find(({ contractId }) => contractId === balance.contractId))
+      continue;
 
-      if (data.owner.image)
-        data.owner.image = `https://arweave.net/${data.owner.image}`;
-
-      owns.push({
-        ...data,
-        price,
-      });
-    }
+    // push to balances
+    // to allow json serialization
+    // return null if the logo is undefined
+    balances.push({
+      ...balance,
+      logo: balance.logo ?? null,
+    });
   }
 
-  return { props: { owns, user, input }, revalidate: 1 };
+  const owned: Art[] = [];
+
+  // load data for the first 8 tokens
+  for (const token of balances.slice(0, 8)) {
+    const data = await fetchArtworkMetadata(token.contractId);
+    //const price = (await arPrice()) * (await client.getPrice(id)).price;
+
+    if (data.lister.image)
+      data.lister.image = `https://arweave.net/${data.lister.image}`;
+
+    owned.push({
+      id: token.contractId,
+      name: token.name,
+      lister: data.lister,
+      price: null,
+    });
+  }
+
+  return { props: { owned, balances, user, input }, revalidate: 1 };
 }
 
 export default Owns;
