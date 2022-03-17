@@ -9,9 +9,10 @@ import {
   fetchUserCreations,
 } from "verto-cache-interface";
 import { Art } from "../../../utils/user";
+import { useState } from "react";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
-import useInfiniteScroll from "../../../utils/infinite_scroll";
+import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
 const Creations = (props: {
@@ -23,12 +24,22 @@ const Creations = (props: {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  const { loading, data } = useInfiniteScroll<Art>(loadMore, props.creations);
+  // artworks infinite loading
+  const [creations, setCreations] = useState<Art[]>(props.creations);
+  const [hasMore, setHasMore] = useState(true);
 
-  async function loadMore(): Promise<Art[]> {
+  async function loadMore() {
+    if (!hasMore) return;
+
     let arts: Art[] = [];
+    const nextArtsToLoad = props.ids.slice(
+      creations.length,
+      creations.length + 8
+    );
 
-    for (const id of props.ids.slice(data.length, data.length + 8)) {
+    if (nextArtsToLoad.length <= 0) return setHasMore(false);
+
+    for (const id of nextArtsToLoad) {
       const data = await fetchArtworkMetadata(id);
       //const price = (await arPrice()) * (await client.getPrice(id)).price;
 
@@ -38,11 +49,10 @@ const Creations = (props: {
       arts.push({
         ...data,
         price: null,
-        owner: data.lister,
       });
     }
 
-    return arts;
+    setCreations((val) => [...val, ...arts]);
   }
 
   return (
@@ -65,32 +75,37 @@ const Creations = (props: {
       <Spacer y={3} />
       <h1 className="Title">All Creations</h1>
       <Spacer y={3} />
-      <div className={styles.Creations}>
-        <AnimatePresence>
-          {data.map((art, i) => (
-            <motion.div
-              key={i}
-              {...cardAnimation(i)}
-              className={styles.CreationItem}
-            >
-              <Card.Asset
-                name={art.name}
-                userData={{
-                  avatar: art.owner.image,
-                  name: art.owner.name,
-                  usertag: art.owner.username,
-                }}
-                // @ts-ignore
-                price={art.price ?? " ??"}
-                image={`https://arweave.net/${art.id}`}
-                onClick={() => router.push(`/space/${art.id}`)}
-              />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </div>
+      <InfiniteScroll
+        dataLength={creations.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<></>}
+        className={styles.Creations}
+        style={{ overflow: "unset !important" }}
+      >
+        {creations.map((art, i) => (
+          <motion.div
+            key={i}
+            {...cardAnimation(i)}
+            className={styles.CreationItem}
+          >
+            <Card.Asset
+              name={art.name}
+              userData={{
+                avatar: art.lister.image,
+                name: art.lister.name,
+                usertag: art.lister.username,
+              }}
+              // @ts-ignore
+              price={art.price ?? " ??"}
+              image={`https://arweave.net/${art.id}`}
+              onClick={() => router.push(`/space/${art.id}`)}
+            />
+          </motion.div>
+        ))}
+      </InfiniteScroll>
       <AnimatePresence>
-        {loading && (
+        {hasMore && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -138,7 +153,6 @@ export async function getStaticProps({ params: { input } }) {
     creations.push({
       ...data,
       price: null,
-      owner: data.lister,
     });
   }
 

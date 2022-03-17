@@ -18,7 +18,7 @@ export interface Art {
   id: string;
   name: string;
   price?: number;
-  owner: UserInterface;
+  lister: UserInterface;
 }
 
 export type TokenType = "community" | "art" | "collection" | "custom";
