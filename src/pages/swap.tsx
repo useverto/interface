@@ -1,4 +1,7 @@
-import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
+import {
+  OrderInterfaceWithPair,
+  UserInterface,
+} from "@verto/js/dist/common/faces";
 import {
   Button,
   Page,
@@ -96,7 +99,7 @@ const Swap = ({ defaultPair }) => {
   }>(defaultPair);
 
   // orderbook for the current pair
-  const [orderbook, setOrderbook] = useState<OrderInterface[]>();
+  const [orderbook, setOrderbook] = useState<OrderInterfaceWithPair[]>();
 
   useEffect(() => {
     (async () => {
@@ -358,7 +361,9 @@ const Swap = ({ defaultPair }) => {
                     id={i + 1}
                     type="buy"
                     price={order.price}
-                    amount={order.filled}
+                    // TODO
+                    //amount={order.filled}
+                    amount={10}
                     total={order.quantity}
                   />
                 ))}
@@ -384,7 +389,9 @@ const Swap = ({ defaultPair }) => {
                     id={i + 1}
                     type="sell"
                     price={order.price}
-                    amount={order.filled}
+                    // TODO
+                    // amount={order.filled}
+                    amount={10}
                     total={order.quantity}
                   />
                 ))}

@@ -1,4 +1,4 @@
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import { generateAvatarGradient } from "@verto/ui";
 
 export function randomEmoji(size = 100) {

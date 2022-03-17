@@ -1,8 +1,8 @@
 import {
-  OrderInterface,
+  OrderInterfaceWithPair,
   TransactionInterface,
   UserInterface,
-} from "@verto/js/dist/faces";
+} from "@verto/js/dist/common/faces";
 import {
   Avatar,
   Button,
@@ -52,7 +52,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
   const [creations, setCreations] = useState<string[]>([]);
   const [owned, setOwned] = useState<string[]>([]);
-  const [orders, setOrders] = useState<OrderInterface[]>([]);
+  const [orders, setOrders] = useState<OrderInterfaceWithPair[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
   const currentAddress = useSelector(
     (state: RootState) => state.addressReducer
@@ -117,7 +117,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   // load orders
   useEffect(() => {
     (async () => {
-      let res: OrderInterface[] = [];
+      let res: OrderInterfaceWithPair[] = [];
 
       if (props.user) {
         for (const address of props.user.addresses) {

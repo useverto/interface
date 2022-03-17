@@ -26,7 +26,7 @@ import {
 } from "@iconicicons/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { fixUserImage } from "../../utils/user";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import { cardAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
 import {

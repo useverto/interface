@@ -16,7 +16,7 @@ import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { Art, TokenType } from "../../utils/user";
 import { arPrice, verto as client } from "../../utils/arweave";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { SearchIcon } from "@iconicicons/react";

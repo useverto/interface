@@ -1,5 +1,5 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import { useRouter } from "next/router";
 import { arPrice, isAddress, verto as client } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";

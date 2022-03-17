@@ -8,7 +8,10 @@ import {
   useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { OrderInterface, UserInterface } from "@verto/js/dist/faces";
+import {
+  OrderInterfaceWithPair,
+  UserInterface,
+} from "@verto/js/dist/common/faces";
 import { motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useSelector } from "react-redux";
@@ -23,7 +26,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  const [orders, setOrders] = useState<OrderInterface[]>([]);
+  const [orders, setOrders] = useState<OrderInterfaceWithPair[]>([]);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
   const currentAddress = useSelector(
     (state: RootState) => state.addressReducer
@@ -36,7 +39,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   // load orders
   useEffect(() => {
     (async () => {
-      let res: OrderInterface[] = [];
+      let res: OrderInterfaceWithPair[] = [];
 
       if (props.user) {
         for (const address of props.user.addresses) {

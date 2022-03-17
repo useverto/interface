@@ -1,5 +1,5 @@
 import { CheckIcon, EditIcon, PlusIcon } from "@iconicicons/react";
-import { TokenInterface, TokenType } from "@verto/js/dist/faces";
+import { TokenInterface, TokenType } from "@verto/js/dist/common/faces";
 import { verto as client, VERTO_CONTRACT_PST } from "../utils/arweave";
 import {
   Button,

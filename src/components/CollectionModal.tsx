@@ -31,7 +31,7 @@ import { RootState } from "../store/reducers";
 import { AnimatePresence, motion } from "framer-motion";
 import { fixUserImage } from "../utils/user";
 import { formatAddress } from "../utils/format";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import Verto from "@verto/js";
 import axios from "axios";
 import styles from "../styles/components/ListingModal.module.sass";

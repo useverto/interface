@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useMediaPredicate } from "react-media-hook";
 import { opacityAnimation } from "../utils/animations";
 import { verto as client } from "../utils/arweave";
-import { OrderInterface } from "@verto/js/dist/faces";
+import { OrderInterface } from "@verto/js/dist/common/faces";
 import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";

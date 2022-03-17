@@ -1,5 +1,8 @@
 import { Loading, Page, Select, Spacer, Tooltip, useSelect } from "@verto/ui";
-import { TransactionInterface, UserInterface } from "@verto/js/dist/faces";
+import {
+  TransactionInterface,
+  UserInterface,
+} from "@verto/js/dist/common/faces";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useRouter } from "next/router";

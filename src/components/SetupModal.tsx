@@ -21,7 +21,7 @@ import { interactWrite } from "smartweave";
 import { client, COMMUNITY_CONTRACT, verto } from "../utils/arweave";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import Instagram from "./icons/Instagram";
 import Twitter from "./icons/Twitter";
 import Facebook from "./icons/Facebook";

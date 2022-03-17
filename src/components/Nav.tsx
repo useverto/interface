@@ -22,7 +22,7 @@ import {
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { UserInterface } from "@verto/js/dist/faces";
+import { UserInterface } from "@verto/js/dist/common/faces";
 import { formatAddress } from "../utils/format";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
