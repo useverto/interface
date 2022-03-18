@@ -426,13 +426,6 @@ const Swap = ({ defaultPair }) => {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
 export async function getStaticProps() {
   const topCommunities = await fetchTopCommunities(2);
 
