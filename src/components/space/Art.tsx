@@ -37,12 +37,13 @@ import {
   calculateTotalSupply,
 } from "../../utils/supply";
 import { RootState } from "../../store/reducers";
-import { MuteIcon, UnmuteIcon } from "@primer/octicons-react";
+import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
 import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { arPrice, gql, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
+import { getVerification, Threshold } from "arverify";
 import marked, { Renderer } from "marked";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
@@ -195,6 +196,7 @@ const Art = (props: PropTypes) => {
   const [minter, setMinter] = useState<
     UserInterface & { isAddress?: boolean }
   >();
+  const [minterVertified, setMinterVerified] = useState(false);
   const [mintDate, setMintDate] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -223,6 +225,31 @@ const Art = (props: PropTypes) => {
             addresses: [],
             isAddress: true,
           });
+
+        // load if minter is verified
+        if (user) {
+          // if user profile is available
+          // check for at least one verified address
+          for (const address of user.addresses) {
+            const verification = await getVerification(
+              address,
+              Threshold.MEDIUM
+            );
+
+            if (verification.verified) {
+              setMinterVerified(true);
+              break;
+            }
+          }
+        } else {
+          // check user address for verification
+          const verification = await getVerification(
+            tx.owner.address,
+            Threshold.MEDIUM
+          );
+
+          setMinterVerified(verification.verified);
+        }
       } catch {
         setToast({
           type: "error",
@@ -385,6 +412,7 @@ const Art = (props: PropTypes) => {
                 @
                 {(minter.isAddress && formatAddress(minter.username, 7)) ||
                   minter.username}
+                {minterVertified && <VerifiedIcon />}
               </span>
             </a>
           </Link>
