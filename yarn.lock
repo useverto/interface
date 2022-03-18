@@ -442,10 +442,10 @@
   resolved "https://registry.yarnpkg.com/@remusao/trie/-/trie-1.4.1.tgz#755d09f8a007476334e611f42719b2d581f00720"
   integrity sha512-yvwa+aCyYI/UjeD39BnpMypG8N06l86wIDW1/PAc6ihBRnodIfZDwccxQN3n1t74wduzaz74m4ZMHZnB06567Q==
 
-"@three-em/js@^0.2.4":
-  version "0.2.4"
-  resolved "https://registry.npmjs.org/@three-em/js/-/js-0.2.4.tgz"
-  integrity sha512-yEoi21FuX1WCbXEjx9Vt838ciz3R6+2Q99v7+U90G+Krbmuy+4VMx3l/b5lWE4P3lrExrK4Ey1CckjzfRfCMAA==
+"@three-em/js@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@three-em/js/-/js-0.2.5.tgz#9fda2dcbc521986ab31c5eb5ec279a0690504a01"
+  integrity sha512-Me12tOsOedcqW7Z7zSrjXUWQbNlqai0RKBFUFkFUZmHmCVEgrKbfn0JutX4DACcgru8migneUtuuiIftXN5NFA==
 
 "@three-em/node-darwin-arm64@0.2.0":
   version "0.2.0"
@@ -628,12 +628,12 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-6":
-  version "1.0.0-beta-6"
-  resolved "https://registry.npmjs.org/@verto/js/-/js-1.0.0-beta-6.tgz"
-  integrity sha512-OGYxZ495Yb5/OKIvAL7FJxBoA0GeLDZWAUhfvvd1dgu5b/J8bxpzXWALYjxoAVboejFsvS0ElVXEGu/9oMKqsg==
+"@verto/js@^1.0.0-beta-7":
+  version "1.0.0-beta-7"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-7.tgz#dfc577123da442e006acc148ec16ce096631dc26"
+  integrity sha512-VTGqTjTfg1tgSsWd5nviYo+Enfa61+O+8sebSJjSd4momMvaawW6w57zf21CYmpXOjWqCnQWbreGJB3Raqe9+A==
   dependencies:
-    "@three-em/js" "^0.2.4"
+    "@three-em/js" "^0.2.5"
     "@three-em/node" "^0.2.4"
     ar-gql "^0.0.6"
     arweave "^1.10.23"
@@ -3251,7 +3251,7 @@ swr@^0.5.6:
   resolved "https://registry.npmjs.org/sylvester/-/sylvester-0.0.21.tgz"
   integrity sha1-KYexzivS84sNzio0OIiEv6RADqc=
 
-tar-fs@*, tar-fs@2.1.1:
+tar-fs@2.1.1, tar-fs@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.1.1.tgz#489a15ab85f1f0befabb370b7de4f9eb5cbe8784"
   integrity sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==
