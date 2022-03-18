@@ -104,10 +104,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
   // load owned
   useEffect(() => {
-    (props.user ? fetchBalancesByUsername : fetchBalancesForAddress)(
-      props.input,
-      "art"
-    )
+    client.user
+      .getBalances(props.input, "art")
       .then((val) =>
         setOwned(val.slice(0, 4).map(({ contractId }) => contractId))
       )

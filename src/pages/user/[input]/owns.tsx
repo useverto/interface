@@ -6,12 +6,7 @@ import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { Art } from "../../../utils/user";
 import { useState } from "react";
-import {
-  fetchArtworkMetadata,
-  fetchBalancesByUsername,
-  fetchBalancesForAddress,
-  UserBalance,
-} from "verto-cache-interface";
+import { fetchArtworkMetadata, UserBalance } from "verto-cache-interface";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -152,9 +147,7 @@ export async function getStaticProps({ params: { input } }) {
   // tokens
   const balances: UserBalance[] = [];
 
-  for (const balance of await (user
-    ? fetchBalancesByUsername
-    : fetchBalancesForAddress)(input, "art")) {
+  for (const balance of await client.user.getBalances(input, "art")) {
     // continue if this token has already been added to the balances array
     if (balances.find(({ contractId }) => contractId === balance.contractId))
       continue;
