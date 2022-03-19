@@ -37,91 +37,13 @@ import ListingModal from "../components/ListingModal";
 import styles from "../styles/views/app.module.sass";
 
 const App = () => {
-  //const [balances, setBalances] = useState<UserBalance[]>([]);
   const address = useSelector((state: RootState) => state.addressReducer);
   const [showMorePsts, setShowMorePsts] = useState(false);
   const theme = useTheme();
-  /*const [owned, setOwned] = useState([]);
-  const [userData, setUserData] = useState<UserInterface>();
-  const [loadingOwned, setLoadingOwned] = useState(true);*/
 
   const router = useRouter();
   const listModal = useModal();
   const { setToast } = useToasts();
-
-  // load balances
-  /*useEffect(() => {
-    if (!address) return;
-    setBalances([]);
-    setOwned([]);
-    setLoadingOwned(true);
-
-    (async () => {
-      const user = (await client.user.getUser(address)) ?? null;
-      setUserData(user);
-
-      // TODO: use new cache
-      const { data: ownedCollectibles } = await axios.get(
-        `${CACHE_URL}/user/${user?.username ?? address}/owns`
-      );
-
-      setOwned(
-        await Promise.all(
-          ownedCollectibles.map(async (artoworkID: string) => {
-            const data = await fetchArtworkMetadata(artoworkID);
-
-            return {
-              ...data,
-              owner: {
-                ...data.lister,
-                image: data.lister.image
-                  ? `https://arweave.net/${data.lister.image}`
-                  : undefined,
-              },
-              price: 1,
-              // (await arPrice()) * (await client.getPrice(artoworkID)).price,
-            };
-          })
-        )
-      );
-      setLoadingOwned(false);
-
-      if (user) {
-        for (const addr of user.addresses) {
-          const addressBalances = await client.user.getBalances(addr);
-
-          setBalances((val) =>
-            [
-              ...val.filter(
-                (existingBalance) =>
-                  !addressBalances.find(
-                    ({ contractId }) =>
-                      contractId === existingBalance.contractId
-                  )
-              ),
-              ...addressBalances.map((addBalance) => ({
-                ...addBalance,
-                balance:
-                  addBalance.balance +
-                  (val.find(
-                    ({ contractId }) => contractId === addBalance.contractId
-                  )?.balance ?? 0),
-              })),
-            ]
-              .filter(
-                ({ contractId }) => !ownedCollectibles.includes(contractId)
-              )
-              .sort((a, b) => b.balance - a.balance)
-          );
-        }
-      } else
-        setBalances(
-          (await client.user.getBalances(address))
-            .filter(({ contractId }) => !ownedCollectibles.includes(contractId))
-            .sort((a, b) => b.balance - a.balance)
-        );
-    })();
-  }, [address]);*/
 
   // load current user
   const [user, setUser] = useState<UserInterface | null>();
