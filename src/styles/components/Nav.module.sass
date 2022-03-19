@@ -11,14 +11,31 @@
     padding: 1em variables.$nav-side-padding / 2
 
   .Logo
+    display: flex
+    align-items: center
     cursor: pointer
     box-shadow: 0px 10px 20px variables.$standard-shadow
     user-select: none
+    text-decoration: none
     transition: all .23s ease-in-out
 
     img
       display: block
       height: 2.4em
+
+    .VersionChip
+      display: block
+      background-color: #000
+      box-shadow: variables.$standard-shadow
+      border-radius: 5px
+      font-size: .67rem
+      text-transform: uppercase
+      font-weight: 500
+      color: #fff
+      text-align: center
+      padding: .1em .5em
+      margin-left: 1em
+      transition: all .23s ease-in-out
 
     &:hover
       opacity: .82
@@ -82,8 +99,13 @@
       transform: translateY(-50%)
       transition: all .17s ease-in-out
 
-  &.DarkNav .Menu .Selection
-    box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
+  &.DarkNav 
+    .Menu .Selection
+      box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
+
+    .Logo .VersionChip
+      background-color: rgb(variables.$primary-color)
+      box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
 
   &.BlurLight, &.BlurDark
     .Menu .Selection
