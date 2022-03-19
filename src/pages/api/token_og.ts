@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // TODO: gradient
 import { randomEmoji } from "../../utils/user";
-import { verto as client } from "../../utils/arweave";
+import { verto as client, gateway } from "../../utils/arweave";
 import { fetchContract } from "verto-cache-interface";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
@@ -89,7 +89,7 @@ export default async function TokenOG(
         </div>
         <img class="logo" src="${
           state.settings?.communityLogo
-            ? `https://arweave.net/${state?.settings?.communityLogo}`
+            ? `${gateway()}/${state?.settings?.communityLogo}`
             : randomEmoji(600)
         }" alt="logo" />
         <svg viewBox="0 0 ${graphSize.width} ${

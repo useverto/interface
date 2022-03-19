@@ -8,7 +8,7 @@ import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMediaPredicate } from "react-media-hook";
 import { opacityAnimation } from "../utils/animations";
-import { verto as client } from "../utils/arweave";
+import { gateway, verto as client } from "../utils/arweave";
 import { OrderInterface } from "@verto/js/dist/common/faces";
 import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
@@ -58,7 +58,7 @@ const Home = ({ artwork }: { artwork: any }) => {
         owner: {
           ...val.owner,
           image: val.owner.image
-            ? `https://arweave.net/${artwork.owner.image}`
+            ? `${gateway()}/${artwork.owner.image}`
             : undefined,
         },
         //price: res?.price ? (res.price * gecko.arweave.usd).toFixed(2) : null,
@@ -182,7 +182,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                     <Card.Collection
                       name={artworkData.name}
                       images={artworkData.images.map(
-                        (txID) => `https://arweave.net/${txID}`
+                        (txID) => `${gateway()}/${txID}`
                       )}
                       userData={{
                         avatar: artworkData.owner?.image,
@@ -200,7 +200,7 @@ const Home = ({ artwork }: { artwork: any }) => {
                         usertag: artworkData.owner.username,
                       }}
                       price={artworkData.price || null}
-                      image={`https://arweave.net/${artworkData.id}`}
+                      image={`${gateway()}/${artworkData.id}`}
                       onClick={() => router.push(`/space/${artworkData.id}`)}
                     />
                   )}

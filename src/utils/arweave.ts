@@ -11,6 +11,10 @@ export const client = new Arweave({
   protocol: "https",
 });
 export const verto = new Verto("use_wallet", client);
+export const gateway = () =>
+  `${client.getConfig().api.protocol ?? "https"}://${
+    client.getConfig().api.host ?? "artweave.net"
+  }:${client.getConfig().api.port ?? "443"}`;
 
 export const gql = new ArDB(client);
 

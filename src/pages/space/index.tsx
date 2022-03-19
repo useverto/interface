@@ -15,7 +15,7 @@ import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
 import { Art, TokenType } from "../../utils/user";
-import { arPrice, verto as client } from "../../utils/arweave";
+import { arPrice, gateway, verto as client } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
@@ -59,7 +59,7 @@ const Space = (props: {
         owner: {
           ...val.owner,
           image: val.owner.image
-            ? `https://arweave.net/${val.owner.image}`
+            ? `${gateway()}/${val.owner.image}`
             : undefined,
         },
       }));
@@ -162,7 +162,7 @@ const Space = (props: {
             ...val,
             {
               id: psc.id,
-              uri: psc.logo ? `https://arweave.net/${psc.logo}` : cryptometaURI,
+              uri: psc.logo ? `${gateway()}/${psc.logo}` : cryptometaURI,
             },
           ]);
         } else {
@@ -334,7 +334,7 @@ const Space = (props: {
                   name: art.owner.name,
                   usertag: art.owner.username,
                 }}
-                images={art.images.map((txID) => `https://arweave.net/${txID}`)}
+                images={art.images.map((txID) => `${gateway()}/${txID}`)}
                 onClick={() => router.push(`/space/${art.id}`)}
               />
             )) || (
@@ -347,7 +347,7 @@ const Space = (props: {
                 }}
                 // @ts-ignore
                 price={prices[art.id] ?? " ??"}
-                image={`https://arweave.net/${art.id}`}
+                image={`${gateway()}/${art.id}`}
                 onClick={() => router.push(`/space/${art.id}`)}
               />
             )}
@@ -396,7 +396,7 @@ const Space = (props: {
                   name={token.name}
                   // @ts-ignore
                   price={token.price ?? " ??"}
-                  image={`https://arweave.net/${token.logo}`}
+                  image={`${gateway()}/${token.logo}`}
                   ticker={token.ticker}
                   onClick={() => router.push(`/space/${token.id}`)}
                 />
@@ -406,14 +406,12 @@ const Space = (props: {
                     name={token.name}
                     userData={{
                       avatar: token.lister?.image
-                        ? `https://arweave.net/${token.lister.image}`
+                        ? `${gateway()}/${token.lister.image}`
                         : undefined,
                       name: token.lister.name,
                       usertag: token.lister.username,
                     }}
-                    images={token.items.map(
-                      (id) => `https://arweave.net/${id}`
-                    )}
+                    images={token.items.map((id) => `${gateway()}/${id}`)}
                     onClick={() => router.push(`/space/${token.id}`)}
                   />
                 )) || (
@@ -421,14 +419,14 @@ const Space = (props: {
                     name={token.name}
                     userData={{
                       avatar: token.lister?.image
-                        ? `https://arweave.net/${token.lister.image}`
+                        ? `${gateway()}/${token.lister.image}`
                         : undefined,
                       name: token.lister.name,
                       usertag: token.lister.username,
                     }}
                     // @ts-ignore
                     price={token.price ?? " ??"}
-                    image={`https://arweave.net/${token.id}`}
+                    image={`${gateway()}/${token.id}`}
                     onClick={() => router.push(`/space/${token.id}`)}
                   />
                 )}
@@ -461,7 +459,7 @@ export async function getStaticProps() {
 
   for (let i = 0; i < arts.length; i++)
     if (arts[i].owner.image)
-      arts[i].owner.image = `https://arweave.net/${arts[i].owner.image}`;
+      arts[i].owner.image = `${gateway()}/${arts[i].owner.image}`;
 
   return { props: { featured, arts }, revalidate: 1 };
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
 import { fetchRandomCommunitiesWithMetadata } from "verto-cache-interface";
+import { gateway } from "../utils/arweave";
 import styles from "../styles/components/PSTSwitcher.module.sass";
 
 const PSTSwitcher = () => {
@@ -99,7 +100,7 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`space/${images.img1.id}`)}
           >
             <img
-              src={`https://arweave.net/${images.img1.logo}`}
+              src={`${gateway()}/${images.img1.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "71px" }}
@@ -133,7 +134,7 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`space/${images.img2.id}`)}
           >
             <img
-              src={`https://arweave.net/${images.img2.logo}`}
+              src={`${gateway()}/${images.img2.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "61px" }}
@@ -152,7 +153,7 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`space/${images.img3.id}`)}
           >
             <img
-              src={`https://arweave.net/${images.img3.logo}`}
+              src={`${gateway()}/${images.img3.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "92px" }}
@@ -176,7 +177,7 @@ const PSTSwitcher = () => {
             onClick={() => router.push(`space/${images.img4.id}`)}
           >
             <img
-              src={`https://arweave.net/${images.img4.logo}`}
+              src={`${gateway()}/${images.img4.logo}`}
               alt="pst"
               draggable={false}
               style={{ width: "90px" }}

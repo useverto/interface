@@ -31,11 +31,11 @@ import { cardAnimation, opacityAnimation } from "../../utils/animations";
 import { run } from "ar-gql";
 import {
   client as arweave,
+  gateway,
   isAddress,
   verto as client,
 } from "../../utils/arweave";
 import { smartweave } from "smartweave";
-import Verto from "@verto/js";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import styles from "../../styles/views/collection.module.sass";
@@ -395,7 +395,7 @@ const Collection = ({
                   )}
                 </AnimatePresence>
                 <Card.AssetClear
-                  image={`https://arweave.net/${id}`}
+                  image={`${gateway()}/${id}`}
                   onClick={() => router.push(`/space/${id}`)}
                 />
               </motion.div>

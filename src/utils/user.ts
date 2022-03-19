@@ -1,5 +1,6 @@
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { generateAvatarGradient } from "@verto/ui";
+import { gateway } from "./arweave";
 
 export function randomEmoji(size = 100) {
   const emojis = ["😂", "🥺", "😊", "🥰", "😃", "🤩", "🤔", "😏", "😷"];
@@ -26,6 +27,6 @@ export type TokenType = "community" | "art" | "collection" | "custom";
 export const fixUserImage = (user: UserInterface) => ({
   ...user,
   image: user?.image
-    ? `https://arweave.net/${user.image}`
+    ? `${gateway()}/${user.image}`
     : generateAvatarGradient(user.name || user.username || ""),
 });

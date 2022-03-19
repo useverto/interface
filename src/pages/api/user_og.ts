@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 // TODO: gradient
 import { randomEmoji } from "../../utils/user";
 import { formatAddress } from "../../utils/format";
-import { verto as client } from "../../utils/arweave";
+import { verto as client, gateway } from "../../utils/arweave";
 import captureWebsite from "capture-website";
 import chrome from "chrome-aws-lambda";
 
@@ -71,7 +71,7 @@ export default async function UserOG(
       </head>
       <body>
         <img class="avatar" src="${
-          user?.image ? `https://arweave.net/${user.image}` : randomEmoji(600)
+          user?.image ? `${gateway()}/${user.image}` : randomEmoji(600)
         }" alt="pfp" />
         <div class="user-data">
           ${(user?.name && `<h1>${user.name}</h1>`) || ""}

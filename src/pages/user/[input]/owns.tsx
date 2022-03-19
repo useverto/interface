@@ -1,7 +1,12 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { useRouter } from "next/router";
-import { arPrice, isAddress, verto as client } from "../../../utils/arweave";
+import {
+  arPrice,
+  gateway,
+  isAddress,
+  verto as client,
+} from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
 import { Art } from "../../../utils/user";
@@ -40,7 +45,7 @@ const Owns = (props: {
       //const price = (await arPrice()) * (await client.getPrice(id)).price;
 
       if (data.lister.image)
-        data.lister.image = `https://arweave.net/${data.lister.image}`;
+        data.lister.image = `${gateway()}/${data.lister.image}`;
 
       owned.push({
         id: token.contractId,
@@ -65,7 +70,7 @@ const Owns = (props: {
             props.user?.username || props.input
           } - Owned art & collectibles`}
           image={
-            (props.user?.image && `https://arweave.net/${props.user.image}`) ||
+            (props.user?.image && `${gateway()}/${props.user.image}`) ||
             undefined
           }
         />
@@ -100,7 +105,7 @@ const Owns = (props: {
               }}
               // @ts-ignore
               price={art.price ?? " ??"}
-              image={`https://arweave.net/${art.id}`}
+              image={`${gateway()}/${art.id}`}
               onClick={() => router.push(`/space/${art.id}`)}
             />
           </motion.div>
@@ -169,7 +174,7 @@ export async function getStaticProps({ params: { input } }) {
     //const price = (await arPrice()) * (await client.getPrice(id)).price;
 
     if (data.lister.image)
-      data.lister.image = `https://arweave.net/${data.lister.image}`;
+      data.lister.image = `${gateway()}/${data.lister.image}`;
 
     owned.push({
       id: token.contractId,

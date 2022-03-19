@@ -6,7 +6,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../../utils/animations";
 import { useRouter } from "next/router";
-import { isAddress, verto as client } from "../../../utils/arweave";
+import { gateway, isAddress, verto as client } from "../../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { formatAddress } from "../../../utils/format";
 import { useEffect, useState } from "react";
@@ -70,7 +70,7 @@ const Transactions = (props: {
           title="User"
           subtitle={`@${props.user?.username || props.input} - Transactions`}
           image={
-            (props.user?.image && `https://arweave.net/${props.user.image}`) ||
+            (props.user?.image && `${gateway()}/${props.user.image}`) ||
             undefined
           }
         />

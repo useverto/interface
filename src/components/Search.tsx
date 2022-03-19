@@ -3,7 +3,7 @@ import { opacityAnimation } from "../utils/animations";
 import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { useTheme, Spacer, generateAvatarGradient } from "@verto/ui";
-import { CACHE_URL } from "../utils/arweave";
+import { CACHE_URL, gateway } from "../utils/arweave";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
@@ -43,7 +43,7 @@ export default function Search({ open, setOpen }) {
 
     data = data.map((val) => ({
       ...val,
-      image: (val.image && `https://arweave.net/${val.image}`) || undefined,
+      image: (val.image && `${gateway}/${val.image}`) || undefined,
       gradient:
         (!val.image &&
           val.type === "user" &&

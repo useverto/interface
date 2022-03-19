@@ -29,7 +29,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
-import { verto as client } from "../utils/arweave";
+import { gateway, verto as client } from "../utils/arweave";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
@@ -370,7 +370,7 @@ const Nav = () => {
                 size="small"
                 usertag={user.username}
                 name={user.name}
-                avatar={`https://arweave.net/${user.image}`}
+                avatar={`${gateway()}/${user.image}`}
                 left
                 //notification={true}
                 style={{ cursor: "pointer" }}

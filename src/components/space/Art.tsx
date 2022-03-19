@@ -40,7 +40,7 @@ import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
 import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/common/faces";
-import { arPrice, gql, verto } from "../../utils/arweave";
+import { arPrice, gateway, gql, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
 import { getVerification, Threshold } from "arverify";
@@ -101,7 +101,7 @@ const Art = (props: PropTypes) => {
   useEffect(() => {
     (async () => {
       // get data about the asset
-      const res = await fetch(`https://arweave.net/${props.id}`);
+      const res = await fetch(`${gateway()}/${props.id}`);
       const resData = await res.clone().blob();
       const content_type = res.clone().headers.get("Content-Type");
 
@@ -330,7 +330,7 @@ const Art = (props: PropTypes) => {
     <>
       <Head>
         <title>Verto - {props.name}</title>
-        <Metas title={props.name} image={`https://arweave.net/${props.id}`} />
+        <Metas title={props.name} image={`${gateway()}/${props.id}`} />
       </Head>
       {(data?.tokenType === "image" && (
         <img
@@ -347,10 +347,7 @@ const Art = (props: PropTypes) => {
             autoPlay
             className={styles.Background}
           >
-            <source
-              src={`https://arweave.net/${props.id}`}
-              type={data.source}
-            />
+            <source src={`${gateway()}/${props.id}`} type={data.source} />
           </video>
         ))}
       <div
@@ -402,7 +399,7 @@ const Art = (props: PropTypes) => {
                 <Avatar
                   usertag={minter.name || minter.username}
                   avatar={
-                    (minter.image && `https://arweave.net/${minter.image}`) ||
+                    (minter.image && `${gateway()}/${minter.image}`) ||
                     undefined
                   }
                   onlyProfilePicture
@@ -537,7 +534,7 @@ const Art = (props: PropTypes) => {
                     usertag={holder.username}
                     avatar={
                       holder.avatar
-                        ? `https://arweave.net/${holder.avatar}`
+                        ? `${gateway()}/${holder.avatar}`
                         : undefined
                     }
                     onlyProfilePicture
@@ -637,7 +634,7 @@ const Art = (props: PropTypes) => {
                       name={suggestion.name}
                       userData={{
                         avatar: minter.image
-                          ? `https://arweave.net/${minter.image}`
+                          ? `${gateway()}/${minter.image}`
                           : undefined,
                         name: minter.name,
                         usertag: minter.username,
@@ -645,7 +642,7 @@ const Art = (props: PropTypes) => {
                       // @ts-ignore
                       /** TODO */
                       price={undefined}
-                      image={`https://arweave.net/${suggestion.id}`}
+                      image={`${gateway()}/${suggestion.id}`}
                       onClick={() => router.push(`/space/${suggestion.id}`)}
                     />
                   </motion.div>

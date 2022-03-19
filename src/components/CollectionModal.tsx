@@ -15,6 +15,7 @@ import {
   CACHE_URL,
   client,
   COLLECTION_CONTRACT_SRC,
+  gateway,
   isAddress,
   verto,
 } from "../utils/arweave";
@@ -494,7 +495,7 @@ const CollectionModal = (props: Props) => {
                         }}
                       >
                         <img
-                          src={`https://arweave.net/${item.image}`}
+                          src={`${gateway()}/${item.image}`}
                           alt="i"
                           draggable={false}
                           className={styles.Square}
@@ -538,11 +539,7 @@ const CollectionModal = (props: Props) => {
                   setItems((val) => val.filter((itemID) => itemID !== item))
                 }
               >
-                <img
-                  src={`https://arweave.net/${item}`}
-                  alt="i"
-                  draggable={false}
-                />
+                <img src={`${gateway()}/${item}`} alt="i" draggable={false} />
                 <div className={styles.RemoveItem}>
                   <TrashIcon />
                 </div>

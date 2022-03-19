@@ -22,7 +22,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { CloseIcon } from "@iconicicons/react";
 import { fetchContract } from "verto-cache-interface";
-import { COMMUNITY_CONTRACT } from "../utils/arweave";
+import { client, COMMUNITY_CONTRACT, gateway } from "../utils/arweave";
 import {
   betaAlertShown,
   ignorePermissionWarning,
@@ -247,18 +247,19 @@ const Theme = ({ children }) => {
 const StatusChecker = ({ children }) => {
   const { setToast } = useToasts();
 
-  // check arweave.net
+  // check gateway status
   useEffect(() => {
     (async () => {
       try {
         await axios({
           method: "GET",
-          url: "https://arweave.net",
+          url: gateway(),
           timeout: 8000,
         });
-      } catch {
+      } catch (e) {
+        console.error("Gateway logs:", e);
         setToast({
-          description: "The arweave.net gateway is down",
+          description: `The ${client.getConfig().api.host} gateway is down`,
           type: "error",
           duration: 7000,
         });
@@ -268,7 +269,6 @@ const StatusChecker = ({ children }) => {
 
   // check cache
   useEffect(() => {
-    // TODO: cache ping
     (async () => {
       try {
         await fetchContract(COMMUNITY_CONTRACT);

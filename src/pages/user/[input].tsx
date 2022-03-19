@@ -24,7 +24,7 @@ import { RootState } from "../../store/reducers";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCancel, getCancelledOrders } from "../../utils/order";
 import { useRouter } from "next/router";
-import { isAddress, verto as client } from "../../utils/arweave";
+import { gateway, isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
 import { resetNavTheme, updateNavTheme } from "../../store/actions";
@@ -191,9 +191,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
 
         const shuffled = shuffleArray(owned);
         const fac = new FastAverageColor();
-        const avColor = await fac.getColorAsync(
-          `https://arweave.net/${shuffled[0]}`
-        );
+        const avColor = await fac.getColorAsync(`${gateway()}/${shuffled[0]}`);
 
         setThumbnail(shuffled[0]);
         dispatch(updateNavTheme(avColor.isDark ? "BlurLight" : "BlurDark"));
@@ -228,7 +226,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             <Avatar
               avatar={
                 props.user.image
-                  ? `https://arweave.net/${props.user.image}`
+                  ? `${gateway()}/${props.user.image}`
                   : undefined
               }
               usertag={props.user.username}
@@ -287,7 +285,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             className={styles.CardGridItemWrapper}
           >
             <Card.AssetClear
-              image={`https://arweave.net/${id}`}
+              image={`${gateway()}/${id}`}
               onClick={() => router.push(`/space/${id}`)}
             />
           </motion.div>
@@ -315,7 +313,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             className={styles.CardGridItemWrapper}
           >
             <Card.AssetClear
-              image={`https://arweave.net/${id}`}
+              image={`${gateway()}/${id}`}
               onClick={() => router.push(`/space/${id}`)}
             />
           </motion.div>

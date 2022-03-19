@@ -18,7 +18,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store/reducers";
 import { addToCancel, getCancelledOrders } from "../../../utils/order";
 import { useRouter } from "next/router";
-import { isAddress, verto as client } from "../../../utils/arweave";
+import { gateway, isAddress, verto as client } from "../../../utils/arweave";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 
@@ -71,7 +71,7 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
           title="User"
           subtitle={`@${props.user?.username || props.input} - Trades`}
           image={
-            (props.user?.image && `https://arweave.net/${props.user.image}`) ||
+            (props.user?.image && `${gateway()}/${props.user.image}`) ||
             undefined
           }
         />

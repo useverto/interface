@@ -24,7 +24,7 @@ import {
   ChevronDownIcon,
   ArrowRightIcon,
 } from "@iconicicons/react";
-import { arPrice, verto as client } from "../utils/arweave";
+import { arPrice, gateway, verto as client } from "../utils/arweave";
 import { fetchArtworkMetadata, UserBalance } from "verto-cache-interface";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
@@ -183,7 +183,7 @@ const App = () => {
                         balanceLogos.find(({ id }) => id === item.contractId)
                           ?.useContractLogo
                           ? {
-                              light: `https://arweave.net/${item.logo}`,
+                              light: `${gateway()}/${item.logo}`,
                             }
                           : {
                               dark: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=dark`,
@@ -242,13 +242,13 @@ const App = () => {
                     name={collectible.name}
                     userData={{
                       avatar: collectible.lister.image
-                        ? `https://arweave.net/${collectible.lister.image}`
+                        ? `${gateway()}/${collectible.lister.image}`
                         : null,
                       name: collectible.lister.name,
                       usertag: collectible.lister.username,
                     }}
                     price={collectible.price ?? 0}
-                    image={`https://arweave.net/${collectible.contractId}`}
+                    image={`${gateway()}/${collectible.contractId}`}
                     reverse={theme === "Light"}
                     onClick={() =>
                       router.push(`/space/${collectible.contractId}`)
