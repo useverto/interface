@@ -20,19 +20,21 @@
       gap: 2em
       justify-content: center
 
-    .NoOwned
+    .LoadingOwnedArts, .NoOwned
       position: absolute
       top: 50%
       left: 50%
-      text-align: center
+      color: #fff
       transform: translate(-50%, -50%)
-      margin: 0
-      font-size: 1.1em
-      color: variables.$foreground-reverse-color
 
-      a
-        text-decoration: underline
-        color: variables.$foreground-reverse-color
+      &.NoOwned
+        text-align: center
+        margin: 0
+        font-size: 1.1em
+
+        a
+          text-decoration: underline
+          color: #fff
 
     .ViewAll
       position: absolute

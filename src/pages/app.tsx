@@ -1,6 +1,7 @@
 import { UserInterface } from "@verto/js/dist/common/faces";
 import {
   Card,
+  Loading,
   Page,
   Spacer,
   Tooltip,
@@ -161,14 +162,14 @@ const App = () => {
       // if the contract does not include a logo
       // we use the placeholder provided by cryptometa
       for (const token of balances) {
-        const cryptometaURI = `https://meta.viewblock.io/AR.${token.contractId}/logo`;
+        const cryptometaURI = `https://meta.viewblock.io/AR.${token.contractId}/logo?t=light`;
         const res = await axios.get(cryptometaURI);
 
         setBalanceLogos((val) => [
           ...val,
           {
             id: token.contractId,
-            useContractLogo: res.status === 200 || !token.logo,
+            useContractLogo: res.status !== 200 || !!token?.logo,
           },
         ]);
       }
@@ -176,14 +177,38 @@ const App = () => {
   }, [balances]);
 
   // load owned arts for user
-  const [owned, setOwned] = useState<UserBalance[]>([]);
+  const [owned, setOwned] = useState<OwnedInterface[]>();
+
+  type OwnedInterface = UserBalance & {
+    price?: number;
+    lister: UserInterface;
+  };
 
   useEffect(() => {
-    if (!address) return;
+    (async () => {
+      if (!address) return;
 
-    client.user
-      .getBalances(user?.username || address, "art")
-      .then((res) => setOwned(res));
+      // get owned art tokens
+      const ownedArts = await client.user.getBalances(
+        user?.username || address,
+        "art"
+      );
+
+      // loop through owned art tokens and load
+      // metadata and price for the art token
+      for (const art of ownedArts) {
+        const artData = await fetchArtworkMetadata(art.contractId);
+
+        setOwned((val) => [
+          ...(val ?? []),
+          {
+            ...art,
+            lister: artData.lister,
+            price: 0, // TODO
+          },
+        ]);
+      }
+    })();
   }, [user, address]);
 
   return (
@@ -220,37 +245,37 @@ const App = () => {
       </h1>
       <Spacer y={2} />
       <AnimatePresence>
-        {balances
-          .sort((a, b) => b.balance - a.balance)
-          .map(
-            (item, i) =>
-              (showMorePsts || i < 4) && (
-                <motion.div key={i} {...cardListAnimation(i)}>
-                  <Card.Balance
-                    id={item.contractId}
-                    name={item.name}
-                    // @ts-ignore
-                    ticker={item.ticker ?? ""}
-                    balance={item.balance}
-                    logo={
-                      balanceLogos.find(({ id }) => id === item.contractId)
-                        ?.useContractLogo
-                        ? {
-                            light: `https://arweave.net/${item.logo}`,
-                          }
-                        : {
-                            dark: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=dark`,
-                            light: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=light`,
-                          }
-                    }
-                  />
-                  <Spacer y={1.5} />
-                </motion.div>
-              )
-          )}
+        {(balances &&
+          balances
+            .sort((a, b) => b.balance - a.balance)
+            .map(
+              (item, i) =>
+                (showMorePsts || i < 4) && (
+                  <motion.div key={i} {...cardListAnimation(i)}>
+                    <Card.Balance
+                      id={item.contractId}
+                      name={item.name}
+                      ticker={item.ticker ?? ""}
+                      balance={item.balance}
+                      logo={
+                        balanceLogos.find(({ id }) => id === item.contractId)
+                          ?.useContractLogo
+                          ? {
+                              light: `https://arweave.net/${item.logo}`,
+                            }
+                          : {
+                              dark: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=dark`,
+                              light: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=light`,
+                            }
+                      }
+                    />
+                    <Spacer y={1.5} />
+                  </motion.div>
+                )
+            )) || <Loading.Spinner style={{ margin: "0 auto" }} />}
       </AnimatePresence>
       <AnimatePresence>
-        {balances.length > 4 && (
+        {balances?.length > 4 && (
           <motion.div {...opacityAnimation()}>
             <Spacer y={1} />
             <span
@@ -273,7 +298,7 @@ const App = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {balances.length === 0 && (
+      {balances?.length === 0 && (
         <p className="NoItemsText">Nothing in wallet</p>
       )}
       <Spacer y={4} />
@@ -288,27 +313,30 @@ const App = () => {
         <Spacer y={2} />
         <div className={styles.OwnedList}>
           <AnimatePresence>
-            {owned.slice(0, 4).map((collectible, i) => (
-              <motion.div {...cardAnimation(i)} key={i}>
-                <Card.Asset
-                  name={collectible.name}
-                  userData={{
-                    avatar: collectible.lister.image,
-                    name: collectible.lister.name,
-                    usertag: collectible.lister.username,
-                  }}
-                  price={collectible.price ?? 0}
-                  image={`https://arweave.net/${collectible.contractId}`}
-                  reverse={theme === "Light"}
-                  onClick={() =>
-                    router.push(`/space/${collectible.contractId}`)
-                  }
-                />
-              </motion.div>
-            ))}
+            {owned &&
+              owned.slice(0, 4).map((collectible, i) => (
+                <motion.div {...cardAnimation(i)} key={i}>
+                  <Card.Asset
+                    name={collectible.name}
+                    userData={{
+                      avatar: collectible.lister.image
+                        ? `https://arweave.net/${collectible.lister.image}`
+                        : null,
+                      name: collectible.lister.name,
+                      usertag: collectible.lister.username,
+                    }}
+                    price={collectible.price ?? 0}
+                    image={`https://arweave.net/${collectible.contractId}`}
+                    reverse={theme === "Light"}
+                    onClick={() =>
+                      router.push(`/space/${collectible.contractId}`)
+                    }
+                  />
+                </motion.div>
+              ))}
           </AnimatePresence>
           <AnimatePresence>
-            {owned.length > 0 && (
+            {owned && owned.length > 0 && (
               <motion.div className={styles.ViewAll} {...opacityAnimation()}>
                 <Link href={`/@${user?.username ?? address}/owns`}>
                   <a>
@@ -325,9 +353,9 @@ const App = () => {
               Consider checking out <Link href="/space">Space</Link>
             </p>
           )) ||
-            (!owned && <>{/** TODO: loading animation here */}</>)}
+            (!owned && <Loading.Spinner className={styles.LoadingOwnedArts} />)}
           {/** Placeholder */}
-          {owned.length === 0 && (
+          {(!owned || owned.length === 0) && (
             <Card.Asset
               name=""
               userData={{ avatar: undefined, usertag: "...", name: "..." }}
