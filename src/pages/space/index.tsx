@@ -28,6 +28,7 @@ import {
   RandomCommunities,
 } from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
+import axios from "axios";
 import useSWR from "swr";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -136,11 +137,47 @@ const Space = (props: {
   }, []);
 
   // preload logos of featured items
+  const [featuredLogos, setFeaturedLogos] = useState<
+    {
+      id: string;
+      uri: string;
+    }[]
+  >([]);
+
   useEffect(() => {
-    for (const psc of featured) {
-      fetch(`https://meta.viewblock.io/AR.${psc.id}/logo?t=dark`);
-    }
-  }, []);
+    (async () => {
+      for (const psc of featured) {
+        // we use dark theme, because the background is always dark
+        const cryptometaURI = `https://meta.viewblock.io/AR.${psc.id}/logo?t=dark`;
+        const res = await axios.get(cryptometaURI);
+
+        // if status code is not "200" then cryptometa
+        // doesn't have the logo saved
+        // in this case we try to use the logo from the
+        // the contract
+        // if not even the contract has the logo, we use
+        // the placeholder logo returned by cryptometa
+        if (res.status !== 200) {
+          setFeaturedLogos((val) => [
+            ...val,
+            {
+              id: psc.id,
+              uri: psc.logo ? `https://arweave.net/${psc.logo}` : cryptometaURI,
+            },
+          ]);
+        } else {
+          // use cryptometa URI
+          setFeaturedLogos((val) => [
+            ...val,
+            {
+              id: psc.id,
+              uri: cryptometaURI,
+            },
+          ]);
+        }
+      }
+    })();
+  }, [featured]);
 
   // load Verto ID for the user
   const [userData, setUserData] = useState<UserInterface>();
@@ -213,9 +250,10 @@ const Space = (props: {
           >
             <div className={styles.TokenInfo}>
               <img
-                src={`https://meta.viewblock.io/AR.${
-                  currentTokenData?.id || ""
-                }/logo?t=dark`}
+                src={
+                  featuredLogos.find(({ id }) => id === currentTokenData?.id)
+                    ?.uri
+                }
                 alt="token-logo"
                 draggable={false}
               />
