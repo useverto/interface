@@ -21,6 +21,8 @@ import { permissions } from "../utils/arconnect";
 import { AnimatePresence, motion } from "framer-motion";
 import { opacityAnimation } from "../utils/animations";
 import { CloseIcon } from "@iconicicons/react";
+import { fetchContract } from "verto-cache-interface";
+import { COMMUNITY_CONTRACT } from "../utils/arweave";
 import {
   betaAlertShown,
   ignorePermissionWarning,
@@ -267,20 +269,9 @@ const StatusChecker = ({ children }) => {
   // check cache
   useEffect(() => {
     // TODO: cache ping
-    /*(async () => {
+    (async () => {
       try {
-        const { data } = await axios({
-          method: "GET",
-          url: `${CACHE_URL}/ping`,
-          timeout: 8000,
-        });
-
-        if (data.connection !== 1)
-          setToast({
-            description: "The cache server is not connected to the DB",
-            type: "error",
-            duration: 7000,
-          });
+        await fetchContract(COMMUNITY_CONTRACT);
       } catch {
         setToast({
           description: "The cache server is down",
@@ -288,7 +279,7 @@ const StatusChecker = ({ children }) => {
           duration: 7000,
         });
       }
-    })();*/
+    })();
   }, []);
 
   return <>{children}</>;

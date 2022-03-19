@@ -24,7 +24,7 @@ import {
   ChevronDownIcon,
   ArrowRightIcon,
 } from "@iconicicons/react";
-import { arPrice, CACHE_URL, verto as client } from "../utils/arweave";
+import { arPrice, verto as client } from "../utils/arweave";
 import { fetchArtworkMetadata, UserBalance } from "verto-cache-interface";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
