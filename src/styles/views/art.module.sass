@@ -17,6 +17,9 @@
   position: relative
   height: 66vh
 
+  @media screen and (max-width: variables.$mobile-screen)
+    height: 77vh
+
   img, video
     position: absolute
     top: 50%
@@ -26,6 +29,10 @@
     box-shadow: variables.$lighter-shadow
     user-select: none
     transform: translate(-50%, -50%)
+
+    @media screen and (max-width: variables.$mobile-screen)
+      max-width: 90%
+      max-height: 85%
 
   .Actions
     position: absolute
@@ -86,6 +93,9 @@
   box-shadow: 0px 0px 20px 2px rgba(0, 0, 0, .2)
   min-height: unset !important
 
+  @media screen and (max-width: variables.$mobile-screen)
+    padding-bottom: 2.5em !important
+
   .UserChip
     position: absolute
     top: -2em
@@ -101,6 +111,9 @@
     border-radius: 2em
     transition: all .23s ease-in-out
 
+    @media screen and (max-width: variables.$mobile-screen)
+      padding: 1em 1.2em
+
     .Avatar
       $avatarSize: 2em
       box-shadow: variables.$standard-shadow
@@ -110,6 +123,11 @@
       overflow: hidden
       margin-right: .75em
 
+      @media screen and (max-width: variables.$mobile-screen)
+        $avatarSize: 1.6em
+        width: $avatarSize
+        height: $avatarSize
+
     span
       display: flex
       align-items: center
@@ -117,6 +135,9 @@
       line-height: 1em
       font-weight: 500
       color: variables.$foreground-color
+
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: .9em
 
       svg
         margin-left: .3em
@@ -156,9 +177,18 @@
     align-items: flex-start
     justify-content: space-between
 
+    @media screen and (max-width: variables.$mobile-screen)
+      display: block
+
     .Texts
       width: 59%
       margin-right: 2em
+
+      @media screen and (max-width: variables.$mobile-screen)
+        width: 100%
+        margin:
+          right: 0
+          bottom: 2em
 
       p, .InfoLink, .Description p
         display: flex
@@ -167,6 +197,9 @@
         text-align: justify
         font-weight: 400
         margin: 0
+
+        @media screen and (max-width: variables.$mobile-screen)
+          font-size: .96em
 
         &.SubTitle
           color: variables.$light-text
