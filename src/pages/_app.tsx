@@ -47,6 +47,7 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
   const [scheme, setScheme] = useState<"dark" | "light">("light");
 
+  // proggress bar config
   Progress.configure({ showSpinner: false });
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function App({ Component, pageProps }) {
     };
   });
 
+  // analytics
   useEffect(() => {
     // Initialize Fathom when the app loads
     // Example: yourdomain.com
@@ -83,6 +85,7 @@ export default function App({ Component, pageProps }) {
     };
   }, []);
 
+  // dark / light scheme
   useEffect(() => {
     if (!window) return;
     const query = window.matchMedia("(prefers-color-scheme: dark)");
@@ -96,6 +99,7 @@ export default function App({ Component, pageProps }) {
     };
   }, []);
 
+  // login checks
   useEffect(() => {
     if (!window.arweaveWallet)
       window.addEventListener("arweaveWalletLoaded", checkLogin);
@@ -113,6 +117,7 @@ export default function App({ Component, pageProps }) {
     if (router.asPath.match(protectedRoutes) && !connected) router.push("/");
   }
 
+  // check for missing permissions
   const permissionsModal = useModal();
 
   useEffect(() => {
@@ -152,7 +157,7 @@ export default function App({ Component, pageProps }) {
           <Nav />
           <Component {...pageProps} />
           <Footer />
-          <BetaAlert />
+          {/**<BetaAlert /> */}
           <Modal {...permissionsModal.bindings}>
             <Modal.Title>Missing permissions</Modal.Title>
             <Modal.Content style={{ textAlign: "justify" }}>
@@ -204,6 +209,7 @@ export default function App({ Component, pageProps }) {
   );
 }
 
+// theme component
 const Theme = ({ children }) => {
   const theme = useSelector((state: RootState) => state.themeReducer);
   const dispatch = useDispatch();
@@ -285,7 +291,7 @@ const StatusChecker = ({ children }) => {
   return <>{children}</>;
 };
 
-const BetaAlert = () => {
+/*const BetaAlert = () => {
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const currentAddress = useSelector(
@@ -325,7 +331,7 @@ const BetaAlert = () => {
       )}
     </AnimatePresence>
   );
-};
+};*/
 
 const Changelog = () => {
   const changelogModal = useModal();
