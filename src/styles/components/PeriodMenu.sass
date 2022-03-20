@@ -1,6 +1,6 @@
 @use "../variables"
   
-=periodMenu
+=periodMenu($dark: false)
   display: flex
   align-items: center
 
@@ -21,3 +21,8 @@
       background-color: variables.$foreground-color
       color: variables.$foreground-reverse-color
       box-shadow: variables.$standard-shadow
+
+      @if $dark
+        background-color: rgb(variables.$primary-color)
+        box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
+        color: #fff

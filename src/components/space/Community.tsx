@@ -23,6 +23,8 @@ import {
   calculateCirculatingSupply,
   calculateTotalSupply,
 } from "../../utils/supply";
+import { AnimatePresence, motion } from "framer-motion";
+import { cardListAnimation } from "../../utils/animations";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -179,7 +181,16 @@ const Community = (props: PropTypes) => {
       <div className={styles.Wrapper}>
         <div className={styles.TokenDetails}>
           <h1 className={styles.Name}>
-            {props.name} <span>({props.ticker})</span>
+            {props.name}
+            <span
+              className={
+                styles.Ticker +
+                " " +
+                (theme === "Dark" ? styles.DarkTicker : "")
+              }
+            >
+              {props.ticker}
+            </span>
           </h1>
           {(props.price !== "--" && (
             <>
@@ -191,16 +202,25 @@ const Community = (props: PropTypes) => {
                 })}
               </h1>
               <Spacer y={3.75} />
-              <div className={styles.PeriodMenu}>
-                {periods.map((per, i) => (
-                  <span
-                    key={i}
-                    className={selectedPeriod === per ? styles.Selected : ""}
-                    onClick={() => setSelectedPeriod(per)}
-                  >
-                    {per}
-                  </span>
-                ))}
+              <div
+                className={
+                  styles.PeriodMenu +
+                  " " +
+                  (theme === "Dark" ? styles.DarkPeriodMenu : "")
+                }
+              >
+                <AnimatePresence>
+                  {periods.map((per, i) => (
+                    <motion.span
+                      key={i}
+                      className={selectedPeriod === per ? styles.Selected : ""}
+                      onClick={() => setSelectedPeriod(per)}
+                      {...cardListAnimation(i)}
+                    >
+                      {per}
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
               </div>
               <Spacer y={1.5} />
               <div className={styles.Graph}>

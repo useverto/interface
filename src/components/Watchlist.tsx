@@ -162,7 +162,13 @@ const Watchlist = () => {
         <div className={styles.Title}>
           Watchlist
           <Spacer x={0.6} />
-          <div className={styles.PeriodMenu}>
+          <div
+            className={
+              styles.PeriodMenu +
+              " " +
+              (theme === "Dark" ? styles.DarkPeriodMenu : "")
+            }
+          >
             <AnimatePresence>
               {!loading &&
                 items.length > 0 &&
