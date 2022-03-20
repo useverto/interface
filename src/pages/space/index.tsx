@@ -148,7 +148,7 @@ const Space = (props: {
     (async () => {
       for (const psc of featured) {
         // we use dark theme, because the background is always dark
-        const cryptometaURI = `https://meta.viewblock.io/AR.${psc.id}/logo?t=dark`;
+        const cryptometaURI = client.token.getLogo(psc.id, "dark");
         const res = await axios.get(cryptometaURI);
 
         // if status code is not "200" then cryptometa

@@ -16,7 +16,7 @@ import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { verto as client } from "../../utils/arweave";
+import { gateway, verto as client } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
 import { fetchContract } from "verto-cache-interface";
 import {
@@ -25,10 +25,20 @@ import {
 } from "../../utils/supply";
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation } from "../../utils/animations";
+import {
+  BankIcon,
+  BoxIcon,
+  DollarIcon,
+  LinkIcon,
+  MessageIcon,
+  RefreshIcon,
+  UsersIcon,
+} from "@iconicicons/react";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import dayjs from "dayjs";
+import axios from "axios";
 import styles from "../../styles/views/community.module.sass";
 
 dayjs.extend(isTomorrow);
@@ -171,6 +181,37 @@ const Community = (props: PropTypes) => {
     router.push("/swap");
   };
 
+  // load logo
+  const [logo, setLogo] = useState(
+    // @ts-expect-error
+    client.token.getLogo(props.id, theme.toLowerCase())
+  );
+
+  useEffect(() => {
+    (async () => {
+      if (!state)
+        return setLogo(
+          // @ts-expect-error
+          client.token.getLogo(props.id, theme.toLowerCase())
+        );
+      else {
+        const cryptometaURI = client.token.getLogo(
+          props.id,
+          // @ts-expect-error
+          theme.toLowerCase()
+        );
+        const res = await axios.get(cryptometaURI);
+        const logoInState = state.settings?.communityLogo;
+
+        if (res.status !== 200 && logoInState) {
+          setLogo(`${gateway()}/${logoInState}`);
+        } else {
+          setLogo(cryptometaURI);
+        }
+      }
+    })();
+  }, [theme, state]);
+
   return (
     <Page>
       <Head>
@@ -181,6 +222,12 @@ const Community = (props: PropTypes) => {
       <div className={styles.Wrapper}>
         <div className={styles.TokenDetails}>
           <h1 className={styles.Name}>
+            <img
+              className={styles.Logo}
+              src={logo}
+              alt="logo"
+              draggable={false}
+            />
             {props.name}
             <span
               className={
@@ -288,96 +335,110 @@ const Community = (props: PropTypes) => {
           <Spacer y={1.8} />
           <h1 className="Title">Metrics</h1>
           <Spacer y={1} />
-          <p className={styles.Paragraph}>
-            {(metrics && (
-              <>
-                Market Cap: ~${metrics.marketCap.toLocaleString()} USD
-                <br />
+          {(metrics && (
+            <>
+              <p className={styles.Data}>
+                <RefreshIcon />
                 Circulating Supply: {metrics.circulatingSupply.toLocaleString()}{" "}
                 {props.ticker}
-                <br />
+              </p>
+              <p className={styles.Data}>
+                <DollarIcon />
                 Total Supply: {metrics.totalSupply.toLocaleString()}{" "}
                 {props.ticker}
-              </>
-            )) || (
-              <>
-                <Loading.Skeleton
-                  style={{
-                    width: "36%",
-                    marginBottom: ".5em",
-                    height: "1.35em",
-                  }}
-                />
-                <Loading.Skeleton
-                  style={{
-                    width: "36%",
-                    marginBottom: ".5em",
-                    height: "1.35em",
-                  }}
-                />
-                <Loading.Skeleton style={{ width: "36%", height: "1.35em" }} />
-              </>
-            )}
-          </p>
+              </p>
+              <p className={styles.Data}>
+                <BankIcon />
+                Market Cap: ~${metrics.marketCap.toLocaleString()} USD
+              </p>
+            </>
+          )) || (
+            <>
+              <Loading.Skeleton
+                style={{
+                  width: "36%",
+                  marginBottom: ".5em",
+                  height: "1.35em",
+                }}
+              />
+              <Loading.Skeleton
+                style={{
+                  width: "36%",
+                  marginBottom: ".5em",
+                  height: "1.35em",
+                }}
+              />
+              <Loading.Skeleton style={{ width: "36%", height: "1.35em" }} />
+            </>
+          )}
           <Spacer y={1.8} />
           <h1 className="Title">Links</h1>
           <Spacer y={1} />
-          <p className={styles.Paragraph}>
-            <ul>
-              {state?.settings?.communityAppUrl && (
-                <li>
-                  <a
-                    href={state.settings.communityAppUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {state.settings.communityAppUrl.replace(
-                      /(http(s?)):\/\//,
-                      ""
-                    )}
-                  </a>
-                </li>
-              )}
-              {state && (
-                <li>
-                  <a
-                    href={`https://community.xyz/#${props.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    community.xyz/{props.name.toLowerCase()}
-                  </a>
-                </li>
-              )}
-              {state?.settings?.communityDiscussionLinks &&
-                state?.settings?.communityDiscussionLinks.map((url, i) => (
-                  <li key={i}>
-                    <a href={url} target="_blank" rel="noopener noreferrer">
-                      {url.replace(/(http(s?)):\/\//, "")}
-                    </a>
-                  </li>
-                ))}
-            </ul>
-            {!state?.settings && (
-              <>
-                <Loading.Skeleton
-                  style={{
-                    width: "28%",
-                    marginBottom: ".5em",
-                    height: "1.35em",
-                  }}
-                />
-                <Loading.Skeleton
-                  style={{
-                    width: "28%",
-                    marginBottom: ".5em",
-                    height: "1.35em",
-                  }}
-                />
-                <Loading.Skeleton style={{ width: "28%", height: "1.35em" }} />
-              </>
-            )}
-          </p>
+          {state?.settings?.communityAppUrl && (
+            <a
+              href={state.settings.communityAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.Data}
+            >
+              <LinkIcon />
+              {state.settings.communityAppUrl.replace(/(http(s?)):\/\//, "")}
+            </a>
+          )}
+          {state && (
+            <>
+              <a
+                href={`https://viewblock.io/arweave/address/${props.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.Data}
+              >
+                <BoxIcon />
+                Viewblock
+              </a>
+              <a
+                href={`https://community.xyz/#${props.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.Data}
+              >
+                <UsersIcon />
+                Community XYZ
+              </a>
+            </>
+          )}
+          {state?.settings?.communityDiscussionLinks &&
+            state?.settings?.communityDiscussionLinks.map((url, i) => (
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                key={i}
+                className={styles.Data}
+              >
+                <MessageIcon />
+                {url.replace(/(http(s?)):\/\//, "")}
+              </a>
+            ))}
+          {!state?.settings && (
+            <>
+              <Loading.Skeleton
+                style={{
+                  width: "28%",
+                  marginBottom: ".5em",
+                  height: "1.35em",
+                }}
+              />
+              <Loading.Skeleton
+                style={{
+                  width: "28%",
+                  marginBottom: ".5em",
+                  height: "1.35em",
+                }}
+              />
+              <Loading.Skeleton style={{ width: "28%", height: "1.35em" }} />
+            </>
+          )}
         </div>
         <Card className={styles.ActionCard}>
           <Input

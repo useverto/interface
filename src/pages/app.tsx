@@ -84,7 +84,7 @@ const App = () => {
       // if the contract does not include a logo
       // we use the placeholder provided by cryptometa
       for (const token of balances) {
-        const cryptometaURI = `https://meta.viewblock.io/AR.${token.contractId}/logo?t=light`;
+        const cryptometaURI = client.token.getLogo(token.contractId, "light");
         const res = await axios.get(cryptometaURI);
 
         setBalanceLogos((val) => [
@@ -186,8 +186,14 @@ const App = () => {
                               light: `${gateway()}/${item.logo}`,
                             }
                           : {
-                              dark: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=dark`,
-                              light: `https://meta.viewblock.io/AR.${item.contractId}/logo?t=light`,
+                              dark: client.token.getLogo(
+                                item.contractId,
+                                "dark"
+                              ),
+                              light: client.token.getLogo(
+                                item.contractId,
+                                "light"
+                              ),
                             }
                       }
                     />
