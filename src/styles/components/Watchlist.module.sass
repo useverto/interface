@@ -10,6 +10,7 @@
 
 .WatchlistContainer
   $gap: 3.5em
+  position: relative
   display: grid
   grid-template-columns: repeat(3, calc(33.333% - #{$gap}))
   gap: $gap
@@ -17,6 +18,10 @@
 
   @media screen and (max-width: variables.$mobile-screen)
     display: block
+
+  .Loading
+    position: absolute
+    +variables.absoluteCenter
 
   .WatchlistItem
     position: relative

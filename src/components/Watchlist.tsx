@@ -3,6 +3,7 @@ import { TokenInterface, TokenType } from "@verto/js/dist/common/faces";
 import { verto as client, VERTO_CONTRACT_PST } from "../utils/arweave";
 import {
   Button,
+  Loading,
   Modal,
   Select,
   Spacer,
@@ -14,7 +15,11 @@ import {
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { cardAnimation, opacityAnimation } from "../utils/animations";
+import {
+  cardAnimation,
+  cardListAnimation,
+  opacityAnimation,
+} from "../utils/animations";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { nextDay, today } from "../utils/format";
@@ -22,11 +27,11 @@ import {
   watchlist as store_name,
   watchlistPeriod,
 } from "../utils/storage_names";
+import { fetchTokenStateMetadata } from "verto-cache-interface";
 import dayjs from "dayjs";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import axios from "axios";
 import styles from "../styles/components/Watchlist.module.sass";
-import { fetchTokenStateMetadata } from "verto-cache-interface";
 
 interface WatchlistItem {
   id: string;
@@ -51,6 +56,7 @@ const Watchlist = () => {
   const [tokens, setTokens] = useState<TokenInterface[]>([]);
   const addTokenModal = useModal();
   const tokenSelect = useSelect<string>();
+  const [loading, setLoading] = useState(true);
 
   // load saved token ids & period data
   useEffect(() => {
@@ -65,6 +71,8 @@ const Watchlist = () => {
   useEffect(() => {
     (async () => {
       if (!tokenIDs || tokens.length === 0) return;
+
+      setLoading(true);
 
       for (const id of tokenIDs) {
         if (items.find((val) => val.id === id)) continue;
@@ -125,6 +133,7 @@ const Watchlist = () => {
       setItems((val) =>
         val.filter((watchlistItem) => tokenIDs.includes(watchlistItem.id))
       );
+      setLoading(false);
       localStorage.setItem(store_name, JSON.stringify(tokenIDs));
     })();
   }, [tokenIDs, tokens]);
@@ -154,39 +163,54 @@ const Watchlist = () => {
           Watchlist
           <Spacer x={0.6} />
           <div className={styles.PeriodMenu}>
-            {periods.map((per, i) => (
-              <span
-                key={i}
-                className={selectedPeriod === per ? styles.Selected : ""}
-                onClick={() => setSelectedPeriod(per)}
-              >
-                {per}
-              </span>
-            ))}
+            <AnimatePresence>
+              {!loading &&
+                items.length > 0 &&
+                periods.map((per, i) => (
+                  <motion.span
+                    key={i}
+                    className={selectedPeriod === per ? styles.Selected : ""}
+                    onClick={() => setSelectedPeriod(per)}
+                    {...cardListAnimation(i)}
+                  >
+                    {per}
+                  </motion.span>
+                ))}
+            </AnimatePresence>
           </div>
         </div>
-        <div className="ActionSheet">
-          <AnimatePresence>
-            {editMode && (
-              <motion.div {...opacityAnimation()} style={{ display: "flex" }}>
-                <Tooltip text="Add">
-                  <button
-                    className="Btn"
-                    onClick={() => addTokenModal.setState(true)}
+        <AnimatePresence>
+          {!loading && (
+            <motion.div className="ActionSheet" {...opacityAnimation()}>
+              <AnimatePresence>
+                {editMode && (
+                  <motion.div
+                    {...opacityAnimation()}
+                    style={{ display: "flex" }}
                   >
-                    <PlusIcon />
-                  </button>
-                </Tooltip>
-                <Spacer x={0.4} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <Tooltip text={editMode ? "Done" : "Edit"}>
-            <button className="Btn" onClick={() => setEditMode((val) => !val)}>
-              {(editMode && <CheckIcon />) || <EditIcon />}
-            </button>
-          </Tooltip>
-        </div>
+                    <Tooltip text="Add">
+                      <button
+                        className="Btn"
+                        onClick={() => addTokenModal.setState(true)}
+                      >
+                        <PlusIcon />
+                      </button>
+                    </Tooltip>
+                    <Spacer x={0.4} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <Tooltip text={editMode ? "Done" : "Edit"}>
+                <button
+                  className="Btn"
+                  onClick={() => setEditMode((val) => !val)}
+                >
+                  {(editMode && <CheckIcon />) || <EditIcon />}
+                </button>
+              </Tooltip>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </h1>
       <Spacer y={2} />
       <div className={styles.WatchlistContainer}>
@@ -308,8 +332,15 @@ const Watchlist = () => {
             );
           })}
         </AnimatePresence>
+        <AnimatePresence>
+          {loading && (
+            <motion.div className={styles.Loading} {...opacityAnimation()}>
+              <Loading.Spinner />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      {items.length === 0 && (
+      {!loading && items.length === 0 && (
         <p className="NoItemsText">
           No items in watchlist. Try <Spacer x={0.23} />
           <span

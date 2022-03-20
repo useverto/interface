@@ -628,10 +628,10 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-7":
-  version "1.0.0-beta-7"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-7.tgz#dfc577123da442e006acc148ec16ce096631dc26"
-  integrity sha512-VTGqTjTfg1tgSsWd5nviYo+Enfa61+O+8sebSJjSd4momMvaawW6w57zf21CYmpXOjWqCnQWbreGJB3Raqe9+A==
+"@verto/js@^1.0.0-beta-8":
+  version "1.0.0-beta-8"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-8.tgz#cfa5499cacdbd5b63b32ff5ad84ed9d4314814a1"
+  integrity sha512-e9XLuGShHmXLHN4pxr+PIbiyYt8omQhsEriTkSDjSxfAgvUl9lvN84S6jsRRlq0C098exg02Dcwdfkp2/Y1Veg==
   dependencies:
     "@three-em/js" "^0.2.5"
     "@three-em/node" "^0.2.4"
