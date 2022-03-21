@@ -1,4 +1,5 @@
 @use "../variables"
+@use "sass:string"
 
 .SearchContent
   position: fixed
@@ -75,19 +76,22 @@
         .TokenData
           +variables.flexCenterWithSpace
 
-          img, .CollectionIcon, .NoAvatar
+          img, .CollectionIcon, .UserAvatar
             $avatarWidth: 64px
-            width: $avatarWidth
-            height: $avatarWidth
+            width: $avatarWidth !important
+            height: $avatarWidth !important
             user-select: none
-            margin-right: $sidePadding
+            $sidePaddingVal: string.slice(#{$sidePadding}, 0, string.index(#{$sidePadding}, "em") - 1)
+            margin-right: #{$sidePaddingVal}rem
             color: variables.$light-text
 
-            &.UserAvatar, &.NoAvatar
+            &.UserAvatar
               border-radius: 100%
+              font-size: 1.8em
 
-            &.NoAvatar
-              +variables.gradientAvatar($avatarWidth)
+              div
+                width: 100% !important
+                height: 100% !important
 
           h1, h2
             margin: 0

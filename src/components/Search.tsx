@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
-import { useTheme } from "@verto/ui";
+import { Avatar, useTheme } from "@verto/ui";
 import { CACHE_URL, gateway, verto } from "../utils/arweave";
 import {
   fetchRandomCommunitiesWithMetadata,
@@ -181,24 +181,13 @@ export default function Search({ open, setOpen }) {
                               key={i}
                             />
                           )) ||
-                          (item.type === "user" &&
-                            !item.image &&
-                            item.gradient && (
-                              <div
-                                className={styles.NoAvatar}
-                                style={{
-                                  background: item.gradient?.gradient ?? "",
-                                }}
-                              >
-                                <span>
-                                  {(item.username || "")
-                                    .charAt(0)
-                                    .toUpperCase()}
-                                </span>
-                              </div>
-                            )) || (
-                            <MenuIcon className={styles.CollectionIcon} />
-                          )}
+                          (item.type === "user" && !item.image && (
+                            <Avatar
+                              usertag={item.username}
+                              onlyProfilePicture
+                              className={styles.UserAvatar}
+                            />
+                          )) || <MenuIcon className={styles.CollectionIcon} />}
                         <div>
                           <h1>{item.name}</h1>
                           <h2
