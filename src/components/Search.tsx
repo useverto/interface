@@ -3,7 +3,7 @@ import { opacityAnimation } from "../utils/animations";
 import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { useTheme, Spacer, generateAvatarGradient } from "@verto/ui";
-import { CACHE_URL, gateway } from "../utils/arweave";
+import { CACHE_URL, gateway, verto } from "../utils/arweave";
 import { useRouter } from "next/router";
 import axios from "axios";
 import Link from "next/link";
@@ -41,15 +41,25 @@ export default function Search({ open, setOpen }) {
 
     if (data.length === 0) return setNoMore(true);
 
-    data = data.map((val) => ({
-      ...val,
-      image: (val.image && `${gateway}/${val.image}`) || undefined,
-      gradient:
-        (!val.image &&
-          val.type === "user" &&
-          generateAvatarGradient(val.username || val.usertag || "")) ||
-        undefined,
-    }));
+    data = await Promise.all(
+      data.map(async (val) => {
+        if (val.type !== "community") {
+          return {
+            ...val,
+            image: (val.image && `${gateway()}/${val.image}`) || undefined,
+          };
+        }
+
+        let image = verto.token.getLogo(val.id, "light");
+        const res = await axios.get(image);
+
+        if (res.status !== 200 && !!val.image) {
+          image = `${gateway()}/${val.image}`;
+        }
+
+        return { ...val, image };
+      })
+    );
 
     setPage((val) => val + 1);
     setResults((val) => {
@@ -115,7 +125,12 @@ export default function Search({ open, setOpen }) {
                             {(item.type !== "collection" &&
                               (item.image || item.type !== "user") && (
                                 <img
-                                  src={item.image ?? "/arweave.png"}
+                                  src={
+                                    item.image?.replace(
+                                      "light",
+                                      theme.toLowerCase()
+                                    ) ?? "/arweave.png"
+                                  }
                                   alt={item.name}
                                   draggable={false}
                                   className={
