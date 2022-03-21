@@ -20,6 +20,7 @@ export default function Search({ open, setOpen }) {
   const theme = useTheme();
   const router = useRouter();
 
+  // load query from route if possible
   useEffect(() => {
     if (router.query.q && router.query.q !== "") {
       setQuery(router.query.q.toString());
@@ -27,8 +28,7 @@ export default function Search({ open, setOpen }) {
     } else setQuery("");
   }, [open, router.query]);
 
-  const [page, setPage] = useState(0);
-
+  // reset everything on query update
   useEffect(() => {
     setPage(0);
     setHasMore(true);
@@ -39,6 +39,7 @@ export default function Search({ open, setOpen }) {
   // infinite load results
   const [results, setResults] = useState([]);
   const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
 
   async function loadMore() {
     if (query === "") return setResults([]);
