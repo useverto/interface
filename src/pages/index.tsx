@@ -6,10 +6,8 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { AnimatePresence, motion } from "framer-motion";
-import { useMediaPredicate } from "react-media-hook";
 import { opacityAnimation } from "../utils/animations";
 import { gateway, verto as client } from "../utils/arweave";
-import { OrderInterface } from "@verto/js/dist/common/faces";
 import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
 import PSTSwitcher from "../components/PSTSwitcher";
@@ -79,50 +77,6 @@ const Home = ({ artwork }: { artwork: any }) => {
 
     if (!user) setupModal.setState(true);
   }
-
-  type Activity = OrderInterface & {
-    actions: {
-      id: string;
-      descriptions: string;
-      timestamp: number;
-      match?: string;
-    }[];
-  };
-  /*const [latestActivity, setLatestActivity] = useState<OrderInterface[]>([]);*/
-
-  const mobile = useMediaPredicate("(max-width: 720px)");
-
-  /*useEffect(() => {
-    (async () => {
-      const { data: activities } = await axios.get(
-        `${CACHE_URL}/latest-activity`
-      );
-
-      setLatestActivity(
-        activities.map(
-          ({
-            status,
-            sender,
-            target,
-            token,
-            input,
-            output,
-            timestamp,
-            actions,
-          }: Activity) => ({
-            id: actions[0].id,
-            status,
-            sender,
-            target,
-            token,
-            input,
-            output,
-            timestamp,
-          })
-        )
-      );
-    })();
-  }, []);*/
 
   return (
     <>
@@ -209,28 +163,6 @@ const Home = ({ artwork }: { artwork: any }) => {
             </AnimatePresence>
           </div>
         </div>
-        {/** 
-        <Spacer y={5} />
-        <div className={styles.Section}>
-          <h1 className={styles.Title}>Latest Activity</h1>
-          <AnimatePresence>
-            {latestActivity.map((activity, i) => (
-              <motion.div key={i} {...cardListAnimation(i)}>
-                <Card.Order
-                  style={
-                    mobile ? { justifyContent: "center", minWidth: "0px" } : {}
-                  }
-                  type={getType(activity.input)}
-                  orderID={activity.id}
-                  status={activity.status}
-                  timestamp={new Date(activity.timestamp * 1000)}
-                />
-                {i !== latestActivity.length - 1 && <Spacer y={1.5} />}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-        */}
         <Spacer y={3} />
         <Spacer y={5} />
         <div className={styles.Section + " " + styles.PSTs}>
