@@ -69,7 +69,13 @@ export default function Search({ open, setOpen }) {
         let image = verto.token.getLogo(val.id, "light");
         const res = await axios.get(image);
 
-        if (res.status !== 200 && !!val.image) {
+        if (
+          res.status !== 200 &&
+          !!val.image &&
+          // TODO: search api bug: if the token doesn't have an image ID
+          // it returns the id of the token itself
+          val.image !== val.id
+        ) {
           image = `${gateway()}/${val.image}`;
         }
 
