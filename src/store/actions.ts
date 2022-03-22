@@ -1,6 +1,7 @@
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { IAddressAction } from "./reducers/address";
 import { INavThemeAction, NavTheme } from "./reducers/nav_theme";
+import { ISearchAction } from "./reducers/search";
 import { IThemeAction } from "./reducers/theme";
 
 export function updateAddress(address: string): IAddressAction {
@@ -39,6 +40,15 @@ export function resetNavTheme(): INavThemeAction {
     type: "UPDATE_NAV_THEME",
     payload: {
       theme: "Default",
+    },
+  };
+}
+
+export function updateSearchOpen(open: boolean): ISearchAction {
+  return {
+    type: "SET_SEARCH_OPEN",
+    payload: {
+      open,
     },
   };
 }

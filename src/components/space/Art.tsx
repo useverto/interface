@@ -74,16 +74,21 @@ const Art = (props: PropTypes) => {
   }, []);
 
   // fullscreen on "F" key
+  const searchOpen = useSelector((state: RootState) => state.searchReducer);
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key.toLowerCase() !== "f") return;
+      // don't toggle fullscreen if search is open
+      if (searchOpen) return;
+
       setFullScreen((val) => !val);
       toggleFullscreen();
     };
     window.addEventListener("keypress", handler);
 
     return () => window.removeEventListener("keypress", handler);
-  }, []);
+  }, [searchOpen]);
 
   // content type
   const [videoMuted, setVideoMuted] = useState(true);

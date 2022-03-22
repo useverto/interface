@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { cardListAnimation, opacityAnimation } from "../utils/animations";
-import { MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
+import { CloseIcon, MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { Avatar, useTheme } from "@verto/ui";
 import { CACHE_URL, gateway, verto } from "../utils/arweave";
@@ -9,6 +9,8 @@ import {
   fetchTopCommunities,
 } from "verto-cache-interface";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+import { updateSearchOpen } from "../store/actions";
 import axios from "axios";
 import Link from "next/link";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -27,6 +29,13 @@ export default function Search({ open, setOpen }) {
       setOpen(true);
     } else setQuery("");
   }, [open, router.query]);
+
+  // update open reducer
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateSearchOpen(open));
+  }, [open]);
 
   // reset everything on query update
   useEffect(() => {
@@ -105,7 +114,24 @@ export default function Search({ open, setOpen }) {
               >
                 Search for something...
               </p>
-              <SearchIcon />
+              {(query === "" && (
+                <div
+                  className={styles.InputIcon}
+                  {...opacityAnimation()}
+                  key={1}
+                >
+                  <SearchIcon />
+                </div>
+              )) || (
+                <div
+                  className={styles.InputIcon + " " + styles.ResetSearch}
+                  {...opacityAnimation()}
+                  key={2}
+                  onClick={() => setQuery("")}
+                >
+                  <CloseIcon />
+                </div>
+              )}
               <input
                 type="text"
                 value={query}
@@ -125,7 +151,7 @@ export default function Search({ open, setOpen }) {
                 (theme === "Dark" ? styles.DarkResults : "")
               }
               endMessage={<p>You have reached the end :)</p>}
-              height={(results.length > 0 && results.length * 85) || 100}
+              height={(results.length > 0 && results.length * 85) || 90}
             >
               <AnimatePresence>
                 {query === "" && (
@@ -206,11 +232,6 @@ export default function Search({ open, setOpen }) {
                   </Link>
                 ))}
               </AnimatePresence>
-              <AnimatePresence>
-                {results.length === 0 && query !== "" && (
-                  <motion.p {...opacityAnimation()}>No results found.</motion.p>
-                )}
-              </AnimatePresence>
             </InfiniteScroll>
           </div>
         </motion.div>
@@ -221,10 +242,12 @@ export default function Search({ open, setOpen }) {
 
 export function useSearch() {
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
 
   // do not allow body scroll when search is visible
   useEffect(() => {
     document.body.style.overflowY = open ? "hidden" : "auto";
+    dispatch(updateSearchOpen(open));
   }, [open]);
 
   return { open, setOpen };

@@ -62,8 +62,12 @@ const Community = (props: PropTypes) => {
 
       setState(state);
     });
-  }, []);
+  }, [props.id]);
 
+  // reset periods on id change
+  useEffect(() => setSelectedPeriod("ALL"), [props.id]);
+
+  // load history
   const [history, setHistory] = useState<
     {
       date: string;
@@ -382,7 +386,10 @@ const Community = (props: PropTypes) => {
               className={styles.Data}
             >
               <LinkIcon />
-              {state.settings.communityAppUrl.replace(/(http(s?)):\/\//, "")}
+              {state.settings.communityAppUrl.replace(
+                /((http(s?)):\/\/)|(\/$)/g,
+                ""
+              )}
             </a>
           )}
           {state && (
@@ -417,7 +424,7 @@ const Community = (props: PropTypes) => {
                 className={styles.Data}
               >
                 <MessageIcon />
-                {url.replace(/(http(s?)):\/\//, "")}
+                {url.replace(/((http(s?)):\/\/)|(\/$)/g, "")}
               </a>
             ))}
           {!state?.settings && (

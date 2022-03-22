@@ -1,4 +1,3 @@
-import { Page } from "@verto/ui";
 import { isAddress, verto as client } from "../../utils/arweave";
 import {
   fetchCollectionById,

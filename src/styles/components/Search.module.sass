@@ -148,3 +148,18 @@
 
           &:hover
             opacity: .8 !important
+
+    .InputIcon
+      display: flex
+      align-items: center
+
+      &.ResetSearch
+        z-index: 100
+        cursor: pointer
+        transition: all .23s ease-in-out
+
+        svg
+          cursor: pointer
+
+        &:hover svg
+          color: variables.$foreground-color
