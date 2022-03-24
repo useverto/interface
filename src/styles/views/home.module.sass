@@ -1,22 +1,21 @@
 @use "../variables"
 
-$titleSize: 2.7em
-  
+$titleSize: 3.6em
+
 .Landing
-  display: flex
-  align-items: center
-  justify-content: space-between
-  
+  width: 100%
+  height: max-content
+
   .Hero
     h1
       font-size: $titleSize
-      font-weight: 400
+      font-weight: 600
       line-height: 1.15em
       margin: 0
 
       [class~=typed-cursor]
-        font-weight: 300
-        color: variables.$light-text
+      font-weight: 300
+      color: variables.$light-text
 
     p
       color: variables.$light-text
@@ -44,7 +43,7 @@ $titleSize: 2.7em
     font-weight: 500
     font-size: $titleSize
     margin: 0
-      bottom: .55em
+    bottom: .55em
 
     @media screen and (max-width: variables.$mobile-screen)
       margin-top: 1em
@@ -64,7 +63,7 @@ $titleSize: 2.7em
 
       li
         padding-left: .55em
-        
+
         &::marker
           padding-right: .2em
 

@@ -189,7 +189,7 @@ const Nav = () => {
               alt="V"
               draggable={false}
             />
-            <span className={styles.VersionChip}>Testnet</span>
+            <span className={styles.VersionChip}>beta</span>
           </a>
         </Link>
         <AnimatePresence>
