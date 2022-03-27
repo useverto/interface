@@ -54,6 +54,26 @@ $detailsWidth: 62.5%
       background-color: rgb(variables.$primary-color)
       box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
 
+  .AddToWatchlist 
+    display: flex
+    align-items: center
+
+    svg
+      font-size: .6em
+      width: 1em
+      height: 1em
+      margin-left: .8em
+      cursor: pointer
+      color: variables.$light-text
+      opacity: .75
+      transition: all .23s ease-in-out
+
+      &:active
+        transform: scale(.94)
+
+    &.Added svg
+      color: #ffee00
+
 .Price
   font-size: variables.$title-font-size * 1.575
   font-weight: 600
