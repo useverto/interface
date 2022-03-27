@@ -91,7 +91,7 @@ const Home = ({
         <title>Verto - Welcome</title>
         <Metas title="Welcome" />
       </Head>
-      <Page style={{ padding: "8vw" }}>
+      <Page>
         <div className={styles.Landing}>
           <div className={styles.Hero}>
             <h1>
@@ -135,6 +135,19 @@ const Home = ({
             </div>
           </div>
           <HeroTokens images={heroTokens} />
+        </div>
+        <div className={styles.InfoSection}>
+          <div className={styles.Primary}>
+            <div className="ps-ts-are-the-xxx-xxx-xxx-of-ar">
+              PSTs are the xxx xxx xxx of Arweave
+            </div>
+            <div className="lorem-ipsum-dolor-sit-amet-co">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+            </div>
+          </div>
+          <div className={styles.Secondary}></div>
         </div>
       </Page>
       <SetupModal {...setupModal.bindings} />

@@ -1,27 +1,43 @@
 @use "../variables"
 
-$titleSize: 3.6em
+$titleSize: 3.8em
 
 .Landing
-  width: 100%
-  height: max-content
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+  @media screen and (max-width: variables.$mobile-screen)
+    justify-content: flex-start
+    align-items: left
+    flex-direction: column
 
   .Hero
+    margin: 12em 0
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin: auto
+
     h1
       font-size: $titleSize
       font-weight: 600
       line-height: 1.15em
-      margin: 0
 
-      [class~=typed-cursor]
-      font-weight: 300
-      color: variables.$light-text
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: $titleSize - 1em
+
+      [class~="typed-cursor"]
+        font-weight: 300
+        color: variables.$light-text
 
     p
       color: variables.$light-text
       font-weight: 400
-      font-size: 1.13em
-      margin: 0
+      font-size: 1.5em
+      margin: 2em 0
+
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: 1.2em
 
       a
         color: inherit
@@ -30,13 +46,38 @@ $titleSize: 3.6em
       display: flex
       align-items: center
 
-  .FeaturedToken
+      button
+        padding: .6rem 1.2rem
+        border: solid #000
+        font-size: 1.2em
+
+  .InfoSection
     display: flex
-    align-items: center
+    justify-content: space-between
     width: 40%
 
-    @media screen and (max-width: variables.$mobile-screen)
-      display: none
+    // @media screen and (max-width: variables.$mobile-screen)
+    //   display: none
+
+    .Primary
+      display: flex
+      flex-direction: column
+      align-items: flex-start
+      padding: 50px
+
+      background: #000000
+      /* shadow */
+
+      box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1), 0px 1px 2px -1px rgba(0, 0, 0, 0.1)
+      border-radius: 40px
+
+      /* Inside auto layout */
+
+      flex: none
+      order: 0
+      align-self: stretch
+      flex-grow: 0
+      margin: 0px 32px
 
 .Section
   .Title

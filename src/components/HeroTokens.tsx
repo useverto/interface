@@ -7,26 +7,25 @@ interface Props {
   className?: string;
 }
 
-export default function HeroTokens(props: Props) {
+export default function HeroTokens({ images, ...props }: Props) {
   return (
-    <div className={styles.Wrapper}>
+    <div className={styles.Wrapper} {...props}>
       <div className={styles.TokensContainer}>
         {[20, 15, 10, 20].map((speed, s) => (
           <Marquee
             speed={speed}
             key={s}
             direction={!(s % 2) ? "left" : "right"}
-            gradient={false}
-            pauseOnHover
+            gradientWidth={50}
           >
-            {props.images.slice(s * 5, (s + 1) * 5).map((img, i) => (
+            {images.slice(s * 6, (s + 1) * 6).map((img, i) => (
               <div key={i} className={styles.Token}>
                 <Image
                   className={styles.Logo}
                   src={`https://arweave.net/${img}`}
                   width={64}
                   height={64}
-                  alt={`token ${i}`}
+                  alt={`AR.${img}`}
                 />
               </div>
             ))}
@@ -37,11 +36,11 @@ export default function HeroTokens(props: Props) {
   );
 }
 
-export async function fetchTokenLogos() {
+export async function fetchTokenLogos(): Promise<string[]> {
   return await fetch(
     "https://storage.googleapis.com/verto-exchange-contracts/tokens/skeletons.json"
   )
-    .then((res) => res.json())
+    .then((res) => res.json() as Promise<{ type: string; logo: string }[]>)
     .then((tokens) => tokens.filter((token) => token.type == "community"))
     .then((tokens) =>
       tokens.filter((token) => /[a-zA-Z0-9-_]{43}/.test(token.logo))
@@ -51,5 +50,5 @@ export async function fetchTokenLogos() {
 
 // TODO(@maximousblk): remove this before merging
 fetchTokenLogos().then((tokens) => {
-  console.log(tokens, tokens.length);
+  console.debug(tokens, tokens.length);
 });
