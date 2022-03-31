@@ -51,6 +51,8 @@
 
     .SwapOverlay
       position: absolute
+      display: flex
+      flex-direction: column
       +variables.absoluteExtend
       z-index: 100
       background-color: rgba(#fff, .67)
@@ -151,6 +153,9 @@
 
         &.SelectToken .TokenSelectList .TokenItem:hover
           background-color: rgba(#fff, .1)
+
+      .SearchToken
+        flex: none
 
     .Head
       padding: 2em $sidePadding 1.7em

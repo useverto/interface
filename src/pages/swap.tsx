@@ -25,10 +25,21 @@ import {
   InformationIcon,
 } from "@iconicicons/react";
 import { OrderType } from "../utils/order";
-import { expandAnimation, opacityAnimation } from "../utils/animations";
+import {
+  cardListAnimation,
+  expandAnimation,
+  opacityAnimation,
+} from "../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
-import { fetchTopCommunities } from "verto-cache-interface";
+import {
+  fetchPaginated,
+  fetchTopCommunities,
+  PaginatedToken,
+  UserBalance,
+} from "verto-cache-interface";
 import { verto } from "../utils/arweave";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/reducers";
 import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
@@ -37,6 +48,7 @@ import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
+import { formatAddress } from "../utils/format";
 
 const Swap = ({ defaultPair }) => {
   // arconnect helper
@@ -110,6 +122,51 @@ const Swap = ({ defaultPair }) => {
       );*/
     })();
   }, []);
+
+  // load tokens to token selector
+  const [tokens, setTokens] = useState<PaginatedToken[]>([]);
+  const [currentTokensPage, setCurrentTokensPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    fetchMore();
+  }, []);
+
+  // fetch all tokens paginated
+  async function fetchMore() {
+    if (!hasMore) return;
+
+    const fetchedTokens = await fetchPaginated<PaginatedToken>(
+      "tokens",
+      8,
+      currentTokensPage
+    );
+
+    // if there are not tokens returned, quit
+    if (fetchedTokens.isEmpty()) return setHasMore(false);
+    else {
+      // get if there is a next page
+      const hasNextPage = fetchedTokens.hasNextPage();
+
+      setHasMore(hasNextPage);
+      setTokens((val) => [...val, ...fetchedTokens.items]);
+
+      // if there is a next page, update the page counter
+      if (hasNextPage) setCurrentTokensPage((val) => val + 1);
+    }
+  }
+
+  // load balances
+  const [balances, setBalances] = useState<UserBalance[]>([]);
+  const address = useSelector((state: RootState) => state.addressReducer);
+
+  useEffect(() => {
+    (async () => {
+      const fetchedBalances = await verto.user.getBalances(address);
+
+      setBalances(fetchedBalances);
+    })();
+  }, [address]);
 
   return (
     <Page>
@@ -206,26 +263,55 @@ const Swap = ({ defaultPair }) => {
                   />
                 </h1>
                 <Spacer y={1.25} />
-                <SwapInput {...tokenSearchInput.bindings}>
+                <SwapInput
+                  className={styles.SearchToken}
+                  {...tokenSearchInput.bindings}
+                >
                   <p>Search for token or contract address</p>
                 </SwapInput>
                 <Spacer y={2} />
-                <div className={styles.TokenSelectList}>
-                  <div className={styles.TokenItem}>
-                    <img
-                      src="https://verto.exchange/logo_light.svg"
-                      alt="token-icon"
-                    />
-                    <Spacer x={1.25} />
-                    <div>
-                      <h1>Verto</h1>
-                      <p>
-                        <span>VRT</span> · ljeWncmsS...WLsnwqp
-                      </p>
-                    </div>
+                {(tokenSelector === "from" && (
+                  <div className={styles.TokenSelectList}>
+                    {/** return owned balances */}
+                    {balances.map((balance, i) => (
+                      <motion.div {...cardListAnimation(i)} key={i}>
+                        <div className={styles.TokenItem}>
+                          <img
+                            src="https://verto.exchange/logo_light.svg"
+                            alt="token-icon"
+                          />
+                          <Spacer x={1.45} />
+                          <div>
+                            <h1>{balance.name}</h1>
+                            <p>
+                              <span>{balance.ticker}</span>
+                              {" · "}
+                              {formatAddress(balance.contractId, 16)}
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                  <Spacer y={0.75} />
-                </div>
+                )) ||
+                  (tokenSelector === "to" && (
+                    <div className={styles.TokenSelectList}>
+                      <div className={styles.TokenItem}>
+                        <img
+                          src="https://verto.exchange/logo_light.svg"
+                          alt="token-icon"
+                        />
+                        <Spacer x={1.45} />
+                        <div>
+                          <h1>Verto</h1>
+                          <p>
+                            <span>VRT</span> · ljeWncmsS...WLsnwqp
+                          </p>
+                        </div>
+                      </div>
+                      <Spacer y={0.75} />
+                    </div>
+                  ))}
               </motion.div>
             )}
           </AnimatePresence>
