@@ -90,13 +90,6 @@ const Swap = ({ defaultPair }) => {
     "from" | "to" | undefined
   >();
 
-  // the token search input controller
-  const tokenSearchInput = useInput("");
-
-  // set token search input value to default
-  // when the token selector appears / disappears
-  useEffect(() => tokenSearchInput.reset(), [tokenSelector]);
-
   // input for the token amount sent
   const amountInput = useInput<number>(0);
 
@@ -192,6 +185,56 @@ const Swap = ({ defaultPair }) => {
       }
     })();
   }, [address]);
+
+  // search
+  const tokenSearchInput = useInput("");
+
+  // set token search input value to default
+  // when the token selector appears / disappears
+  useEffect(() => tokenSearchInput.reset(), [tokenSelector]);
+
+  /**
+   * Filter tokens by their name, ticker and finally their ID
+   * @param token Token to filter
+   */
+  function filterTokens(token: BalanceType | PaginatedToken) {
+    const query = tokenSearchInput.state.toLowerCase();
+
+    console.log(query, token.name.toLowerCase());
+
+    // return true for all if there is no query
+    if (!query || query === "") return true;
+
+    // filter using the query
+    if (token.name.toLowerCase().includes(query)) return true;
+    if (token.ticker.toLowerCase().includes(query)) return true;
+
+    // @ts-expect-error
+    const id: string = token?.id || token?.contractId;
+
+    if (query === id.toLowerCase()) return true;
+
+    // return false if none of the above match
+    return false;
+  }
+
+  /**
+   * Sort tokens by their name, ticker and id (compared to the query)
+   */
+  function sortTokens(
+    a: BalanceType | PaginatedToken,
+    b: BalanceType | PaginatedToken,
+    sortType: "name" | "ticker" | "id"
+  ) {
+    if (tokenSearchInput.state === "" || !tokenSearchInput.state) return 0;
+
+    const query = new RegExp(tokenSearchInput.state, "gi");
+
+    return (
+      (b[sortType].match(query)?.length || 0) -
+      (a[sortType].match(query)?.length || 0)
+    );
+  }
 
   return (
     <Page>
@@ -296,41 +339,44 @@ const Swap = ({ defaultPair }) => {
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
-                    {balances.map((balance, i) => {
-                      let image = balance.contractId;
+                    {balances
+                      .filter(filterTokens)
+                      .sort((a, b) => sortTokens(a, b, "name"))
+                      .map((balance, i) => {
+                        let image = balance.contractId;
 
-                      // for communities
-                      if (balance.type === "community") {
-                        if (balance.useContractLogo) {
-                          image = `${gateway()}/${balance.logo}`;
+                        // for communities
+                        if (balance.type === "community") {
+                          if (balance.useContractLogo) {
+                            image = `${gateway()}/${balance.logo}`;
+                          } else {
+                            image = verto.token.getLogo(
+                              balance.contractId,
+                              theme.toLowerCase() as "light" | "dark"
+                            );
+                          }
                         } else {
-                          image = verto.token.getLogo(
-                            balance.contractId,
-                            theme.toLowerCase() as "light" | "dark"
-                          );
+                          // for other tokens
+                          image = `${gateway()}/${balance.contractId}`;
                         }
-                      } else {
-                        // for other tokens
-                        image = `${gateway()}/${balance.contractId}`;
-                      }
 
-                      return (
-                        <motion.div {...cardListAnimation(i)} key={i}>
-                          <div className={styles.TokenItem}>
-                            <img src={image} alt="token-icon" />
-                            <Spacer x={1.45} />
-                            <div>
-                              <h1>{balance.name}</h1>
-                              <p>
-                                <span>{balance.ticker}</span>
-                                {" · "}
-                                {formatAddress(balance.contractId, 16)}
-                              </p>
+                        return (
+                          <motion.div {...cardListAnimation(i)} key={i}>
+                            <div className={styles.TokenItem}>
+                              <img src={image} alt="token-icon" />
+                              <Spacer x={1.45} />
+                              <div>
+                                <h1>{balance.name}</h1>
+                                <p>
+                                  <span>{balance.ticker}</span>
+                                  {" · "}
+                                  {formatAddress(balance.contractId, 16)}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </motion.div>
-                      );
-                    })}
+                          </motion.div>
+                        );
+                      })}
                   </div>
                 )) ||
                   (tokenSelector === "to" && (
