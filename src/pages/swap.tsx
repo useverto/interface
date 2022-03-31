@@ -439,7 +439,15 @@ const Swap = ({
                               // set the active pair "from" token
                               onClick={() => setPairItem(balance, "from")}
                             >
-                              <img src={image} alt="token-icon" />
+                              <img
+                                src={image}
+                                alt="token-icon"
+                                className={
+                                  balance.type === "art"
+                                    ? styles.ArtPreview
+                                    : ""
+                                }
+                              />
                               <Spacer x={1.25} />
                               <div>
                                 <h1>{balance.name}</h1>
@@ -617,11 +625,18 @@ const Swap = ({
                       total={order.quantity}
                     />
                   ))}
-              {!orderbook &&
+              {(!orderbook &&
                 new Array(5).fill("").map((_, i) => (
                   <tr key={i}>
                     <td colSpan={4}>
                       <Loading.Skeleton className={styles.OrderBookLoading} />
+                    </td>
+                  </tr>
+                ))) ||
+                (orderbook.length === 0 && (
+                  <tr>
+                    <td colSpan={4}>
+                      <p className={styles.NoOrders}>No orders...</p>
                     </td>
                   </tr>
                 ))}
@@ -654,11 +669,18 @@ const Swap = ({
                       total={order.quantity}
                     />
                   ))}
-              {!orderbook &&
+              {(!orderbook &&
                 new Array(5).fill("").map((_, i) => (
                   <tr key={i}>
                     <td colSpan={4}>
                       <Loading.Skeleton className={styles.OrderBookLoading} />
+                    </td>
+                  </tr>
+                ))) ||
+                (orderbook.length === 0 && (
+                  <tr>
+                    <td colSpan={4}>
+                      <p className={styles.NoOrders}>No orders...</p>
                     </td>
                   </tr>
                 ))}
