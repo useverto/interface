@@ -37,18 +37,19 @@ import {
   PaginatedToken,
   UserBalance,
 } from "verto-cache-interface";
-import { verto } from "../utils/arweave";
+import { gateway, verto } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
+import { formatAddress } from "../utils/format";
 import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
+import axios from "axios";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
-import { formatAddress } from "../utils/format";
 
 const Swap = ({ defaultPair }) => {
   // arconnect helper
@@ -157,14 +158,38 @@ const Swap = ({ defaultPair }) => {
   }
 
   // load balances
-  const [balances, setBalances] = useState<UserBalance[]>([]);
+  const [balances, setBalances] = useState<BalanceType[]>([]);
   const address = useSelector((state: RootState) => state.addressReducer);
+
+  type BalanceType = UserBalance & {
+    useContractLogo: boolean;
+  };
 
   useEffect(() => {
     (async () => {
+      if (!address) return;
+      setBalances([]);
+
       const fetchedBalances = await verto.user.getBalances(address);
 
-      setBalances(fetchedBalances);
+      // load logos
+      for (const balance of fetchedBalances) {
+        const { status } = await axios.get(
+          verto.token.getLogo(balance.contractId)
+        );
+
+        setBalances((val) => [
+          ...val,
+          {
+            ...balance,
+            useContractLogo:
+              balance.type === "community" &&
+              status !== 200 &&
+              balance.logo &&
+              balance.logo !== balance.contractId,
+          },
+        ]);
+      }
     })();
   }, [address]);
 
@@ -243,7 +268,6 @@ const Swap = ({ defaultPair }) => {
             )}
           </AnimatePresence>
           <AnimatePresence>
-            {/** If the token selector is not undefined, we display the token selector overlay */}
             {tokenSelector && (
               <motion.div
                 className={
@@ -272,26 +296,41 @@ const Swap = ({ defaultPair }) => {
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
-                    {/** return owned balances */}
-                    {balances.map((balance, i) => (
-                      <motion.div {...cardListAnimation(i)} key={i}>
-                        <div className={styles.TokenItem}>
-                          <img
-                            src="https://verto.exchange/logo_light.svg"
-                            alt="token-icon"
-                          />
-                          <Spacer x={1.45} />
-                          <div>
-                            <h1>{balance.name}</h1>
-                            <p>
-                              <span>{balance.ticker}</span>
-                              {" · "}
-                              {formatAddress(balance.contractId, 16)}
-                            </p>
+                    {balances.map((balance, i) => {
+                      let image = balance.contractId;
+
+                      // for communities
+                      if (balance.type === "community") {
+                        if (balance.useContractLogo) {
+                          image = `${gateway()}/${balance.logo}`;
+                        } else {
+                          image = verto.token.getLogo(
+                            balance.contractId,
+                            theme.toLowerCase() as "light" | "dark"
+                          );
+                        }
+                      } else {
+                        // for other tokens
+                        image = `${gateway()}/${balance.contractId}`;
+                      }
+
+                      return (
+                        <motion.div {...cardListAnimation(i)} key={i}>
+                          <div className={styles.TokenItem}>
+                            <img src={image} alt="token-icon" />
+                            <Spacer x={1.45} />
+                            <div>
+                              <h1>{balance.name}</h1>
+                              <p>
+                                <span>{balance.ticker}</span>
+                                {" · "}
+                                {formatAddress(balance.contractId, 16)}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 )) ||
                   (tokenSelector === "to" && (
