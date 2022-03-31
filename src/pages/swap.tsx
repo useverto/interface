@@ -33,14 +33,16 @@ import {
 import { useMediaPredicate } from "react-media-hook";
 import {
   fetchPaginated,
+  fetchTokenStateMetadata,
   fetchTopCommunities,
   PaginatedToken,
   UserBalance,
 } from "verto-cache-interface";
-import { gateway, verto } from "../utils/arweave";
+import { gateway, isAddress, verto } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
+import { swapItems } from "../utils/storage_names";
 import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
@@ -51,7 +53,11 @@ import axios from "axios";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
 
-const Swap = ({ defaultPair }) => {
+const Swap = ({
+  defaultPair,
+}: {
+  defaultPair: { from: SimpleTokenInterface; to: SimpleTokenInterface };
+}) => {
   // arconnect helper
   const arconnect = useArConnect();
 
@@ -101,9 +107,55 @@ const Swap = ({ defaultPair }) => {
 
   // the currently selected token pair
   const [pair, setPair] = useState<{
-    from: ExtendedTokenInterface;
-    to: ExtendedTokenInterface;
+    from: SimpleTokenInterface;
+    to: SimpleTokenInterface;
   }>(defaultPair);
+
+  // load the last used token pair
+  useEffect(() => {
+    (async () => {
+      const pairStorageVal = localStorage.getItem(swapItems);
+
+      // return if nothing is stored
+      if (!pairStorageVal) return;
+
+      const parsedPair: { from: string; to: string } = JSON.parse(
+        pairStorageVal
+      );
+
+      // return if the parsed pair is invalid
+      if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
+
+      // load token metadata to set as the pair
+      const fromToken = await fetchTokenStateMetadata(parsedPair.from);
+      const toToken = await fetchTokenStateMetadata(parsedPair.to);
+
+      // set pair
+      setPair({
+        from: {
+          id: fromToken.id,
+          name: fromToken.name,
+          ticker: fromToken.ticker,
+        },
+        to: {
+          id: toToken.id,
+          name: toToken.name,
+          ticker: toToken.ticker,
+        },
+      });
+    })();
+  }, []);
+
+  // save the current pair to load later
+  useEffect(() => {
+    localStorage.setItem(
+      swapItems,
+      JSON.stringify({
+        from: pair.from.id,
+        to: pair.to.id,
+      })
+    );
+  }, [pair]);
 
   // orderbook for the current pair
   const [orderbook, setOrderbook] = useState<OrderInterfaceWithPair[]>();
@@ -642,7 +694,14 @@ const Swap = ({ defaultPair }) => {
 };
 
 export async function getStaticProps() {
-  const topCommunities = await fetchTopCommunities(2);
+  const topCommunities: SimpleTokenInterface[] = (
+    await fetchTopCommunities(2)
+  ).map((val) => ({
+    // mapping out redundant data
+    id: val.id,
+    name: val.name,
+    ticker: val.ticker,
+  }));
 
   return {
     props: {
@@ -658,9 +717,8 @@ export async function getStaticProps() {
 export default Swap;
 
 export type ExtendedUserInterface = UserInterface & { baseAddress: string };
-export type ExtendedTokenInterface = {
+export type SimpleTokenInterface = {
   id: string;
   name: string;
   ticker: string;
-  logo: string;
 };
