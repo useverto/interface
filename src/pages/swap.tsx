@@ -12,6 +12,7 @@ import {
   useTheme,
   Card,
   useInput,
+  Loading,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
@@ -103,9 +104,10 @@ const Swap = ({ defaultPair }) => {
 
   useEffect(() => {
     (async () => {
-      setOrderbook(
+      // TODO
+      /*setOrderbook(
         await verto.exchange.getOrderBook([pair.from.id, pair.to.id])
-      );
+      );*/
     })();
   }, []);
 
@@ -353,19 +355,28 @@ const Swap = ({ defaultPair }) => {
               <th>Total</th>
             </thead>
             <tbody>
-              {orderbook
-                .filter((order) => order.pair[0] === pair.from.id)
-                .map((order, i) => (
-                  <OrderBookRow
-                    key={i}
-                    id={i + 1}
-                    type="buy"
-                    price={order.price}
-                    // TODO
-                    //amount={order.filled}
-                    amount={10}
-                    total={order.quantity}
-                  />
+              {orderbook &&
+                orderbook
+                  .filter((order) => order.pair[0] === pair.from.id)
+                  .map((order, i) => (
+                    <OrderBookRow
+                      key={i}
+                      id={i + 1}
+                      type="buy"
+                      price={order.price}
+                      // TODO
+                      //amount={order.filled}
+                      amount={10}
+                      total={order.quantity}
+                    />
+                  ))}
+              {!orderbook &&
+                new Array(5).fill("").map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={4}>
+                      <Loading.Skeleton className={styles.OrderBookLoading} />
+                    </td>
+                  </tr>
                 ))}
             </tbody>
           </table>
@@ -381,19 +392,28 @@ const Swap = ({ defaultPair }) => {
               <th>Total</th>
             </thead>
             <tbody>
-              {orderbook
-                .filter((order) => order.pair[1] === pair.to.id)
-                .map((order, i) => (
-                  <OrderBookRow
-                    key={i}
-                    id={i + 1}
-                    type="sell"
-                    price={order.price}
-                    // TODO
-                    // amount={order.filled}
-                    amount={10}
-                    total={order.quantity}
-                  />
+              {orderbook &&
+                orderbook
+                  .filter((order) => order.pair[1] === pair.to.id)
+                  .map((order, i) => (
+                    <OrderBookRow
+                      key={i}
+                      id={i + 1}
+                      type="sell"
+                      price={order.price}
+                      // TODO
+                      // amount={order.filled}
+                      amount={10}
+                      total={order.quantity}
+                    />
+                  ))}
+              {!orderbook &&
+                new Array(5).fill("").map((_, i) => (
+                  <tr key={i}>
+                    <td colSpan={4}>
+                      <Loading.Skeleton className={styles.OrderBookLoading} />
+                    </td>
+                  </tr>
                 ))}
             </tbody>
           </table>

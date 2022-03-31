@@ -154,7 +154,7 @@
 
     .Head
       padding: 2em $sidePadding 1.7em
-      background-color: variables.$foreground-color
+      background-color: rgb(variables.$primary-color)
       display: flex
       align-items: center
       justify-content: space-between
@@ -214,7 +214,11 @@
 
       &.DarkHead
         .HeadText
-          color: #313131
+          color: #fff
+
+          .Select
+            p, .Arrow
+              color: rgba(#fff, .8)
 
           select
             background-color: rgba(#000, .17)
@@ -369,6 +373,10 @@
 
     @media screen and (max-width: variables.$mobile-screen)
       width: 100%
+
+    .OrderBookLoading
+      width: 90%
+      margin: .2em auto
 
     h1
       font-size: 1.6em
