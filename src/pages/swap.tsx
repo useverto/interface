@@ -200,8 +200,6 @@ const Swap = ({ defaultPair }) => {
   function filterTokens(token: BalanceType | PaginatedToken) {
     const query = tokenSearchInput.state.toLowerCase();
 
-    console.log(query, token.name.toLowerCase());
-
     // return true for all if there is no query
     if (!query || query === "") return true;
 
@@ -234,6 +232,28 @@ const Swap = ({ defaultPair }) => {
       (b[sortType].match(query)?.length || 0) -
       (a[sortType].match(query)?.length || 0)
     );
+  }
+
+  /**
+   * Update pair based on the selected token
+   * @param token Token to set as the new pair
+   * @param type Type of the token ("from" or "to")
+   */
+  function setPairItem(
+    token: BalanceType | PaginatedToken,
+    type: "from" | "to"
+  ) {
+    setPair((val) => ({
+      ...val,
+      [type]: {
+        // @ts-expect-error
+        id: token.id || token.contractId,
+        name: token.name,
+        ticker: token.ticker,
+        logo: token.logo,
+      },
+    }));
+    setTokenSelector(undefined);
   }
 
   return (
@@ -362,9 +382,13 @@ const Swap = ({ defaultPair }) => {
 
                         return (
                           <motion.div {...cardListAnimation(i)} key={i}>
-                            <div className={styles.TokenItem}>
+                            <div
+                              className={styles.TokenItem}
+                              // set the active pair "from" token
+                              onClick={() => setPairItem(balance, "from")}
+                            >
                               <img src={image} alt="token-icon" />
-                              <Spacer x={1.45} />
+                              <Spacer x={1.25} />
                               <div>
                                 <h1>{balance.name}</h1>
                                 <p>
