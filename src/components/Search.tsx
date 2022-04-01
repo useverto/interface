@@ -212,7 +212,9 @@ export default function Search({ open, setOpen }) {
                               alt={item.name}
                               draggable={false}
                               className={
-                                item.type === "user" ? styles.UserAvatar : ""
+                                (item.type === "user" && styles.UserAvatar) ||
+                                (item.type === "art" && styles.ArtPreview) ||
+                                ""
                               }
                               key={i}
                             />
