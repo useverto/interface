@@ -337,6 +337,7 @@ const Swap = ({
               datasets: [
                 {
                   // TODO: filterGraphData()
+                  // show price of "to" token in "from" tokens
                   data: [0, 1, 2, 2, 4, 3, 2, 4],
                   ...GraphDataConfig,
                   borderColor: theme === "Light" ? "#000000" : "#ffffff",
@@ -350,10 +351,7 @@ const Swap = ({
                   `${Number(value).toLocaleString(undefined, {
                     maximumFractionDigits: 2,
                     minimumFractionDigits: 2,
-                  })} ${
-                    /*selectedPST.ticker + (graphMode === "price" ? "/AR" : "")*/
-                    ""
-                  }`,
+                  })} ${pair.from.ticker}/${pair.to.ticker}`,
               }),
               maintainAspectRatio: false,
             }}

@@ -42,6 +42,9 @@
     width: 39%
     padding: 0
 
+    @media screen and (max-width: variables.$mobile-screen)
+      width: 100%
+
     .SwapWrapper
       display: flex
       flex-direction: column
@@ -148,11 +151,17 @@
               margin: 0
                 bottom: .05em
 
+              @media screen and (max-width: variables.$mobile-screen)
+                font-size: 1.4em
+
             p
               font-size: .96em
               color: variables.$light-text
               font-weight: 500
               margin: 0
+
+              @media screen and (max-width: variables.$mobile-screen)
+                font-size: .78em
 
       &.SwapOverlayDark
         background-color: rgba(#030a23, .67)
