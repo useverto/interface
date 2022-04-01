@@ -32,7 +32,6 @@ import {
 } from "../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
 import {
-  fetchPaginated,
   fetchTokenStateMetadata,
   fetchTopCommunities,
   PaginatedToken,
@@ -50,6 +49,7 @@ import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
 import axios from "axios";
+import usePaginatedTokens from "../utils/paginated_tokens";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
 
@@ -97,10 +97,10 @@ const Swap = ({
   >();
 
   // input for the token amount sent
-  const amountInput = useInput<number>(0);
+  const amountInput = useInput<number>(undefined);
 
   // input for the price for one
-  const priceInput = useInput<number>(0);
+  const priceInput = useInput<number>(undefined);
 
   // is the device size = mobile
   const mobile = useMediaPredicate("(max-width: 720px)");
@@ -170,37 +170,11 @@ const Swap = ({
   }, []);
 
   // load tokens to token selector
-  const [tokens, setTokens] = useState<PaginatedToken[]>([]);
-  const [currentTokensPage, setCurrentTokensPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const { tokens, hasMore, fetchMore } = usePaginatedTokens();
 
   useEffect(() => {
     fetchMore();
   }, []);
-
-  // fetch all tokens paginated
-  async function fetchMore() {
-    if (!hasMore) return;
-
-    const fetchedTokens = await fetchPaginated<PaginatedToken>(
-      "tokens",
-      8,
-      currentTokensPage
-    );
-
-    // if there are not tokens returned, quit
-    if (fetchedTokens.isEmpty()) return setHasMore(false);
-    else {
-      // get if there is a next page
-      const hasNextPage = fetchedTokens.hasNextPage();
-
-      setHasMore(hasNextPage);
-      setTokens((val) => [...val, ...fetchedTokens.items]);
-
-      // if there is a next page, update the page counter
-      if (hasNextPage) setCurrentTokensPage((val) => val + 1);
-    }
-  }
 
   // load balances
   const [balances, setBalances] = useState<BalanceType[]>([]);
@@ -442,7 +416,13 @@ const Swap = ({
                           return (
                             <motion.div {...cardListAnimation(i)} key={i}>
                               <div
-                                className={styles.TokenItem}
+                                className={
+                                  styles.TokenItem +
+                                  " " +
+                                  (pair.from?.id === balance.contractId
+                                    ? styles.SelectedToken
+                                    : "")
+                                }
                                 // set the active pair "from" token
                                 onClick={() => setPairItem(balance, "from")}
                               >

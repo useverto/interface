@@ -21,10 +21,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { SearchIcon } from "@iconicicons/react";
 import {
-  fetchPaginated,
   fetchRandomArtworkWithUser,
   fetchRandomCommunitiesWithMetadata,
-  PaginatedToken,
   RandomCommunities,
 } from "verto-cache-interface";
 import Search, { useSearch } from "../../components/Search";
@@ -34,6 +32,7 @@ import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
 import InfiniteScroll from "react-infinite-scroll-component";
+import usePaginatedTokens from "../../utils/paginated_tokens";
 import styles from "../../styles/views/space.module.sass";
 
 const Space = (props: {
@@ -194,34 +193,8 @@ const Space = (props: {
   // search
   const search = useSearch();
 
-  // all tokens
-  const [tokens, setTokens] = useState<PaginatedToken[]>([]);
-  const [currentTokensPage, setCurrentTokensPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  // fetch all tokens paginated
-  async function fetchMore() {
-    if (!hasMore) return;
-
-    const fetchedTokens = await fetchPaginated<PaginatedToken>(
-      "tokens",
-      8,
-      currentTokensPage
-    );
-
-    // if there are not tokens returned, quit
-    if (fetchedTokens.isEmpty()) return setHasMore(false);
-    else {
-      // get if there is a next page
-      const hasNextPage = fetchedTokens.hasNextPage();
-
-      setHasMore(hasNextPage);
-      setTokens((val) => [...val, ...fetchedTokens.items]);
-
-      // if there is a next page, update the page counter
-      if (hasNextPage) setCurrentTokensPage((val) => val + 1);
-    }
-  }
+  // all tokens (infinite loading)
+  const { tokens, hasMore, fetchMore } = usePaginatedTokens();
 
   return (
     <Page>
