@@ -49,6 +49,7 @@ import Metas from "../components/Metas";
 import useArConnect from "use-arconnect";
 import useGeofence from "../utils/geofence";
 import axios from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
 import usePaginatedTokens from "../utils/paginated_tokens";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
@@ -271,20 +272,42 @@ const Swap = ({
    * @param token Token to set as the new pair
    * @param type Type of the token ("from" or "to")
    */
-  function setPairItem(
+  async function setPairItem(
     token: BalanceType | PaginatedToken,
     type: "from" | "to"
   ) {
-    setPair((val) => ({
-      ...val,
-      [type]: {
-        // @ts-expect-error
-        id: token.id || token.contractId,
-        name: token.name,
-        ticker: token.ticker,
-        logo: token.logo,
-      },
-    }));
+    if (tokens.length === 0) await fetchMore();
+
+    setPair((val) => {
+      // @ts-expect-error
+      const id: string = token.id || token.contractId;
+      let updatedPair = {
+        ...val,
+        [type]: {
+          id,
+          name: token.name,
+          ticker: token.ticker,
+        },
+      };
+
+      // update "to" token if it is the same as "from" token
+      // and do the same for the "from" token
+      if (type === "from" && id === pair.to.id) {
+        updatedPair.to = {
+          id: tokens[0].id,
+          name: tokens[0].name,
+          ticker: tokens[0].ticker,
+        };
+      } else if (type === "to" && id === pair.from.id) {
+        updatedPair.from = {
+          id: balances[0].contractId,
+          name: balances[0].name,
+          ticker: balances[0].ticker,
+        };
+      }
+
+      return updatedPair;
+    });
     setTokenSelector(undefined);
   }
 
@@ -391,85 +414,124 @@ const Swap = ({
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
-                    {!loadingBalances &&
-                      balances
-                        .filter(filterTokens)
-                        .sort((a, b) => sortTokens(a, b, "name"))
-                        .map((balance, i) => {
-                          let image = balance.contractId;
+                    <AnimatePresence>
+                      {!loadingBalances &&
+                        balances
+                          .filter(filterTokens)
+                          .sort((a, b) => sortTokens(a, b, "name"))
+                          .map((balance, i) => {
+                            let image = balance.contractId;
 
-                          // for communities
-                          if (balance.type === "community") {
-                            if (balance.useContractLogo) {
-                              image = `${gateway()}/${balance.logo}`;
+                            // for communities
+                            if (balance.type === "community") {
+                              if (balance.useContractLogo) {
+                                image = `${gateway()}/${balance.logo}`;
+                              } else {
+                                image = verto.token.getLogo(
+                                  balance.contractId,
+                                  theme.toLowerCase() as "light" | "dark"
+                                );
+                              }
                             } else {
-                              image = verto.token.getLogo(
-                                balance.contractId,
-                                theme.toLowerCase() as "light" | "dark"
-                              );
+                              // for other tokens
+                              image = `${gateway()}/${balance.contractId}`;
                             }
-                          } else {
-                            // for other tokens
-                            image = `${gateway()}/${balance.contractId}`;
-                          }
 
-                          return (
-                            <motion.div {...cardListAnimation(i)} key={i}>
-                              <div
-                                className={
-                                  styles.TokenItem +
-                                  " " +
-                                  (pair.from?.id === balance.contractId
-                                    ? styles.SelectedToken
-                                    : "")
-                                }
-                                // set the active pair "from" token
-                                onClick={() => setPairItem(balance, "from")}
-                              >
-                                <img
-                                  src={image}
-                                  alt="token-icon"
+                            return (
+                              <motion.div {...cardListAnimation(i)} key={i}>
+                                <div
                                   className={
-                                    balance.type === "art"
-                                      ? styles.ArtPreview
-                                      : ""
+                                    styles.TokenItem +
+                                    " " +
+                                    (pair.from?.id === balance.contractId
+                                      ? styles.SelectedToken
+                                      : "")
                                   }
-                                />
-                                <Spacer x={1.25} />
-                                <div>
-                                  <h1>{balance.name}</h1>
-                                  <p>
-                                    <span>{balance.ticker}</span>
-                                    {" · "}
-                                    {formatAddress(balance.contractId, 16)}
-                                  </p>
+                                  // set the active pair "from" token
+                                  onClick={() => setPairItem(balance, "from")}
+                                >
+                                  <img
+                                    src={image}
+                                    alt="token-icon"
+                                    className={
+                                      balance.type === "art"
+                                        ? styles.ArtPreview
+                                        : ""
+                                    }
+                                  />
+                                  <Spacer x={1.25} />
+                                  <div>
+                                    <h1>{balance.name}</h1>
+                                    <p>
+                                      <span>{balance.ticker}</span>
+                                      {" · "}
+                                      {formatAddress(balance.contractId, 16)}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            </motion.div>
-                          );
-                        })}
+                              </motion.div>
+                            );
+                          })}
+                    </AnimatePresence>
                     {loadingBalances && (
                       <Loading.Spinner className={styles.LoadingTokenList} />
                     )}
                   </div>
                 )) ||
                   (tokenSelector === "to" && (
-                    <div className={styles.TokenSelectList}>
-                      <div className={styles.TokenItem}>
-                        <img
-                          src="https://verto.exchange/logo_light.svg"
-                          alt="token-icon"
-                        />
-                        <Spacer x={1.45} />
-                        <div>
-                          <h1>Verto</h1>
-                          <p>
-                            <span>VRT</span> · ljeWncmsS...WLsnwqp
-                          </p>
-                        </div>
-                      </div>
-                      <Spacer y={0.75} />
-                    </div>
+                    <InfiniteScroll
+                      className={styles.TokenSelectList}
+                      dataLength={tokens.length}
+                      next={fetchMore}
+                      hasMore={hasMore}
+                      loader={
+                        <Loading.Spinner className={styles.LoadingTokenList} />
+                      }
+                      style={{ overflow: "unset !important" }}
+                      height={300}
+                    >
+                      <AnimatePresence>
+                        {tokens
+                          .filter(({ type }) => type !== "collection")
+                          .map((token, i) => {
+                            // TODO: use Cryptometa token api to get logo
+                            let image = token.id;
+
+                            if (token.type === "community") image = token.logo;
+
+                            return (
+                              <motion.div {...cardListAnimation(i)} key={i}>
+                                <div
+                                  className={
+                                    styles.TokenItem +
+                                    " " +
+                                    (pair.to?.id === token.id
+                                      ? styles.SelectedToken
+                                      : "")
+                                  }
+                                  // set the active pair "to" token
+                                  onClick={() => setPairItem(token, "to")}
+                                >
+                                  <img
+                                    src={`${gateway()}/${image}`}
+                                    alt="token-icon"
+                                  />
+                                  <Spacer x={1.45} />
+                                  <div>
+                                    <h1>{token.name}</h1>
+                                    <p>
+                                      <span>{token.ticker}</span>
+                                      {" · "}
+                                      {formatAddress(token.id, 16)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Spacer y={0.75} />
+                              </motion.div>
+                            );
+                          })}
+                      </AnimatePresence>
+                    </InfiniteScroll>
                   ))}
               </motion.div>
             )}

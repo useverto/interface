@@ -369,6 +369,7 @@ const Space = (props: {
                   name={token.name}
                   // @ts-ignore
                   price={token.price ?? " ??"}
+                  // TODO: Add community logo from Cryptometa API
                   image={`${gateway()}/${token.logo}`}
                   ticker={token.ticker}
                   onClick={() => router.push(`/space/${token.id}`)}
