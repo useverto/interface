@@ -204,6 +204,7 @@ const Swap = ({
 
   // load balances
   const [balances, setBalances] = useState<BalanceType[]>([]);
+  const [loadingBalances, setLoadingBalances] = useState(true);
   const address = useSelector((state: RootState) => state.addressReducer);
 
   type BalanceType = UserBalance & {
@@ -214,27 +215,32 @@ const Swap = ({
     (async () => {
       if (!address) return;
       setBalances([]);
+      setLoadingBalances(true);
 
-      const fetchedBalances = await verto.user.getBalances(address);
+      try {
+        const fetchedBalances = await verto.user.getBalances(address);
 
-      // load logos
-      for (const balance of fetchedBalances) {
-        const { status } = await axios.get(
-          verto.token.getLogo(balance.contractId)
-        );
+        // load logos
+        for (const balance of fetchedBalances) {
+          const { status } = await axios.get(
+            verto.token.getLogo(balance.contractId)
+          );
 
-        setBalances((val) => [
-          ...val,
-          {
-            ...balance,
-            useContractLogo:
-              balance.type === "community" &&
-              status !== 200 &&
-              balance.logo &&
-              balance.logo !== balance.contractId,
-          },
-        ]);
-      }
+          setBalances((val) => [
+            ...val,
+            {
+              ...balance,
+              useContractLogo:
+                balance.type === "community" &&
+                status !== 200 &&
+                balance.logo &&
+                balance.logo !== balance.contractId,
+            },
+          ]);
+        }
+      } catch {}
+
+      setLoadingBalances(false);
     })();
   }, [address]);
 
@@ -411,56 +417,60 @@ const Swap = ({
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
-                    {balances
-                      .filter(filterTokens)
-                      .sort((a, b) => sortTokens(a, b, "name"))
-                      .map((balance, i) => {
-                        let image = balance.contractId;
+                    {!loadingBalances &&
+                      balances
+                        .filter(filterTokens)
+                        .sort((a, b) => sortTokens(a, b, "name"))
+                        .map((balance, i) => {
+                          let image = balance.contractId;
 
-                        // for communities
-                        if (balance.type === "community") {
-                          if (balance.useContractLogo) {
-                            image = `${gateway()}/${balance.logo}`;
+                          // for communities
+                          if (balance.type === "community") {
+                            if (balance.useContractLogo) {
+                              image = `${gateway()}/${balance.logo}`;
+                            } else {
+                              image = verto.token.getLogo(
+                                balance.contractId,
+                                theme.toLowerCase() as "light" | "dark"
+                              );
+                            }
                           } else {
-                            image = verto.token.getLogo(
-                              balance.contractId,
-                              theme.toLowerCase() as "light" | "dark"
-                            );
+                            // for other tokens
+                            image = `${gateway()}/${balance.contractId}`;
                           }
-                        } else {
-                          // for other tokens
-                          image = `${gateway()}/${balance.contractId}`;
-                        }
 
-                        return (
-                          <motion.div {...cardListAnimation(i)} key={i}>
-                            <div
-                              className={styles.TokenItem}
-                              // set the active pair "from" token
-                              onClick={() => setPairItem(balance, "from")}
-                            >
-                              <img
-                                src={image}
-                                alt="token-icon"
-                                className={
-                                  balance.type === "art"
-                                    ? styles.ArtPreview
-                                    : ""
-                                }
-                              />
-                              <Spacer x={1.25} />
-                              <div>
-                                <h1>{balance.name}</h1>
-                                <p>
-                                  <span>{balance.ticker}</span>
-                                  {" · "}
-                                  {formatAddress(balance.contractId, 16)}
-                                </p>
+                          return (
+                            <motion.div {...cardListAnimation(i)} key={i}>
+                              <div
+                                className={styles.TokenItem}
+                                // set the active pair "from" token
+                                onClick={() => setPairItem(balance, "from")}
+                              >
+                                <img
+                                  src={image}
+                                  alt="token-icon"
+                                  className={
+                                    balance.type === "art"
+                                      ? styles.ArtPreview
+                                      : ""
+                                  }
+                                />
+                                <Spacer x={1.25} />
+                                <div>
+                                  <h1>{balance.name}</h1>
+                                  <p>
+                                    <span>{balance.ticker}</span>
+                                    {" · "}
+                                    {formatAddress(balance.contractId, 16)}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
+                            </motion.div>
+                          );
+                        })}
+                    {loadingBalances && (
+                      <Loading.Spinner className={styles.LoadingTokenList} />
+                    )}
                   </div>
                 )) ||
                   (tokenSelector === "to" && (
