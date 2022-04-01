@@ -1,5 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { cardListAnimation, opacityAnimation } from "../utils/animations";
+import {
+  cardListAnimation,
+  infiniteScrollAnimation,
+  opacityAnimation,
+} from "../utils/animations";
 import { CloseIcon, MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { Avatar, useTheme } from "@verto/ui";
@@ -187,7 +191,7 @@ export default function Search({ open, setOpen }) {
                   >
                     <motion.a
                       className={styles.ResultItem}
-                      {...opacityAnimation()}
+                      {...infiniteScrollAnimation}
                       href={
                         item.type === "user"
                           ? `/@${item.username}`
