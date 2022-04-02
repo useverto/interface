@@ -138,14 +138,12 @@ const Home = ({
         </div>
         <div className={styles.InfoSection}>
           <div className={styles.Primary}>
-            <div className="ps-ts-are-the-xxx-xxx-xxx-of-ar">
-              PSTs are the xxx xxx xxx of Arweave
-            </div>
-            <div className="lorem-ipsum-dolor-sit-amet-co">
+            <h3>PSTs are the xxx xxx xxx of Arweave</h3>
+            <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
               tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
               suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
-            </div>
+            </p>
           </div>
           <div className={styles.Secondary}></div>
         </div>
