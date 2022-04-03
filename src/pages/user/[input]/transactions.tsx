@@ -105,6 +105,9 @@ const Transactions = (props: {
         next={loadMore}
         hasMore={hasMore}
         loader={<></>}
+        endMessage={
+          <p className={styles.EndText}>You have reached the end 😋</p>
+        }
         style={{ overflow: "unset !important" }}
       >
         <table className={styles.Transactions}>
