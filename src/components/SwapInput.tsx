@@ -6,7 +6,6 @@ import {
   CSSProperties,
   PropsWithChildren,
   ChangeEventHandler,
-  useRef,
 } from "react";
 import styles from "../styles/components/SwapInput.module.sass";
 
@@ -23,7 +22,7 @@ export default function SwapInput({
   extraPadding = false,
   focusTheme = false,
   ...props
-}: PropsWithChildren<SwapInputProps>) {
+}: PropsWithChildren<Props>) {
   const [val, setVal] = useState(value);
   const [inputStatus, setInputStatus] = useState(status);
   const [changed, setChanged] = useState(false);
@@ -36,8 +35,6 @@ export default function SwapInput({
     if (!val.match(matchPattern)) setInputStatus("error");
     else setInputStatus(undefined);
   }, [val]);
-
-  const inputElement = useRef<HTMLInputElement>();
 
   return (
     <div
@@ -60,14 +57,7 @@ export default function SwapInput({
       {...props}
     >
       {(val === "" || extraPadding) && (
-        // we cannot just set the z-index to -1, because sometimes
-        // the children need to be clickable
-        <div
-          className={styles.Placeholder}
-          onClick={() => inputElement.current.focus()}
-        >
-          {children}
-        </div>
+        <div className={styles.Placeholder}>{children}</div>
       )}
       <input
         type={typeof value === "number" ? "number" : "text"}
@@ -90,13 +80,12 @@ export default function SwapInput({
             }) ||
           undefined
         }
-        ref={inputElement}
       />
     </div>
   );
 }
 
-export interface SwapInputProps {
+interface Props {
   value: string | number;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   className?: string;

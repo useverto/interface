@@ -14,12 +14,7 @@ import {
   useInput,
   Loading,
 } from "@verto/ui";
-import {
-  MouseEventHandler,
-  PropsWithChildren,
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
 import { GraphDataConfig, GraphOptions } from "../utils/graph";
 import { AnimatePresence, motion } from "framer-motion";
@@ -47,7 +42,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
 import { swapItems } from "../utils/storage_names";
-import SwapInput, { SwapInputProps } from "../components/SwapInput";
+import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
@@ -320,21 +315,13 @@ const Swap = ({
   const orderInfoModal = useModal();
 
   /**
-   * Balance of the current token to be sold
-   */
-  function balanceOfCurrent() {
-    return (
-      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
-      0
-    );
-  }
-
-  /**
    * Returns the tokens to be sold / owned balance ratio
    */
   function fillPercentage() {
     const amount = amountInput.state ?? 0;
-    const owned = balanceOfCurrent();
+    const owned =
+      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
+      0;
 
     return (amount / owned) * 100;
   }
@@ -645,12 +632,12 @@ const Swap = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <AmountInput
-                  {...amountInput.bindings}
-                  setMax={() => amountInput.setState(balanceOfCurrent())}
-                >
-                  {pair.from.ticker}
-                </AmountInput>
+                <SwapInput {...amountInput.bindings} extraPadding>
+                  <p>Amount</p>
+                  <p style={{ textTransform: "uppercase" }}>
+                    {pair.from.ticker}
+                  </p>
+                </SwapInput>
                 <Spacer y={2} />
                 <SwapInput value="" extraPadding readonly focusTheme>
                   <p>Total</p>
@@ -857,37 +844,6 @@ const Swap = ({
         </Modal.Content>
       </Modal>
     </Page>
-  );
-};
-
-const AmountInput = ({
-  children,
-  setMax,
-  ...props
-}: PropsWithChildren<SwapInputProps & { setMax: () => any }>) => {
-  const [maxHovered, setMaxHovered] = useState(false);
-
-  /**
-   * Set the value of the input to the maximum
-   * balance that the user owns of this token
-   */
-  const maxBalance: MouseEventHandler<HTMLParagraphElement> = (e) => {
-    e.stopPropagation();
-    setMax();
-  };
-
-  return (
-    <SwapInput {...props} extraPadding>
-      <p>Amount</p>
-      <p
-        className={styles.MaxAmountButton}
-        onMouseEnter={() => setMaxHovered(true)}
-        onMouseLeave={() => setMaxHovered(false)}
-        onClick={maxBalance}
-      >
-        {maxHovered ? "Max" : children}
-      </p>
-    </SwapInput>
   );
 };
 
