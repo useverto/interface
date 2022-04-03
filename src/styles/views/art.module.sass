@@ -1,6 +1,7 @@
 @use "../variables"
 
 .Background
+  $backgroundBlur: 20px
   position: fixed
   top: -5vh
   left: -5vw
@@ -11,7 +12,10 @@
   min-height: 110vh
   user-select: none
   object-fit: cover
-  filter: blur(20px)
+  filter: blur($backgroundBlur)
+
+  &.DarkBackground
+    filter: blur($backgroundBlur) grayscale(70%)
 
 .Preview
   position: relative
@@ -33,6 +37,12 @@
     @media screen and (max-width: variables.$mobile-screen)
       max-width: 90%
       max-height: 85%
+
+  // enforce a different box-shadow when not in
+  // fullscreen no matter the display theme
+  &:not(.FullScreenView)
+    img, video
+      box-shadow: 0px 10px 20px rgba(0, 0, 0, .26)
 
   .Actions
     position: absolute

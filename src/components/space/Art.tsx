@@ -342,7 +342,11 @@ const Art = (props: PropTypes) => {
           src={data.source}
           alt="art"
           draggable={false}
-          className={styles.Background}
+          className={
+            styles.Background +
+            " " +
+            (displayTheme === "Dark" ? styles.DarkBackground : "")
+          }
         />
       )) ||
         (data?.tokenType === "video" && (
