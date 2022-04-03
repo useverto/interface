@@ -137,15 +137,77 @@ const Home = ({
           <HeroTokens images={heroTokens} />
         </div>
         <div className={styles.InfoSection}>
-          <div className={styles.Primary}>
-            <h3>PSTs are the xxx xxx xxx of Arweave</h3>
+          <div className={[styles.Card, styles.Primary].join(" ")}>
+            <h2>PSTs are the xxx xxx xxx of Arweave</h2>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
               tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
               suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
             </p>
           </div>
-          <div className={styles.Secondary}></div>
+          <div className={[styles.Card, styles.Secondary].join(" ")}>
+            <h2>Verto allows you trade and exchange them seamlessly</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+            </p>
+            {/* TODO(@martonlederer): add link */}
+            <Button>Explore the Permaweb</Button>
+          </div>
+        </div>
+
+        <h3
+          style={{ padding: "2em", width: "100%", border: "2px dashed #f00" }}
+        >
+          🚧 Work in Progress
+        </h3>
+
+        <div className={styles.CTA}>
+          <div className={styles.Left}>
+            <div className={[styles.Card, styles.DAO].join(" ")}>
+              <h2>The Verto DAO</h2>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+                tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+                suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+              </p>
+              <Button type="secondary">Learn More</Button>
+            </div>
+            <div className={[styles.Card, styles.Social].join(" ")}>
+              <h3>Join our Community</h3>
+
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+            </div>
+          </div>
+          <div className={[styles.Card, styles.Right].join(" ")}>
+            <h2>For Developers</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+            </p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et.
+            </p>
+            <Button>Read Docs</Button>
+          </div>
         </div>
       </Page>
       <SetupModal {...setupModal.bindings} />
