@@ -34,6 +34,8 @@ import {
   RefreshIcon,
   UsersIcon,
 } from "@iconicicons/react";
+import { StarFillIcon, StarIcon } from "@primer/octicons-react";
+import { watchlist as watchlist_store } from "../../utils/storage_names";
 import isTomorrow from "dayjs/plugin/isTomorrow";
 import Head from "next/head";
 import Metas from "../../components/Metas";
@@ -216,6 +218,28 @@ const Community = (props: PropTypes) => {
     })();
   }, [theme, state]);
 
+  // get if added to the watchlist
+  const [favorite, setFavorite] = useState(false);
+
+  useEffect(() => {
+    const watchlist = JSON.parse(localStorage.getItem(watchlist_store) || "[]");
+
+    setFavorite(watchlist.includes(props.id));
+  }, [state]);
+
+  // toggle favorite
+  function toggleInWatchlist() {
+    const watchlist = JSON.parse(localStorage.getItem(watchlist_store) || "[]");
+    const index = watchlist.indexOf(props.id);
+
+    if (index > -1) watchlist.splice(index, 1);
+    else watchlist.push(props.id);
+
+    localStorage.setItem(watchlist_store, JSON.stringify(watchlist));
+
+    setFavorite(!favorite);
+  }
+
   return (
     <Page>
       <Head>
@@ -242,6 +266,14 @@ const Community = (props: PropTypes) => {
             >
               {props.ticker}
             </span>
+            <div
+              className={
+                styles.AddToWatchlist + " " + ((favorite && styles.Added) || "")
+              }
+              onClick={toggleInWatchlist}
+            >
+              {(favorite && <StarFillIcon />) || <StarIcon />}
+            </div>
           </h1>
           {(props.price !== "--" && (
             <>

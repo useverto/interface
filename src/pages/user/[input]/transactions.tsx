@@ -26,15 +26,31 @@ const Transactions = (props: {
   // active address select
   const activeAddress = useSelect(props.user?.addresses?.[0] ?? props.input);
 
+  // set active address from query params if address
+  // param exists and is a valid Arweave address
+  useEffect(() => {
+    // "address" param
+    const address = router.query.address;
+    const addr = router.query.addr;
+
+    if (typeof address === "string" && isAddress(address)) {
+      activeAddress.setState(address);
+    } else if (typeof addr === "string" && isAddress(addr)) {
+      activeAddress.setState(addr);
+    }
+  }, [router.query]);
+
   // transactions infinite loading
   const [transactions, setTransactions] = useState(props.txs);
   const [hasMore, setHasMore] = useState(true);
+  const [animationCounter, setAnimationCounter] = useState(0);
 
   // reset everything on address change
   useEffect(() => {
     setTransactions([]);
     setHasMore(true);
     loadMore(true);
+    setAnimationCounter(0);
   }, [activeAddress.state]);
 
   async function loadMore(reload = false) {
@@ -52,6 +68,7 @@ const Transactions = (props: {
     // if there are no more txs, return
     if (res.length === 0) return setHasMore(false);
 
+    setAnimationCounter(transactions.length);
     setTransactions((val) => [...val, ...res]);
   }
 
@@ -102,11 +119,14 @@ const Transactions = (props: {
         next={loadMore}
         hasMore={hasMore}
         loader={<></>}
+        endMessage={
+          <p className={styles.EndText}>You have reached the end 😋</p>
+        }
         style={{ overflow: "unset !important" }}
       >
         <table className={styles.Transactions}>
           {transactions.map((transaction, i) => (
-            <motion.tr key={i} {...cardListAnimation(i)}>
+            <motion.tr key={i} {...cardListAnimation(i - animationCounter)}>
               <td className={styles.TxType}>{transaction.type}</td>
               <td className={styles.TxID}>
                 <a

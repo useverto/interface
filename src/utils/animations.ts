@@ -129,3 +129,20 @@ interface CountUpProps {
   frameDuration?: number;
   decimals?: number;
 }
+
+export const infiniteScrollAnimation = {
+  initial: {
+    opacity: 0,
+    y: 50,
+    transition: {
+      ease: [0.78, 0.14, 0.15, 0.86],
+    },
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      ease: [0.78, 0.14, 0.15, 0.86],
+    },
+  },
+};
