@@ -26,6 +26,20 @@ const Transactions = (props: {
   // active address select
   const activeAddress = useSelect(props.user?.addresses?.[0] ?? props.input);
 
+  // set active address from query params if address
+  // param exists and is a valid Arweave address
+  useEffect(() => {
+    // "address" param
+    const address = router.query.address;
+    const addr = router.query.addr;
+
+    if (typeof address === "string" && isAddress(address)) {
+      activeAddress.setState(address);
+    } else if (typeof addr === "string" && isAddress(addr)) {
+      activeAddress.setState(addr);
+    }
+  }, [router.query]);
+
   // transactions infinite loading
   const [transactions, setTransactions] = useState(props.txs);
   const [hasMore, setHasMore] = useState(true);
