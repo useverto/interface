@@ -257,6 +257,12 @@
       .OrderTypeInfo
         display: flex
         align-items: center
+        cursor: pointer
+        color: variables.$light-text
+        transition: all .23s ease-in-out
+
+        &:active
+          transform: scale(.9)
 
         svg
           font-size: 1.3em
@@ -316,11 +322,11 @@
         .Bar
           position: absolute
           top: 50%
-          left: 50%
-          width: 85%
+          left: $sidePadding
+          right: $sidePadding
           height: $barSize
           background-color: variables.$cec
-          transform: translate(-50%, -50%)
+          transform: translateY(-50%)
 
           .Filled
             position: absolute
@@ -338,7 +344,7 @@
           width: $barSize
           height: $barSize
           border: $barSize solid variables.$cec
-          background-color: variables.$background-color
+          background-color: variables.$component-background
           transition: all .23s ease-in-out
 
           &.FilledCircle
@@ -466,3 +472,11 @@
       width: 1em
       height: 1em
       transform: rotate(90deg)
+
+.ModalContentJustify
+  text-align: justify
+
+.ModalTitleInner
+  font-size: 1.15em
+  margin: 1.15em 0 .5em
+  font-weight: 600

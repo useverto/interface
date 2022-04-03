@@ -311,6 +311,11 @@ const Swap = ({
     setTokenSelector(undefined);
   }
 
+  const orderInfoModal = useModal();
+
+  // TODO: to calculate the total amount of tokens the user will receive
+  // dry run the contract with the swap interaction
+
   return (
     <Page>
       <Head>
@@ -403,6 +408,7 @@ const Swap = ({
                   />
                 </h1>
                 <Spacer y={1.25} />
+                {/** TODO: search for "to" tokens (using the search hook of the cache api) */}
                 <SwapInput
                   className={styles.SearchToken}
                   {...tokenSearchInput.bindings}
@@ -467,6 +473,7 @@ const Swap = ({
                                     </p>
                                   </div>
                                 </div>
+                                <Spacer y={0.75} />
                               </motion.div>
                             );
                           })}
@@ -585,7 +592,10 @@ const Swap = ({
                     Limit Order
                   </p>
                 </div>
-                <div className={styles.OrderTypeInfo}>
+                <div
+                  className={styles.OrderTypeInfo}
+                  onClick={() => orderInfoModal.setState(true)}
+                >
                   <InformationIcon />
                 </div>
               </div>
@@ -744,7 +754,7 @@ const Swap = ({
       <Spacer y={2} />
       <Modal {...permissionModal.bindings}>
         <Modal.Title>Missing permissions</Modal.Title>
-        <Modal.Content style={{ textAlign: "justify" }}>
+        <Modal.Content className={styles.ModalContentJustify}>
           A few permissions are missing. These are necessary for swapping to
           work. Please allow them below.
           <Spacer y={1.5} />
@@ -762,6 +772,20 @@ const Swap = ({
           >
             Allow
           </Button>
+        </Modal.Content>
+      </Modal>
+      <Modal {...orderInfoModal.bindings}>
+        <Modal.Title>Orders</Modal.Title>
+        <Modal.Content className={styles.ModalContentJustify}>
+          <h3 className={styles.ModalTitleInner}>Market Orders</h3>
+          Placing an order "at the market" will execute as quickly as possible.
+          It will loop through all orders until the submitted order is filled.
+          If the order is not completely filled, it will be executed the next
+          time someone creates an order against it.
+          <h3 className={styles.ModalTitleInner}>Limit Orders</h3>
+          Placing an order "at the limit" will execute once an order is created
+          that matches the limit price. It will not execute if the limit price
+          is not met.
         </Modal.Content>
       </Modal>
     </Page>
