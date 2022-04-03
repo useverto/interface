@@ -311,7 +311,20 @@ const Swap = ({
     setTokenSelector(undefined);
   }
 
+  // modal that gives information about the order types (market or limit)
   const orderInfoModal = useModal();
+
+  /**
+   * Returns the tokens to be sold / owned balance ratio
+   */
+  function fillPercentage() {
+    const amount = amountInput.state ?? 0;
+    const owned =
+      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
+      0;
+
+    return (amount / owned) * 100;
+  }
 
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
@@ -635,13 +648,53 @@ const Swap = ({
             <div className={styles.SwapBottom}>
               <div className={styles.ProgressBar}>
                 <div className={styles.Bar}>
-                  <div className={styles.Filled} style={{ width: "50%" }} />
+                  <div
+                    className={styles.Filled}
+                    style={{
+                      width: `${fillPercentage()}%`,
+                    }}
+                  />
                 </div>
-                <div className={styles.Circle + " " + styles.FilledCircle} />
-                <div className={styles.Circle + " " + styles.FilledCircle} />
-                <div className={styles.Circle + " " + styles.FilledCircle} />
-                <div className={styles.Circle} />
-                <div className={styles.Circle} />
+                {/** 0% */}
+                <div
+                  className={
+                    styles.Circle +
+                    " " +
+                    (fillPercentage() > 0 ? styles.FilledCircle : "")
+                  }
+                />
+                {/** 25% */}
+                <div
+                  className={
+                    styles.Circle +
+                    " " +
+                    (fillPercentage() >= 25 ? styles.FilledCircle : "")
+                  }
+                />
+                {/** 50% */}
+                <div
+                  className={
+                    styles.Circle +
+                    " " +
+                    (fillPercentage() >= 50 ? styles.FilledCircle : "")
+                  }
+                />
+                {/** 75% */}
+                <div
+                  className={
+                    styles.Circle +
+                    " " +
+                    (fillPercentage() >= 75 ? styles.FilledCircle : "")
+                  }
+                />
+                {/** 100% */}
+                <div
+                  className={
+                    styles.Circle +
+                    " " +
+                    (fillPercentage() >= 100 ? styles.FilledCircle : "")
+                  }
+                />
               </div>
               <Spacer y={2} />
               <Button className={styles.SwapButton}>Swap</Button>
