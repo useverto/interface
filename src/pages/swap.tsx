@@ -776,7 +776,9 @@ const Swap = ({
       </Modal>
       <Modal {...orderInfoModal.bindings}>
         <Modal.Title>Orders</Modal.Title>
-        <Modal.Content className={styles.ModalContentJustify}>
+        <Modal.Content
+          className={styles.ModalContentJustify + " " + styles.OrderModal}
+        >
           <h3 className={styles.ModalTitleInner}>Market Orders</h3>
           Placing an order "at the market" will execute as quickly as possible.
           It will loop through all orders until the submitted order is filled.
