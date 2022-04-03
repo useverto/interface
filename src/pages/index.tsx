@@ -91,8 +91,8 @@ const Home = ({
         <title>Verto - Welcome</title>
         <Metas title="Welcome" />
       </Head>
-      <Page>
-        <div className={styles.Landing}>
+      <div>
+        <Page className={styles.Landing}>
           <div className={styles.Hero}>
             <h1>
               Exchange <span id="typed" className={styles.Cursor} />
@@ -135,8 +135,8 @@ const Home = ({
             </div>
           </div>
           <HeroTokens images={heroTokens} />
-        </div>
-        <div className={styles.InfoSection}>
+        </Page>
+        <Page className={styles.InfoSection}>
           <div className={[styles.Card, styles.Primary].join(" ")}>
             <h2>PSTs are the xxx xxx xxx of Arweave</h2>
             <p>
@@ -155,15 +155,20 @@ const Home = ({
             {/* TODO(@martonlederer): add link */}
             <Button>Explore the Permaweb</Button>
           </div>
-        </div>
+        </Page>
 
         <h3
-          style={{ padding: "2em", width: "100%", border: "2px dashed #f00" }}
+          style={{
+            padding: "2em",
+            margin: "auto",
+            width: "50%",
+            border: "2px dashed #f00",
+          }}
         >
           🚧 Work in Progress
         </h3>
 
-        <div className={styles.CTA}>
+        <Page className={styles.CTA}>
           <div className={styles.Left}>
             <div className={[styles.Card, styles.DAO].join(" ")}>
               <h2>The Verto DAO</h2>
@@ -208,8 +213,8 @@ const Home = ({
             </p>
             <Button>Read Docs</Button>
           </div>
-        </div>
-      </Page>
+        </Page>
+      </div>
       <SetupModal {...setupModal.bindings} />
     </>
   );
