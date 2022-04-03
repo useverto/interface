@@ -29,12 +29,14 @@ const Transactions = (props: {
   // transactions infinite loading
   const [transactions, setTransactions] = useState(props.txs);
   const [hasMore, setHasMore] = useState(true);
+  const [animationCounter, setAnimationCounter] = useState(0);
 
   // reset everything on address change
   useEffect(() => {
     setTransactions([]);
     setHasMore(true);
     loadMore(true);
+    setAnimationCounter(0);
   }, [activeAddress.state]);
 
   async function loadMore(reload = false) {
@@ -52,6 +54,7 @@ const Transactions = (props: {
     // if there are no more txs, return
     if (res.length === 0) return setHasMore(false);
 
+    setAnimationCounter(transactions.length);
     setTransactions((val) => [...val, ...res]);
   }
 
@@ -106,7 +109,7 @@ const Transactions = (props: {
       >
         <table className={styles.Transactions}>
           {transactions.map((transaction, i) => (
-            <motion.tr key={i} {...cardListAnimation(i)}>
+            <motion.tr key={i} {...cardListAnimation(i - animationCounter)}>
               <td className={styles.TxType}>{transaction.type}</td>
               <td className={styles.TxID}>
                 <a

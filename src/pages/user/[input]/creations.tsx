@@ -34,6 +34,7 @@ const Creations = (props: {
   const [hasMore, setHasMore] = useState(
     props.ids.length > props.creations.length
   );
+  const [animationCounter, setAnimationCounter] = useState(0);
 
   async function loadMore() {
     if (!hasMore) return;
@@ -45,6 +46,8 @@ const Creations = (props: {
     );
 
     if (nextArtsToLoad.length <= 0) return setHasMore(false);
+
+    setAnimationCounter(creations.length);
 
     for (const id of nextArtsToLoad) {
       const data = await fetchArtworkMetadata(id);
@@ -93,7 +96,7 @@ const Creations = (props: {
         {creations.map((art, i) => (
           <motion.div
             key={i}
-            {...cardAnimation(i)}
+            {...cardAnimation(i - animationCounter)}
             className={styles.CreationItem}
           >
             <Card.Asset

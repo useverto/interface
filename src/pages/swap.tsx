@@ -171,7 +171,7 @@ const Swap = ({
   }, []);
 
   // load tokens to token selector
-  const { tokens, hasMore, fetchMore } = usePaginatedTokens();
+  const { tokens, hasMore, fetchMore, animationCounter } = usePaginatedTokens();
 
   useEffect(() => {
     fetchMore();
@@ -498,7 +498,10 @@ const Swap = ({
                             if (token.type === "community") image = token.logo;
 
                             return (
-                              <motion.div {...cardListAnimation(i)} key={i}>
+                              <motion.div
+                                {...cardListAnimation(i - animationCounter)}
+                                key={i}
+                              >
                                 <div
                                   className={
                                     styles.TokenItem +

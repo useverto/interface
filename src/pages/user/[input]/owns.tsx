@@ -31,6 +31,7 @@ const Owns = (props: {
   const [hasMore, setHasMore] = useState(
     props.balances.length > props.owned.length
   );
+  const [animationCounter, setAnimationCounter] = useState(0);
 
   async function loadMore() {
     if (!hasMore) return;
@@ -39,6 +40,8 @@ const Owns = (props: {
     const nextArtsToLoad = props.balances.slice(owned.length, owned.length + 8);
 
     if (nextArtsToLoad.length <= 0) return setHasMore(false);
+
+    setAnimationCounter(owned.length);
 
     for (const token of nextArtsToLoad) {
       const data = await fetchArtworkMetadata(token.contractId);
@@ -93,7 +96,7 @@ const Owns = (props: {
         {owned.map((art, i) => (
           <motion.div
             key={i}
-            {...cardAnimation(i)}
+            {...cardAnimation(i - animationCounter)}
             className={styles.CreationItem}
           >
             <Card.Asset

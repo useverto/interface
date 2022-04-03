@@ -10,9 +10,15 @@ export default function usePaginatedTokens() {
   const [currentTokensPage, setCurrentTokensPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
+  // animation counter to prevent the newly added
+  // tokens from being animated with a delay
+  const [animationCounter, setAnimationCounter] = useState(0);
+
   // fetch all tokens paginated
   async function fetchMore() {
     if (!hasMore) return;
+
+    setAnimationCounter(tokens.length);
 
     const fetchedTokens = await fetchPaginated<PaginatedToken>(
       "tokens",
@@ -38,5 +44,6 @@ export default function usePaginatedTokens() {
     tokens,
     fetchMore,
     hasMore,
+    animationCounter,
   };
 }

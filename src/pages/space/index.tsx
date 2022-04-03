@@ -194,7 +194,7 @@ const Space = (props: {
   const search = useSearch();
 
   // all tokens (infinite loading)
-  const { tokens, hasMore, fetchMore } = usePaginatedTokens();
+  const { tokens, hasMore, fetchMore, animationCounter } = usePaginatedTokens();
 
   return (
     <Page>
@@ -361,7 +361,7 @@ const Space = (props: {
           {tokens.map((token, i) => (
             <motion.div
               key={i}
-              {...cardAnimation(i)}
+              {...cardAnimation(i - animationCounter)}
               className={styles.Card + " " + styles.AllTokensCard}
             >
               {(token.type === "community" && (
