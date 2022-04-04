@@ -319,12 +319,23 @@ const Swap = ({
    */
   function fillPercentage() {
     const amount = amountInput.state ?? 0;
-    const owned =
-      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
-      0;
+    const owned = balanceOfCurrent();
 
     return (amount / owned) * 100;
   }
+
+  /**
+   * Get the owned balance of the currently selected "from" token
+   */
+  function balanceOfCurrent() {
+    return (
+      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
+      0
+    );
+  }
+
+  // max btn hovered
+  const [maxHovered, setMaxHovered] = useState(false);
 
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
@@ -640,8 +651,13 @@ const Swap = ({
                   {...amountInput.bindings}
                   type="number"
                   rightEl={
-                    <p style={{ textTransform: "uppercase" }}>
-                      {pair.from.ticker}
+                    <p
+                      className={styles.Max}
+                      onMouseEnter={() => setMaxHovered(true)}
+                      onMouseLeave={() => setMaxHovered(false)}
+                      onClick={() => amountInput.setState(balanceOfCurrent())}
+                    >
+                      {maxHovered ? "Max" : pair.from.ticker}
                     </p>
                   }
                 >

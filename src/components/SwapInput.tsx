@@ -52,6 +52,9 @@ export default function SwapInput({
     return () => window.removeEventListener("resize", calculateInputWidth);
   }, []);
 
+  /**
+   * Calculate input width to fit into the parent
+   */
   function calculateInputWidth() {
     if (!parentRef) return;
     let labelWidth = 0;
