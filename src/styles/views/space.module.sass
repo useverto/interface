@@ -5,12 +5,13 @@
   $topPadding: 2.8em
   $bottomPadding: 3.2em
   position: relative
-  background-color: variables.$component-background
+  background-color: variables.$foreground-color
   color: variables.$foreground-reverse-color
   border-radius: 15px
   box-shadow: variables.$standard-shadow
   height: 250px
   overflow: hidden
+  transition: background-color .23s ease-in-out
 
   @media screen and (max-width: variables.$mobile-screen)
     height: 450px
@@ -113,6 +114,8 @@
           display: none
 
   &.DarkFeatured
+    background-color: variables.$component-background
+
     .Paginator
       span
         border-color: variables.$foreground-color
