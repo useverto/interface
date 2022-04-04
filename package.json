@@ -24,7 +24,6 @@
     "axios": "^0.21.4",
     "capture-website": "^2.3.0",
     "chart.js": "^2.9.4",
-    "chrome-aws-lambda": "^10.1.0",
     "copy-to-clipboard": "^3.3.1",
     "dayjs": "^1.11.0",
     "fast-average-color": "^7.1.0",
