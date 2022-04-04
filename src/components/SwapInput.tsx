@@ -1,5 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { opacityAnimation } from "../utils/animations";
 import {
   useState,
   useEffect,

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { fetchPaginated, PaginatedToken } from "verto-cache-interface";
+import { gateway, verto } from "./arweave";
+import axios from "axios";
 
 /**
  * Paginated tokens hook to use with infinite scrolling
@@ -33,6 +35,22 @@ export default function usePaginatedTokens() {
       const hasNextPage = fetchedTokens.hasNextPage();
 
       setHasMore(hasNextPage);
+
+      // cryptometa logo api
+      for (const token of fetchedTokens.items) {
+        if (token.type !== "community") continue;
+
+        let logo = verto.token.getLogo(token.id, "dark");
+
+        const { status } = await axios.get(logo);
+
+        if (status !== 200 && token.logo && token.logo !== token.id) {
+          logo = `${gateway()}/${token.logo}`;
+        }
+
+        token.logo = logo;
+      }
+
       setTokens((val) => [...val, ...fetchedTokens.items]);
 
       // if there is a next page, update the page counter

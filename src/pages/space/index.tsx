@@ -156,7 +156,7 @@ const Space = (props: {
         // the contract
         // if not even the contract has the logo, we use
         // the placeholder logo returned by cryptometa
-        if (res.status !== 200) {
+        if (res.status !== 200 && psc.logo && psc.logo !== psc.id) {
           setFeaturedLogos((val) => [
             ...val,
             {
@@ -369,8 +369,7 @@ const Space = (props: {
                   name={token.name}
                   // @ts-ignore
                   price={token.price ?? " ??"}
-                  // TODO: Add community logo from Cryptometa API
-                  image={`${gateway()}/${token.logo}`}
+                  image={token.logo}
                   ticker={token.ticker}
                   onClick={() => router.push(`/space/${token.id}`)}
                 />

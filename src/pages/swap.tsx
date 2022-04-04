@@ -511,7 +511,6 @@ const Swap = ({
                         {tokens
                           .filter(({ type }) => type !== "collection")
                           .map((token, i) => {
-                            // TODO: use Cryptometa token api to get logo
                             let image = token.id;
 
                             if (token.type === "community") image = token.logo;
@@ -533,7 +532,11 @@ const Swap = ({
                                   onClick={() => setPairItem(token, "to")}
                                 >
                                   <img
-                                    src={`${gateway()}/${image}`}
+                                    src={
+                                      token.type === "community"
+                                        ? token.logo
+                                        : `${gateway()}/${image}`
+                                    }
                                     alt="token-icon"
                                   />
                                   <Spacer x={1.45} />
