@@ -120,9 +120,8 @@ const Swap = ({
       // return if nothing is stored
       if (!pairStorageVal) return;
 
-      const parsedPair: { from: string; to: string } = JSON.parse(
-        pairStorageVal
-      );
+      const parsedPair: { from: string; to: string } =
+        JSON.parse(pairStorageVal);
 
       // return if the parsed pair is invalid
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;

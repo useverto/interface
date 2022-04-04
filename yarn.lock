@@ -479,10 +479,10 @@
   resolved "https://registry.yarnpkg.com/@three-em/node-darwin-arm64/-/node-darwin-arm64-0.2.0.tgz#64bf322a574277f1434dd447b51e9357c997ee12"
   integrity sha512-bW7xDQJiYQ/Yc25hAnSWPkEwj4rZ+grQjRUkTFq8Mf8H5u1ngL8ex/XGcwbvZ1YUzbA/oXStn+xQk9uRvvuEiA==
 
-"@three-em/node@^0.2.7":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@three-em/node/-/node-0.2.7.tgz#ff5ef54b81ef7ee6be8847a71e0f0110ae3dc780"
-  integrity sha512-foulpTocchzc+Coi4R6LMjXlulGzz3bKk1BEJAtV0fxcBSzz1LTRzXYllasxBM9owQf9tc7A6fFZSdgrYRnhgQ==
+"@three-em/node@^0.2.8":
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/@three-em/node/-/node-0.2.8.tgz#5d400f62d59d5f01b6ea6e9e7a0177193d25be1a"
+  integrity sha512-tY5NwmWn9lL59+2/acIdf3nLEnfml1CUV9/AapAR22XlAraszLvpGf/ljHK3IFFuigHIx+PQO3Ls+Fg9eRvKcg==
   dependencies:
     detect-libc "^1.0.3"
   optionalDependencies:
@@ -641,13 +641,13 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-9":
-  version "1.0.0-beta-9"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-9.tgz#7e023ecde5defd2d7e5c17f99cd6443b0178fba6"
-  integrity sha512-9AAcqhd6lQN3kEvqvIOg1rqxtCcMjDs7/uikWBdHHFN+JfdZg9C7TRChsRUyeSZVpCcdpzPDf/zOGhmlZ5hKww==
+"@verto/js@^1.0.0-beta-10":
+  version "1.0.0-beta-10"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-10.tgz#0281fbcedd8e65da1a0550565dca59bf69c0f6e5"
+  integrity sha512-oMZ8OjV7aKlJwIz/g7Si+FmqgMTdMbLNm0wlIo8P2379605yMKYIkk0RMIP083yXYXIZMFqQgEIrFungvBF9tg==
   dependencies:
     "@three-em/js" "^0.2.5"
-    "@three-em/node" "^0.2.7"
+    "@three-em/node" "^0.2.8"
     ar-gql "^0.0.6"
     arweave "^1.10.23"
     axios "^0.24.0"
@@ -3224,7 +3224,7 @@ swr@^0.5.7:
   resolved "https://registry.yarnpkg.com/sylvester/-/sylvester-0.0.21.tgz#2987b1ce2bd2f38b0dce2a34388884bfa4400ea7"
   integrity sha1-KYexzivS84sNzio0OIiEv6RADqc=
 
-tar-fs@*, tar-fs@2.1.1:
+tar-fs@2.1.1, tar-fs@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.1.1.tgz#489a15ab85f1f0befabb370b7de4f9eb5cbe8784"
   integrity sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==
