@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useState } from "react";
 import { fetchPaginated, PaginatedToken } from "verto-cache-interface";
 import { gateway, verto } from "./arweave";
+import axios from "axios";
 
 /**
  * Paginated tokens hook to use with infinite scrolling

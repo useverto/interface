@@ -682,10 +682,10 @@
     react-media-hook "^0.4.9"
     styled-components "^5.2.1"
 
-"@verto/ui@^3.6.2-beta":
-  version "3.6.2-beta"
-  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-3.6.2-beta.tgz#b6014077cc8374a6f99f461248aeca1882c47d61"
-  integrity sha512-zA6Ub9HAELXifaZao/UBNyotqN/3+WBof5jezmj2YLxXjQt0f9QYNfwwttae7+xKm5U7V7lOGeroVovhRvHswQ==
+"@verto/ui@^3.6.3-beta":
+  version "3.6.3-beta"
+  resolved "https://registry.yarnpkg.com/@verto/ui/-/ui-3.6.3-beta.tgz#27f703c54ed172fb115671873429d77497664cc5"
+  integrity sha512-cmjE+EdTmGfk5UYZ6DQcpI8PbqYywkTPKwuQeDxN+0PLkCA4TDZzMLQXGmCccXap0OzY9i4cGOZEOf5n2njNWA==
   dependencies:
     "@iconicicons/react" "^1.1.1"
     "@primer/octicons-react" "^16.3.0"
