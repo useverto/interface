@@ -624,27 +624,39 @@ const Swap = ({
                     >
                       <SwapInput
                         {...priceInput.bindings}
-                        extraPadding={{ right: "8.6em", left: "6em" }}
+                        rightEl={
+                          <p>
+                            {pair.to.ticker} / {pair.from.ticker}
+                          </p>
+                        }
+                        type="number"
                       >
                         <p>Price</p>
-                        <p>
-                          {pair.to.ticker} / {pair.from.ticker}
-                        </p>
                       </SwapInput>
                       <Spacer y={2} />
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <SwapInput {...amountInput.bindings} extraPadding>
+                <SwapInput
+                  {...amountInput.bindings}
+                  type="number"
+                  rightEl={
+                    <p style={{ textTransform: "uppercase" }}>
+                      {pair.from.ticker}
+                    </p>
+                  }
+                >
                   <p>Amount</p>
-                  <p style={{ textTransform: "uppercase" }}>
-                    {pair.from.ticker}
-                  </p>
                 </SwapInput>
                 <Spacer y={2} />
-                <SwapInput value="" extraPadding readonly focusTheme>
+                <SwapInput
+                  value=""
+                  type="number"
+                  readonly
+                  focusTheme
+                  rightEl={<p>xxxxxx</p>}
+                >
                   <p>Total</p>
-                  <p>xxxxxx</p>
                 </SwapInput>
               </div>
             </div>
