@@ -522,9 +522,19 @@ const Swap = ({
                         {tokens
                           .filter(({ type }) => type !== "collection")
                           .map((token, i) => {
-                            let image = token.id;
+                            let image = token.logo;
 
-                            if (token.type === "community") image = token.logo;
+                            if (token.type === "community") {
+                              // overwrite crytometa logo url with theme
+                              if (image.includes("viewblock") || !image) {
+                                image = verto.token.getLogo(
+                                  token.id,
+                                  theme.toLowerCase() as "light" | "dark"
+                                );
+                              }
+                            } else {
+                              image = `${gateway()}/${token.id}`;
+                            }
 
                             return (
                               <motion.div
@@ -542,14 +552,7 @@ const Swap = ({
                                   // set the active pair "to" token
                                   onClick={() => setPairItem(token, "to")}
                                 >
-                                  <img
-                                    src={
-                                      token.type === "community"
-                                        ? token.logo
-                                        : `${gateway()}/${image}`
-                                    }
-                                    alt="token-icon"
-                                  />
+                                  <img src={image} alt="token-icon" />
                                   <Spacer x={1.45} />
                                   <div>
                                     <h1>{token.name}</h1>
