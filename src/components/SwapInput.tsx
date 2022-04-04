@@ -4,12 +4,15 @@ import {
   CSSProperties,
   PropsWithChildren,
   ChangeEventHandler,
+  ReactNode,
+  useRef,
 } from "react";
 import styles from "../styles/components/SwapInput.module.sass";
 
 export default function SwapInput({
-  children,
   value = "",
+  children,
+  rightEl,
   onChange,
   className,
   style,
@@ -17,8 +20,9 @@ export default function SwapInput({
   readonly = false,
   status,
   matchPattern,
-  extraPadding = false,
   focusTheme = false,
+  type = "text",
+  placeholder,
   ...props
 }: PropsWithChildren<Props>) {
   const [val, setVal] = useState(value);
@@ -28,18 +32,60 @@ export default function SwapInput({
   useEffect(() => setVal(value), [value]);
   useEffect(() => setInputStatus(status), [status]);
 
+  // ensure match pattern is right
   useEffect(() => {
     if (typeof val !== "string" || !matchPattern || !changed) return;
     if (!val.match(matchPattern)) setInputStatus("error");
     else setInputStatus(undefined);
   }, [val]);
 
+  const inputRef = useRef<HTMLInputElement>();
+
+  // adjust input width
+  const [inputWidth, setInputWidth] = useState(0);
+  const parentRef = useRef<HTMLDivElement>();
+
+  useEffect(calculateInputWidth, [children, rightEl, inputRef]);
+  useEffect(() => {
+    window.addEventListener("resize", calculateInputWidth);
+
+    return () => window.removeEventListener("resize", calculateInputWidth);
+  }, []);
+
+  /**
+   * Calculate input width to fit into the parent
+   */
+  function calculateInputWidth() {
+    if (!parentRef) return;
+    let labelWidth = 0;
+
+    const numFromCss = (str: string) =>
+      parseFloat(str.replace(/(em|px|rem)/g, ""));
+    const parentStyle = getComputedStyle(parentRef.current);
+    const inputStyle = getComputedStyle(inputRef.current);
+    const inputPadding =
+      numFromCss(inputStyle.paddingLeft) + numFromCss(inputStyle.paddingRight);
+
+    for (let i = 0; i < parentRef.current.childNodes.length; i++) {
+      const child = parentRef.current.childNodes[i] as Element;
+
+      if (child.tagName === "INPUT") continue;
+      const computedStyle = getComputedStyle(child as Element);
+
+      labelWidth += numFromCss(computedStyle.width);
+    }
+
+    const finalInputWidth =
+      numFromCss(parentStyle.width) - labelWidth - inputPadding;
+
+    if (finalInputWidth > 0 && finalInputWidth !== inputWidth)
+      setInputWidth(finalInputWidth);
+  }
+
   return (
     <div
       className={
         styles.SwapInput +
-        " " +
-        ((!extraPadding && styles.NormalPadding) || "") +
         " " +
         ((inputStatus && styles[`Status_${inputStatus}`]) || "") +
         " " +
@@ -49,16 +95,22 @@ export default function SwapInput({
         " " +
         ((focusTheme && styles.Focus) || "") +
         " " +
+        ((!children && styles.NoLabel) || "") +
+        " " +
         (className || "")
       }
       style={style}
+      onClick={(e) => {
+        // @ts-expect-error
+        if (e.target.tagName === "INPUT" || !inputRef.current) return;
+        inputRef.current.focus();
+      }}
       {...props}
+      ref={parentRef}
     >
-      {(val === "" || extraPadding) && (
-        <div className={styles.Placeholder}>{children}</div>
-      )}
+      {children && children}
       <input
-        type={typeof value === "number" ? "number" : "text"}
+        type={type}
         onChange={(e) => {
           setVal(
             typeof value === "number" ? Number(e.target.value) : e.target.value
@@ -69,21 +121,19 @@ export default function SwapInput({
         value={val}
         disabled={disabled}
         readOnly={readonly}
-        style={
-          (extraPadding &&
-            typeof extraPadding !== "boolean" && {
-              paddingLeft: extraPadding.left,
-              paddingRight: extraPadding.right,
-              width: `calc(100% - ${extraPadding.left} - ${extraPadding.right})`,
-            }) ||
-          undefined
-        }
+        ref={inputRef}
+        style={{
+          width: inputWidth,
+        }}
+        placeholder={placeholder}
       />
+      {rightEl && rightEl}
     </div>
   );
 }
 
 interface Props {
+  rightEl?: ReactNode;
   value: string | number;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   className?: string;
@@ -91,14 +141,10 @@ interface Props {
   disabled?: boolean;
   status?: InputStatus;
   matchPattern?: RegExp;
-  extraPadding?:
-    | boolean
-    | {
-        left: string;
-        right: string;
-      };
   readonly?: boolean;
   focusTheme?: boolean;
+  type?: "text" | "number" | "password";
+  placeholder?: string;
 }
 
 type InputStatus = undefined | "error" | "warning" | "success";

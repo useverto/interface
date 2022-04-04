@@ -8,28 +8,31 @@
     font-size: .9em
 
 .SwapInput
-  position: relative
+  $sidePadding: 1.2em
+  display: flex
+  align-items: stretch
   background-color: variables.$skeleton
   border: 1px solid variables.$skeleton
   cursor: text
   overflow: hidden
   border-radius: 12px
-  z-index: 1
+  height: 4.2em
+  padding: 0 $sidePadding
   transition: all .23s ease-in-out
-  $sidePadding: 1.2em
-  $topPadding: 1.14em
-  $largeSidePadding: 6em
 
   input
     display: block
     outline: none
     border: none
-    width: calc(100% - #{$largeSidePadding} * 2)
     color: variables.$foreground-color
-    padding: $topPadding $largeSidePadding
+    padding: 0
+    margin: 0
     text-align: right
     background-color: transparent
-    z-index: 10
+    height: 100%
+    padding: 
+      left: $sidePadding / 2
+      right: $sidePadding / 2
     +normalTextStyles
 
     &[type="number"]
@@ -38,40 +41,28 @@
         -moz-appearance: none
         appearance: none
 
-  .Placeholder
-    position: absolute
-    top: 50%
-    left: $sidePadding
-    right: $sidePadding
+  &.NoLabel input
+    text-align: left
+
+  p
+    +normalTextStyles
     display: flex
+    color: variables.$foreground-color
     align-items: center
-    justify-content: space-between
-    z-index: -1
-    transform: translateY(-50%)
-    transition: opacity .23s ease-in-out
+    margin: 0
+    text-overflow: ellipsis
+    overflow: hidden
+    white-space: nowrap
+    width: max-content
 
-    p
-      +normalTextStyles
-      color: variables.$foreground-color
-      margin: 0
-      text-overflow: ellipsis
-      overflow: hidden
-      white-space: nowrap
-
-      &:last-child
-        color: variables.$light-text
-        text-align: right
+    &:last-child
+      color: variables.$light-text
+      text-align: right
 
   &.Focus, &:focus-within
     &:not(.Disabled):not(.ReadOnly), &.Focus
       background-color: variables.$skeleton-shine
       border-color: #ABABAB
-
-  &.NormalPadding
-    input
-      padding: $topPadding $sidePadding
-      width: calc(100% - #{$sidePadding} * 2)
-      text-align: left
 
   input:not(:placeholder-shown) + .Placeholder
     opacity: 0

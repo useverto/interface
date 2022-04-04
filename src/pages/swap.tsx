@@ -318,12 +318,23 @@ const Swap = ({
    */
   function fillPercentage() {
     const amount = amountInput.state ?? 0;
-    const owned =
-      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
-      0;
+    const owned = balanceOfCurrent();
 
     return (amount / owned) * 100;
   }
+
+  /**
+   * Get the owned balance of the currently selected "from" token
+   */
+  function balanceOfCurrent() {
+    return (
+      balances.find(({ contractId }) => contractId === pair.from.id)?.balance ??
+      0
+    );
+  }
+
+  // max btn hovered
+  const [maxHovered, setMaxHovered] = useState(false);
 
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
@@ -424,9 +435,8 @@ const Swap = ({
                 <SwapInput
                   className={styles.SearchToken}
                   {...tokenSearchInput.bindings}
-                >
-                  <p>Search for token or contract address</p>
-                </SwapInput>
+                  placeholder="Search for token or contract address"
+                />
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
@@ -623,27 +633,44 @@ const Swap = ({
                     >
                       <SwapInput
                         {...priceInput.bindings}
-                        extraPadding={{ right: "8.6em", left: "6em" }}
+                        rightEl={
+                          <p>
+                            {pair.to.ticker} / {pair.from.ticker}
+                          </p>
+                        }
+                        type="number"
                       >
                         <p>Price</p>
-                        <p>
-                          {pair.to.ticker} / {pair.from.ticker}
-                        </p>
                       </SwapInput>
                       <Spacer y={2} />
                     </motion.div>
                   )}
                 </AnimatePresence>
-                <SwapInput {...amountInput.bindings} extraPadding>
+                <SwapInput
+                  {...amountInput.bindings}
+                  type="number"
+                  rightEl={
+                    <p
+                      className={styles.Max}
+                      onMouseEnter={() => setMaxHovered(true)}
+                      onMouseLeave={() => setMaxHovered(false)}
+                      onClick={() => amountInput.setState(balanceOfCurrent())}
+                    >
+                      {maxHovered ? "Max" : pair.from.ticker}
+                    </p>
+                  }
+                >
                   <p>Amount</p>
-                  <p style={{ textTransform: "uppercase" }}>
-                    {pair.from.ticker}
-                  </p>
                 </SwapInput>
                 <Spacer y={2} />
-                <SwapInput value="" extraPadding readonly focusTheme>
+                <SwapInput
+                  value=""
+                  type="number"
+                  readonly
+                  focusTheme
+                  rightEl={<p>xxxxxx</p>}
+                >
                   <p>Total</p>
-                  <p>xxxxxx</p>
                 </SwapInput>
               </div>
             </div>
