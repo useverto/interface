@@ -22,6 +22,7 @@ export default function SwapInput({
   matchPattern,
   focusTheme = false,
   type = "text",
+  placeholder,
   ...props
 }: PropsWithChildren<Props>) {
   const [val, setVal] = useState(value);
@@ -44,7 +45,14 @@ export default function SwapInput({
   const [inputWidth, setInputWidth] = useState(0);
   const parentRef = useRef<HTMLDivElement>();
 
+  useEffect(calculateInputWidth, [children, rightEl, inputRef]);
   useEffect(() => {
+    window.addEventListener("resize", calculateInputWidth);
+
+    return () => window.removeEventListener("resize", calculateInputWidth);
+  }, []);
+
+  function calculateInputWidth() {
     if (!parentRef) return;
     let labelWidth = 0;
 
@@ -69,7 +77,7 @@ export default function SwapInput({
 
     if (finalInputWidth > 0 && finalInputWidth !== inputWidth)
       setInputWidth(finalInputWidth);
-  }, [children, rightEl, inputRef]);
+  }
 
   return (
     <div
@@ -83,6 +91,8 @@ export default function SwapInput({
         ((readonly && styles.ReadOnly) || "") +
         " " +
         ((focusTheme && styles.Focus) || "") +
+        " " +
+        ((!children && styles.NoLabel) || "") +
         " " +
         (className || "")
       }
@@ -112,6 +122,7 @@ export default function SwapInput({
         style={{
           width: inputWidth,
         }}
+        placeholder={placeholder}
       />
       {rightEl && rightEl}
     </div>
@@ -130,6 +141,7 @@ interface Props {
   readonly?: boolean;
   focusTheme?: boolean;
   type?: "text" | "number" | "password";
+  placeholder?: string;
 }
 
 type InputStatus = undefined | "error" | "warning" | "success";

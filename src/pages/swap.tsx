@@ -425,9 +425,8 @@ const Swap = ({
                 <SwapInput
                   className={styles.SearchToken}
                   {...tokenSearchInput.bindings}
-                >
-                  <p>Search for token or contract address</p>
-                </SwapInput>
+                  placeholder="Search for token or contract address"
+                />
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
                   <div className={styles.TokenSelectList}>
