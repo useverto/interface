@@ -99,7 +99,7 @@ const Transactions = (props: {
       <Spacer y={3} />
       <h1 className="Title">
         All Transactions
-        {props.user && (
+        {props.user && props.user.addresses.length > 1 && (
           <Select
             {...activeAddress.bindings}
             small

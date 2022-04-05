@@ -249,24 +249,6 @@ const Swap = ({
   }
 
   /**
-   * Sort tokens by their name, ticker and id (compared to the query)
-   */
-  function sortTokens(
-    a: BalanceType | PaginatedToken,
-    b: BalanceType | PaginatedToken,
-    sortType: "name" | "ticker" | "id"
-  ) {
-    if (tokenSearchInput.state === "" || !tokenSearchInput.state) return 0;
-
-    const query = new RegExp(tokenSearchInput.state, "gi");
-
-    return (
-      (b[sortType].match(query)?.length || 0) -
-      (a[sortType].match(query)?.length || 0)
-    );
-  }
-
-  /**
    * Update pair based on the selected token
    * @param token Token to set as the new pair
    * @param type Type of the token ("from" or "to")
@@ -444,7 +426,8 @@ const Swap = ({
                       {!loadingBalances &&
                         balances
                           .filter(filterTokens)
-                          .sort((a, b) => sortTokens(a, b, "name"))
+                          // TODO: sort by balance
+                          .sort((a, b) => b.balance - a.balance)
                           .map((balance, i) => {
                             let image = balance.contractId;
 
@@ -473,8 +456,17 @@ const Swap = ({
                                       ? styles.SelectedToken
                                       : "")
                                   }
-                                  // set the active pair "from" token
                                   onClick={() => setPairItem(balance, "from")}
+                                  title={
+                                    balance?.balance
+                                      ? balance?.balance?.toLocaleString(
+                                          undefined,
+                                          { maximumFractionDigits: 2 }
+                                        ) +
+                                        " " +
+                                        balance.ticker
+                                      : undefined
+                                  }
                                 >
                                   <img
                                     src={image}
@@ -521,9 +513,19 @@ const Swap = ({
                         {tokens
                           .filter(({ type }) => type !== "collection")
                           .map((token, i) => {
-                            let image = token.id;
+                            let image = token.logo;
 
-                            if (token.type === "community") image = token.logo;
+                            if (token.type === "community") {
+                              // overwrite crytometa logo url with theme
+                              if (image.includes("viewblock") || !image) {
+                                image = verto.token.getLogo(
+                                  token.id,
+                                  theme.toLowerCase() as "light" | "dark"
+                                );
+                              }
+                            } else {
+                              image = `${gateway()}/${token.id}`;
+                            }
 
                             return (
                               <motion.div
@@ -541,14 +543,7 @@ const Swap = ({
                                   // set the active pair "to" token
                                   onClick={() => setPairItem(token, "to")}
                                 >
-                                  <img
-                                    src={
-                                      token.type === "community"
-                                        ? token.logo
-                                        : `${gateway()}/${image}`
-                                    }
-                                    alt="token-icon"
-                                  />
+                                  <img src={image} alt="token-icon" />
                                   <Spacer x={1.45} />
                                   <div>
                                     <h1>{token.name}</h1>
