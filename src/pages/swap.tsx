@@ -250,24 +250,6 @@ const Swap = ({
   }
 
   /**
-   * Sort tokens by their name, ticker and id (compared to the query)
-   */
-  function sortTokens(
-    a: BalanceType | PaginatedToken,
-    b: BalanceType | PaginatedToken,
-    sortType: "name" | "ticker" | "id"
-  ) {
-    if (tokenSearchInput.state === "" || !tokenSearchInput.state) return 0;
-
-    const query = new RegExp(tokenSearchInput.state, "gi");
-
-    return (
-      (b[sortType].match(query)?.length || 0) -
-      (a[sortType].match(query)?.length || 0)
-    );
-  }
-
-  /**
    * Update pair based on the selected token
    * @param token Token to set as the new pair
    * @param type Type of the token ("from" or "to")
@@ -445,7 +427,8 @@ const Swap = ({
                       {!loadingBalances &&
                         balances
                           .filter(filterTokens)
-                          .sort((a, b) => sortTokens(a, b, "name"))
+                          // TODO: sort by balance
+                          .sort((a, b) => b.balance - a.balance)
                           .map((balance, i) => {
                             let image = balance.contractId;
 
@@ -474,8 +457,17 @@ const Swap = ({
                                       ? styles.SelectedToken
                                       : "")
                                   }
-                                  // set the active pair "from" token
                                   onClick={() => setPairItem(balance, "from")}
+                                  title={
+                                    balance?.balance
+                                      ? balance?.balance?.toLocaleString(
+                                          undefined,
+                                          { maximumFractionDigits: 2 }
+                                        ) +
+                                        " " +
+                                        balance.ticker
+                                      : undefined
+                                  }
                                 >
                                   <img
                                     src={image}
