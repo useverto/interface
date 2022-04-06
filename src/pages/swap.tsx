@@ -13,6 +13,7 @@ import {
   Card,
   useInput,
   Loading,
+  useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
@@ -321,6 +322,59 @@ const Swap = ({
 
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
+
+  // summary modal
+  const orderSummaryModal = useModal();
+
+  // toasts
+  const { setToast } = useToasts();
+
+  /**
+   * Validate the given datas before creating the order
+   */
+  function validateOrder() {
+    amountInput.setStatus(undefined);
+    priceInput.setStatus(undefined);
+
+    const amount = Number(amountInput.state);
+    const price = Number(priceInput.state);
+    let error = false;
+
+    // validate price if limit order
+    if (orderType === "limit" && (Number.isNaN(price) || price <= 0)) {
+      priceInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `Invalid price of ${pair.to.ticker}/${pair.from.ticker}`,
+        duration: 3300,
+      });
+      error = true;
+    }
+
+    // validate amount type
+    if (Number.isNaN(amount) || amount <= 0) {
+      amountInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `Invalid amout of ${pair.from.ticker}`,
+        duration: 3300,
+      });
+      error = true;
+    }
+
+    // check if the user has enough balance
+    if (balanceOfCurrent() < amountInput.state) {
+      amountInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `You don't have enough ${pair.from.ticker} tokens to sell`,
+        duration: 3300,
+      });
+      error = true;
+    }
+
+    if (!error) orderSummaryModal.setState(true);
+  }
 
   return (
     <Page>
@@ -722,7 +776,9 @@ const Swap = ({
                 />
               </div>
               <Spacer y={2} />
-              <Button className={styles.SwapButton}>Swap</Button>
+              <Button className={styles.SwapButton} onClick={validateOrder}>
+                Swap
+              </Button>
             </div>
           </div>
         </Card>
@@ -867,6 +923,10 @@ const Swap = ({
           that matches the limit price. It will not execute if the limit price
           is not met.
         </Modal.Content>
+      </Modal>
+      <Modal {...orderSummaryModal.bindings}>
+        <Modal.Title>Order Summary</Modal.Title>
+        <Modal.Content className={styles.ModalContentJustify}></Modal.Content>
       </Modal>
     </Page>
   );
