@@ -33,6 +33,7 @@ import {
 } from "../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
 import {
+  fetchContract,
   fetchTokenStateMetadata,
   fetchTopCommunities,
   PaginatedToken,
@@ -158,6 +159,29 @@ const Swap = ({
       })
     );
   }, [pair]);
+
+  // whether to use the logo of the "to" token from the contract or not
+  const [useToTokenContractLogo, setUseToTokenContractLogo] = useState(false);
+  const [toTokenContract, setToTokenContract] = useState<
+    Record<string, string>
+  >();
+
+  useEffect(() => {
+    (async () => {
+      if (!pair.to?.id) return;
+
+      const toTokenContract = await fetchContract(pair.to.id);
+      const { status } = await axios.get(verto.token.getLogo(pair.to.id));
+
+      setToTokenContract(toTokenContract.state);
+
+      if (status === 200 || !toTokenContract.state.logo) {
+        setUseToTokenContractLogo(false);
+      } else {
+        setUseToTokenContractLogo(true);
+      }
+    })();
+  }, [pair.to]);
 
   // orderbook for the current pair
   const [orderbook, setOrderbook] = useState<OrderInterfaceWithPair[]>();
@@ -323,9 +347,6 @@ const Swap = ({
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
 
-  // summary modal
-  const orderSummaryModal = useModal();
-
   // toasts
   const { setToast } = useToasts();
 
@@ -338,7 +359,7 @@ const Swap = ({
 
     const amount = Number(amountInput.state);
     const price = Number(priceInput.state);
-    let error = false;
+    let valid = true;
 
     // validate price if limit order
     if (orderType === "limit" && (Number.isNaN(price) || price <= 0)) {
@@ -348,7 +369,7 @@ const Swap = ({
         description: `Invalid price of ${pair.to.ticker}/${pair.from.ticker}`,
         duration: 3300,
       });
-      error = true;
+      valid = false;
     }
 
     // validate amount type
@@ -359,7 +380,7 @@ const Swap = ({
         description: `Invalid amout of ${pair.from.ticker}`,
         duration: 3300,
       });
-      error = true;
+      valid = false;
     }
 
     // check if the user has enough balance
@@ -370,10 +391,70 @@ const Swap = ({
         description: `You don't have enough ${pair.from.ticker} tokens to sell`,
         duration: 3300,
       });
-      error = true;
+      valid = false;
     }
 
-    if (!error) orderSummaryModal.setState(true);
+    return valid;
+  }
+
+  // loading creating order
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * Create the order
+   */
+  async function swap() {
+    if (!validateOrder()) return;
+
+    setLoading(true);
+
+    try {
+      const amount = Number(amountInput.state);
+      const price =
+        orderType === "limit" ? Number(priceInput.state) : undefined;
+
+      // create the order
+      const orderID = await verto.exchange.swap(
+        {
+          from: pair.from.id,
+          to: pair.to.id,
+        },
+        amount,
+        price
+      );
+
+      setToast({
+        type: "success",
+        description: "Created order",
+        duration: 3300,
+      });
+    } catch (e) {
+      console.error(
+        "Error creating order: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Stack: \n",
+        "Order type ",
+        orderType,
+        "\n",
+        "Pair: \n",
+        JSON.stringify(pair, null, 2),
+        "\n",
+        "Amount: ",
+        amountInput.state,
+        "\n",
+        "Price (if order is a limit order): ",
+        priceInput.state
+      );
+      setToast({
+        type: "error",
+        description: "Could not create order",
+        duration: 3400,
+      });
+    }
+
+    setLoading(false);
   }
 
   return (
@@ -776,7 +857,7 @@ const Swap = ({
                 />
               </div>
               <Spacer y={2} />
-              <Button className={styles.SwapButton} onClick={validateOrder}>
+              <Button className={styles.SwapButton} onClick={() => swap()}>
                 Swap
               </Button>
             </div>
@@ -923,10 +1004,6 @@ const Swap = ({
           that matches the limit price. It will not execute if the limit price
           is not met.
         </Modal.Content>
-      </Modal>
-      <Modal {...orderSummaryModal.bindings}>
-        <Modal.Title>Order Summary</Modal.Title>
-        <Modal.Content className={styles.ModalContentJustify}></Modal.Content>
       </Modal>
     </Page>
   );
