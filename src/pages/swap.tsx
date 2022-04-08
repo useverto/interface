@@ -857,7 +857,11 @@ const Swap = ({
                 />
               </div>
               <Spacer y={2} />
-              <Button className={styles.SwapButton} onClick={() => swap()}>
+              <Button
+                className={styles.SwapButton}
+                onClick={() => swap()}
+                loading={loading}
+              >
                 Swap
               </Button>
             </div>
