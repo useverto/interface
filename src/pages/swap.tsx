@@ -1,4 +1,5 @@
 import {
+  ClobContractStateInterface,
   OrderInterfaceWithPair,
   UserInterface,
 } from "@verto/js/dist/common/faces";
@@ -39,7 +40,7 @@ import {
   PaginatedToken,
   UserBalance,
 } from "verto-cache-interface";
-import { gateway, isAddress, verto } from "../utils/arweave";
+import { CLOB_CONTRACT, gateway, isAddress, verto } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
@@ -318,6 +319,66 @@ const Swap = ({
     setTokenSelector(undefined);
   }
 
+  // load clob contract
+  const [
+    clobContractState,
+    setClobContractState,
+  ] = useState<ClobContractStateInterface>();
+
+  useEffect(() => {
+    fetchContract(CLOB_CONTRACT)
+      .then((res) => setClobContractState(res.state))
+      .catch();
+  }, []);
+
+  // if current pair doesn't exist, create it
+  const [swapBtnDisabled, setSwapBtnDisabled] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (!clobContractState) return;
+      if (!pair.from?.id || !pair.to?.id) return;
+
+      // check if the pair exists
+      if (
+        !!clobContractState.pairs.find(
+          ({ pair: existingPair }) =>
+            existingPair.includes(pair.from.id) &&
+            existingPair.includes(pair.to.id)
+        )
+      )
+        return;
+
+      setSwapBtnDisabled(true);
+      setLoading(true);
+      setToast({
+        type: "info",
+        description: `Selected pair does not exist yet. Creating ${pair.from.ticker}/${pair.to.ticker} now...`,
+        duration: 3400,
+      });
+
+      // attempt to create the pair
+      try {
+        await verto.exchange.addPair([pair.from.id, pair.to.id]);
+
+        setToast({
+          type: "success",
+          description: "Created pair",
+          duration: 3000,
+        });
+      } catch {
+        setToast({
+          type: "error",
+          description: "Failed to create pair",
+          duration: 3700,
+        });
+      }
+
+      setLoading(false);
+      setSwapBtnDisabled(false);
+    })();
+  }, [pair, clobContractState]);
+
   // modal that gives information about the order types (market or limit)
   const orderInfoModal = useModal();
 
@@ -404,6 +465,7 @@ const Swap = ({
    * Create the order
    */
   async function swap() {
+    if (loading || swapBtnDisabled) return;
     if (!validateOrder()) return;
 
     setLoading(true);

@@ -3512,7 +3512,7 @@ verto-internals@^0.7.0:
 
 verto-internals@^0.9.1:
   version "0.9.1"
-  resolved "https://registry.npmjs.org/verto-internals/-/verto-internals-0.9.1.tgz"
+  resolved "https://registry.yarnpkg.com/verto-internals/-/verto-internals-0.9.1.tgz#1b678ca63c93afbf99eeb3e2d3bf917c9e1f3d43"
   integrity sha512-SzCVQkBahl5vQJ/fR1c5ghW5uEkSn7G/kYvm+gt5UiyYD6RQ/z+s5IU7A/56p7Jtj2xXfl91yGXHRFdGWz1w3A==
   dependencies:
     "@google-cloud/datastore" "^6.6.2"
