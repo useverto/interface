@@ -49,8 +49,3 @@ export async function fetchTokenLogos(): Promise<string[]> {
     ) // filter out invalid logos
     .then((tokens) => tokens.map((token) => token.logo));
 }
-
-// TODO(@maximousblk): remove this before merging
-fetchTokenLogos().then((tokens) => {
-  console.debug(tokens, tokens.length);
-});
