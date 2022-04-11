@@ -1,4 +1,5 @@
 import {
+  ClobContractStateInterface,
   OrderInterfaceWithPair,
   UserInterface,
 } from "@verto/js/dist/common/faces";
@@ -13,6 +14,7 @@ import {
   Card,
   useInput,
   Loading,
+  useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../utils/arconnect";
@@ -32,12 +34,13 @@ import {
 } from "../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
 import {
+  fetchContract,
   fetchTokenStateMetadata,
   fetchTopCommunities,
   PaginatedToken,
   UserBalance,
 } from "verto-cache-interface";
-import { gateway, isAddress, verto } from "../utils/arweave";
+import { CLOB_CONTRACT, gateway, isAddress, verto } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
@@ -156,6 +159,29 @@ const Swap = ({
       })
     );
   }, [pair]);
+
+  // whether to use the logo of the "to" token from the contract or not
+  const [useToTokenContractLogo, setUseToTokenContractLogo] = useState(false);
+  const [toTokenContract, setToTokenContract] = useState<
+    Record<string, string>
+  >();
+
+  useEffect(() => {
+    (async () => {
+      if (!pair.to?.id) return;
+
+      const toTokenContract = await fetchContract(pair.to.id);
+      const { status } = await axios.get(verto.token.getLogo(pair.to.id));
+
+      setToTokenContract(toTokenContract.state);
+
+      if (status === 200 || !toTokenContract.state.logo) {
+        setUseToTokenContractLogo(false);
+      } else {
+        setUseToTokenContractLogo(true);
+      }
+    })();
+  }, [pair.to]);
 
   // orderbook for the current pair
   const [orderbook, setOrderbook] = useState<OrderInterfaceWithPair[]>();
@@ -292,6 +318,66 @@ const Swap = ({
     setTokenSelector(undefined);
   }
 
+  // load clob contract
+  const [
+    clobContractState,
+    setClobContractState,
+  ] = useState<ClobContractStateInterface>();
+
+  useEffect(() => {
+    fetchContract(CLOB_CONTRACT)
+      .then((res) => setClobContractState(res.state))
+      .catch();
+  }, []);
+
+  // if current pair doesn't exist, create it
+  const [swapBtnDisabled, setSwapBtnDisabled] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      if (!clobContractState) return;
+      if (!pair.from?.id || !pair.to?.id) return;
+
+      // check if the pair exists
+      if (
+        !!clobContractState.pairs.find(
+          ({ pair: existingPair }) =>
+            existingPair.includes(pair.from.id) &&
+            existingPair.includes(pair.to.id)
+        )
+      )
+        return;
+
+      setSwapBtnDisabled(true);
+      setLoading(true);
+      setToast({
+        type: "info",
+        description: `Selected pair does not exist yet. Creating ${pair.from.ticker}/${pair.to.ticker} now...`,
+        duration: 3400,
+      });
+
+      // attempt to create the pair
+      try {
+        await verto.exchange.addPair([pair.from.id, pair.to.id]);
+
+        setToast({
+          type: "success",
+          description: "Created pair",
+          duration: 3000,
+        });
+      } catch {
+        setToast({
+          type: "error",
+          description: "Failed to create pair",
+          duration: 3700,
+        });
+      }
+
+      setLoading(false);
+      setSwapBtnDisabled(false);
+    })();
+  }, [pair, clobContractState]);
+
   // modal that gives information about the order types (market or limit)
   const orderInfoModal = useModal();
 
@@ -320,6 +406,117 @@ const Swap = ({
 
   // TODO: to calculate the total amount of tokens the user will receive
   // dry run the contract with the swap interaction
+
+  // toasts
+  const { setToast } = useToasts();
+
+  /**
+   * Validate the given datas before creating the order
+   */
+  function validateOrder() {
+    amountInput.setStatus(undefined);
+    priceInput.setStatus(undefined);
+
+    const amount = Number(amountInput.state);
+    const price = Number(priceInput.state);
+    let valid = true;
+
+    // validate price if limit order
+    if (orderType === "limit" && (Number.isNaN(price) || price <= 0)) {
+      priceInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `Invalid price of ${pair.to.ticker}/${pair.from.ticker}`,
+        duration: 3300,
+      });
+      valid = false;
+    }
+
+    // validate amount type
+    if (Number.isNaN(amount) || amount <= 0) {
+      amountInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `Invalid amout of ${pair.from.ticker}`,
+        duration: 3300,
+      });
+      valid = false;
+    }
+
+    // check if the user has enough balance
+    if (balanceOfCurrent() < amountInput.state) {
+      amountInput.setStatus("error");
+      setToast({
+        type: "error",
+        description: `You don't have enough ${pair.from.ticker} tokens to sell`,
+        duration: 3300,
+      });
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  // loading creating order
+  const [loading, setLoading] = useState(false);
+
+  /**
+   * Create the order
+   */
+  async function swap() {
+    if (loading || swapBtnDisabled) return;
+    if (!validateOrder()) return;
+
+    setLoading(true);
+
+    try {
+      const amount = Number(amountInput.state);
+      const price =
+        orderType === "limit" ? Number(priceInput.state) : undefined;
+
+      // create the order
+      const orderID = await verto.exchange.swap(
+        {
+          from: pair.from.id,
+          to: pair.to.id,
+        },
+        amount,
+        price
+      );
+
+      setToast({
+        type: "success",
+        description: "Created order",
+        duration: 3300,
+      });
+    } catch (e) {
+      console.error(
+        "Error creating order: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Stack: \n",
+        "Order type ",
+        orderType,
+        "\n",
+        "Pair: \n",
+        JSON.stringify(pair, null, 2),
+        "\n",
+        "Amount: ",
+        amountInput.state,
+        "\n",
+        "Price (if order is a limit order): ",
+        priceInput.state
+      );
+      setToast({
+        type: "error",
+        description: "Could not create order",
+        duration: 3400,
+      });
+    }
+
+    setLoading(false);
+  }
 
   return (
     <Page>
@@ -721,7 +918,13 @@ const Swap = ({
                 />
               </div>
               <Spacer y={2} />
-              <Button className={styles.SwapButton}>Swap</Button>
+              <Button
+                className={styles.SwapButton}
+                onClick={() => swap()}
+                loading={loading}
+              >
+                Swap
+              </Button>
             </div>
           </div>
         </Card>
