@@ -17,6 +17,8 @@ export default function HeroTokens({ images, ...props }: Props) {
             key={s}
             direction={!(s % 2) ? "left" : "right"}
             gradientWidth={50}
+            pauseOnHover
+            style={{ minWidth: "max-content" }}
           >
             {images.slice(s * 6, (s + 1) * 6).map((img, i) => (
               <div key={i} className={styles.Token}>

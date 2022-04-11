@@ -17,6 +17,7 @@ import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
 import HeroTokens, { fetchTokenLogos } from "../components/HeroTokens";
 import styles from "../styles/views/home.module.sass";
+import Image from "next/image";
 
 const Home = ({
   artwork,
@@ -157,16 +158,55 @@ const Home = ({
           </div>
         </Page>
 
+        <Page className={styles.Ecosystem}>
+          <h1>The Verto Ecosystem</h1>
+          <p>
+            <strong>$VRT</strong> is a way for any person to passively earn a
+            volume-weighted index of all profit sharing tokens being traded on
+            the exchange. 0.5% of any PST transaction made on the exchange is
+            sent straight to a VRT holder.
+          </p>
+        </Page>
+
         <h3
           style={{
             padding: "2em",
-            margin: "auto",
+            margin: "2em auto",
             width: "50%",
+            textAlign: "center",
             border: "2px dashed #f00",
           }}
         >
-          🚧 Work in Progress
+          🚧 TOKEN_ANIMATION_PLACEHOLDER 🚧
         </h3>
+
+        <Page className={styles.Assets}>
+          {/* table>tr*4>td*3 */}
+          <table className={styles.AssetsTable}>
+            {[1, 2, 3, 4].map((_, i) => (
+              <tr key={i} className={styles.AssetRow}>
+                <td className={styles.AssetName}>
+                  <Image
+                    src="https://via.placeholder.com/128"
+                    width={46}
+                    height={46}
+                    className={styles.AssetImage}
+                  />
+                  <div>
+                    <h3>Asset Name</h3>
+                    <p>TIKR</p>
+                  </div>
+                </td>
+                <td className={styles.AssetPrice}>
+                  <p>$123,456,789.00</p>
+                </td>
+                <td className={styles.AssetChange}>
+                  <p>100.00%</p>
+                </td>
+              </tr>
+            ))}
+          </table>
+        </Page>
 
         <Page className={styles.CTA}>
           <div className={styles.Left}>

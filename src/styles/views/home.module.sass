@@ -110,6 +110,62 @@ $titleSize: 3.8em
     h2
       color: variables.$foreground-color
 
+.Assets
+  background-color: #00000005
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  .AssetsTable
+    display: flex
+    flex-direction: column
+    gap: 2em
+    padding: 2em
+
+    .AssetRow
+      display: flex
+      justify-content: space-between
+      align-items: center
+      padding: .5em 1em
+      border-radius: .25em
+      background: linear-gradient(0deg, #FFFFFF1A, #FFFFFF1A), variables.$background-color
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)
+
+      .AssetName
+        display: flex
+        align-items: center
+        gap: 2em
+
+        div
+          display: flex
+          flex-direction: column
+          justify-content: space-around
+
+          p, h3
+            margin: 0
+
+        .AssetImage
+          border-radius: 20%
+
+
+.Ecosystem
+  text-align: center
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  h1
+    font-size: 3em
+    font-weight: 600
+    line-height: 1em
+
+  p
+    font-size: 1.2em
+
 .CTA
   display: flex
   gap: 4rem
@@ -158,41 +214,3 @@ $titleSize: 3.8em
     justify-content: space-between
     border: 1px #80808040 solid
     width: 160%
-
-.Section
-  .Title
-    font-weight: 500
-    font-size: $titleSize
-    margin: 0
-    bottom: .55em
-
-    @media screen and (max-width: variables.$mobile-screen)
-      margin-top: 1em
-
-  .Description
-    font-size: 1.1em
-    font-weight: 400
-    text-align: justify
-    color: variables.$light-text
-
-    a
-      color: inherit
-      text-decoration: underline
-
-    ul
-      list-style-type: "-"
-
-      li
-        padding-left: .55em
-
-        &::marker
-          padding-right: .2em
-
-.PSTs
-  display: flex
-
-  @media screen and (max-width: variables.$mobile-screen)
-    display: none
-
-  .Text
-    flex: 2
