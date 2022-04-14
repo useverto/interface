@@ -1,28 +1,47 @@
 @use "../variables"
 
-$titleSize: 2.7em
-  
+$titleSize: 3.8em
+
 .Landing
   display: flex
   align-items: center
   justify-content: space-between
-  
+  overflow-x: hidden
+  padding-bottom: 0 !important
+  background-color: #00000005
+
+  @media screen and (max-width: variables.$mobile-screen)
+    justify-content: flex-start
+    align-items: left
+    flex-direction: column
+
   .Hero
+    margin: 12em 0
+    z-index: 1
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin: auto
+
     h1
       font-size: $titleSize
-      font-weight: 400
+      font-weight: 600
       line-height: 1.15em
-      margin: 0
 
-      [class~=typed-cursor]
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: $titleSize - 1em
+
+      [class~="typed-cursor"]
         font-weight: 300
         color: variables.$light-text
 
     p
       color: variables.$light-text
       font-weight: 400
-      font-size: 1.13em
-      margin: 0
+      font-size: 1.5em
+      margin: 2em 0
+
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: 1.2em
 
       a
         color: inherit
@@ -31,48 +50,167 @@ $titleSize: 2.7em
       display: flex
       align-items: center
 
-  .FeaturedToken
-    display: flex
-    align-items: center
-    width: 40%
+      button
+        padding: .6rem 1.2rem
+        border: solid #000
+        font-size: 1.2em
 
-    @media screen and (max-width: variables.$mobile-screen)
-      display: none
-
-.Section
-  .Title
-    font-weight: 500
-    font-size: $titleSize
-    margin: 0
-      bottom: .55em
-
-    @media screen and (max-width: variables.$mobile-screen)
-      margin-top: 1em
-
-  .Description
-    font-size: 1.1em
-    font-weight: 400
-    text-align: justify
-    color: variables.$light-text
-
-    a
-      color: inherit
-      text-decoration: underline
-
-    ul
-      list-style-type: "-"
-
-      li
-        padding-left: .55em
-        
-        &::marker
-          padding-right: .2em
-
-.PSTs
+.Card
   display: flex
+  flex-direction: column
+  align-items: flex-start
+  gap: 2em
+  padding: 20px
+  border-radius: 20px
+  background-color: variables.$background-color
 
   @media screen and (max-width: variables.$mobile-screen)
-    display: none
+    width: 100% !important
 
-  .Text
-    flex: 2
+  h2
+    margin: 0
+    font-size: 4em
+    font-weight: 500
+    line-height: 1em
+
+  p
+    margin: 0
+    opacity: 50%
+    font-size: 1.5em
+
+.InfoSection
+  display: flex
+  gap: 2em
+  justify-content: space-between
+  background-color: #96969620
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  @media screen and (max-width: variables.$mobile-screen)
+    flex-direction: column
+
+  .Primary
+    width: 35%
+    background-color: variables.$foreground-color
+    color: variables.$background-color
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: 100%
+
+  .Secondary
+    width: 55%
+    border: 1px #80808040 solid
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: 100%
+
+    h2
+      color: variables.$foreground-color
+
+.Assets
+  background-color: #00000005
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  .AssetsTable
+    display: flex
+    flex-direction: column
+    gap: 2em
+    padding: 2em
+
+    .AssetRow
+      display: flex
+      justify-content: space-between
+      align-items: center
+      padding: .5em 1em
+      border-radius: .25em
+      background: linear-gradient(0deg, #FFFFFF1A, #FFFFFF1A), variables.$background-color
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)
+
+      .AssetName
+        display: flex
+        align-items: center
+        gap: 2em
+
+        div
+          display: flex
+          flex-direction: column
+          justify-content: space-around
+
+          p, h3
+            margin: 0
+
+        .AssetImage
+          border-radius: 20%
+
+
+.Ecosystem
+  text-align: center
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  h1
+    font-size: 3em
+    font-weight: 600
+    line-height: 1em
+
+  p
+    font-size: 1.2em
+
+.CTA
+  display: flex
+  gap: 4rem
+  background-color: #96969620
+
+  // reset <Page/> styles
+  min-height: 0 !important
+  padding-bottom: 8em !important
+  padding-top: 8em !important
+
+  @media screen and (max-width: variables.$mobile-screen)
+    flex-direction: column-reverse
+
+  .Left
+    display: flex
+    flex-direction: column
+    align-items: flex-start
+    gap: 2rem
+
+    @media screen and (max-width: variables.$mobile-screen)
+      width: 100%
+
+    .DAO
+      background-color: variables.$foreground-color
+      color: variables.$background-color
+      justify-content: space-between
+      width: 100%
+      height: 100%
+
+      button
+        border-color: variables.$foreground-color
+
+    .Social
+      display: flex
+      flex-direction: row
+      align-items: center
+      justify-content: space-between
+      border: 1px #80808040 solid
+      width: 100%
+
+      h3
+        margin: 0
+        font-size: 1.5em
+
+  .Right
+    justify-content: space-between
+    border: 1px #80808040 solid
+    width: 160%

@@ -1,0 +1,55 @@
+@use "../variables"
+
+$lighten: linear-gradient(0deg, #FFFFFF1A, #FFFFFF1A)
+
+.Wrapper
+  position: absolute
+  max-width: 100vw
+  height: 100vh
+  top: -2em
+  right: -30vw
+  overflow: hidden
+
+  @media screen and (max-width: variables.$mobile-screen)
+    z-index: 0
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    position: relative
+    margin: 4em 0
+
+    [class="marquee"]
+      min-width: none !important
+
+  .TokensContainer
+    position: relative
+    top: 10em
+    transform: rotate(-75deg)
+
+    @media screen and (max-width: variables.$mobile-screen)
+      top: 0
+      transform: none
+
+    .Token
+      font-size: 0
+      overflow: hidden
+      margin: 1.2rem
+      padding: 2.4rem
+      border-radius: 0.6rem
+      background: $lighten, variables.$background-color
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)
+      transform: rotate(90deg)
+
+      @media screen and (max-width: variables.$mobile-screen)
+        margin: 0.8rem
+        padding: 1.8rem
+        transform: rotate(0deg)
+
+      img
+        width: 46px
+        height: 46px
+
+
+      .Logo
+        border-radius: 0.6rem

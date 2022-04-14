@@ -15,9 +15,17 @@ import axios from "axios";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
+import HeroTokens, { fetchTokenLogos } from "../components/HeroTokens";
 import styles from "../styles/views/home.module.sass";
+import Image from "next/image";
 
-const Home = ({ artwork }: { artwork: any }) => {
+const Home = ({
+  artwork,
+  heroTokens,
+}: {
+  artwork: any;
+  heroTokens: string[];
+}) => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -84,9 +92,8 @@ const Home = ({ artwork }: { artwork: any }) => {
         <title>Verto - Welcome</title>
         <Metas title="Welcome" />
       </Head>
-      <Page>
-        <Spacer y={5} />
-        <div className={styles.Landing}>
+      <div>
+        <Page className={styles.Landing}>
           <div className={styles.Hero}>
             <h1>
               Exchange <span id="typed" className={styles.Cursor} />
@@ -128,107 +135,126 @@ const Home = ({ artwork }: { artwork: any }) => {
               </Button>
             </div>
           </div>
-          <div className={styles.FeaturedToken}>
-            <AnimatePresence>
-              {Object.keys(artworkData).length > 0 && (
-                <motion.div {...opacityAnimation()}>
-                  {(artworkData.type === "collection" && (
-                    <Card.Collection
-                      name={artworkData.name}
-                      images={artworkData.images.map(
-                        (txID) => `${gateway()}/${txID}`
-                      )}
-                      userData={{
-                        avatar: artworkData.owner?.image,
-                        name: artworkData.owner.name,
-                        usertag: artworkData.owner.username,
-                      }}
-                      onClick={() => router.push(`/space/${artworkData.id}`)}
-                    />
-                  )) || (
-                    <Card.Asset
-                      name={artworkData.name}
-                      userData={{
-                        avatar: artworkData.owner?.image,
-                        name: artworkData.owner.name,
-                        usertag: artworkData.owner.username,
-                      }}
-                      price={artworkData.price || null}
-                      image={`${gateway()}/${artworkData.id}`}
-                      onClick={() => router.push(`/space/${artworkData.id}`)}
-                    />
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-        <Spacer y={3} />
-        <Spacer y={5} />
-        <div className={styles.Section + " " + styles.PSTs}>
-          <div className={styles.Text}>
-            <h1 className={styles.Title}>What are PSTs?</h1>
-            <p className={styles.Description}>
-              Profit-Sharing Tokens, or PSTs, are a new incentivization
-              mechanism for the open web that allow developers to earn a stream
-              of micro-dividends for the duration their application is used. (
-              <a
-                href="https://arweave.medium.com/profit-sharing-tokens-a-new-incentivization-mechanism-for-an-open-web-1f2532411d6e"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Source
-              </a>
-              )
-              <br />
-              <br />
-              In order for PSTs to have value, however, they need to be able to
-              be exchanged for other PSTs or AR. This is where Verto comes in...
+          <HeroTokens images={heroTokens} />
+        </Page>
+        <Page className={styles.InfoSection}>
+          <div className={[styles.Card, styles.Primary].join(" ")}>
+            <h2>PSTs are the xxx xxx xxx of Arweave</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
             </p>
           </div>
-          <PSTSwitcher />
-        </div>
-        <div className={styles.Section}>
-          <h1 className={styles.Title}>Why Verto?</h1>
-          <p className={styles.Description}>
-            Verto is a completely decentralized network of trading posts built
-            on top of the blockweave. Anyone can host their own trading post and
-            power the exchange, while also being incentivized to do so. With
-            Verto, you can pick the trading post you'd like to use and exchange
-            your PSTs freely!
-            <br />
-            <br />
-            Decisions for Verto are made by our very own Profit-Sharing DAO,
-            which means that anyone can have a say in the direction of our
-            platform.
-            <br />
-            <br />
-            You can also easily host your own Trading Post, while accruing PSTs
-            for doing so. See our Trading Post Repository for documentation.
+          <div className={[styles.Card, styles.Secondary].join(" ")}>
+            <h2>Verto allows you trade and exchange them seamlessly</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+            </p>
+            {/* TODO(@martonlederer): add link */}
+            <Button>Explore the Permaweb</Button>
+          </div>
+        </Page>
+
+        <Page className={styles.Ecosystem}>
+          <h1>The Verto Ecosystem</h1>
+          <p>
+            <strong>$VRT</strong> is a way for any person to passively earn a
+            volume-weighted index of all profit sharing tokens being traded on
+            the exchange. 0.5% of any PST transaction made on the exchange is
+            sent straight to a VRT holder.
           </p>
-        </div>
-        <div className={styles.Section}>
-          <h1 className={styles.Title}>VRT - The Verto Protocol Token</h1>
-          <p className={styles.Description}>
-            VRT is a way for any person to passively earn a volume-weighted
-            index of all profit sharing tokens being traded on the exchange.
-            0.5% of any PST transaction made on the exchange is sent straight to
-            a VRT holder.
-            <br />
-            <br />
-            By holding VRT, a user is also inherently a member of the Verto
-            Profit-Sharing DAO, which means they can choose to stake their
-            tokens to have a say in the various decisions made for the platform.
-          </p>
-        </div>
-        <div className={styles.Section}>
-          <h1 className={styles.Title}>Get in Touch</h1>
-          <p className={styles.Description}>
-            Have a question or are interested in purchasing more VRT than you
-            can find on the exchange? Join our Discord. Let's chat!
-          </p>
-        </div>
-      </Page>
+        </Page>
+
+        <h3
+          style={{
+            padding: "2em",
+            margin: "2em auto",
+            width: "50%",
+            textAlign: "center",
+            border: "2px dashed #f00",
+          }}
+        >
+          🚧 TOKEN_ANIMATION_PLACEHOLDER 🚧
+        </h3>
+
+        <Page className={styles.Assets}>
+          {/* table>tr*4>td*3 */}
+          <table className={styles.AssetsTable}>
+            {[1, 2, 3, 4].map((_, i) => (
+              <tr key={i} className={styles.AssetRow}>
+                <td className={styles.AssetName}>
+                  <Image
+                    src="https://via.placeholder.com/128"
+                    width={46}
+                    height={46}
+                    className={styles.AssetImage}
+                  />
+                  <div>
+                    <h3>Asset Name</h3>
+                    <p>TIKR</p>
+                  </div>
+                </td>
+                <td className={styles.AssetPrice}>
+                  <p>$123,456,789.00</p>
+                </td>
+                <td className={styles.AssetChange}>
+                  <p>100.00%</p>
+                </td>
+              </tr>
+            ))}
+          </table>
+        </Page>
+
+        <Page className={styles.CTA}>
+          <div className={styles.Left}>
+            <div className={[styles.Card, styles.DAO].join(" ")}>
+              <h2>The Verto DAO</h2>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+                tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+                suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+              </p>
+              <Button type="secondary">Learn More</Button>
+            </div>
+            <div className={[styles.Card, styles.Social].join(" ")}>
+              <h3>Join our Community</h3>
+
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
+                className="image"
+              />
+            </div>
+          </div>
+          <div className={[styles.Card, styles.Right].join(" ")}>
+            <h2>For Developers</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
+              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+            </p>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
+              tellus quam facilisi lacus et, et tincidunt et.
+            </p>
+            <Button>Read Docs</Button>
+          </div>
+        </Page>
+      </div>
       <SetupModal {...setupModal.bindings} />
     </>
   );
@@ -236,10 +262,12 @@ const Home = ({ artwork }: { artwork: any }) => {
 
 export async function getServerSideProps() {
   const artwork = (await fetchRandomArtworkWithUser(1))[0];
+  const heroTokens = await fetchTokenLogos();
 
   return {
     props: {
       artwork,
+      heroTokens,
     },
   };
 }

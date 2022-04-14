@@ -6,7 +6,7 @@
   justify-content: space-between
   padding: 1.32em variables.$nav-side-padding
   border-top: 1px solid #eaeaea
-  background-color: variables.$background-color
+  background-color: #000
 
   @media screen and (max-width: variables.$mobile-screen)
     padding: 1.32em variables.$nav-side-padding / 2
@@ -27,23 +27,24 @@
 
   .Title
     display: flex
-    font-size: 1.29em
+    font-size: 1.5em
     color: variables.$light-text
     font-weight: 400
     margin: 0
 
     span
-      color: variables.$foreground-color
+      color: variables.$light-text
 
     a
       font-size: 1em
 
   .Links
     display: flex
+    flex-direction: column
 
     a
-      font-size: .95em
-      margin: 0 .8em
+      font-size: 1.1em
+      margin: 0.8em
 
       @media screen and (max-width: variables.$mobile-screen)
         margin: 0 .35em

@@ -123,9 +123,8 @@ const Swap = ({
       // return if nothing is stored
       if (!pairStorageVal) return;
 
-      const parsedPair: { from: string; to: string } = JSON.parse(
-        pairStorageVal
-      );
+      const parsedPair: { from: string; to: string } =
+        JSON.parse(pairStorageVal);
 
       // return if the parsed pair is invalid
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
@@ -163,9 +162,8 @@ const Swap = ({
 
   // whether to use the logo of the "to" token from the contract or not
   const [useToTokenContractLogo, setUseToTokenContractLogo] = useState(false);
-  const [toTokenContract, setToTokenContract] = useState<
-    Record<string, string>
-  >();
+  const [toTokenContract, setToTokenContract] =
+    useState<Record<string, string>>();
 
   useEffect(() => {
     (async () => {
@@ -320,10 +318,8 @@ const Swap = ({
   }
 
   // load clob contract
-  const [
-    clobContractState,
-    setClobContractState,
-  ] = useState<ClobContractStateInterface>();
+  const [clobContractState, setClobContractState] =
+    useState<ClobContractStateInterface>();
 
   useEffect(() => {
     fetchContract(CLOB_CONTRACT)

@@ -29,6 +29,44 @@ const Footer = () => {
         <a href="https://arweave.org" target="_blank" rel="noopener noreferrer">
           Arweave
         </a>
+      </div>{" "}
+      <div className={styles.Links}>
+        <a
+          href="https://verto.exchange/chat"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Chat
+        </a>
+        <a
+          href="https://github.com/useverto/verto"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Code
+        </a>
+        <a href="https://arweave.org" target="_blank" rel="noopener noreferrer">
+          Arweave
+        </a>
+      </div>{" "}
+      <div className={styles.Links}>
+        <a
+          href="https://verto.exchange/chat"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Chat
+        </a>
+        <a
+          href="https://github.com/useverto/verto"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Code
+        </a>
+        <a href="https://arweave.org" target="_blank" rel="noopener noreferrer">
+          Arweave
+        </a>
       </div>
     </div>
   );
