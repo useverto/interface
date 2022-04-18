@@ -1,3 +1,4 @@
+import { gateway } from "../utils/arweave";
 import Marquee from "react-fast-marquee";
 import Image from "next/image";
 import styles from "../styles/components/HeroTokens.module.sass";
@@ -24,7 +25,7 @@ export default function HeroTokens({ images, ...props }: Props) {
               <div key={i} className={styles.Token}>
                 <Image
                   className={styles.Logo}
-                  src={`https://arweave.net/${img}`}
+                  src={`${gateway()}/${img}`}
                   width={64}
                   height={64}
                   alt={`AR.${img}`}
