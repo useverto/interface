@@ -12,7 +12,7 @@ import {
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import {
-  CACHE_URL,
+  __CACHE_URL_V2__,
   client,
   COLLECTION_CONTRACT_SRC,
   gateway,
@@ -92,7 +92,7 @@ const CollectionModal = (props: Props) => {
         });
 
       const { data } = await axios.get(
-        `${CACHE_URL}/site/search/${userQuery}?type=user`
+        `${__CACHE_URL_V2__}/site/search/${userQuery}?type=user`
       );
 
       res.push(
@@ -134,7 +134,7 @@ const CollectionModal = (props: Props) => {
       if (collectiblesQuery === "") setCollectiblesResult([]);
 
       const { data } = await axios.get(
-        `${CACHE_URL}/site/search/${collectiblesQuery}?type=art`
+        `${__CACHE_URL_V2__}/site/search/${collectiblesQuery}?type=art`
       );
 
       setCollectiblesResult(

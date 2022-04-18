@@ -5,7 +5,6 @@ import {
   useModal,
   useToasts,
   VertoProvider,
-  useTheme,
 } from "@verto/ui";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -18,13 +17,9 @@ import { RootState } from "../store/reducers";
 import { updateNavTheme, updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
-import { AnimatePresence, motion } from "framer-motion";
-import { opacityAnimation } from "../utils/animations";
-import { CloseIcon } from "@iconicicons/react";
 import { fetchContract } from "verto-cache-interface";
 import { client, COMMUNITY_CONTRACT, gateway } from "../utils/arweave";
 import {
-  betaAlertShown,
   ignorePermissionWarning,
   lastViewedChangelog,
   theme as themeStorageName,

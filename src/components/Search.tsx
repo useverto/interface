@@ -7,7 +7,7 @@ import {
 import { CloseIcon, MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { Avatar, useTheme } from "@verto/ui";
-import { CACHE_URL, gateway, verto } from "../utils/arweave";
+import { __CACHE_URL_V2__, gateway, verto } from "../utils/arweave";
 import {
   fetchRandomCommunitiesWithMetadata,
   fetchTopCommunities,
@@ -57,7 +57,9 @@ export default function Search({ open, setOpen }) {
   async function loadMore() {
     if (query === "") return setResults([]);
 
-    let { data } = await axios.get(`${CACHE_URL}/site/search/${query}/${page}`);
+    let { data } = await axios.get(
+      `${__CACHE_URL_V2__}/site/search/${query}/${page}`
+    );
 
     if (data.length === 0) return setHasMore(false);
 
