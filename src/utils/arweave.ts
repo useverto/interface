@@ -1,4 +1,4 @@
-import { GQLEdgeTransactionInterface } from "ardb/lib/faces/gql";
+import ArdbTransaction from "ardb/lib/models/transaction";
 import Arweave from "arweave";
 import axios from "axios";
 import moment from "moment";
@@ -62,7 +62,7 @@ export const verto = new Verto("use_wallet", client, true, {
 /** @deprecated */
 export const __CACHE_URL_V2__ = "https://v2.cache.verto.exchange";
 
-/** arweave functionalities */
+/** Arweave functionalities */
 
 export const balanceHistory = async (
   address: string
@@ -71,17 +71,17 @@ export const balanceHistory = async (
     .search()
     .to(address)
     .limit(100)
-    .find()) as GQLEdgeTransactionInterface[];
+    .find()) as ArdbTransaction[];
   const outTxs = (await gql
     .search()
     .from(address)
     .limit(100)
-    .find()) as GQLEdgeTransactionInterface[];
+    .find()) as ArdbTransaction[];
 
   const txs = inTxs
     .concat(outTxs)
-    .filter(({ node }) => !!node?.block?.timestamp)
-    .sort((a, b) => b.node.block.timestamp - a.node.block.timestamp)
+    .filter((tx) => !!tx?.block?.timestamp)
+    .sort((a, b) => b.block.timestamp - a.block.timestamp)
     .slice(0, 100);
   let balance = parseFloat(
     client.ar.winstonToAr(await client.wallets.getBalance(address))
@@ -91,22 +91,23 @@ export const balanceHistory = async (
     [moment().format("MMM DD, YYYY - HH:mm")]: balance,
   };
 
-  for (const { node } of txs) {
-    balance += parseFloat(node.fee.ar);
+  for (const tx of txs) {
+    balance += parseFloat(tx.fee.ar);
 
-    if (node.owner.address === address) {
-      balance += parseFloat(node.quantity.ar);
+    if (tx.owner.address === address) {
+      balance += parseFloat(tx.quantity.ar);
     } else {
-      balance -= parseFloat(node.quantity.ar);
+      balance -= parseFloat(tx.quantity.ar);
     }
 
-    res[moment(node.block.timestamp * 1000).format("MMM DD, YYYY - HH:mm")] =
+    res[moment(tx.block.timestamp * 1000).format("MMM DD, YYYY - HH:mm")] =
       balance;
   }
 
   return res;
 };
 
+/** Get arweave price */
 export const arPrice = async (): Promise<number> => {
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
@@ -115,4 +116,5 @@ export const arPrice = async (): Promise<number> => {
   return gecko.arweave.usd;
 };
 
+/** Validate if a string is a valid Arweave address */
 export const isAddress = (addr: string) => /^[a-z0-9_-]{43}$/i.test(addr);
