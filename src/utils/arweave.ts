@@ -9,7 +9,7 @@ import Verto from "@verto/js";
 
 /** Global Arweave client instance */
 export const client = new Arweave({
-  host: "arweave.net",
+  host: "www.arweave.run",
   port: 443,
   protocol: "https",
 });
@@ -27,10 +27,10 @@ export const gql = new ArDB(client);
 export const ROOT_URL = "https://verto.exchange";
 
 /** Community contract id */
-export const COMMUNITY_CONTRACT = "t9T7DIOGxx4VWXoCEeYYarFYeERTpWIC1V3y-BPZgKE";
+export const COMMUNITY_CONTRACT = "1LZh-CT5hGxr20aj_wbkTaiV1POQlQ4nDl-Doolt_JQ";
 
 /** Clob contract id */
-export const CLOB_CONTRACT = "";
+export const CLOB_CONTRACT = "F9pOJ9sUPC0U_5PutuFy2oUg1DKGLeIgGfN9c1tBLEs";
 
 /** Collection contract src tx id */
 export const COLLECTION_CONTRACT_SRC =
@@ -41,7 +41,7 @@ export const COLLECTIBLE_CONTRACT_SRC =
   "K2s2nciTrl4pk2Nvlvzba-DnWrkm45bo4qMPR7zFpzI";
 
 /** Verto PST contract id */
-export const VERTO_CONTRACT_PST = "usjm4PCxUd5mtaon7zc97-dt-3qf67yPyqgzLnLqk5A";
+export const VERTO_CONTRACT_PST = "xRkYokQfFHLh2K9slmghlXNptKrqQdDZoy75JGsv89M";
 
 /**
  * Cache interface configuration
@@ -57,6 +57,7 @@ export const verto = new Verto("use_wallet", client, true, {
   COMMUNITY_CONTRACT,
   CLOB_CONTRACT,
   CACHE_CONFIG,
+  EXCHANGE_CONTRACT: VERTO_CONTRACT_PST,
 });
 
 /** @deprecated */

@@ -372,7 +372,7 @@ const Swap = ({
           description: "Created pair",
           duration: 3000,
         });
-      } catch {
+      } catch (e) {
         setToast({
           type: "error",
           description: "Failed to create pair",
