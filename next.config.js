@@ -7,7 +7,13 @@ module.exports = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ["arweave.net", "meta.viewblock.io", "via.placeholder.com"],
+    domains: [
+      "arweave.net",
+      "meta.viewblock.io",
+      "via.placeholder.com",
+      "arweave.run",
+      "www.arweave.run",
+    ],
     formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
