@@ -174,7 +174,17 @@ const Swap = ({
 
       setToTokenContract(toTokenContract.state);
 
-      if (status === 200 || !toTokenContract.state.logo) {
+      let hasLogo = false;
+
+      if (toTokenContract.state.settings) {
+        const settings: Map<string, any> = new Map(
+          toTokenContract.state.settings
+        );
+
+        hasLogo = !!settings.get("communityLogo");
+      }
+
+      if (status === 200 || !hasLogo) {
         setUseToTokenContractLogo(false);
       } else {
         setUseToTokenContractLogo(true);
