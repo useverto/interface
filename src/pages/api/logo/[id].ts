@@ -20,11 +20,6 @@ export default async function logo(req: NextApiRequest, res: NextApiResponse) {
     return res.status(400).json({ error: "Invalid theme" });
   }
 
-  res.setHeader(
-    "Cache-Control",
-    "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
-  );
-
   // get cryptometa logo
   const cryptometaLogo = await axios.get(
     verto.token.getLogo(id, theme as "dark" | "light"),
@@ -32,6 +27,10 @@ export default async function logo(req: NextApiRequest, res: NextApiResponse) {
   );
 
   const sendLogo = (logoReq: AxiosResponse<any>) => {
+    res.setHeader(
+      "Cache-Control",
+      "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
+    );
     res.setHeader("Content-Type", logoReq.headers["content-type"]);
     res.status(200).send(logoReq.data);
   };
