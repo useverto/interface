@@ -63,32 +63,6 @@ export default function Search({ open, setOpen }) {
 
     if (data.length === 0) return setHasMore(false);
 
-    data = await Promise.all(
-      data.map(async (val) => {
-        if (val.type !== "community") {
-          return {
-            ...val,
-            image: (val.image && `${gateway()}/${val.image}`) || undefined,
-          };
-        }
-
-        let image = verto.token.getLogo(val.id, "light");
-        const res = await axios.get(image);
-
-        if (
-          res.status !== 200 &&
-          !!val.image &&
-          // TODO: search api bug: if the token doesn't have an image ID
-          // it returns the id of the token itself
-          val.image !== val.id
-        ) {
-          image = `${gateway()}/${val.image}`;
-        }
-
-        return { ...val, image };
-      })
-    );
-
     setResults((val) => [...val, ...data]);
     setPage((val) => val + 1);
   }
@@ -206,10 +180,11 @@ export default function Search({ open, setOpen }) {
                           (item.image || item.type !== "user") && (
                             <img
                               src={
-                                item.image?.replace(
-                                  "light",
-                                  theme.toLowerCase()
-                                ) ?? "/arweave.png"
+                                (item.type === "community" &&
+                                  `/api/logo/${
+                                    item.id
+                                  }?theme=${theme.toLowerCase()}`) ||
+                                `${gateway()}/${item.image}`
                               }
                               alt={item.name}
                               draggable={false}
