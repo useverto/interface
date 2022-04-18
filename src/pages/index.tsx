@@ -10,7 +10,6 @@ import { opacityAnimation } from "../utils/animations";
 import { gateway, verto as client } from "../utils/arweave";
 import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
-import PSTSwitcher from "../components/PSTSwitcher";
 import axios from "axios";
 import Head from "next/head";
 import Metas from "../components/Metas";
