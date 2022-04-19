@@ -31,7 +31,6 @@ import Balance from "../components/Balance";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import Watchlist from "../components/Watchlist";
-import axios from "axios";
 import Link from "next/link";
 import ListingModal from "../components/ListingModal";
 import styles from "../styles/views/app.module.sass";
@@ -63,40 +62,6 @@ const App = () => {
       .getBalances(user?.username ?? address, "community")
       .then((res) => setBalances(res));
   }, [user, address]);
-
-  // preload logos of token balances
-  const [balanceLogos, setBalanceLogos] = useState<
-    {
-      id: string;
-      // should the app use the logo from the token
-      // contract or from the cryptometa api
-      useContractLogo: boolean;
-    }[]
-  >([]);
-
-  useEffect(() => {
-    (async () => {
-      if (!balances) return;
-
-      // check if cryptometa includes the logo for
-      // the token. if it doees not, we will use the
-      // logo from the contract
-      // if the contract does not include a logo
-      // we use the placeholder provided by cryptometa
-      for (const token of balances) {
-        const cryptometaURI = client.token.getLogo(token.contractId, "light");
-        const res = await axios.get(cryptometaURI);
-
-        setBalanceLogos((val) => [
-          ...val,
-          {
-            id: token.contractId,
-            useContractLogo: res.status !== 200 || !!token?.logo,
-          },
-        ]);
-      }
-    })();
-  }, [balances]);
 
   // load owned arts for user
   const [owned, setOwned] = useState<OwnedInterface[]>();
@@ -179,23 +144,11 @@ const App = () => {
                       name={item.name}
                       ticker={item.ticker ?? ""}
                       balance={item.balance}
-                      logo={
-                        balanceLogos.find(({ id }) => id === item.contractId)
-                          ?.useContractLogo
-                          ? {
-                              light: `${gateway()}/${item.logo}`,
-                            }
-                          : {
-                              dark: client.token.getLogo(
-                                item.contractId,
-                                "dark"
-                              ),
-                              light: client.token.getLogo(
-                                item.contractId,
-                                "light"
-                              ),
-                            }
-                      }
+                      logo={{
+                        light: `/api/logo/${
+                          item.contractId
+                        }?theme=${theme.toLowerCase()}`,
+                      }}
                     />
                     <Spacer y={1.5} />
                   </motion.div>

@@ -27,6 +27,7 @@ export default async function logo(req: NextApiRequest, res: NextApiResponse) {
   );
 
   const sendLogo = (logoReq: AxiosResponse<any>) => {
+    console.log(logoReq.headers["content-type"]);
     res.setHeader(
       "Cache-Control",
       "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
