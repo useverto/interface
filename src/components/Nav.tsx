@@ -167,15 +167,14 @@ const Nav = () => {
   return (
     <>
       <motion.div
-        className={
-          styles.Nav +
-          " " +
-          ((displayTheme === "Dark" && styles.DarkNav) || "") +
-          " " +
-          ((blurTheme !== "Default" && styles[blurTheme]) || "") +
-          " " +
-          ((router.asPath === "/" && styles.Sticky) || "")
-        }
+        className={[
+          styles.Nav,
+          (displayTheme === "Dark" && styles.DarkNav) || "",
+          (blurTheme !== "Default" && styles[blurTheme]) || "",
+          (router.asPath === "/" && styles.Sticky) || "",
+        ]
+          .filter((val) => val !== "")
+          .join(" ")}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.44, ease: "easeInOut" }}
@@ -373,7 +372,9 @@ const Nav = () => {
                 size="small"
                 usertag={user.username}
                 name={user.name}
-                avatar={`${gateway()}/${user.image}`}
+                avatar={
+                  (user.image && `${gateway()}/${user.image}`) || undefined
+                }
                 left
                 //notification={true}
                 style={{ cursor: "pointer" }}
