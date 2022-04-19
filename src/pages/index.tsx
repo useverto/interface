@@ -1,16 +1,13 @@
-import { Button, Card, Page, Spacer, useModal } from "@verto/ui";
-import { useEffect, useState } from "react";
+import { Button, Page, Spacer, useModal } from "@verto/ui";
+import { useEffect } from "react";
 import { permissions } from "../utils/arconnect";
 import { useRouter } from "next/router";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
-import { AnimatePresence, motion } from "framer-motion";
-import { opacityAnimation } from "../utils/animations";
-import { gateway, verto as client } from "../utils/arweave";
+import { verto as client } from "../utils/arweave";
 import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
-import axios from "axios";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
@@ -18,13 +15,7 @@ import HeroTokens, { fetchTokenLogos } from "../components/HeroTokens";
 import styles from "../styles/views/home.module.sass";
 import Image from "next/image";
 
-const Home = ({
-  artwork,
-  heroTokens,
-}: {
-  artwork: any;
-  heroTokens: string[];
-}) => {
+const Home = ({ heroTokens }: { heroTokens: string[] }) => {
   const address = useSelector((state: RootState) => state.addressReducer);
   const router = useRouter();
   const dispatch = useDispatch();
@@ -46,30 +37,6 @@ const Home = ({
     return () => {
       typed.destroy();
     };
-  }, []);
-
-  const [artworkData, setArtworkData] = useState(artwork);
-
-  useEffect(() => {
-    (async () => {
-      // TODO
-      // const res = await client.getPrice(artwork.id);
-      const { data: gecko } = await axios.get(
-        "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-      );
-
-      setArtworkData((val) => ({
-        ...val,
-        owner: {
-          ...val.owner,
-          image: val.owner.image
-            ? `${gateway()}/${artwork.owner.image}`
-            : undefined,
-        },
-        //price: res?.price ? (res.price * gecko.arweave.usd).toFixed(2) : null,
-        price: 0 ? (0 * gecko.arweave.usd).toFixed(2) : null,
-      }));
-    })();
   }, []);
 
   const setupModal = useModal();
@@ -260,12 +227,10 @@ const Home = ({
 };
 
 export async function getServerSideProps() {
-  const artwork = (await fetchRandomArtworkWithUser(1))[0];
   const heroTokens = await fetchTokenLogos();
 
   return {
     props: {
-      artwork,
       heroTokens,
     },
   };
