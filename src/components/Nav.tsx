@@ -172,7 +172,9 @@ const Nav = () => {
           " " +
           ((displayTheme === "Dark" && styles.DarkNav) || "") +
           " " +
-          ((blurTheme !== "Default" && styles[blurTheme]) || "")
+          ((blurTheme !== "Default" && styles[blurTheme]) || "") +
+          " " +
+          ((router.asPath === "/" && styles.Sticky) || "")
         }
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
