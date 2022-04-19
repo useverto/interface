@@ -38,7 +38,6 @@ import {
 } from "../../utils/supply";
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
-import { GQLTransactionInterface } from "ardb/lib/faces/gql";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { arPrice, gateway, gql, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
@@ -50,6 +49,7 @@ import tinycolor from "tinycolor2";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
+import ArdbTransaction from "ardb/lib/models/transaction";
 import dayjs from "dayjs";
 import styles from "../../styles/views/art.module.sass";
 
@@ -208,10 +208,9 @@ const Art = (props: PropTypes) => {
     (async () => {
       try {
         // load tx info
-        const tx = (await gql
-          .search("transaction")
-          .id(props.id)
-          .find()) as GQLTransactionInterface;
+        const tx = (
+          await gql.search("transaction").id(props.id).find()
+        )[0] as ArdbTransaction;
 
         if (tx?.block?.timestamp) {
           // multiply by 1000 to get Date API compatible value
