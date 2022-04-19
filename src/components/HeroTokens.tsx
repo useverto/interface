@@ -1,4 +1,4 @@
-import { gateway } from "../utils/arweave";
+import { CACHE_CONFIG, gateway } from "../utils/arweave";
 import Marquee from "react-fast-marquee";
 import Image from "next/image";
 import styles from "../styles/components/HeroTokens.module.sass";
@@ -40,9 +40,7 @@ export default function HeroTokens({ images, ...props }: Props) {
 }
 
 export async function fetchTokenLogos(): Promise<string[]> {
-  return await fetch(
-    "https://storage.googleapis.com/verto-exchange-contracts/tokens/skeletons.json"
-  )
+  return await fetch(`${CACHE_CONFIG.CONTRACT_CDN}/tokens/skeletons.json`)
     .then((res) => res.json() as Promise<{ type: string; logo: string }[]>)
     .then((tokens) => tokens.filter((token) => token.type == "community"))
     .then((tokens) =>

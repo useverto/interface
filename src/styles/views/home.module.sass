@@ -18,9 +18,11 @@ $titleSize: 3.8em
   .Hero
     margin: 12em 0
     z-index: 1
+    width: 47%
 
     @media screen and (max-width: variables.$mobile-screen)
       margin: auto
+      width: auto
 
     h1
       font-size: $titleSize
@@ -50,12 +52,18 @@ $titleSize: 3.8em
       display: flex
       align-items: center
 
+      @media screen and (max-width: variables.$mobile-screen)
+        justify-content: space-between
+
       button
         padding:
           left: 0
           right: 0
         width: 32%
         font-size: 1.2em
+
+        @media screen and (max-width: variables.$mobile-screen)
+          width: 48%
 
 .Card
   display: flex
