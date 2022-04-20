@@ -45,6 +45,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
 import { swapItems } from "../utils/storage_names";
+import { pairAddPending } from "../utils/pending_pair";
 import SwapInput from "../components/SwapInput";
 import Balance from "../components/Balance";
 import Head from "next/head";
@@ -56,7 +57,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import usePaginatedTokens from "../utils/paginated_tokens";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
-import { pairAddPending } from "../utils/pair";
 
 const Swap = ({
   defaultPair,

@@ -1,4 +1,3 @@
-import { GQLEdgeInterface } from "ar-gql/dist/faces";
 import { CLOB_CONTRACT, run } from "./arweave";
 
 const pairQuery = `
