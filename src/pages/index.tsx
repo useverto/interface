@@ -6,7 +6,6 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { verto as client } from "../utils/arweave";
-import { fetchRandomArtworkWithUser } from "verto-cache-interface";
 import Typed from "typed.js";
 import Head from "next/head";
 import Metas from "../components/Metas";

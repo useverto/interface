@@ -28,12 +28,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { fixUserImage } from "../../utils/user";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { cardAnimation, opacityAnimation } from "../../utils/animations";
-import { run } from "ar-gql";
 import {
   client as arweave,
   gateway,
   isAddress,
   verto as client,
+  run,
 } from "../../utils/arweave";
 import { smartweave } from "smartweave";
 import Head from "next/head";

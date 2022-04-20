@@ -1,4 +1,5 @@
 import ArdbTransaction from "ardb/lib/models/transaction";
+import GQLResultInterface from "ar-gql/dist/faces";
 import Arweave from "arweave";
 import axios from "axios";
 import moment from "moment";
@@ -119,3 +120,30 @@ export const arPrice = async (): Promise<number> => {
 
 /** Validate if a string is a valid Arweave address */
 export const isAddress = (addr: string) => /^[a-z0-9_-]{43}$/i.test(addr);
+
+/**
+ * Run a query on the Arweave Graphql API, using the
+ * global client instance's configured gateway
+ *
+ * @param query The query string to run
+ * @param variables GQL variables to pass
+ * @returns Query result
+ */
+export async function run(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<GQLResultInterface> {
+  const graphql = JSON.stringify({
+    query,
+    variables,
+  });
+
+  // execute the query
+  const { data } = await axios.post(gateway() + "/graphql", graphql, {
+    headers: {
+      "content-type": "application/json",
+    },
+  });
+
+  return data;
+}

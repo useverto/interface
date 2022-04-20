@@ -337,53 +337,75 @@ const Swap = ({
       .catch();
   }, []);
 
+  // if the pair adding is already in progress
+  const [addingPairPending, setAddingPairPending] = useState(false);
+
   // if current pair doesn't exist, create it
-  const [swapBtnDisabled, setSwapBtnDisabled] = useState(false);
+  const pairModal = useModal();
+  const [pairExists, setPairExists] = useState(true);
 
   useEffect(() => {
     (async () => {
       if (!clobContractState) return;
       if (!pair.from?.id || !pair.to?.id) return;
 
-      // check if the pair exists
-      if (
-        !!clobContractState.pairs.find(
-          ({ pair: existingPair }) =>
-            existingPair.includes(pair.from.id) &&
-            existingPair.includes(pair.to.id)
-        )
-      )
-        return;
+      const pairInContract = !!clobContractState.pairs.find(
+        ({ pair: existingPair }) =>
+          existingPair.includes(pair.from.id) &&
+          existingPair.includes(pair.to.id)
+      );
 
-      setSwapBtnDisabled(true);
-      setLoading(true);
-      setToast({
-        type: "info",
-        description: `Selected pair does not exist yet. Creating ${pair.from.ticker}/${pair.to.ticker} now...`,
-        duration: 3400,
-      });
+      // return if the CLOB state already includes the pair
+      if (pairInContract) return setPairExists(true);
 
-      // attempt to create the pair
-      try {
-        await verto.exchange.addPair([pair.from.id, pair.to.id]);
-
-        setToast({
-          type: "success",
-          description: "Created pair",
-          duration: 3000,
-        });
-      } catch (e) {
-        setToast({
-          type: "error",
-          description: "Failed to create pair",
-          duration: 3700,
-        });
-      }
-
-      setLoading(false);
-      setSwapBtnDisabled(false);
+      /**
+       * Check if there is already an interaction, that has
+       * not yet been mined and what tries to add the current pair.
+       * This is necessary to notify the user that the pair is already
+       * being added, but that the transaction is still pending.
+       */
     })();
   }, [pair, clobContractState]);
+
+  // loading add pair
+  const [addPairLoading, setAddPairLoading] = useState(false);
+
+  /**
+   * Attempt to add the current pair to the CLOB contract
+   */
+  async function addPair() {
+    setAddPairLoading(true);
+
+    try {
+      await verto.exchange.addPair([pair.from.id, pair.to.id]);
+
+      setToast({
+        type: "success",
+        description: "Created pair",
+        duration: 3000,
+      });
+    } catch (e) {
+      console.error(
+        "Error adding pair: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Stack: \n",
+        "Pair: \n",
+        JSON.stringify(pair, null, 2),
+        "\n",
+        "Error: ",
+        e
+      );
+      setToast({
+        type: "error",
+        description: "Failed to create pair",
+        duration: 3700,
+      });
+    }
+
+    setAddPairLoading(false);
+  }
 
   // modal that gives information about the order types (market or limit)
   const orderInfoModal = useModal();
@@ -471,8 +493,7 @@ const Swap = ({
    * Create the order
    */
   async function swap() {
-    if (loading || swapBtnDisabled) return;
-    if (!validateOrder()) return;
+    if (!validateOrder() || loading) return;
 
     setLoading(true);
 
@@ -927,7 +948,13 @@ const Swap = ({
               <Spacer y={2} />
               <Button
                 className={styles.SwapButton}
-                onClick={() => swap()}
+                onClick={() => {
+                  if (pairExists) {
+                    swap();
+                  } else {
+                    pairModal.setState(true);
+                  }
+                }}
                 loading={loading}
               >
                 Swap
@@ -1075,6 +1102,12 @@ const Swap = ({
           Placing an order "at the limit" will execute once an order is created
           that matches the limit price. It will not execute if the limit price
           is not met.
+        </Modal.Content>
+      </Modal>
+      <Modal {...pairModal.bindings}>
+        <Modal.Title>Add Pair</Modal.Title>
+        <Modal.Content className={styles.ModalContentJustify}>
+          The current pair is not yet added to the Orderbook contract.
         </Modal.Content>
       </Modal>
     </Page>
