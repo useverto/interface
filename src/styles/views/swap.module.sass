@@ -293,7 +293,11 @@
           &.SelectedOrderType
             font-weight: 500
 
-          &:hover:not(.SelectedOrderType)
+          &.DisabledOrderType
+            opacity: .5
+            cursor: not-allowed
+
+          &:hover:not(.SelectedOrderType):not(.DisabledOrderType)
             opacity: .7
 
         .Separator

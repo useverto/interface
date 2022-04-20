@@ -47,12 +47,18 @@ export async function pairAddPending(pair: [string, string]): Promise<boolean> {
           node.tags.find(({ name }) => name === "Input")?.value ?? "";
         const interactionPair: [string, string] = JSON.parse(input).pair;
 
-        // break if the pair is added
+        // break if the pair is added or if there was already an interaction
+        // that has been mined, that adds this pair
+        // if that is the case, we should return false, because that interaction
+        // must have failed
+        // the reason for that is that we are already checking the clob contract
+        // to find this pair, and if we did not find it, it indeed prooves that
+        // the interaction failed
         if (
           pair.includes(interactionPair[0]) &&
           pair.includes(interactionPair[1])
         ) {
-          return true;
+          return !node.block;
         }
       }
 

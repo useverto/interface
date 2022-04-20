@@ -161,48 +161,27 @@ const Swap = ({
     );
   }, [pair]);
 
-  // whether to use the logo of the "to" token from the contract or not
-  const [useToTokenContractLogo, setUseToTokenContractLogo] = useState(false);
-  const [toTokenContract, setToTokenContract] =
-    useState<Record<string, string>>();
-
-  useEffect(() => {
-    (async () => {
-      if (!pair.to?.id) return;
-
-      const toTokenContract = await fetchContract(pair.to.id);
-      const { status } = await axios.get(verto.token.getLogo(pair.to.id));
-
-      setToTokenContract(toTokenContract.state);
-
-      let hasLogo = false;
-
-      if (toTokenContract.state.settings) {
-        const settings: Map<string, any> = new Map(
-          toTokenContract.state.settings
-        );
-
-        hasLogo = !!settings.get("communityLogo");
-      }
-
-      if (status === 200 || !hasLogo) {
-        setUseToTokenContractLogo(false);
-      } else {
-        setUseToTokenContractLogo(true);
-      }
-    })();
-  }, [pair.to]);
-
   // orderbook for the current pair
   const [orderbook, setOrderbook] = useState<OrderInterfaceWithPair[]>();
 
   useEffect(() => {
     (async () => {
-      setOrderbook(
-        await verto.exchange.getOrderBook([pair.from.id, pair.to.id])
-      );
+      // set orderbook to undefined to show loading
+      setOrderbook(undefined);
+
+      // fetch orderbook
+      const currentOrderbook = await verto.exchange.getOrderBook([
+        pair.from.id,
+        pair.to.id,
+      ]);
+
+      setOrderbook(currentOrderbook);
+
+      // set the order type to "limit" if the
+      // orderbook for this pair is empty
+      setOrderType(currentOrderbook.length === 0 ? "limit" : "market");
     })();
-  }, []);
+  }, [pair]);
 
   // load tokens to token selector
   const { tokens, hasMore, fetchMore, animationCounter } = usePaginatedTokens();
@@ -830,10 +809,27 @@ const Swap = ({
               <div className={styles.OrderType}>
                 <div className={styles.Selector}>
                   <p
-                    className={
-                      orderType === "market" ? styles.SelectedOrderType : ""
+                    className={[
+                      (orderType === "market" && styles.SelectedOrderType) ||
+                        "",
+                      (orderbook &&
+                        orderbook.length === 0 &&
+                        styles.DisabledOrderType) ||
+                        "",
+                    ]
+                      .filter((val) => val !== "")
+                      .join(" ")}
+                    onClick={() => {
+                      // return if the orderbook has no orders yet
+                      if (orderbook && orderbook.length === 0) return;
+                      setOrderType("market");
+                    }}
+                    title={
+                      (orderbook &&
+                        orderbook.length === 0 &&
+                        "A first order for a pair always has to be a limit order.") ||
+                      undefined
                     }
-                    onClick={() => setOrderType("market")}
                   >
                     Market Order
                   </p>
