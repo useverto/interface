@@ -56,6 +56,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import usePaginatedTokens from "../utils/paginated_tokens";
 import OrderBookRow from "../components/OrderBookRow";
 import styles from "../styles/views/swap.module.sass";
+import { pairAddPending } from "../utils/pair";
 
 const Swap = ({
   defaultPair,
@@ -364,6 +365,7 @@ const Swap = ({
        * This is necessary to notify the user that the pair is already
        * being added, but that the transaction is still pending.
        */
+      setPairExists(await pairAddPending([pair.from.id, pair.to.id]));
     })();
   }, [pair, clobContractState]);
 

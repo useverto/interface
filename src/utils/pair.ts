@@ -1,3 +1,4 @@
+import { GQLEdgeInterface } from "ar-gql/dist/faces";
 import { CLOB_CONTRACT, run } from "./arweave";
 
 const pairQuery = `
@@ -10,6 +11,7 @@ const pairQuery = `
         { name: "App-Name", values: "SmartWeaveAction" }
       ]
       after: $after
+      first: 100
     ) {
       edges {
         cursor
@@ -28,16 +30,38 @@ const pairQuery = `
 `;
 
 /**
- * Load interactions
- * @param pair
- * @param after
+ * Get if the pair has an "addPair" interaction pending.
  */
-export async function loadAddPairInteractions(
-  pair: [string, string],
-  after?: string
-) {
-  const res = await run(pairQuery, {
-    clobID: CLOB_CONTRACT,
-    after,
-  });
+export async function pairAddPending(pair: [string, string]): Promise<boolean> {
+  const hasInteraction = async (after?: string) => {
+    try {
+      const { data } = await run(pairQuery, {
+        clobID: CLOB_CONTRACT,
+        after,
+      });
+      const edges = data?.transactions?.edges ?? [];
+
+      if (edges.length === 0) return false;
+
+      for (const { node } of edges) {
+        const input =
+          node.tags.find(({ name }) => name === "Input")?.value ?? "";
+        const interactionPair: [string, string] = JSON.parse(input).pair;
+
+        // break if the pair is added
+        if (
+          pair.includes(interactionPair[0]) &&
+          pair.includes(interactionPair[1])
+        ) {
+          return true;
+        }
+      }
+
+      return hasInteraction(edges[edges.length - 1]?.cursor);
+    } catch {
+      return false;
+    }
+  };
+
+  return await hasInteraction();
 }
