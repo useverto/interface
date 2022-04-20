@@ -365,7 +365,15 @@ const Swap = ({
        * This is necessary to notify the user that the pair is already
        * being added, but that the transaction is still pending.
        */
-      setPairExists(await pairAddPending([pair.from.id, pair.to.id]));
+      const foundPairAddInteraction = await pairAddPending([
+        pair.from.id,
+        pair.to.id,
+      ]);
+      setPairExists(foundPairAddInteraction);
+
+      if (!pairModal.state && !foundPairAddInteraction) {
+        pairModal.setState(true);
+      }
     })();
   }, [pair, clobContractState]);
 
@@ -407,6 +415,7 @@ const Swap = ({
     }
 
     setAddPairLoading(false);
+    pairModal.setState(false);
   }
 
   // modal that gives information about the order types (market or limit)
@@ -1109,7 +1118,19 @@ const Swap = ({
       <Modal {...pairModal.bindings}>
         <Modal.Title>Add Pair</Modal.Title>
         <Modal.Content className={styles.ModalContentJustify}>
-          The current pair is not yet added to the Orderbook contract.
+          <div className={styles.PairChip}>
+            {pair.from.ticker}/{pair.to.ticker}
+          </div>{" "}
+          is not yet added to the Orderbook contract. Do you want to add it now?
+          <Spacer y={1.5} />
+          <Button
+            small
+            style={{ margin: "0 auto" }}
+            onClick={addPair}
+            loading={addPairLoading}
+          >
+            Add
+          </Button>
         </Modal.Content>
       </Modal>
     </Page>
