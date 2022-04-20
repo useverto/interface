@@ -198,10 +198,9 @@ const Swap = ({
 
   useEffect(() => {
     (async () => {
-      // TODO
-      /*setOrderbook(
+      setOrderbook(
         await verto.exchange.getOrderBook([pair.from.id, pair.to.id])
-      );*/
+      );
     })();
   }, []);
 
