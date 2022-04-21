@@ -77,14 +77,6 @@ export const expandAnimation = (i = 0) => ({
   },
 });
 
-interface CountUpProps {
-  start?: number;
-  end: number;
-  duration?: number;
-  frameDuration?: number;
-  decimals?: number;
-}
-
 export const infiniteScrollAnimation = {
   initial: {
     opacity: 0,
