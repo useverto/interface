@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-
 /**
  * Animation standard for card lists
  *

@@ -394,6 +394,7 @@ const Swap = ({
 
     setAddPairLoading(false);
     pairModal.setState(false);
+    setPairExists(true);
   }
 
   // modal that gives information about the order types (market or limit)
