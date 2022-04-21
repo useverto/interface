@@ -77,51 +77,6 @@ export const expandAnimation = (i = 0) => ({
   },
 });
 
-/**
- * Count up from a number, to a number
- */
-export const useCountUp = ({
-  start = 0,
-  end,
-  duration = 1400,
-  frameDuration = 1000 / 60,
-  decimals = 5,
-}: CountUpProps) => {
-  const [state, setState] = useState(start);
-  const [toEnd, setToEnd] = useState(end);
-  const [multiply, setMultiply] = useState(0);
-
-  const decimalLength = (val: number) =>
-    val.toString().split(".")[1]?.length ?? 0;
-  const easeOut = (t: number) => t * (2 - t);
-
-  useEffect(() => {
-    const newVal =
-      Math.round(end * Math.pow(10, decimals)) / Math.pow(10, decimals);
-    setToEnd(newVal);
-    setMultiply(Math.pow(10, decimalLength(newVal)) ?? 1);
-  }, [end, decimals]);
-
-  // TODO start from start param
-  useEffect(() => {
-    if (toEnd === 0) return;
-
-    let frame = 0;
-
-    const totalFrames = Math.round(duration / frameDuration);
-    const counter = setInterval(() => {
-      frame++;
-      setState(
-        Math.round(toEnd * multiply * easeOut(frame / totalFrames) + start)
-      );
-
-      if (frame === totalFrames) clearInterval(counter);
-    }, frameDuration);
-  }, [toEnd]);
-
-  return state / multiply;
-};
-
 interface CountUpProps {
   start?: number;
   end: number;

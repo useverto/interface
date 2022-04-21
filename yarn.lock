@@ -3081,6 +3081,11 @@ split-array-stream@^2.0.0:
   dependencies:
     is-stream-ended "^0.1.4"
 
+stonk-ticker@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/stonk-ticker/-/stonk-ticker-1.0.1.tgz#ea4b7a4671085f968f046703b22ec88dfe858769"
+  integrity sha512-UM5QCXS5a+9qPsWn2GcaVakzXurtxWIx+u1WPFvvRuPnt+t265FBKWnT5743jeKTfQVxYp9o/nKzZw2m9OGTcA==
+
 stream-events@^1.0.4, stream-events@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/stream-events/-/stream-events-1.0.5.tgz#bbc898ec4df33a4902d892333d47da9bf1c406d5"

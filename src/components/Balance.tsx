@@ -7,51 +7,68 @@ import { motion, AnimatePresence } from "framer-motion";
 import { client } from "../utils/arweave";
 import { ClipboardIcon } from "@iconicicons/react";
 import { Tooltip, useTheme, useToasts } from "@verto/ui";
-import { useCountUp } from "../utils/animations";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { useMediaPredicate } from "react-media-hook";
+import { Ticker } from "stonk-ticker";
 import copy from "copy-to-clipboard";
 import styles from "../styles/components/Balance.module.sass";
 
 const Balance = () => {
-  const [history, setHistory] = useState<{ [date: string]: number }>();
-  const [balance, setBalance] = useState(0);
-  const [historicalBalance, setHistorycalBalance] = useState<{
-    date: string;
-    val: number;
-  }>();
   const { setToast } = useToasts();
-  const decimals = 5;
-  const animatedBalance = useCountUp({ end: balance, decimals });
   const address = useSelector((state: RootState) => state.addressReducer);
   const theme = useTheme();
 
+  // animated balance display
+  const [balanceDisplay, setBalanceDisplay] = useState<{
+    val: number;
+    direction: "up" | "down";
+  }>({
+    val: 0,
+    direction: "up",
+  });
+
+  // wallet balance
+  const [balance, setBalance] = useState(0);
+
   useEffect(() => {
-    if (!address) return;
-    loadData();
+    (async () => {
+      const balance = (await client.wallets.getBalance(address)) ?? "0";
+      const parsedBalance = parseFloat(client.ar.winstonToAr(balance));
+
+      setBalance(parsedBalance);
+      setBalanceDisplay({
+        val: parsedBalance,
+        direction: "up",
+      });
+    })();
   }, [address]);
 
-  async function loadData() {
-    setBalance(
-      parseFloat(
-        client.ar.winstonToAr(await client.wallets.getBalance(address)) ?? "0"
-      )
-    );
-    setHistory(await balanceHistory(address));
-  }
+  // historical balance
+  const [history, setHistory] = useState<{ [date: string]: number }>();
 
+  useEffect(() => {
+    balanceHistory(address)
+      .then((res) => setHistory(res))
+      .catch();
+  }, [address]);
+
+  // mobile repsonsive display
   const mobile = useMediaPredicate("(max-width: 720px)");
+
+  // date of the current balance
+  const [date, setDate] = useState<string>();
 
   return (
     <div className={styles.Balance}>
       <div className={styles.Data}>
-        <p>{historicalBalance?.date || "Total balance"}</p>
+        <p>{date || "Total balance"}</p>
         <h1>
-          {(historicalBalance?.val || animatedBalance).toLocaleString(
-            undefined,
-            { maximumFractionDigits: decimals }
-          )}
+          <Ticker
+            value={parseFloat(balanceDisplay.val.toFixed(5))}
+            constantKeys={["-", "."]}
+            direction={balanceDisplay.direction}
+          />
           <b>AR</b>
         </h1>
         <p className={styles.Address}>
@@ -80,7 +97,13 @@ const Balance = () => {
             animate={{ opacity: 1, scaleY: 1 }}
             exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.23, ease: "easeInOut" }}
-            onMouseLeave={() => setHistorycalBalance(undefined)}
+            onMouseLeave={() => {
+              setBalanceDisplay((current) => ({
+                val: balance,
+                direction: current.val > balance ? "down" : "up",
+              }));
+              setDate(undefined);
+            }}
           >
             <Line
               data={{
@@ -96,18 +119,11 @@ const Balance = () => {
               options={GraphOptions({
                 theme,
                 tooltipText({ value, label }) {
-                  const formattedBal =
-                    Math.round(Number(value) * Math.pow(10, decimals)) /
-                    Math.pow(10, decimals);
-                  if (
-                    !historicalBalance ||
-                    historicalBalance.date !== label ||
-                    historicalBalance.val !== formattedBal
-                  )
-                    setHistorycalBalance({
-                      date: label,
-                      val: formattedBal,
-                    });
+                  setBalanceDisplay((current) => ({
+                    val: parseFloat(value),
+                    direction: current.val > value ? "down" : "up",
+                  }));
+                  setDate(label);
 
                   return `${Number(value).toLocaleString(undefined, {
                     maximumFractionDigits: 2,
