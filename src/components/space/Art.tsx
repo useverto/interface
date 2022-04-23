@@ -4,6 +4,7 @@ import {
   Card,
   Page,
   Spacer,
+  Tooltip,
   useTheme,
   useToasts,
 } from "@verto/ui";
@@ -481,24 +482,34 @@ const Art = (props: PropTypes) => {
               </>
             )}
             <Spacer y={0.25} />
-            <a
-              href="https://www.notion.so/Foreign-Call-Protocol-Specification-61e221e5118a40b980fcaade35a2a718"
-              className={styles.InfoLink}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Tooltip
+              text={
+                (state?.invocations &&
+                  state?.foreignCalls &&
+                  "Token supports FCP") ||
+                "Token does not support FCP"
+              }
+              position="right"
             >
-              {(state?.invocations && state?.foreignCalls && (
-                <>
-                  <CheckCircleIcon />
-                  Supports FCP
-                </>
-              )) || (
-                <>
-                  <CloseCircleIcon />
-                  FCP not supported
-                </>
-              )}
-            </a>
+              <a
+                href="https://www.notion.so/Foreign-Call-Protocol-Specification-61e221e5118a40b980fcaade35a2a718"
+                className={styles.InfoLink}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {(state?.invocations && state?.foreignCalls && (
+                  <>
+                    <CheckCircleIcon />
+                    Tradeable
+                  </>
+                )) || (
+                  <>
+                    <CloseCircleIcon />
+                    Not tradeable
+                  </>
+                )}
+              </a>
+            </Tooltip>
             <Spacer y={0.25} />
             <a
               href={`https://viewblock.io/arweave/tx/${props.id}`}

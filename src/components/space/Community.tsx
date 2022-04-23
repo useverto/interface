@@ -5,6 +5,7 @@ import {
   Loading,
   Page,
   Spacer,
+  Tooltip,
   useInput,
   useTheme,
   useToasts,
@@ -28,6 +29,8 @@ import { cardListAnimation } from "../../utils/animations";
 import {
   BankIcon,
   BoxIcon,
+  CheckCircleIcon,
+  CloseCircleIcon,
   DollarIcon,
   LinkIcon,
   MessageIcon,
@@ -442,6 +445,34 @@ const Community = (props: PropTypes) => {
                 <UsersIcon />
                 Community XYZ
               </a>
+              <Tooltip
+                text={
+                  (state?.invocations &&
+                    state?.foreignCalls &&
+                    "Token supports FCP") ||
+                  "Token does not support FCP"
+                }
+                position="right"
+              >
+                <a
+                  href="https://www.notion.so/Foreign-Call-Protocol-Specification-61e221e5118a40b980fcaade35a2a718"
+                  className={styles.Data}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {(state?.invocations && state?.foreignCalls && (
+                    <>
+                      <CheckCircleIcon />
+                      Tradeable
+                    </>
+                  )) || (
+                    <>
+                      <CloseCircleIcon />
+                      Not tradeable
+                    </>
+                  )}
+                </a>
+              </Tooltip>
             </>
           )}
           {state?.settings?.communityDiscussionLinks &&
