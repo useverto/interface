@@ -40,7 +40,7 @@ import {
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
 import { UserInterface } from "@verto/js/dist/common/faces";
-import { arPrice, gateway, gql, verto } from "../../utils/arweave";
+import { arPrice, gateway, gql, supportsFCP, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
 import { getVerification, Threshold } from "arverify";
@@ -484,9 +484,7 @@ const Art = (props: PropTypes) => {
             <Spacer y={0.25} />
             <Tooltip
               text={
-                (state?.invocations &&
-                  state?.foreignCalls &&
-                  "Token supports FCP") ||
+                (supportsFCP(state) && "Token supports FCP") ||
                 "Token does not support FCP"
               }
               position="right"
@@ -497,15 +495,15 @@ const Art = (props: PropTypes) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {(state?.invocations && state?.foreignCalls && (
+                {(supportsFCP(state) && (
                   <>
                     <CheckCircleIcon />
-                    Tradeable
+                    Tradable
                   </>
                 )) || (
                   <>
                     <CloseCircleIcon />
-                    Not tradeable
+                    Not tradable
                   </>
                 )}
               </a>

@@ -17,7 +17,7 @@ import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { gateway, verto as client } from "../../utils/arweave";
+import { gateway, supportsFCP, verto as client } from "../../utils/arweave";
 import { TokenType } from "../../utils/user";
 import { fetchContract } from "verto-cache-interface";
 import {
@@ -447,9 +447,7 @@ const Community = (props: PropTypes) => {
               </a>
               <Tooltip
                 text={
-                  (state?.invocations &&
-                    state?.foreignCalls &&
-                    "Token supports FCP") ||
+                  (supportsFCP(state) && "Token supports FCP") ||
                   "Token does not support FCP"
                 }
                 position="right"
@@ -460,15 +458,15 @@ const Community = (props: PropTypes) => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {(state?.invocations && state?.foreignCalls && (
+                  {(supportsFCP(state) && (
                     <>
                       <CheckCircleIcon />
-                      Tradeable
+                      Tradable
                     </>
                   )) || (
                     <>
                       <CloseCircleIcon />
-                      Not tradeable
+                      Not tradable
                     </>
                   )}
                 </a>

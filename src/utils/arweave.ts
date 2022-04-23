@@ -147,3 +147,13 @@ export async function run(
 
   return data;
 }
+
+/**
+ * Check if a token supports the FCP. This is needed to enable trading for it.
+ *
+ * @param state State of the token
+ * @returns true if the token supports FCP
+ */
+export function supportsFCP(state: any): boolean {
+  return state?.invocations && state?.foreignCalls;
+}

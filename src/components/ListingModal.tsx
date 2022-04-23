@@ -9,7 +9,12 @@ import {
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { interactWrite, readContract } from "smartweave";
-import { client, COMMUNITY_CONTRACT, isAddress } from "../utils/arweave";
+import {
+  client,
+  COMMUNITY_CONTRACT,
+  isAddress,
+  supportsFCP,
+} from "../utils/arweave";
 import CollectionModal from "./CollectionModal";
 import MintCollectible from "./MintCollectible";
 import styles from "../styles/components/ListingModal.module.sass";
@@ -55,6 +60,15 @@ export default function ListingModal(props: Props) {
         }
 
         setDisabled(false);
+
+        if (!supportsFCP(currentState)) {
+          setToast({
+            description:
+              "Token does not support FCP and it will not be tradable",
+            type: "warning",
+            duration: 3650,
+          });
+        }
 
         if (currentState.roles || currentState.votes)
           setSelectedLayout("community");

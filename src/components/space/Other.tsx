@@ -8,7 +8,7 @@ import {
   DownloadIcon,
 } from "@iconicicons/react";
 import { fetchContract } from "verto-cache-interface";
-import { gateway } from "../../utils/arweave";
+import { gateway, supportsFCP } from "../../utils/arweave";
 import Head from "next/head";
 import Metas from "../Metas";
 import styles from "../../styles/views/community.module.sass";
@@ -71,9 +71,7 @@ const Other = (props: Props) => {
           <>
             <Tooltip
               text={
-                (state?.invocations &&
-                  state?.foreignCalls &&
-                  "Token supports FCP") ||
+                (supportsFCP(state) && "Token supports FCP") ||
                 "Token does not support FCP"
               }
               position="right"
@@ -84,15 +82,15 @@ const Other = (props: Props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {(state?.invocations && state?.foreignCalls && (
+                {(supportsFCP(state) && (
                   <>
                     <CheckCircleIcon />
-                    Tradeable
+                    Tradable
                   </>
                 )) || (
                   <>
                     <CloseCircleIcon />
-                    Not tradeable
+                    Not tradable
                   </>
                 )}
               </a>
