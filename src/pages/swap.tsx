@@ -40,7 +40,13 @@ import {
   PaginatedToken,
   UserBalance,
 } from "verto-cache-interface";
-import { CLOB_CONTRACT, gateway, isAddress, verto } from "../utils/arweave";
+import {
+  CLOB_CONTRACT,
+  gateway,
+  isAddress,
+  supportsFCP,
+  verto,
+} from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
 import { formatAddress } from "../utils/format";
@@ -116,9 +122,17 @@ const Swap = ({
     to: SimpleTokenInterface;
   }>(defaultPair);
 
+  // wether the pair is currently loaded or not
+  // this is needed so that the ui doesn't try to load
+  // wether the pair is added or not to the order book
+  // more than once
+  const [loadingPair, setLoadingPair] = useState(true);
+
   // load the last used token pair
   useEffect(() => {
     (async () => {
+      setLoadingPair(true);
+
       const pairStorageVal = localStorage.getItem(swapItems);
 
       // return if nothing is stored
@@ -147,6 +161,7 @@ const Swap = ({
           ticker: toToken.ticker,
         },
       });
+      setLoadingPair(false);
     })();
   }, []);
 
@@ -316,8 +331,8 @@ const Swap = ({
       .catch();
   }, []);
 
-  // if the pair adding is already in progress
-  const [addingPairPending, setAddingPairPending] = useState(false);
+  // wether the pair is tradable or not
+  const [tradablePair, setTradablePair] = useState(false);
 
   // if current pair doesn't exist, create it
   const pairModal = useModal();
@@ -325,8 +340,14 @@ const Swap = ({
 
   useEffect(() => {
     (async () => {
-      if (!clobContractState) return;
-      if (!pair.from?.id || !pair.to?.id) return;
+      if (
+        !clobContractState ||
+        !tradablePair ||
+        loadingPair ||
+        !pair.from?.id ||
+        !pair.to?.id
+      )
+        return;
 
       const pairInContract = !!clobContractState.pairs.find(
         ({ pair: existingPair }) =>
@@ -349,11 +370,9 @@ const Swap = ({
       ]);
       setPairExists(foundPairAddInteraction);
 
-      if (!pairModal.state && !foundPairAddInteraction) {
-        pairModal.setState(true);
-      }
+      pairModal.setState(!pairModal.state && !foundPairAddInteraction);
     })();
-  }, [pair, clobContractState]);
+  }, [pair, clobContractState, tradablePair, loadingPair]);
 
   // loading add pair
   const [addPairLoading, setAddPairLoading] = useState(false);
@@ -476,14 +495,14 @@ const Swap = ({
     return valid;
   }
 
-  // loading creating order
+  // button loading state
   const [loading, setLoading] = useState(false);
 
   /**
    * Create the order
    */
   async function swap() {
-    if (!validateOrder() || loading) return;
+    if (!validateOrder() || loading || !tradablePair) return;
 
     setLoading(true);
 
@@ -535,6 +554,33 @@ const Swap = ({
 
     setLoading(false);
   }
+
+  // tradable validation
+  // if one of the tokens in the pair does not support the FCP
+  // Verto cannot create a swap between them
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+
+      try {
+        // load the state of the tokens in the pair
+        const { state: fromState } = await fetchContract(pair.from.id);
+        const { state: toState } = await fetchContract(pair.to.id);
+
+        // if both are supported, the pair is tradable
+        setTradablePair(supportsFCP(fromState) && supportsFCP(toState));
+      } catch (e) {
+        console.error("Error fetching pair states: \n", e);
+        setToast({
+          description: "Unable to verify the pair's tradability",
+          type: "error",
+          duration: 3000,
+        });
+      }
+
+      setLoading(false);
+    })();
+  }, [pair]);
 
   return (
     <Page>
@@ -962,7 +1008,8 @@ const Swap = ({
                     pairModal.setState(true);
                   }
                 }}
-                loading={loading}
+                loading={loading || loadingPair}
+                disabled={!tradablePair || loading || loadingPair}
               >
                 Swap
               </Button>
