@@ -54,6 +54,9 @@ import dayjs from "dayjs";
 import styles from "../../styles/views/art.module.sass";
 
 const Art = (props: PropTypes) => {
+  const router = useRouter();
+  if (router.isFallback) return <></>;
+
   const { setToast } = useToasts();
 
   // fullscreen stuff
@@ -318,8 +321,6 @@ const Art = (props: PropTypes) => {
       }
     })();
   }, [minter]);
-
-  const router = useRouter();
 
   // load arweave price
   const [arweavePrice, setArweavePrice] = useState(0);

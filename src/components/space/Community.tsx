@@ -49,8 +49,6 @@ const Community = (props: PropTypes) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  // TODO(@johnletey): SWR ...
-
   const periods = ["24h", "1w", "1m", "1y", "ALL"];
   const [selectedPeriod, setSelectedPeriod] = useState<string>("ALL");
   const [state, setState] = useState(null);

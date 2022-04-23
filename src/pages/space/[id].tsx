@@ -8,16 +8,14 @@ import axios from "axios";
 import Community from "../../components/space/Community";
 import Collection from "../../components/space/Collection";
 import Art from "../../components/space/Art";
+import Other from "../../components/space/Other";
 
 const Token = (props) => {
-  // TODO: custom layout
-
   return (
     <>
       {(props.type === "community" && <Community {...props} />) ||
-        (props.type === "collection" && <Collection {...props} />) || (
-          <Art {...props} />
-        )}
+        (props.type === "collection" && <Collection {...props} />) ||
+        (props.type === "art" && <Art {...props} />) || <Other {...props} />}
     </>
   );
 };
