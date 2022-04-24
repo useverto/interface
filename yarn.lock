@@ -469,24 +469,24 @@
   resolved "https://registry.yarnpkg.com/@remusao/trie/-/trie-1.4.1.tgz#755d09f8a007476334e611f42719b2d581f00720"
   integrity sha512-yvwa+aCyYI/UjeD39BnpMypG8N06l86wIDW1/PAc6ihBRnodIfZDwccxQN3n1t74wduzaz74m4ZMHZnB06567Q==
 
-"@three-em/js@^0.2.5":
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/@three-em/js/-/js-0.2.7.tgz#a0234b48f6a60adaeed1b04e76136ed5cada48b2"
-  integrity sha512-gOX0YphIqmC5bU+TM7xoANjXOsw6oy9QSaamRfGYoZLTpABnRLBPgeNNUOVyCibg8wcgZoICJICGg+/ZHWVVBA==
-
-"@three-em/node-darwin-arm64@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@three-em/node-darwin-arm64/-/node-darwin-arm64-0.2.0.tgz#64bf322a574277f1434dd447b51e9357c997ee12"
-  integrity sha512-bW7xDQJiYQ/Yc25hAnSWPkEwj4rZ+grQjRUkTFq8Mf8H5u1ngL8ex/XGcwbvZ1YUzbA/oXStn+xQk9uRvvuEiA==
-
-"@three-em/node@^0.2.8":
+"@three-em/js@^0.2.8":
   version "0.2.8"
-  resolved "https://registry.yarnpkg.com/@three-em/node/-/node-0.2.8.tgz#5d400f62d59d5f01b6ea6e9e7a0177193d25be1a"
-  integrity sha512-tY5NwmWn9lL59+2/acIdf3nLEnfml1CUV9/AapAR22XlAraszLvpGf/ljHK3IFFuigHIx+PQO3Ls+Fg9eRvKcg==
+  resolved "https://registry.yarnpkg.com/@three-em/js/-/js-0.2.8.tgz#ec1c8f636d681bfcb486ec14e1299ef9fcfb8af0"
+  integrity sha512-dBuhb+d6SlhBkUi9DZUNXnw5x9wFY0Xl4AKnQtwAr0goq8X9whEeogxeB8qWXKBKRXI1Jf3CuxfkFpdmq630mw==
+
+"@three-em/node-darwin-arm64@0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@three-em/node-darwin-arm64/-/node-darwin-arm64-0.2.9.tgz#20e5db84a45831e0ae56923b344ce50e7b8e945a"
+  integrity sha512-G8K1IQxmWBqTDRG2zYJfRhceJo9HeaRVfmgjazcfsUU3w2SuMRsYE6/0zT53tsMe3tFPERxl6w+mBGD9pGGe8g==
+
+"@three-em/node@^0.2.10":
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/@three-em/node/-/node-0.2.10.tgz#0d40175e0521952a9eed4e1d5a709ec483bfe5a0"
+  integrity sha512-wum0hz7AlPCHP/TmqHPnzQZ+8doCEAok88utjLVPg4sROZpOW1qcBvpwKIWu6EEbOveBg1Qx/LuDmXzMMXEAxA==
   dependencies:
     detect-libc "^1.0.3"
   optionalDependencies:
-    "@three-em/node-darwin-arm64" "0.2.0"
+    "@three-em/node-darwin-arm64" "0.2.9"
 
 "@tootallnate/once@2":
   version "2.0.0"
@@ -641,13 +641,13 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-12":
-  version "1.0.0-beta-12"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-12.tgz#23f7d380439b4d0809e43f3d522e30564abbc110"
-  integrity sha512-ap+XbZv86DRgPeCti2JMtxeVcRZ+zQiJr1TAL9EFbOfFd0Nvg8bYJjGUDOAx9CxOZZ3/l1IR8WoESCzGMmYw0w==
+"@verto/js@^1.0.0-beta-14":
+  version "1.0.0-beta-14"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-14.tgz#6d87f2f5448667e5dc4c554cb1324c69a21d3714"
+  integrity sha512-4Ir93kVJ7ixsRSWoqbixyP8QNficbCUvbxcex/CHw3Qq+6L/GMvBKToBv93VgOV2QoDG5+HZmjmP5DH+P6YqkQ==
   dependencies:
-    "@three-em/js" "^0.2.5"
-    "@three-em/node" "^0.2.8"
+    "@three-em/js" "^0.2.8"
+    "@three-em/node" "^0.2.10"
     ar-gql "^0.0.6"
     arweave "^1.10.23"
     axios "^0.24.0"
