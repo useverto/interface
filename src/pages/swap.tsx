@@ -526,6 +526,8 @@ const Swap = ({
         description: "Created order",
         duration: 3300,
       });
+      priceInput.reset();
+      amountInput.reset();
     } catch (e) {
       console.error(
         "Error creating order: \n",
