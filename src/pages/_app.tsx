@@ -140,65 +140,62 @@ export default function App({ Component, pageProps }) {
   return (
     <ReduxProvider store={store}>
       <Theme>
-        <StatusChecker>
-          <Head>
-            <link
-              rel="shortcut icon"
-              href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
-              type="image/svg"
-            />
-            <link rel="manifest" href="/manifest.json" />
-          </Head>
-          <Nav />
-          <Component {...pageProps} />
-          <Footer />
-          {/**<BetaAlert /> */}
-          <Modal {...permissionsModal.bindings}>
-            <Modal.Title>Missing permissions</Modal.Title>
-            <Modal.Content style={{ textAlign: "justify" }}>
-              A few permissions are missing. Some of them are essential for
-              Verto to work. Please allow these to use Verto to it's full
-              potential.
-              <Spacer y={1.5} />
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+        <Head>
+          <link
+            rel="shortcut icon"
+            href={scheme === "dark" ? "/logo_dark.svg" : "/logo_light.svg"}
+            type="image/svg"
+          />
+          <link rel="manifest" href="/manifest.json" />
+        </Head>
+        <Nav />
+        <Component {...pageProps} />
+        <Footer />
+        {/**<BetaAlert /> */}
+        <Modal {...permissionsModal.bindings}>
+          <Modal.Title>Missing permissions</Modal.Title>
+          <Modal.Content style={{ textAlign: "justify" }}>
+            A few permissions are missing. Some of them are essential for Verto
+            to work. Please allow these to use Verto to it's full potential.
+            <Spacer y={1.5} />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                onClick={async () => {
+                  try {
+                    await window.arweaveWallet.connect(permissions, {
+                      name: "Verto",
+                    });
+                  } catch {}
+                  permissionsModal.setState(false);
+                }}
+                small
+              >
+                Allow
+              </Button>
+              <Spacer x={1} />
+              <Button
+                type="secondary"
+                small
+                onClick={() => {
+                  localStorage.setItem(
+                    ignorePermissionWarning,
+                    JSON.stringify({ val: true })
+                  );
+                  permissionsModal.setState(false);
                 }}
               >
-                <Button
-                  onClick={async () => {
-                    try {
-                      await window.arweaveWallet.connect(permissions, {
-                        name: "Verto",
-                      });
-                    } catch {}
-                    permissionsModal.setState(false);
-                  }}
-                  small
-                >
-                  Allow
-                </Button>
-                <Spacer x={1} />
-                <Button
-                  type="secondary"
-                  small
-                  onClick={() => {
-                    localStorage.setItem(
-                      ignorePermissionWarning,
-                      JSON.stringify({ val: true })
-                    );
-                    permissionsModal.setState(false);
-                  }}
-                >
-                  Don't show again
-                </Button>
-              </div>
-            </Modal.Content>
-          </Modal>
-          <Changelog />
-        </StatusChecker>
+                Don't show again
+              </Button>
+            </div>
+          </Modal.Content>
+        </Modal>
+        <Changelog />
       </Theme>
     </ReduxProvider>
   );
@@ -243,47 +240,6 @@ const Theme = ({ children }) => {
   }, [router.asPath]);
 
   return <VertoProvider theme={displayTheme}>{children}</VertoProvider>;
-};
-
-const StatusChecker = ({ children }) => {
-  const { setToast } = useToasts();
-
-  // check gateway status
-  useEffect(() => {
-    (async () => {
-      try {
-        await axios({
-          method: "GET",
-          url: gateway(),
-          timeout: 8000,
-        });
-      } catch (e) {
-        console.error("Gateway logs:", e);
-        setToast({
-          description: `The ${client.getConfig().api.host} gateway is down`,
-          type: "error",
-          duration: 7000,
-        });
-      }
-    })();
-  }, []);
-
-  // check cache
-  useEffect(() => {
-    (async () => {
-      try {
-        await fetchContract(COMMUNITY_CONTRACT);
-      } catch {
-        setToast({
-          description: "The cache server is down",
-          type: "error",
-          duration: 7000,
-        });
-      }
-    })();
-  }, []);
-
-  return <>{children}</>;
 };
 
 /*const BetaAlert = () => {

@@ -1,53 +1,80 @@
 @use "../variables"
   
+$title-color: #fff
+
 .Footer
   display: flex
-  align-items: center
   justify-content: space-between
-  padding: 1.32em variables.$nav-side-padding
-  border-top: 1px solid #eaeaea
+  align-items: flex-start
+  min-height: unset !important
   background-color: #000
+  padding:
+    top: 5em !important
+    bottom: 5em !important
 
-  @media screen and (max-width: variables.$mobile-screen)
-    padding: 1.32em variables.$nav-side-padding / 2
-
-  a
-    text-decoration: none
-    color: variables.$light-text
-    transition: all .23s ease-in-out
-
-    &:hover
-      color: #000
-
-  &.Dark
-    border-top-color: rgba(156, 160, 177, .18)
-
-    a:hover
-      color: #fff
-
-  .Title
-    display: flex
-    font-size: 1.5em
-    color: variables.$light-text
-    font-weight: 400
-    margin: 0
-
-    span
-      color: variables.$light-text
-
-    a
-      font-size: 1em
+  .Logo
+    user-select: none
 
   .Links
     display: flex
     flex-direction: column
+    gap: 1.45em
 
-    a
-      font-size: 1.1em
-      margin: 0.8em
+    a, .Title
+      color: rgba(#fff, .6)
+      text-decoration: none
+      font-size: 1.07em
+      font-weight: 400
+      width: max-content
+      transition: all .23s ease-in-out
 
-      @media screen and (max-width: variables.$mobile-screen)
-        margin: 0 .35em
+      &.Title
+        color: $title-color
+        padding-bottom: .55em
 
-      &:last-child
-        margin-right: 0
+      &:hover:not(.Title)
+        color: rgba(#fff, .9)
+
+  .Status
+    display: flex
+    align-items: center
+    padding: .45em .95em
+    border: 1px solid rgba(#fff, .7)
+    border-radius: 10px
+    font-size: 1.07em
+    color: $title-color
+    font-weight: 400
+
+    $status-default: rgba(#fff, .5)
+    $status-up: #00C087
+    $status-warning: #FFC107
+    $status-down: #FF3D00
+
+    .StatusCircle
+      width: 10px
+      height: 10px
+      border-radius: 100%
+      background-color: $status-default
+      margin: 0 .5em 0 .65em
+
+      &.Up
+        background-color: $status-up
+
+      &.Warning
+        background-color: $status-warning
+
+      &.Down
+        background-color: $status-down
+
+    .StatusText
+      color: $status-default
+      text-transform: capitalize
+
+      &.Up
+        color: $status-up
+
+      &.Warning
+        color: $status-warning
+
+      &.Down
+        color: $status-down
