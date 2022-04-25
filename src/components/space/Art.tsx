@@ -2,6 +2,7 @@ import {
   Avatar,
   Button,
   Card,
+  Loading,
   Page,
   Spacer,
   Tooltip,
@@ -29,6 +30,7 @@ import {
 import {
   fetchArtworkMetadata,
   fetchContract,
+  fetchTokenStateMetadata,
   fetchUserCreations,
 } from "verto-cache-interface";
 import { ArtworkMetadata } from "verto-cache-interface/dist/calls/types/artwork-metadata";
@@ -44,6 +46,7 @@ import { arPrice, gateway, gql, supportsFCP, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
 import { getVerification, Threshold } from "arverify";
+import { OrderInterface } from "verto-internals/interfaces/contracts/clob";
 import marked, { Renderer } from "marked";
 import Link from "next/link";
 import tinycolor from "tinycolor2";
@@ -332,6 +335,33 @@ const Art = (props: PropTypes) => {
     })();
   }, [props.price]);
 
+  // load offers
+  const [offers, setOffers] = useState<ArtOrderInterface[]>();
+
+  useEffect(() => {
+    (async () => {
+      const orders = await verto.exchange.getOrderBook(props.id);
+
+      setOffers(
+        await Promise.all(
+          orders.map(async (order) => {
+            const ticker = (await fetchTokenStateMetadata(order.token)).ticker;
+            const usd = undefined;
+
+            return {
+              ...order,
+              ticker,
+              usd,
+            };
+          })
+        )
+      );
+    })();
+  }, [props.id]);
+
+  // can the user sell this token
+  const canSell = () => !!(state && state?.balances?.[profile]);
+
   return (
     <>
       <Head>
@@ -564,53 +594,43 @@ const Art = (props: PropTypes) => {
             <Spacer y={3} />
             <h2>
               Offers
-              <div className={styles.OfferSelect}>
+              {/*<div className={styles.OfferSelect}>
                 <select>
                   <option value="recent">Most recent</option>
                   <option value="cheapest">Cheapest</option>
                   <option value="qty">Highest quantity</option>
                 </select>
                 <ChevronDownIcon />
-              </div>
+              </div>*/}
             </h2>
             <Spacer y={1.7} />
             <AnimatePresence>
-              <motion.div
-                {...cardListAnimation(0)}
-                key={0}
-                className={styles.OfferItem}
-              >
-                <Card.Bits
-                  quantity={17}
-                  price={{ usd: 10.23, qty: 22, ticker: "VRT" }}
-                />
-                <Spacer y={1.4} />
-              </motion.div>
-              <motion.div
-                {...cardListAnimation(1)}
-                key={1}
-                className={styles.OfferItem}
-              >
-                <Card.Bits
-                  quantity={6}
-                  price={{ usd: 8.23, qty: 17, ticker: "ARDRIVE" }}
-                />
-                <Spacer y={1.4} />
-              </motion.div>
-              <motion.div
-                {...cardListAnimation(2)}
-                key={2}
-                className={styles.OfferItem}
-              >
-                <Card.Bits
-                  quantity={23}
-                  price={{ usd: 18.95, qty: 33, ticker: "VRT" }}
-                />
-                <Spacer y={1.4} />
-              </motion.div>
+              {(offers &&
+                offers.map((offer, i) => (
+                  <motion.div
+                    {...cardListAnimation(i)}
+                    key={i}
+                    className={styles.OfferItem}
+                  >
+                    <Card.Bits
+                      quantity={offer.quantity}
+                      price={{
+                        usd: offer.usd, // price using USD
+                        qty: offer.price, // price using the native token
+                        ticker: offer.ticker,
+                      }}
+                    />
+                    <Spacer y={1.4} />
+                  </motion.div>
+                ))) || <Loading.Spinner />}
+              {offers && offers.length === 0 && (
+                <p className={styles.NoOffers}>
+                  No offers yet. {canSell && "Be the first one to sell!"}
+                </p>
+              )}
             </AnimatePresence>
             <AnimatePresence>
-              {state && state?.balances?.[profile] && (
+              {canSell() && (
                 <motion.div {...opacityAnimation()}>
                   <Button
                     type="outlined"
@@ -681,5 +701,10 @@ interface PropTypes {
   price: number | "--";
   type?: TokenType;
 }
+
+type ArtOrderInterface = OrderInterface & {
+  ticker: string;
+  usd: number;
+};
 
 export default Art;
