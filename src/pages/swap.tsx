@@ -570,7 +570,17 @@ const Swap = ({
         const { state: toState } = await fetchContract(pair.to.id);
 
         // if both are supported, the pair is tradable
-        setTradablePair(supportsFCP(fromState) && supportsFCP(toState));
+        const isTradablePair = supportsFCP(fromState) && supportsFCP(toState);
+
+        setTradablePair(isTradablePair);
+        if (!isTradablePair) {
+          setToast({
+            type: "warning",
+            description:
+              "This pair is not tradable. One of the tokens does not support the FCP",
+            duration: 3300,
+          });
+        }
       } catch (e) {
         console.error("Error fetching pair states: \n", e);
         setToast({
