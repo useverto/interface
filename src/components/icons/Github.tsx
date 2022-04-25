@@ -1,4 +1,4 @@
-const Twitter = () => (
+const Twitter = ({ fill = false }) => (
   <svg
     width="24"
     height="24"
@@ -12,6 +12,7 @@ const Twitter = () => (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+      fill={(fill && "currentColor") || undefined}
     />
   </svg>
 );
