@@ -2,6 +2,7 @@ import { Page, Spacer, useTheme, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { gateway, client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import { fetchContract } from "verto-cache-interface";
+import { useMediaPredicate } from "react-media-hook";
 import Image from "next/image";
 import Twitter from "./icons/Twitter";
 import Github from "./icons/Github";
@@ -81,18 +82,31 @@ const Footer = () => {
     })();
   }, []);
 
+  // mobile repsonsive display
+  const mobile = useMediaPredicate("(max-width: 720px)");
+
   return (
     <Page
       className={styles.Footer + " " + (theme === "Dark" ? styles.Dark : "")}
     >
       <div className={styles.FooterLinks}>
-        <Image
-          className={styles.Logo}
-          src="/logo_dark.svg"
-          width={60}
-          height={60}
-          draggable={false}
-        />
+        {(mobile && (
+          <Image
+            className={styles.Logo}
+            src="/logo_text.svg"
+            width={179}
+            height={37}
+            draggable={false}
+          />
+        )) || (
+          <Image
+            className={styles.Logo}
+            src="/logo_dark.svg"
+            width={60}
+            height={60}
+            draggable={false}
+          />
+        )}
         <div className={styles.Links}>
           <span className={styles.Title}>About</span>
           <a
