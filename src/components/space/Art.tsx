@@ -625,7 +625,7 @@ const Art = (props: PropTypes) => {
                 ))) || <Loading.Spinner />}
               {offers && offers.length === 0 && (
                 <p className={styles.NoOffers}>
-                  No offers yet. {canSell && "Be the first one to sell!"}
+                  No offers yet. {canSell() && "Be the first one to sell!"}
                 </p>
               )}
             </AnimatePresence>
