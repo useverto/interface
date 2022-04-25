@@ -31,6 +31,8 @@ $top-padding: 5em
         gap: .9em
 
       a, .Title
+        display: flex
+        align-items: center
         color: rgba(#fff, .6)
         text-decoration: none
         font-size: 1.07em
@@ -47,6 +49,12 @@ $top-padding: 5em
 
         &:hover:not(.Title)
           color: rgba(#fff, .9)
+
+        svg
+          font-size: 1em
+          width: 1em
+          height: 1em
+          margin-left: .45em
 
     .Status
       display: flex

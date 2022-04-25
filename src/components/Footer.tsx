@@ -1,8 +1,9 @@
-import { Page, Spacer, useTheme, useToasts } from "@verto/ui";
+import { Page, useTheme, useToasts } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { gateway, client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import { fetchContract } from "verto-cache-interface";
 import { useMediaPredicate } from "react-media-hook";
+import { ShareIcon } from "@iconicicons/react";
 import Image from "next/image";
 import Twitter from "./icons/Twitter";
 import Github from "./icons/Github";
@@ -115,6 +116,7 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             Library
+            <ShareIcon />
           </a>
           <a
             href="https://blog.th8ta.org/"
@@ -122,6 +124,7 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             Blog
+            <ShareIcon />
           </a>
           <a
             href="https://github.com/useverto/interface"
@@ -129,6 +132,7 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             Code
+            <ShareIcon />
           </a>
           <a
             href="https://github.com/useverto/contracts"
@@ -136,12 +140,14 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             Contracts
+            <ShareIcon />
           </a>
         </div>
         <div className={styles.Links}>
           <span className={styles.Title}>Company</span>
           <a href="https://th8ta.org" target="_blank" rel="noopener noreferrer">
             th8ta
+            <ShareIcon />
           </a>
           <a
             href="https://arconnect.io"
@@ -149,9 +155,11 @@ const Footer = () => {
             rel="noopener noreferrer"
           >
             ArConnect
+            <ShareIcon />
           </a>
           <a href="https://3em.dev" target="_blank" rel="noopener noreferrer">
             3em
+            <ShareIcon />
           </a>
         </div>
         <div className={styles.Status}>
