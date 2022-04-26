@@ -185,38 +185,40 @@ const Footer = () => {
         </div>
       </div>
       <div className={styles.SocialRow}>
-        <a
-          href="https://twitter.com/vertoexchange"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Twitter fill />
-        </a>
-        <a
-          href="https://twitter.com/vertoexchange"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Github fill />
-        </a>
-        <a
-          href="https://verto.exchange/chat"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Discord />
-        </a>
-        <a
-          href="https://www.linkedin.com/company/th8ta/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Linkedin />
-        </a>
+        <p className={styles.Copyright}>
+          Copyright (c) {new Date().getFullYear()}. All rights reserved
+        </p>
+        <div className={styles.SocialLinks}>
+          <a
+            href="https://twitter.com/vertoexchange"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Twitter fill />
+          </a>
+          <a
+            href="https://twitter.com/vertoexchange"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Github fill />
+          </a>
+          <a
+            href="https://verto.exchange/chat"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Discord />
+          </a>
+          <a
+            href="https://www.linkedin.com/company/th8ta/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Linkedin />
+          </a>
+        </div>
       </div>
-      <p className={styles.Copyright}>
-        Copyright (c) {new Date().getFullYear()}. All rights reserved
-      </p>
     </Page>
   );
 };

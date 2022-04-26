@@ -107,34 +107,44 @@ $top-padding: 5em
   .SocialRow
     display: flex
     align-items: center
-    justify-content: flex-end
-    gap: 20px
+    justify-content: space-between
     margin-top: $top-padding / 3 * 2
     padding-top: $top-padding / 3 * 2
     border-top: 1px solid rgba(#fff, .1)
 
-    a
-      color: #fff
-      opacity: .6
-      text-decoration: none
-      cursor: pointer
-      transition: all .23s ease-in-out
+    .SocialLinks
+      display: flex
+      align-items: center
+      gap: 20px
 
-      svg
-        width: 20px
-        height: 20px
-        font-size: 1em
+      @media screen and (max-width: variables.$mobile-screen)
+        gap: 10px
 
-      &:hover
-        opacity: 1
+      a
+        display: flex
+        align-items: center
+        color: #fff
+        opacity: .6
+        text-decoration: none
+        cursor: pointer
+        transition: all .23s ease-in-out
 
-  .Copyright
-    margin: 0
-    color: rgba(#fff, .6) !important
-    font-size: .9em
-    font-weight: 400
-    margin-top: .5em
+        svg
+          width: 20px
+          height: 20px
+          font-size: 1em
 
-    @media screen and (max-width: variables.$mobile-screen)
-      margin-top: $top-padding / 3 * 2
-      font-size: .75em
+          @media screen and (max-width: variables.$mobile-screen)
+            font-size: .75em
+
+        &:hover
+          opacity: 1
+
+    .Copyright
+      margin: 0
+      color: rgba(#fff, .6) !important
+      font-size: .9em
+      font-weight: 400
+
+      @media screen and (max-width: variables.$mobile-screen)
+        font-size: .75em
