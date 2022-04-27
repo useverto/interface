@@ -7,6 +7,7 @@ import {
   Avatar,
   Button,
   Card,
+  Loading,
   Modal,
   Page,
   Spacer,
@@ -50,8 +51,6 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
-  const [creations, setCreations] = useState<string[]>([]);
-  const [owned, setOwned] = useState<string[]>([]);
   const [orders, setOrders] = useState<OrderInterfaceWithPair[]>([]);
   const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
   const currentAddress = useSelector(
@@ -96,6 +95,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   }, [arconnect, currentAddress, isCurrentUser]);
 
   // load creations
+  const [creations, setCreations] = useState<string[]>();
+
   useEffect(() => {
     fetchUserCreations(props.input)
       .then((val) => setCreations(val.slice(0, 4)))
@@ -103,6 +104,8 @@ const User = (props: { user: UserInterface | null; input: string }) => {
   }, []);
 
   // load owned
+  const [owned, setOwned] = useState<string[]>();
+
   useEffect(() => {
     client.user
       .getBalances(props.input, "art")
@@ -278,7 +281,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <h1 className="Title">Owned art {"&"} collectibles</h1>
       <Spacer y={2} />
       <div className={styles.Creations}>
-        {owned.map((id, i) => (
+        {owned?.map((id, i) => (
           <motion.div
             key={i}
             {...cardAnimation(i)}
@@ -291,7 +294,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           </motion.div>
         ))}
       </div>
-      {(owned.length > 0 && (
+      {(owned && owned.length > 0 && (
         <>
           <Spacer y={2} />
           <Link href={`/@${props.input}/owns`}>
@@ -301,25 +304,29 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="NoItemsText">No collectibles owned...</span>}
+      )) ||
+        (owned && (
+          <span className="NoItemsText">No collectibles owned...</span>
+        )) || <Loading.Spinner className={styles.LoadingSection} />}
       <Spacer y={2} />
       <h1 className="Title">Creations</h1>
       <Spacer y={2} />
       <div className={styles.Creations}>
-        {creations.map((id, i) => (
-          <motion.div
-            key={i}
-            {...cardAnimation(i)}
-            className={styles.CardGridItemWrapper}
-          >
-            <Card.AssetClear
-              image={`${gateway()}/${id}`}
-              onClick={() => router.push(`/space/${id}`)}
-            />
-          </motion.div>
-        ))}
+        {creations &&
+          creations.map((id, i) => (
+            <motion.div
+              key={i}
+              {...cardAnimation(i)}
+              className={styles.CardGridItemWrapper}
+            >
+              <Card.AssetClear
+                image={`${gateway()}/${id}`}
+                onClick={() => router.push(`/space/${id}`)}
+              />
+            </motion.div>
+          ))}
       </div>
-      {(creations.length > 0 && (
+      {(creations && creations.length > 0 && (
         <>
           <Spacer y={2} />
           <Link href={`/@${props.input}/creations`}>
@@ -329,7 +336,10 @@ const User = (props: { user: UserInterface | null; input: string }) => {
             </a>
           </Link>
         </>
-      )) || <span className="NoItemsText">No creations...</span>}
+      )) ||
+        (creations && <span className="NoItemsText">No creations...</span>) || (
+          <Loading.Spinner className={styles.LoadingSection} />
+        )}
       <Spacer y={2} />
       <h1 className="Title">Trades</h1>
       <Spacer y={2} />
