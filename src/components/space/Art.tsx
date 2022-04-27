@@ -55,47 +55,12 @@ import Metas from "../../components/Metas";
 import FastAverageColor from "fast-average-color";
 import ArdbTransaction from "ardb/lib/models/transaction";
 import dayjs from "dayjs";
+import Other from "./Other";
 import styles from "../../styles/views/art.module.sass";
 
 const Art = (props: PropTypes) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
-
-  const { setToast } = useToasts();
-
-  // fullscreen stuff
-  const [fullScreen, setFullScreen] = useState(false);
-  const previewEl = useRef<HTMLDivElement>();
-
-  function toggleFullscreen() {
-    if (!fullScreen) previewEl.current?.requestFullscreen();
-    else document.exitFullscreen();
-    setFullScreen((val) => !val);
-  }
-
-  useEffect(() => {
-    const handler = () => setFullScreen(!!document.fullscreenElement);
-    document.addEventListener("fullscreenchange", handler);
-
-    return () => document.removeEventListener("fullscreenchange", handler);
-  }, []);
-
-  // fullscreen on "F" key
-  const searchOpen = useSelector((state: RootState) => state.searchReducer);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() !== "f") return;
-      // don't toggle fullscreen if search is open
-      if (searchOpen) return;
-
-      setFullScreen((val) => !val);
-      toggleFullscreen();
-    };
-    window.addEventListener("keypress", handler);
-
-    return () => window.removeEventListener("keypress", handler);
-  }, [searchOpen]);
 
   // content type
   const [videoMuted, setVideoMuted] = useState(true);
@@ -156,6 +121,44 @@ const Art = (props: PropTypes) => {
       } catch {}
     })();
   }, [props.id]);
+
+  if (data?.tokenType === "other") return <Other {...props} />;
+
+  const { setToast } = useToasts();
+
+  // fullscreen stuff
+  const [fullScreen, setFullScreen] = useState(false);
+  const previewEl = useRef<HTMLDivElement>();
+
+  function toggleFullscreen() {
+    if (!fullScreen) previewEl.current?.requestFullscreen();
+    else document.exitFullscreen();
+    setFullScreen((val) => !val);
+  }
+
+  useEffect(() => {
+    const handler = () => setFullScreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", handler);
+
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
+
+  // fullscreen on "F" key
+  const searchOpen = useSelector((state: RootState) => state.searchReducer);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() !== "f") return;
+      // don't toggle fullscreen if search is open
+      if (searchOpen) return;
+
+      setFullScreen((val) => !val);
+      toggleFullscreen();
+    };
+    window.addEventListener("keypress", handler);
+
+    return () => window.removeEventListener("keypress", handler);
+  }, [searchOpen]);
 
   // state
 

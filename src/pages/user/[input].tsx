@@ -341,9 +341,9 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           <Loading.Spinner className={styles.LoadingSection} />
         )}
       <Spacer y={2} />
-      <h1 className="Title">Trades</h1>
+      {/*<h1 className="Title">Trades</h1>
       <Spacer y={2} />
-      {/*orders.map((order, i) => (
+      orders.map((order, i) => (
         <motion.div key={i} {...cardListAnimation(i)}>
           <Card.Trade
             type={(() => {
@@ -388,7 +388,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           />
           <Spacer y={1} />
         </motion.div>
-          ))*/}
+          ))
       {(orders.length > 0 && (
         <>
           <Spacer y={2} />
@@ -400,7 +400,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
           </Link>
         </>
       )) || <span className="NoItemsText">No trades...</span>}
-      <Spacer y={4} />
+      <Spacer y={4} />*/}
       <h1 className="Title">Transactions</h1>
       <Spacer y={1} />
       <table className={styles.Transactions}>
