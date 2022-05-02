@@ -282,11 +282,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <Spacer y={2} />
       <div className={styles.Creations}>
         {owned?.map((id, i) => (
-          <motion.div
-            key={i}
-            {...cardAnimation(i)}
-            className={styles.CardGridItemWrapper}
-          >
+          <motion.div key={i} {...cardAnimation(i)}>
             <Card.AssetClear
               image={`${gateway()}/${id}`}
               onClick={() => router.push(`/space/${id}`)}
@@ -314,11 +310,7 @@ const User = (props: { user: UserInterface | null; input: string }) => {
       <div className={styles.Creations}>
         {creations &&
           creations.map((id, i) => (
-            <motion.div
-              key={i}
-              {...cardAnimation(i)}
-              className={styles.CardGridItemWrapper}
-            >
+            <motion.div key={i} {...cardAnimation(i)}>
               <Card.AssetClear
                 image={`${gateway()}/${id}`}
                 onClick={() => router.push(`/space/${id}`)}

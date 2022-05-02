@@ -333,7 +333,15 @@
     color: variables.$foreground-color
 
   .SuggestedArts
-    +variables.cardGrid
+    display: grid
+    justify-content: space-between
+    grid-template-columns: auto auto auto auto
+    gap: 3em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      display: flex
+      align-items: center
+      flex-direction: column
 
     .Item
       display: block

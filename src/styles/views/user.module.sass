@@ -56,7 +56,15 @@
 
 .Creations
   position: relative
-  +variables.cardGrid($itemName: "CreationItem")
+  display: grid
+  justify-content: space-between
+  grid-template-columns: auto auto auto auto
+  gap: 3em
+
+  @media screen and (max-width: variables.$mobile-screen)
+    display: flex
+    align-items: center
+    flex-direction: column
 
 .Transactions
   width: 100%

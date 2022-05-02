@@ -213,28 +213,3 @@ $component-background: var(--component-background)
     color: $foreground-color
     font-weight: 500
     text-decoration: underline
-
-=cardGrid($itemName: "Item", $space: 3.5em)
-  display: grid
-  justify-content: space-between
-  grid-template-columns: repeat(4, 1fr)
-  justify-items: center
-
-  @media screen and (max-width: $mobile-screen)
-    justify-content: center
-    grid-template-columns: auto
-
-  .CardGridItemWrapper
-    width: max-content
-
-  .#{$itemName}
-    position: relative
-
-    &:nth-child(4n+4)
-      margin-bottom: $space
-
-    &:last-child
-      margin-bottom: 0
-
-    @media screen and (max-width: $mobile-screen)
-      margin-bottom: $space
