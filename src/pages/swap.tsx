@@ -512,7 +512,7 @@ const Swap = ({
         orderType === "limit" ? Number(priceInput.state) : undefined;
 
       // create the order
-      const orderID = await verto.exchange.swap(
+      await verto.exchange.swap(
         {
           from: pair.from.id,
           to: pair.to.id,
@@ -523,8 +523,14 @@ const Swap = ({
 
       setToast({
         type: "success",
-        description: "Created order",
-        duration: 3300,
+        description:
+          "Order created successfully. Your funds will arrive shortly",
+        duration: 3800,
+      });
+      setToast({
+        type: "info",
+        description: `Your estimated receipt is ${estimate.immediate} ${pair.to.ticker}`,
+        duration: 3800,
       });
       priceInput.reset();
       amountInput.reset();
