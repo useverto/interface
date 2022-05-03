@@ -442,9 +442,6 @@ const Swap = ({
   // max btn hovered
   const [maxHovered, setMaxHovered] = useState(false);
 
-  // TODO: to calculate the total amount of tokens the user will receive
-  // dry run the contract with the swap interaction
-
   // toasts
   const { setToast } = useToasts();
 
@@ -603,10 +600,12 @@ const Swap = ({
   // estimate the received token amount
   const [estimate, setEstimate] = useState<{
     immediate: number;
+    rest: number;
     remaining: number;
     fee: number;
   }>({
     immediate: 0,
+    rest: 0,
     remaining: 0,
     fee: 0,
   });
@@ -993,17 +992,31 @@ const Swap = ({
                   <p>Amount</p>
                 </SwapInput>
                 <Spacer y={2.4} />
-                {estimate.remaining && (
+                {(orderType === "limit" && (
                   <>
                     <div className={styles.Estimate}>
-                      <p>Returns</p>
+                      <p>Estimated immediate</p>
                       <p>
-                        ≈ {isNanNull(estimate.remaining)} {pair.from.ticker}
+                        ≈ {isNanNull(estimate.immediate)} {pair.to.ticker}
                       </p>
                     </div>
                     <Spacer y={0.65} />
+                    <div className={styles.Estimate}>
+                      <p>Remains</p>
+                      <p>
+                        ≈ {isNanNull(estimate.rest)} {pair.to.ticker}
+                      </p>
+                    </div>
                   </>
+                )) || (
+                  <div className={styles.Estimate}>
+                    <p>Returns</p>
+                    <p>
+                      ≈ {isNanNull(estimate.remaining)} {pair.from.ticker}
+                    </p>
+                  </div>
                 )}
+                <Spacer y={0.65} />
                 <div className={styles.Estimate}>
                   <p>Fee</p>
                   <p>
@@ -1014,7 +1027,10 @@ const Swap = ({
                 <div className={styles.Estimate + " " + styles.Total}>
                   <p>Total estimated</p>
                   <p>
-                    ≈ {isNanNull(estimate.immediate)} {pair.to.ticker}
+                    ≈{" "}
+                    {isNanNull(estimate.immediate) +
+                      isNanNull(estimate.rest || 0)}{" "}
+                    {pair.to.ticker}
                   </p>
                 </div>
               </div>
