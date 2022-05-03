@@ -23,6 +23,8 @@ export default function SwapInput({
   focusTheme = false,
   type = "text",
   placeholder,
+  min,
+  max,
   ...props
 }: PropsWithChildren<Props>) {
   const [val, setVal] = useState(value);
@@ -82,6 +84,12 @@ export default function SwapInput({
       setInputWidth(finalInputWidth);
   }
 
+  // validate min-max
+  useEffect(() => {
+    if (!!max && val > max) setVal(max);
+    if (min !== undefined && val < min) setVal(min);
+  }, [val, min, max]);
+
   return (
     <div
       className={
@@ -126,6 +134,8 @@ export default function SwapInput({
           width: inputWidth,
         }}
         placeholder={placeholder}
+        min={min}
+        max={max}
       />
       {rightEl && rightEl}
     </div>
@@ -145,6 +155,8 @@ interface Props {
   focusTheme?: boolean;
   type?: "text" | "number" | "password";
   placeholder?: string;
+  min?: number;
+  max?: number;
 }
 
 type InputStatus = undefined | "error" | "warning" | "success";

@@ -311,12 +311,29 @@
 
     .SwapInputs
       padding: $sidePadding
+        bottom: $sidePadding / 2
 
       .Max
         cursor: pointer
         
         &:hover
           text-decoration: underline
+
+    .Estimate
+        display: flex
+        align-items: center
+        justify-content: space-between
+        margin: 0 .2em
+
+        &.Total
+          padding-top: .8em
+          border-top: 1px dashed variables.$cec
+
+        p
+          font-size: .9em
+          font-weight: 500
+          color: variables.$light-text
+          margin: 0
 
     .SwapBottom
       padding: $sidePadding

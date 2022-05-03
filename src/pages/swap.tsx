@@ -924,6 +924,7 @@ const Swap = ({
                           </p>
                         }
                         type="number"
+                        min={0}
                       >
                         <p>Price</p>
                       </SwapInput>
@@ -944,19 +945,35 @@ const Swap = ({
                       {maxHovered ? "Max" : pair.from.ticker}
                     </p>
                   }
+                  min={0}
+                  max={balanceOfCurrent()}
                 >
                   <p>Amount</p>
                 </SwapInput>
-                <Spacer y={2} />
-                <SwapInput
-                  value=""
-                  type="number"
-                  readonly
-                  focusTheme
-                  rightEl={<p>xxxxxx</p>}
-                >
+                <Spacer y={2.4} />
+                <div className={styles.Estimate}>
+                  <p>Immediately gets</p>
+                  <p>
+                    ~TESTAMOUNT
+                    {pair.to.ticker}
+                  </p>
+                </div>
+                <Spacer y={0.65} />
+                <div className={styles.Estimate}>
+                  <p>Estimated remaining</p>
+                  <p>
+                    ~TESTAMOUNT
+                    {pair.to.ticker}
+                  </p>
+                </div>
+                <Spacer y={0.8} />
+                <div className={styles.Estimate + " " + styles.Total}>
                   <p>Total</p>
-                </SwapInput>
+                  <p>
+                    ~TESTAMOUNT
+                    {pair.to.ticker}
+                  </p>
+                </div>
               </div>
             </div>
             <div className={styles.SwapBottom}>
