@@ -77,3 +77,9 @@ export function shuffleArray<T>(array: T[]): T[] {
 
   return copy;
 }
+
+/**
+ * Return 0 if the value is NaN
+ * @param val Value to check
+ */
+export const isNanNull = (val) => (Number.isNaN(val) ? 0 : val);

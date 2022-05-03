@@ -49,7 +49,7 @@ import {
 } from "../utils/arweave";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/reducers";
-import { formatAddress } from "../utils/format";
+import { formatAddress, isNanNull } from "../utils/format";
 import { swapItems } from "../utils/storage_names";
 import { pairAddPending } from "../utils/pending_pair";
 import SwapInput from "../components/SwapInput";
@@ -594,6 +594,35 @@ const Swap = ({
     })();
   }, [pair]);
 
+  // estimate the received token amount
+  const [estimate, setEstimate] = useState<{
+    immediate: number;
+    rest?: number;
+  }>({
+    immediate: 0,
+  });
+
+  useEffect(() => {
+    (async () => {
+      if (!amountInput.state) return;
+
+      let price = orderType === "limit" ? Number(priceInput.state) : undefined;
+
+      if (orderType === "limit" && isNaN(price)) price = 0;
+
+      const res = await verto.exchange.estimateSwap(
+        {
+          from: pair.from.id,
+          to: pair.to.id,
+        },
+        Number(amountInput.state),
+        price
+      );
+
+      setEstimate(res);
+    })();
+  }, [pair, orderType, amountInput.state, priceInput.state]);
+
   return (
     <Page>
       <Head>
@@ -954,23 +983,21 @@ const Swap = ({
                 <div className={styles.Estimate}>
                   <p>Immediately gets</p>
                   <p>
-                    ~TESTAMOUNT
-                    {pair.to.ticker}
+                    ~{isNanNull(estimate.immediate)} {pair.to.ticker}
                   </p>
                 </div>
                 <Spacer y={0.65} />
                 <div className={styles.Estimate}>
                   <p>Estimated remaining</p>
                   <p>
-                    ~TESTAMOUNT
-                    {pair.to.ticker}
+                    ~{isNanNull(estimate.rest ?? 0)} {pair.to.ticker}
                   </p>
                 </div>
                 <Spacer y={0.8} />
                 <div className={styles.Estimate + " " + styles.Total}>
                   <p>Total</p>
                   <p>
-                    ~TESTAMOUNT
+                    ~{estimate.immediate + isNanNull(estimate.rest)}{" "}
                     {pair.to.ticker}
                   </p>
                 </div>
