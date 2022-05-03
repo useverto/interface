@@ -598,18 +598,23 @@ const Swap = ({
   const [estimate, setEstimate] = useState<{
     immediate: number;
     rest?: number;
+    fee: number;
   }>({
     immediate: 0,
+    fee: 0,
   });
 
   useEffect(() => {
     (async () => {
       if (!amountInput.state) return;
 
+      // get price
       let price = orderType === "limit" ? Number(priceInput.state) : undefined;
 
+      // if the price is undefined for limit orders, set it to 0
       if (orderType === "limit" && isNaN(price)) price = 0;
 
+      // fetch estimate
       const res = await verto.exchange.estimateSwap(
         {
           from: pair.from.id,
@@ -997,8 +1002,15 @@ const Swap = ({
                 <div className={styles.Estimate + " " + styles.Total}>
                   <p>Total</p>
                   <p>
-                    ~{estimate.immediate + isNanNull(estimate.rest)}{" "}
+                    ~{isNanNull(estimate.immediate) + isNanNull(estimate.rest)}{" "}
                     {pair.to.ticker}
+                  </p>
+                </div>
+                <Spacer y={0.65} />
+                <div className={styles.Estimate}>
+                  <p>Total fee</p>
+                  <p>
+                    {isNanNull(estimate.fee)} {pair.from.ticker}
                   </p>
                 </div>
               </div>
