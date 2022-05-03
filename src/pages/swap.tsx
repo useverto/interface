@@ -677,7 +677,8 @@ const Swap = ({
         <Card className={styles.SwapForm}>
           {/** If the country is blocked, we display an overlay */}
           <AnimatePresence>
-            {blockedCountry && (
+            {/** TODO: re-enable this on MAINNET release */}
+            {/*blockedCountry && (
               <motion.div
                 className={
                   styles.SwapOverlay +
@@ -698,7 +699,7 @@ const Swap = ({
                   </p>
                 </div>
               </motion.div>
-            )}
+            )*/}
           </AnimatePresence>
           <AnimatePresence>
             {tokenSelector && (
@@ -1093,9 +1094,9 @@ const Swap = ({
             {pair.from.ticker} / {pair.to.ticker}
           </span>
         </h1>
-        <Select label="DEPTH" small className={styles.DepthSelect}>
+        {/*<Select label="DEPTH" small className={styles.DepthSelect}>
           <option value="0">0</option>
-        </Select>
+        </Select>*/}
       </div>
       <Spacer y={2} />
       <div className={styles.OrderBook}>
