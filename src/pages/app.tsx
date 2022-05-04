@@ -86,6 +86,8 @@ const App = () => {
       for (const art of ownedArts) {
         const artData = await fetchArtworkMetadata(art.contractId);
 
+        if (!artData) continue;
+
         setOwned((val) => [
           ...(val ?? []),
           {
