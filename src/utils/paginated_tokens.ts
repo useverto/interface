@@ -25,7 +25,8 @@ export default function usePaginatedTokens() {
     const fetchedTokens = await fetchPaginated<PaginatedToken>(
       "tokens",
       8,
-      currentTokensPage
+      currentTokensPage,
+      true
     );
 
     // if there are not tokens returned, quit

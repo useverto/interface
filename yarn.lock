@@ -641,10 +641,10 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-19":
-  version "1.0.0-beta-19"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-19.tgz#345a4717f8ba46c6aff4a273e1acd2637839d18e"
-  integrity sha512-oaJcHNr6Pvq30HyWVvX6/PG7R42T6uTlKMjcUe13ff6V217Vwqui8OZk7pLts+vglYXtQKoKOBbfnqy7twS9KA==
+"@verto/js@^1.0.0-beta-20":
+  version "1.0.0-beta-20"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-20.tgz#aabfd95f7b165915955c1617167369a5714f5827"
+  integrity sha512-sWzfZ34C2a5xD87LtA0mu0P8dcIUphI2tfNy+grY8EkBSZbenENOgqoqxv56hxWuV3E9N0/QTIHMXT+vXRYx2g==
   dependencies:
     "@three-em/js" "^0.2.8"
     "@three-em/node" "^0.2.10"
@@ -652,7 +652,7 @@
     arweave "^1.10.23"
     axios "^0.24.0"
     smartweave "^0.4.46"
-    verto-cache-interface "^1.2.2"
+    verto-cache-interface "^1.2.3"
     verto-internals "^0.9.1"
 
 "@verto/ui@^3.0.0-alpha":
@@ -3452,10 +3452,10 @@ uuid@8.3.2, uuid@^8.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-verto-cache-interface@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.2.tgz#4270231279aa705458c2f6320e62c5e4dfbe7853"
-  integrity sha512-W8eJY4sv3RVZKUbhbpK4pyxt5YShi0fomnp5qt/WaK6+6v/fyyYHWq0rf83iTKLx+xTx7VSiJNoM/2XOTcU8Bw==
+verto-cache-interface@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.3.tgz#178d6d6780501e2b69a8ee63182c96713c5e6d0d"
+  integrity sha512-+T5flkTwB6bZJpeWAGFgaqd+SrixlOurtwnQg5MpNw0LnOdpq7AZoJlmhNzg91MJbkgMQx8VOv5+SMutzDXDUQ==
   dependencies:
     axios "^0.23.0"
     verto-internals "^0.7.0"
