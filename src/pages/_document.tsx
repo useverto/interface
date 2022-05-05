@@ -5,13 +5,7 @@ import Document, {
   NextScript,
   DocumentContext,
 } from "next/document";
-import { ROOT_URL, COMMUNITY_CONTRACT, CACHE_CONFIG } from "../utils/arweave";
-import { CacheInterfaceConstants } from "verto-cache-interface";
-
-// configure the cache interface
-CacheInterfaceConstants.CACHE_API = CACHE_CONFIG.CACHE_API;
-CacheInterfaceConstants.COMMUNITY_CONTRACT = COMMUNITY_CONTRACT;
-CacheInterfaceConstants.CONTRACT_CDN = CACHE_CONFIG.CONTRACT_CDN;
+import { ROOT_URL } from "../utils/arweave";
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {

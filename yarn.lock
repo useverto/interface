@@ -641,10 +641,10 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-20":
-  version "1.0.0-beta-20"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-20.tgz#aabfd95f7b165915955c1617167369a5714f5827"
-  integrity sha512-sWzfZ34C2a5xD87LtA0mu0P8dcIUphI2tfNy+grY8EkBSZbenENOgqoqxv56hxWuV3E9N0/QTIHMXT+vXRYx2g==
+"@verto/js@^1.0.0-beta-21":
+  version "1.0.0-beta-21"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-21.tgz#f4f9a0e6ce55b1b18f7c210140f537197cf2cda6"
+  integrity sha512-nAa7XB7iSQRGbnLxo0JwD3FYhPIzbsoE52bMiHvXH3HAjaoE1/cUtg90YJaex76jxn1rgJblLUzdQXZkeEKKbA==
   dependencies:
     "@three-em/js" "^0.2.8"
     "@three-em/node" "^0.2.10"

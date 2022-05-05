@@ -18,12 +18,18 @@ import { updateNavTheme, updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
 import { fetchContract } from "verto-cache-interface";
-import { client, COMMUNITY_CONTRACT, gateway } from "../utils/arweave";
+import {
+  CACHE_CONFIG,
+  client,
+  COMMUNITY_CONTRACT,
+  gateway,
+} from "../utils/arweave";
 import {
   ignorePermissionWarning,
   lastViewedChangelog,
   theme as themeStorageName,
 } from "../utils/storage_names";
+import { CacheInterfaceConstants } from "verto-cache-interface";
 import { gt, valid } from "semver";
 import pkg from "../../package.json";
 import store from "../store";
@@ -37,6 +43,11 @@ import * as Fathom from "fathom-client";
 import betaAlertStyles from "../styles/components/BetaAlert.module.sass";
 import "../styles/global.sass";
 import "../styles/progress.sass";
+
+// configure the cache interface
+CacheInterfaceConstants.CACHE_API = CACHE_CONFIG.CACHE_API;
+CacheInterfaceConstants.COMMUNITY_CONTRACT = COMMUNITY_CONTRACT;
+CacheInterfaceConstants.CONTRACT_CDN = CACHE_CONFIG.CONTRACT_CDN;
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
