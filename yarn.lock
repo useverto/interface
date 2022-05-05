@@ -798,6 +798,13 @@ arconnect@^0.2.8, arconnect@^0.2.9:
   dependencies:
     arweave "^1.10.13"
 
+arconnect@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/arconnect/-/arconnect-0.4.2.tgz#83de7638fb46183e82d7ec7efb5594c5f7cdc806"
+  integrity sha512-Jkpd4QL3TVqnd3U683gzXmZUVqBUy17DdJDuL/3D9rkysLgX6ymJ2e+sR+xyZF5Rh42CBqDXWNMmCjBXeP7Gbw==
+  dependencies:
+    arweave "^1.10.13"
+
 ardb@^1.1.10:
   version "1.1.10"
   resolved "https://registry.yarnpkg.com/ardb/-/ardb-1.1.10.tgz#9f2de81e6ff7613c962e39536f881d58c11b79ff"
@@ -3456,6 +3463,14 @@ verto-cache-interface@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.3.tgz#178d6d6780501e2b69a8ee63182c96713c5e6d0d"
   integrity sha512-+T5flkTwB6bZJpeWAGFgaqd+SrixlOurtwnQg5MpNw0LnOdpq7AZoJlmhNzg91MJbkgMQx8VOv5+SMutzDXDUQ==
+  dependencies:
+    axios "^0.23.0"
+    verto-internals "^0.7.0"
+
+verto-cache-interface@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.4.tgz#3c5980e31a973c8b381f0f1c9478a4e285467a81"
+  integrity sha512-LwZx/bOQh4sNcSint41eRwfc+tB+0TOvmEl+h5F5dTM4tR4J1ARWHWO7KofCmwJfwcg/vsDOzf/ddFUpNlKF9Q==
   dependencies:
     axios "^0.23.0"
     verto-internals "^0.7.0"

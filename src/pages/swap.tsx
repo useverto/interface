@@ -41,6 +41,7 @@ import {
   UserBalance,
 } from "verto-cache-interface";
 import {
+  client,
   CLOB_CONTRACT,
   gateway,
   isAddress,
@@ -1217,9 +1218,18 @@ const Swap = ({
           <Button
             onClick={async () => {
               try {
-                await window.arweaveWallet.connect(requiredPermissions, {
-                  name: "Verto",
-                });
+                await window.arweaveWallet.connect(
+                  requiredPermissions,
+                  {
+                    name: "Verto",
+                  },
+                  {
+                    host: client.getConfig().api.host,
+                    port: Number(client.getConfig().api.port),
+                    // @ts-expect-error
+                    protocol: client.getConfig().api.protocol | "https",
+                  }
+                );
                 permissionModal.setState(false);
               } catch {}
             }}

@@ -17,7 +17,7 @@
     "@verto/js": "^1.0.0-beta-20",
     "@verto/ui": "^3.6.4-beta",
     "ar-gql": "^0.0.6",
-    "arconnect": "^0.2.9",
+    "arconnect": "^0.4.2",
     "ardb": "^1.1.10",
     "arverify": "^0.0.11",
     "arweave": "^1.10.23",
@@ -52,7 +52,7 @@
     "tinycolor2": "^1.4.2",
     "typed.js": "^2.0.12",
     "use-arconnect": "^1.0.1",
-    "verto-cache-interface": "^1.2.3",
+    "verto-cache-interface": "^1.2.4",
     "verto-internals": "^0.9.1"
   },
   "devDependencies": {

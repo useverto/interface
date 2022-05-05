@@ -31,7 +31,7 @@ export const ROOT_URL = "https://verto.exchange";
 export const COMMUNITY_CONTRACT = "ZabIbneNSOr7U6zv96slxtTlQgpId3cmyOHMf4BEjLI";
 
 /** Clob contract id */
-export const CLOB_CONTRACT = "Nv9OKVLKVPG97G02SibJT7azZXkYE7Ev02hiP9nx618";
+export const CLOB_CONTRACT = "X_8nM4tZUu3EGaL7wxiU3Sme5pe21Ei9iQJHK605P8M";
 
 /** Collection contract src tx id */
 export const COLLECTION_CONTRACT_SRC =

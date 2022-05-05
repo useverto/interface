@@ -168,9 +168,18 @@ export default function App({ Component, pageProps }) {
               <Button
                 onClick={async () => {
                   try {
-                    await window.arweaveWallet.connect(permissions, {
-                      name: "Verto",
-                    });
+                    await window.arweaveWallet.connect(
+                      permissions,
+                      {
+                        name: "Verto",
+                      },
+                      {
+                        host: client.getConfig().api.host,
+                        port: Number(client.getConfig().api.port),
+                        // @ts-expect-error
+                        protocol: client.getConfig().api.protocol | "https",
+                      }
+                    );
                   } catch {}
                   permissionsModal.setState(false);
                 }}
