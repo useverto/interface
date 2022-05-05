@@ -41,9 +41,9 @@ import {
   UserBalance,
 } from "verto-cache-interface";
 import {
-  client,
   CLOB_CONTRACT,
   gateway,
+  gatewayConfig,
   isAddress,
   supportsFCP,
   verto,
@@ -1223,12 +1223,7 @@ const Swap = ({
                   {
                     name: "Verto",
                   },
-                  {
-                    host: client.getConfig().api.host,
-                    port: Number(client.getConfig().api.port),
-                    // @ts-expect-error
-                    protocol: client.getConfig().api.protocol | "https",
-                  }
+                  gatewayConfig
                 );
                 permissionModal.setState(false);
               } catch {}

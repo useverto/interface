@@ -29,7 +29,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
-import { gateway, verto as client, client as arweave } from "../utils/arweave";
+import { gateway, verto as client, gatewayConfig } from "../utils/arweave";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
@@ -133,12 +133,7 @@ const Nav = () => {
     await window.arweaveWallet.connect(
       permissions,
       { name: "Verto" },
-      {
-        host: arweave.getConfig().api.host,
-        port: Number(arweave.getConfig().api.port),
-        // @ts-expect-error
-        protocol: arweave.getConfig().api.protocol | "https",
-      }
+      gatewayConfig
     );
     await syncAddress();
 

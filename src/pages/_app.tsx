@@ -20,9 +20,9 @@ import { permissions } from "../utils/arconnect";
 import { fetchContract } from "verto-cache-interface";
 import {
   CACHE_CONFIG,
-  client,
   COMMUNITY_CONTRACT,
   gateway,
+  gatewayConfig,
 } from "../utils/arweave";
 import {
   ignorePermissionWarning,
@@ -184,12 +184,7 @@ export default function App({ Component, pageProps }) {
                       {
                         name: "Verto",
                       },
-                      {
-                        host: client.getConfig().api.host,
-                        port: Number(client.getConfig().api.port),
-                        // @ts-expect-error
-                        protocol: client.getConfig().api.protocol | "https",
-                      }
+                      gatewayConfig
                     );
                   } catch {}
                   permissionsModal.setState(false);

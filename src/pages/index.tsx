@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
-import { verto as client, client as arweave } from "../utils/arweave";
+import { verto as client, gatewayConfig } from "../utils/arweave";
 import Typed from "typed.js";
 import Head from "next/head";
 import Metas from "../components/Metas";
@@ -44,12 +44,7 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
     await window.arweaveWallet.connect(
       permissions,
       { name: "Verto" },
-      {
-        host: arweave.getConfig().api.host,
-        port: Number(arweave.getConfig().api.port),
-        // @ts-expect-error
-        protocol: arweave.getConfig().api.protocol | "https",
-      }
+      gatewayConfig
     );
 
     const activeAddress = await window.arweaveWallet.getActiveAddress();

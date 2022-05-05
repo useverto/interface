@@ -1,3 +1,4 @@
+import { GatewayConfig } from "arconnect";
 import ArdbTransaction from "ardb/lib/models/transaction";
 import GQLResultInterface from "ar-gql/dist/faces";
 import Arweave from "arweave";
@@ -8,12 +9,15 @@ import Verto from "@verto/js";
 
 /** Global APIs and constants */
 
-/** Global Arweave client instance */
-export const client = new Arweave({
+/** Arweave gateway config */
+export const gatewayConfig: GatewayConfig = {
   host: "www.arweave.run",
   port: 443,
   protocol: "https",
-});
+};
+
+/** Global Arweave client instance */
+export const client = new Arweave(gatewayConfig);
 
 /** Arweave gateway direct URL concatenated from the client instance */
 export const gateway = () =>
