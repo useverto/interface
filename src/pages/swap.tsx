@@ -1130,36 +1130,52 @@ const Swap = ({
               <th>Total</th>
             </thead>
             <tbody>
-              {orderbook &&
-                orderbook
-                  .filter((order) => order.pair[0] === pair.from.id)
-                  .map((order, i) => (
-                    <OrderBookRow
-                      key={i}
-                      id={i + 1}
-                      type="buy"
-                      price={order.price}
-                      // TODO
-                      //amount={order.filled}
-                      amount={10}
-                      total={order.quantity}
-                    />
-                  ))}
-              {(!orderbook &&
-                new Array(5).fill("").map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={4}>
-                      <Loading.Skeleton className={styles.OrderBookLoading} />
-                    </td>
-                  </tr>
-                ))) ||
-                (orderbook.length === 0 && (
-                  <tr>
-                    <td colSpan={4}>
-                      <p className={styles.NoOrders}>No orders...</p>
-                    </td>
-                  </tr>
-                ))}
+              {(() => {
+                // if orderbook is not loaded
+                if (!orderbook)
+                  return (
+                    <>
+                      {new Array(5).fill("").map((_, i) => (
+                        <tr key={i}>
+                          <td colSpan={4}>
+                            <Loading.Skeleton
+                              className={styles.OrderBookLoading}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  );
+
+                // get buy orders
+                const buyOrders = orderbook.filter(
+                  (order) => order.token === pair.from.id
+                );
+
+                if (buyOrders.length === 0)
+                  return (
+                    <tr>
+                      <td colSpan={4}>
+                        <p className={styles.NoOrders}>No buy orders...</p>
+                      </td>
+                    </tr>
+                  );
+                else
+                  return (
+                    <>
+                      {buyOrders.map((order, i) => (
+                        <OrderBookRow
+                          key={i}
+                          id={i + 1}
+                          type="buy"
+                          price={order.price}
+                          amount={order.quantity}
+                          total={order.originalQuantity}
+                        />
+                      ))}
+                    </>
+                  );
+              })()}
             </tbody>
           </table>
         </Card>
@@ -1174,36 +1190,52 @@ const Swap = ({
               <th>Total</th>
             </thead>
             <tbody>
-              {orderbook &&
-                orderbook
-                  .filter((order) => order.pair[1] === pair.to.id)
-                  .map((order, i) => (
-                    <OrderBookRow
-                      key={i}
-                      id={i + 1}
-                      type="sell"
-                      price={order.price}
-                      // TODO
-                      // amount={order.filled}
-                      amount={10}
-                      total={order.quantity}
-                    />
-                  ))}
-              {(!orderbook &&
-                new Array(5).fill("").map((_, i) => (
-                  <tr key={i}>
-                    <td colSpan={4}>
-                      <Loading.Skeleton className={styles.OrderBookLoading} />
-                    </td>
-                  </tr>
-                ))) ||
-                (orderbook.length === 0 && (
-                  <tr>
-                    <td colSpan={4}>
-                      <p className={styles.NoOrders}>No orders...</p>
-                    </td>
-                  </tr>
-                ))}
+              {(() => {
+                // if orderbook is not loaded
+                if (!orderbook)
+                  return (
+                    <>
+                      {new Array(5).fill("").map((_, i) => (
+                        <tr key={i}>
+                          <td colSpan={4}>
+                            <Loading.Skeleton
+                              className={styles.OrderBookLoading}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  );
+
+                // get sell orders
+                const sellOrders = orderbook.filter(
+                  (order) => order.token === pair.to.id
+                );
+
+                if (sellOrders.length === 0)
+                  return (
+                    <tr>
+                      <td colSpan={4}>
+                        <p className={styles.NoOrders}>No sell orders...</p>
+                      </td>
+                    </tr>
+                  );
+                else
+                  return (
+                    <>
+                      {sellOrders.map((order, i) => (
+                        <OrderBookRow
+                          key={i}
+                          id={i + 1}
+                          type="sell"
+                          price={order.price}
+                          amount={order.quantity}
+                          total={order.originalQuantity}
+                        />
+                      ))}
+                    </>
+                  );
+              })()}
             </tbody>
           </table>
         </Card>
@@ -1243,8 +1275,8 @@ const Swap = ({
           <h3 className={styles.ModalTitleInner}>Market Orders</h3>
           Placing an order "at the market" will execute as quickly as possible.
           It will loop through all orders until the submitted order is filled.
-          If the order is not completely filled, it will be executed the next
-          time someone creates an order against it.
+          If the order is not completely filled, the remaining amount will be
+          sent back to the order creator.
           <h3 className={styles.ModalTitleInner}>Limit Orders</h3>
           Placing an order "at the limit" will execute once an order is created
           that matches the limit price. It will not execute if the limit price
