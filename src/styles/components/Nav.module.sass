@@ -180,6 +180,11 @@
     .Logo .VersionChip, .Menu .Selection
       box-shadow: none
 
+    .Menu
+      @media screen and (max-width: variables.$mobile-screen)
+        top: 90vh
+        bottom: unset
+
 .UserPopover
   padding: .4em .5em !important
   right: 0
