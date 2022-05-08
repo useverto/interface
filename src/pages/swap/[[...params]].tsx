@@ -142,6 +142,18 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       // return if the parsed pair is invalid
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
 
+      // if the pair items are the same
+      // update one of them to a random one
+      if (
+        parsedPair.from === parsedPair.to ||
+        (parsedPair.from === pair.to.id && overwrite.to && !overwrite.from) ||
+        (parsedPair.to === pair.from.id && overwrite.from && !overwrite.to) ||
+        (pair.from.id === pair.to.id && overwrite.from && overwrite.to)
+      ) {
+        parsedPair.to = (await fetchTopCommunities(1))[0].id;
+        overwrite.to = false;
+      }
+
       // load token metadata to set as the pair
       const fromToken = overwrite.from
         ? pair.from
