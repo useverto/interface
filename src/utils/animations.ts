@@ -92,27 +92,48 @@ export const infiniteScrollAnimation = {
   },
 };
 
+const mobileBaseAnimationState = {
+  left: "50%",
+  translateX: "-50%",
+};
+
 export const navMobileAnimation = {
   initial: {
     opacity: 0,
     y: 200,
-    left: "50%",
-    translateX: "-50%",
+    ...mobileBaseAnimationState,
   },
   animate: {
     opacity: 1,
     y: 0,
-    left: "50%",
-    translateX: "-50%",
+    ...mobileBaseAnimationState,
   },
   exit: {
     opacity: 0,
     y: 200,
-    left: "50%",
-    translateX: "-50%",
+    ...mobileBaseAnimationState,
   },
   transition: {
     duration: 0.23,
     ease: "easeInOut",
   },
+};
+
+export const navDesktopAnimation = {
+  initial: {
+    opacity: 0,
+    y: "-50%",
+    ...mobileBaseAnimationState,
+  },
+  animate: {
+    opacity: 1,
+    y: "-50%",
+    ...mobileBaseAnimationState,
+  },
+  exit: {
+    opacity: 0,
+    y: "-50%",
+    ...mobileBaseAnimationState,
+  },
+  transition: navMobileAnimation.transition,
 };

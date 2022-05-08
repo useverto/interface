@@ -30,7 +30,11 @@ import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
 import { gateway, verto as client, gatewayConfig } from "../utils/arweave";
-import { navMobileAnimation, opacityAnimation } from "../utils/animations";
+import {
+  navDesktopAnimation,
+  navMobileAnimation,
+  opacityAnimation,
+} from "../utils/animations";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
@@ -244,7 +248,7 @@ const Nav = () => {
           {arconnect && address && menuShown && (
             <motion.div
               className={styles.Menu}
-              {...((mobile && navMobileAnimation) || opacityAnimation)}
+              {...((mobile && navMobileAnimation) || navDesktopAnimation)}
             >
               <Link href="/app">
                 <a
