@@ -72,7 +72,16 @@
     transform: translate(-50%, -50%)
 
     @media screen and (max-width: variables.$mobile-screen)
-      display: none
+      position: fixed
+      top: unset
+      bottom: 1em
+      left: 50%
+      background-color: variables.$component-background
+      box-shadow: variables.$standard-shadow
+      padding: 1em .4em
+      border-radius: 10px
+      z-index: 10000
+      transform: translateX(-50%)
 
     a
       font-size: $menuItemFontSize
@@ -98,6 +107,10 @@
       top: 50%
       transform: translateY(-50%)
       transition: all .17s ease-in-out
+
+      @media screen and (max-width: variables.$mobile-screen)
+        height: $menuItemFontSize * 2.6
+        border-radius: 10px
 
   &.DarkNav 
     .Menu .Selection

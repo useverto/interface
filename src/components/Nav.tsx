@@ -67,6 +67,7 @@ const Nav = () => {
     };
   });
 
+  // sync the selection position with the current route
   useEffect(syncSelected, [router.asPath]);
 
   // set user data
@@ -162,8 +163,6 @@ const Nav = () => {
 
   const search = useSearch();
 
-  const mobile = useMediaPredicate("(max-width: 720px)");
-
   const theme = useSelector((state: RootState) => state.themeReducer);
   const displayTheme = useTheme();
   const blurTheme = useSelector((state: RootState) => state.navThemeReducer);
@@ -255,50 +254,6 @@ const Nav = () => {
             closeOnClick
             content={
               <>
-                {/**
-                 * If the user is on mobile, we put the menu items into
-                 * the profile dropdown for a more responsive layout
-                 */}
-                {mobile && (
-                  <>
-                    <Link href="/app">
-                      <a
-                        className={
-                          styles.MenuItem +
-                          " " +
-                          (displayTheme === "Dark" ? styles.Dark : "")
-                        }
-                      >
-                        <HomeIcon />
-                        Home
-                      </a>
-                    </Link>
-                    <Link href="/space">
-                      <a
-                        className={
-                          styles.MenuItem +
-                          " " +
-                          (displayTheme === "Dark" ? styles.Dark : "")
-                        }
-                      >
-                        <MapIcon />
-                        Space
-                      </a>
-                    </Link>
-                    <Link href="/swap">
-                      <a
-                        className={
-                          styles.MenuItem +
-                          " " +
-                          (displayTheme === "Dark" ? styles.Dark : "")
-                        }
-                      >
-                        <ArrowSwitchIcon />
-                        Swap
-                      </a>
-                    </Link>
-                  </>
-                )}
                 <Link href={`/@${user ? user.username : address}`}>
                   <a
                     className={
