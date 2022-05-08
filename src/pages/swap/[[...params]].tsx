@@ -1065,46 +1065,29 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                     }}
                   />
                 </div>
-                {/** 0% */}
-                <div
-                  className={
-                    styles.Circle +
-                    " " +
-                    (fillPercentage() > 0 ? styles.FilledCircle : "")
+                {new Array(5).fill("").map((_, i) => {
+                  let filled = fillPercentage() >= i * 25;
+
+                  if (i === 0 && fillPercentage() === 0) {
+                    filled = false;
                   }
-                />
-                {/** 25% */}
-                <div
-                  className={
-                    styles.Circle +
-                    " " +
-                    (fillPercentage() >= 25 ? styles.FilledCircle : "")
-                  }
-                />
-                {/** 50% */}
-                <div
-                  className={
-                    styles.Circle +
-                    " " +
-                    (fillPercentage() >= 50 ? styles.FilledCircle : "")
-                  }
-                />
-                {/** 75% */}
-                <div
-                  className={
-                    styles.Circle +
-                    " " +
-                    (fillPercentage() >= 75 ? styles.FilledCircle : "")
-                  }
-                />
-                {/** 100% */}
-                <div
-                  className={
-                    styles.Circle +
-                    " " +
-                    (fillPercentage() >= 100 ? styles.FilledCircle : "")
-                  }
-                />
+
+                  return (
+                    <div
+                      className={
+                        styles.Circle +
+                        " " +
+                        (filled ? styles.FilledCircle : "")
+                      }
+                      onClick={() =>
+                        amountInput.setState(
+                          Math.floor((balanceOfCurrent() / 100) * (i * 25))
+                        )
+                      }
+                      key={i}
+                    />
+                  );
+                })}
               </div>
               <Spacer y={2} />
               <Button
