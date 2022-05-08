@@ -527,7 +527,9 @@ const Swap = ({
       });
       setToast({
         type: "info",
-        description: `Your estimated receipt is ${estimate.immediate} ${pair.to.ticker}`,
+        description: `Your estimated receipt is ${
+          (estimate.immediate ?? 0) + (estimate.rest ?? 0)
+        } ${pair.to.ticker}`,
         duration: 3800,
       });
       priceInput.reset();
@@ -1127,7 +1129,8 @@ const Swap = ({
               <th>Side</th>
               <th>Price ({pair.to.ticker})</th>
               <th>Amount</th>
-              <th>Total</th>
+              <th className={styles.TotalColumn}>Total</th>
+              <th className={styles.CancelColumn} />
             </thead>
             <tbody>
               {(() => {
@@ -1137,7 +1140,7 @@ const Swap = ({
                     <>
                       {new Array(5).fill("").map((_, i) => (
                         <tr key={i}>
-                          <td colSpan={4}>
+                          <td colSpan={5}>
                             <Loading.Skeleton
                               className={styles.OrderBookLoading}
                             />
@@ -1155,7 +1158,7 @@ const Swap = ({
                 if (buyOrders.length === 0)
                   return (
                     <tr>
-                      <td colSpan={4}>
+                      <td colSpan={5}>
                         <p className={styles.NoOrders}>No buy orders...</p>
                       </td>
                     </tr>
@@ -1166,11 +1169,13 @@ const Swap = ({
                       {buyOrders.map((order, i) => (
                         <OrderBookRow
                           key={i}
-                          id={i + 1}
+                          index={i + 1}
+                          orderID={order.id}
                           type="buy"
                           price={order.price}
                           amount={order.quantity}
                           total={order.originalQuantity}
+                          cancellable={order.creator === address}
                         />
                       ))}
                     </>
@@ -1187,7 +1192,8 @@ const Swap = ({
               <th>Side</th>
               <th>Price ({pair.from.ticker})</th>
               <th>Amount</th>
-              <th>Total</th>
+              <th className={styles.TotalColumn}>Total</th>
+              <th className={styles.CancelColumn} />
             </thead>
             <tbody>
               {(() => {
@@ -1197,7 +1203,7 @@ const Swap = ({
                     <>
                       {new Array(5).fill("").map((_, i) => (
                         <tr key={i}>
-                          <td colSpan={4}>
+                          <td colSpan={5}>
                             <Loading.Skeleton
                               className={styles.OrderBookLoading}
                             />
@@ -1215,7 +1221,7 @@ const Swap = ({
                 if (sellOrders.length === 0)
                   return (
                     <tr>
-                      <td colSpan={4}>
+                      <td colSpan={5}>
                         <p className={styles.NoOrders}>No sell orders...</p>
                       </td>
                     </tr>
@@ -1226,11 +1232,13 @@ const Swap = ({
                       {sellOrders.map((order, i) => (
                         <OrderBookRow
                           key={i}
-                          id={i + 1}
+                          index={i + 1}
+                          orderID={order.id}
                           type="sell"
                           price={order.price}
                           amount={order.quantity}
                           total={order.originalQuantity}
+                          cancellable={order.creator === address}
                         />
                       ))}
                     </>

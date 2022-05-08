@@ -2,6 +2,7 @@
 
 .OrberBookRow
   position: relative
+  z-index: 1
   $buyTheme: #5EDBAF
   $sellTheme: #FE157D
 
@@ -27,9 +28,32 @@
     &.Total
       text-align: right
 
+    &.CancelColumn
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 1em
+      height: 1em
+
+      .Cancel, .LoadingCancel
+        color: variables.$light-text
+        width: 1em
+        height: 1em
+
+      .LoadingCancel
+        font-size: .74em
+
+      .Cancel
+        font-size: 1.1em
+        cursor: pointer
+        transition: all .23s ease-in-out
+
+        &:active
+          transform: scale(.8)
+
   .Fill
     position: absolute
-    z-index: 1
+    z-index: -1
     right: 0
     top: 0
     bottom: 0

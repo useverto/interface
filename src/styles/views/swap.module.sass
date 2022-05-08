@@ -423,6 +423,7 @@
     $topPadding: 1.5em
     $sidePadding: 1.8em
     padding: $topPadding 0
+    overflow: unset !important
     width: 48%
 
     @media screen and (max-width: variables.$mobile-screen)
@@ -478,9 +479,12 @@
             text-align: left
             padding-left: $sidePadding
 
-          &:last-child
+          &.TotalColumn
             text-align: right
             padding-right: $sidePadding
+
+          &.CancelColumn
+            width: 1em
 
 .ConfirmModal
   p
