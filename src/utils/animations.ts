@@ -91,3 +91,28 @@ export const infiniteScrollAnimation = {
     },
   },
 };
+
+export const navMobileAnimation = {
+  initial: {
+    opacity: 0,
+    y: 200,
+    left: "50%",
+    translateX: "-50%",
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    left: "50%",
+    translateX: "-50%",
+  },
+  exit: {
+    opacity: 0,
+    y: 200,
+    left: "50%",
+    translateX: "-50%",
+  },
+  transition: {
+    duration: 0.23,
+    ease: "easeInOut",
+  },
+};

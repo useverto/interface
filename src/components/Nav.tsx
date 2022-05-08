@@ -30,6 +30,7 @@ import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
 import { gateway, verto as client, gatewayConfig } from "../utils/arweave";
+import { navMobileAnimation, opacityAnimation } from "../utils/animations";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
@@ -167,6 +168,49 @@ const Nav = () => {
   const displayTheme = useTheme();
   const blurTheme = useSelector((state: RootState) => state.navThemeReducer);
 
+  // menu slide in / out animation on mobile
+  const [menuShown, setMenuShown] = useState(true);
+  const mobile = useMediaPredicate("(max-width: 720px)");
+
+  // show / hide menu on mobile, using the menuShown state
+  // and the previous scroll position
+  useEffect(() => {
+    // if the user enters / leaves mobile mode, toggle the menu
+    setMenuShown(true);
+
+    // only do the animation for mobile mode
+    if (!mobile) return;
+
+    // define the previous scroll position
+    let previousScroll = 0;
+
+    // handle scroll events
+    const handleScroll = () => {
+      // scroll sensitivity
+      const sensitivity = 80;
+
+      // if at the top, show the menu
+      if (window.scrollY === 0) {
+        setMenuShown(true);
+        previousScroll = window.screenY;
+        return;
+      }
+
+      // set the menu to hidden if the user is scrolling down
+      setMenuShown(previousScroll > window.scrollY);
+
+      // check sensitivity
+      if (Math.abs(previousScroll - window.scrollY) < sensitivity) return;
+
+      // update the previous scroll position
+      previousScroll = window.scrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobile]);
+
   return (
     <>
       <motion.div
@@ -197,13 +241,10 @@ const Nav = () => {
           </a>
         </Link>
         <AnimatePresence>
-          {arconnect && address && (
+          {arconnect && address && menuShown && (
             <motion.div
               className={styles.Menu}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.21, ease: "easeInOut" }}
+              {...((mobile && navMobileAnimation) || opacityAnimation)}
             >
               <Link href="/app">
                 <a
