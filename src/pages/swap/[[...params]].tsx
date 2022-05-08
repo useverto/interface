@@ -1084,6 +1084,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                           Math.floor((balanceOfCurrent() / 100) * (i * 25))
                         )
                       }
+                      title={i * 25 + "%"}
                       key={i}
                     />
                   );

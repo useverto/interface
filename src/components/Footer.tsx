@@ -4,6 +4,7 @@ import { gateway, client, COMMUNITY_CONTRACT } from "../utils/arweave";
 import { fetchContract } from "verto-cache-interface";
 import { useMediaPredicate } from "react-media-hook";
 import { ShareIcon } from "@iconicicons/react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import Twitter from "./icons/Twitter";
 import Github from "./icons/Github";
@@ -86,9 +87,18 @@ const Footer = () => {
   // mobile repsonsive display
   const mobile = useMediaPredicate("(max-width: 720px)");
 
+  // we don't need the top marg on the homepage
+  const router = useRouter();
+
   return (
     <Page
-      className={styles.Footer + " " + (theme === "Dark" ? styles.Dark : "")}
+      className={[
+        styles.Footer,
+        theme === "Dark" ? styles.Dark : "",
+        router.asPath !== "/" ? "" : styles.NoMargin,
+      ]
+        .filter((val) => val !== "")
+        .join(" ")}
     >
       <div className={styles.FooterLinks}>
         {(mobile && (
