@@ -384,7 +384,11 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       ]);
       setPairExists(foundPairAddInteraction);
 
-      pairModal.setState(!pairModal.state && !foundPairAddInteraction);
+      if (!pairModal.state && !foundPairAddInteraction) {
+        pairModal.setState(true);
+      } else if (pairModal.state && foundPairAddInteraction) {
+        pairModal.setState(false);
+      }
     })();
   }, [pair, clobContractState, tradablePair, loadingPair]);
 
