@@ -1,3 +1,4 @@
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import {
   ClobContractStateInterface,
   OrderInterfaceWithPair,
@@ -17,8 +18,8 @@ import {
   useToasts,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
-import { permissions as requiredPermissions } from "../utils/arconnect";
-import { GraphDataConfig, GraphOptions } from "../utils/graph";
+import { permissions as requiredPermissions } from "../../utils/arconnect";
+import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { AnimatePresence, motion } from "framer-motion";
 import { Line } from "react-chartjs-2";
 import {
@@ -26,12 +27,12 @@ import {
   CloseCircleIcon,
   InformationIcon,
 } from "@iconicicons/react";
-import { OrderType } from "../utils/order";
+import { OrderType } from "../../utils/order";
 import {
   cardListAnimation,
   expandAnimation,
   opacityAnimation,
-} from "../utils/animations";
+} from "../../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
 import {
   fetchContract,
@@ -47,29 +48,25 @@ import {
   isAddress,
   supportsFCP,
   verto,
-} from "../utils/arweave";
+} from "../../utils/arweave";
 import { useSelector } from "react-redux";
-import { RootState } from "../store/reducers";
-import { formatAddress, isNanNull } from "../utils/format";
-import { swapItems } from "../utils/storage_names";
-import { pairAddPending } from "../utils/pending_pair";
-import SwapInput from "../components/SwapInput";
-import Balance from "../components/Balance";
+import { RootState } from "../../store/reducers";
+import { formatAddress, isNanNull } from "../../utils/format";
+import { swapItems } from "../../utils/storage_names";
+import { pairAddPending } from "../../utils/pending_pair";
+import SwapInput from "../../components/SwapInput";
+import Balance from "../../components/Balance";
 import Head from "next/head";
-import Metas from "../components/Metas";
+import Metas from "../../components/Metas";
 import useArConnect from "use-arconnect";
-import useGeofence from "../utils/geofence";
+import useGeofence from "../../utils/geofence";
 import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
-import usePaginatedTokens from "../utils/paginated_tokens";
-import OrderBookRow from "../components/OrderBookRow";
-import styles from "../styles/views/swap.module.sass";
+import usePaginatedTokens from "../../utils/paginated_tokens";
+import OrderBookRow from "../../components/OrderBookRow";
+import styles from "../../styles/views/swap.module.sass";
 
-const Swap = ({
-  defaultPair,
-}: {
-  defaultPair: { from: SimpleTokenInterface; to: SimpleTokenInterface };
-}) => {
+const Swap = ({ defaultPair, overwrite }: Props) => {
   // arconnect helper
   const arconnect = useArConnect();
 
@@ -146,8 +143,12 @@ const Swap = ({
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
 
       // load token metadata to set as the pair
-      const fromToken = await fetchTokenStateMetadata(parsedPair.from);
-      const toToken = await fetchTokenStateMetadata(parsedPair.to);
+      const fromToken = overwrite.from
+        ? pair.from
+        : await fetchTokenStateMetadata(parsedPair.from);
+      const toToken = overwrite.to
+        ? pair.to
+        : await fetchTokenStateMetadata(parsedPair.to);
 
       // set pair
       setPair({
@@ -1313,7 +1314,52 @@ const Swap = ({
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps({
+  query,
+}: GetServerSidePropsContext): Promise<GetServerSidePropsResult<Props>> {
+  const params =
+    (query?.params && {
+      from: typeof query.params === "string" ? query.params : query.params[0],
+      to: typeof query.params === "string" ? undefined : query.params[1],
+    }) ||
+    {};
+
+  const defaultPair: {
+    from: SimpleTokenInterface;
+    to: SimpleTokenInterface;
+  } = {
+    from: undefined,
+    to: undefined,
+  };
+
+  // fetch from token if defined
+  if (params?.from && isAddress(params.from)) {
+    try {
+      defaultPair.from = await fetchTokenStateMetadata(params.from);
+    } catch {}
+  }
+
+  // fetch to token if defined
+  if (params?.to && isAddress(params.to)) {
+    try {
+      defaultPair.to = await fetchTokenStateMetadata(params.to);
+    } catch {}
+  }
+
+  // if to and from are defined, return props
+  if (defaultPair.from && defaultPair.to) {
+    return {
+      props: {
+        defaultPair,
+        overwrite: {
+          from: true,
+          to: true,
+        },
+      },
+    };
+  }
+
+  // if only one or none is defined, we return the top communities
   const topCommunities: SimpleTokenInterface[] = (
     await fetchTopCommunities(2)
   ).map((val) => ({
@@ -1326,15 +1372,30 @@ export async function getStaticProps() {
   return {
     props: {
       defaultPair: {
-        from: topCommunities[0],
-        to: topCommunities[1],
+        from: defaultPair.from ?? topCommunities[0],
+        to: defaultPair.to ?? topCommunities[1],
+      },
+      // overwrite locally storaged pair or not
+      overwrite: {
+        from: !!defaultPair.from,
+        to: !!defaultPair.to,
       },
     },
-    revalidate: 1,
   };
 }
 
 export default Swap;
+
+interface Props {
+  defaultPair: {
+    from: SimpleTokenInterface;
+    to: SimpleTokenInterface;
+  };
+  overwrite: {
+    from: boolean;
+    to: boolean;
+  };
+}
 
 export type ExtendedUserInterface = UserInterface & { baseAddress: string };
 export type SimpleTokenInterface = {

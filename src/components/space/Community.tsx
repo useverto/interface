@@ -13,7 +13,6 @@ import {
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
-import { swapItems } from "../../utils/storage_names";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
@@ -173,19 +172,6 @@ const Community = (props: PropTypes) => {
     }
 
     setTransferring(false);
-  };
-
-  const goToSwap = () => {
-    localStorage.setItem(
-      swapItems,
-      JSON.stringify({
-        val: {
-          input: "AR",
-          output: props.id,
-        },
-      })
-    );
-    router.push("/swap");
   };
 
   // load logo
@@ -529,7 +515,11 @@ const Community = (props: PropTypes) => {
             Transfer
           </Button>
           <Spacer y={1.3} />
-          <Button type="outlined" style={{ width: "100%" }} onClick={goToSwap}>
+          <Button
+            type="outlined"
+            style={{ width: "100%" }}
+            onClick={() => router.push(`/swap/${props.id}`)}
+          >
             Swap
           </Button>
         </Card>
