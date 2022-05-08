@@ -14,7 +14,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
-import { Art, TokenType } from "../../utils/user";
 import { arPrice, gateway, verto as client } from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { useSelector } from "react-redux";
@@ -25,9 +24,9 @@ import {
   fetchRandomCommunitiesWithMetadata,
   RandomCommunities,
 } from "verto-cache-interface";
+import { GetServerSidePropsResult } from "next";
 import Search, { useSearch } from "../../components/Search";
 import axios from "axios";
-import useSWR from "swr";
 import Head from "next/head";
 import Metas from "../../components/Metas";
 import ListingModal from "../../components/ListingModal";
@@ -35,39 +34,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import usePaginatedTokens from "../../utils/paginated_tokens";
 import styles from "../../styles/views/space.module.sass";
 
-const Space = (props: {
-  featured: RandomCommunities[];
-  arts: Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>;
-}) => {
-  // featured tokens
-  const { data: featured } = useSWR(
-    "getFeatured",
-    fetchRandomCommunitiesWithMetadata,
-    {
-      initialData: props.featured,
-    }
-  );
-
-  // featured arts
-  const { data: arts } = useSWR(
-    "getArts",
-    async () => {
-      const data = await fetchRandomArtworkWithUser(4);
-      return data.map((val) => ({
-        ...val,
-        owner: {
-          ...val.owner,
-          image: val.owner.image
-            ? `${gateway()}/${val.owner.image}`
-            : undefined,
-        },
-      }));
-    },
-    {
-      initialData: props.arts,
-    }
-  );
-
+const Space = ({ featured, arts }: Props) => {
   const [prices, setPrices] = useState<{ [id: string]: number }>({});
   const [history, setHistory] = useState<{
     [id: string]: { [date: string]: number };
@@ -426,7 +393,9 @@ const Space = (props: {
   );
 };
 
-export async function getStaticProps() {
+export async function getServerSideProps(): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const featured = await fetchRandomCommunitiesWithMetadata();
   let arts = await fetchRandomArtworkWithUser(4);
 
@@ -434,14 +403,12 @@ export async function getStaticProps() {
     if (arts[i].owner.image)
       arts[i].owner.image = `${gateway()}/${arts[i].owner.image}`;
 
-  return { props: { featured, arts }, revalidate: 1 };
+  return { props: { featured, arts } };
 }
 
 export default Space;
 
-interface UnifiedTokenInterface extends Art {
-  ticker: string;
-  logo?: string;
-  type: TokenType;
-  items?: string[];
+interface Props {
+  featured: RandomCommunities[];
+  arts: Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>;
 }
