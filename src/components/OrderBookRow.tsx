@@ -50,6 +50,17 @@ const OrderBookRow = ({
         duration: 3000,
       });
     } catch (e) {
+      console.error(
+        "Error cancelling order: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Order data: \n",
+        {
+          orderID,
+          type,
+        }
+      );
       setToast({
         type: "error",
         description: "Unable to cancel order",
