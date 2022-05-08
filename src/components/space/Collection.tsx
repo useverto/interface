@@ -451,7 +451,7 @@ const Collection = ({
   );
 };
 
-interface CollectionProps {
+export interface CollectionProps {
   id: string;
   name: string;
   description: string;

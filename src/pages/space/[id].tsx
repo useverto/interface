@@ -4,9 +4,12 @@ import {
   fetchContract,
   fetchUserByUsername,
 } from "verto-cache-interface";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import axios from "axios";
-import Community from "../../components/space/Community";
-import Collection from "../../components/space/Collection";
+import Community, {
+  PropTypes as TokenProps,
+} from "../../components/space/Community";
+import Collection, { CollectionProps } from "../../components/space/Collection";
 import Art from "../../components/space/Art";
 import Other from "../../components/space/Other";
 
@@ -20,64 +23,71 @@ const Token = (props) => {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { id } }) {
+export async function getServerSideProps({
+  params: { id },
+}: GetServerSidePropsContext<{ id: string }>): Promise<
+  GetServerSidePropsResult<TokenProps | CollectionProps>
+> {
   if (!isAddress(id))
     return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
+      notFound: true,
     };
 
   const type = await client.token.getTokenType(id);
 
   if (!type)
     return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
+      notFound: true,
     };
 
   if (type === "collection") {
-    const data = await fetchCollectionById(id);
-    const ownerData = await fetchUserByUsername(data.owner);
+    try {
+      const data = await fetchCollectionById(id);
+      const ownerData = await fetchUserByUsername(data.owner);
 
-    return {
-      props: {
-        ...data,
-        type: "collection",
-        owner: ownerData,
-      },
-      revalidate: 1,
-    };
+      return {
+        props: {
+          ...data,
+          type: "collection",
+          owner: ownerData,
+        },
+      };
+    } catch {
+      return {
+        notFound: true,
+      };
+    }
   } else {
-    const { state } = await fetchContract(id);
-    // TODO: price
-    //const res = await client.getPrice(id);
+    try {
+      // fetch token
+      const { state } = await fetchContract(id);
+      // fetch price
+      let price: number | "--" = "--";
 
-    const { data: gecko } = await axios.get(
-      "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-    );
+      try {
+        // TODO: price
+        //const res = await client.getPrice(id);
+        const { data: gecko } = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
+        );
 
-    return {
-      props: {
-        id,
-        name: state.name,
-        ticker: state.ticker,
-        //price: res ? res.price * gecko.arweave.usd : "--",
-        price: "--",
-        type: type || "community",
-      },
-      revalidate: 1,
-    };
+        // price = res ? res.price * gecko.arweave.usd : "--",
+      } catch {}
+
+      return {
+        props: {
+          id,
+          name: state.name,
+          ticker: state.ticker,
+          price,
+          type: type || "community",
+        },
+      };
+    } catch {
+      return {
+        notFound: true,
+      };
+    }
   }
 }
 

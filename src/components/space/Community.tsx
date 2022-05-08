@@ -528,7 +528,7 @@ const Community = (props: PropTypes) => {
   );
 };
 
-interface PropTypes {
+export interface PropTypes {
   id: string;
   name: string;
   ticker: string;
