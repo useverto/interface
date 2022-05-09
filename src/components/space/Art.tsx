@@ -3,9 +3,11 @@ import {
   Button,
   Card,
   Loading,
+  Modal,
   Page,
   Spacer,
   Tooltip,
+  useModal,
   useTheme,
   useToasts,
 } from "@verto/ui";
@@ -41,7 +43,7 @@ import {
 } from "../../utils/supply";
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
-import { UserInterface } from "@verto/js/dist/common/faces";
+import { TokenPair, UserInterface } from "@verto/js/dist/common/faces";
 import { arPrice, gateway, gql, supportsFCP, verto } from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
@@ -365,6 +367,12 @@ const Art = (props: PropTypes) => {
   // can the user sell this token
   const canSell = () => !!(state && state?.balances?.[profile]);
 
+  // sell modal
+  // TODO: move buy / sell logic to a modal
+  // this will be possible with the search
+  // cache function
+  const sellModal = useModal();
+
   return (
     <>
       <Head>
@@ -622,6 +630,13 @@ const Art = (props: PropTypes) => {
                         qty: offer.price, // price using the native token
                         ticker: offer.ticker,
                       }}
+                      onClick={() =>
+                        router.push(
+                          `/swap/${offer.pair.find(
+                            (val) => val !== props.id
+                          )}/${props.id}`
+                        )
+                      }
                     />
                     <Spacer y={1.4} />
                   </motion.div>
@@ -637,7 +652,9 @@ const Art = (props: PropTypes) => {
                 <motion.div {...opacityAnimation()}>
                   <Button
                     type="outlined"
-                    style={{ width: "100%", marginTop: "2.1em" }}
+                    style={{ marginTop: "2.1em" }}
+                    fullWidth
+                    onClick={() => router.push(`/swap/${props.id}`)}
                   >
                     Sell
                   </Button>
@@ -708,6 +725,7 @@ interface PropTypes {
 type ArtOrderInterface = OrderInterface & {
   ticker: string;
   usd: number;
+  pair: TokenPair;
 };
 
 export default Art;
