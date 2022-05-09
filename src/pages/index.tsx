@@ -15,8 +15,8 @@ import Typed from "typed.js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
-import styles from "../styles/views/home.module.sass";
 import Image from "next/image";
+import styles from "../styles/views/home.module.sass";
 
 const Home = ({ heroTokens }: { heroTokens: string[] }) => {
   const address = useSelector((state: RootState) => state.addressReducer);
