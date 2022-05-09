@@ -580,11 +580,11 @@ const Art = (props: PropTypes) => {
                     (displayTheme === "Dark" ? styles.DarkOwnerCount : "")
                   }
                 >
-                  {(state && Object.values(state.balances).length) || "0"}
+                  {(state && owners.length) || "0"}
                 </span>
                 <h1>
                   Owner
-                  {state && Object.values(state.balances).length > 1 && "s"}
+                  {state && owners.length > 1 && "s"}
                 </h1>
               </div>
               <Avatar.Group>
