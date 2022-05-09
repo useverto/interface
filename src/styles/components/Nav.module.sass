@@ -120,54 +120,56 @@
       background-color: rgb(variables.$primary-color)
       box-shadow: 0px 0 17px 6px rgba(variables.$primary-color, .35)
 
-  &.BlurLight, &.BlurDark
-    .Menu .Selection, .Logo .VersionChip
-      backdrop-filter: blur(20px)
-      box-shadow: 0px 10px 20px rgba(0, 0, 0, .2)
+  // only allow blur theme on desktop, disable on mobile
+  @media screen and (min-width: variables.$mobile-screen)
+    &.BlurLight, &.BlurDark
+      .Menu .Selection, .Logo .VersionChip
+        backdrop-filter: blur(20px)
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, .2)
 
-    &.BlurLight
-      .SearchAndConnect .SearchIcon, .Menu a
-        color: #fff
+      &.BlurLight
+        .SearchAndConnect .SearchIcon, .Menu a
+          color: #fff
 
-      .Menu 
-        a.Selected
-          color: #000
+        .Menu 
+          a.Selected
+            color: #000
 
-        .Selection
+          .Selection
+            background-color: rgba(#fff, .6)
+
+        .Logo .VersionChip
           background-color: rgba(#fff, .6)
-
-      .Logo .VersionChip
-        background-color: rgba(#fff, .6)
-        color: #000
-
-      .UserAvatar
-        h1
-          color: #fff
-
-        p
-          color: #ddd
-
-    &.BlurDark
-      .SearchAndConnect .SearchIcon, .Menu a
-        color: #000
-
-      .Menu 
-        a.Selected
-          color: #fff
-
-        .Selection
-          background-color: rgba(#000, .8)
-
-      .Logo .VersionChip
-        background-color: rgba(#000, .8)
-        color: #fff
-
-      .UserAvatar
-        h1
           color: #000
 
-        p
-          color: #272727
+        .UserAvatar
+          h1
+            color: #fff
+
+          p
+            color: #ddd
+
+      &.BlurDark
+        .SearchAndConnect .SearchIcon, .Menu a
+          color: #000
+
+        .Menu 
+          a.Selected
+            color: #fff
+
+          .Selection
+            background-color: rgba(#000, .8)
+
+        .Logo .VersionChip
+          background-color: rgba(#000, .8)
+          color: #fff
+
+        .UserAvatar
+          h1
+            color: #000
+
+          p
+            color: #272727
 
   &.Sticky
     position: sticky
