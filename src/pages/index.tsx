@@ -6,11 +6,15 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress } from "../store/actions";
 import { verto as client, gatewayConfig } from "../utils/arweave";
+import HeroTokens, { fetchTokenLogos } from "../components/HeroTokens";
+import Discord from "../components/icons/Discord";
+import Linkedin from "../components/icons/Linkedin";
+import Twitter from "../components/icons/Twitter";
+import Github from "../components/icons/Github";
 import Typed from "typed.js";
 import Head from "next/head";
 import Metas from "../components/Metas";
 import SetupModal from "../components/SetupModal";
-import HeroTokens, { fetchTokenLogos } from "../components/HeroTokens";
 import styles from "../styles/views/home.module.sass";
 import Image from "next/image";
 
@@ -190,23 +194,34 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
             </div>
             <div className={[styles.Card, styles.Social].join(" ")}>
               <h3>Join our Community</h3>
-
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
-                className="image"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
-                className="image"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
-                className="image"
-              />
-              <img
-                src="https://cdn.builder.io/api/v1/image/assets%2FTEMP%2Fdc9f90481a4c4147b9b97403445e12e1"
-                className="image"
-              />
+              <a
+                href="https://twitter.com/vertoexchange"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Twitter fill />
+              </a>
+              <a
+                href="https://twitter.com/vertoexchange"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Github fill />
+              </a>
+              <a
+                href="https://verto.exchange/chat"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Discord />
+              </a>
+              <a
+                href="https://www.linkedin.com/company/th8ta/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Linkedin />
+              </a>
             </div>
           </div>
           <div className={[styles.Card, styles.Right].join(" ")}>
