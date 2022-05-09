@@ -2,11 +2,13 @@ import {
   Avatar,
   Button,
   Card,
+  Input,
   Loading,
   Modal,
   Page,
   Spacer,
   Tooltip,
+  useInput,
   useModal,
   useTheme,
   useToasts,
@@ -373,6 +375,61 @@ const Art = (props: PropTypes) => {
   // cache function
   const sellModal = useModal();
 
+  // transfer collectible
+  const transferModal = useModal();
+  const transferTarget = useInput<string>();
+  const transferAmount = useInput();
+  const [loadingTransfer, setLoadingTransfer] = useState(false);
+
+  async function transfer() {
+    transferTarget.setStatus(undefined);
+    transferAmount.setStatus(undefined);
+
+    // validate transfer form
+    const amount =
+      transferAmount.state === "" ? 0 : Number(transferAmount.state);
+
+    if (amount <= 0) return transferAmount.setStatus("error");
+    if (transferTarget.state === "") return transferTarget.setStatus("error");
+    if (state.balances[profile] < amount)
+      return transferAmount.setStatus("error");
+
+    setLoadingTransfer(true);
+
+    try {
+      await verto.token.transfer(amount, props.id, transferTarget.state);
+
+      setToast({
+        description: `Transferring ${amount.toLocaleString()} ${props.ticker}`,
+        type: "success",
+        duration: 2600,
+      });
+    } catch (e) {
+      console.error(
+        "Error transferring token: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Stack: \n",
+        "Token: \n",
+        props.id,
+        "\n",
+        "Target: \n",
+        transferTarget.state,
+        "\n",
+        "Amount: \n",
+        transferAmount.state
+      );
+      setToast({
+        description: `Could not transfer ${props.ticker}`,
+        type: "success",
+        duration: 2600,
+      });
+    }
+
+    setLoadingTransfer(false);
+  }
+
   return (
     <>
       <Head>
@@ -651,12 +708,20 @@ const Art = (props: PropTypes) => {
               {canSell() && (
                 <motion.div {...opacityAnimation()}>
                   <Button
-                    type="outlined"
+                    type="filled"
                     style={{ marginTop: "2.1em" }}
                     fullWidth
                     onClick={() => router.push(`/swap/${props.id}`)}
                   >
                     Sell
+                  </Button>
+                  <Spacer y={1.25} />
+                  <Button
+                    type="outlined"
+                    fullWidth
+                    onClick={() => transferModal.setState(true)}
+                  >
+                    Transfer
                   </Button>
                 </motion.div>
               )}
@@ -710,6 +775,34 @@ const Art = (props: PropTypes) => {
         </div>
         <Spacer y={2.35} />
       </Page>
+      <Modal {...transferModal.bindings}>
+        <Modal.Title>Transfer {props.ticker}</Modal.Title>
+        <Modal.Content>
+          <Input
+            label="Address"
+            placeholder="Recipient..."
+            {...transferTarget.bindings}
+            fullWidth
+          />
+          <Spacer y={1.2} />
+          <Input
+            label="Amount"
+            placeholder={state?.balances?.[profile]?.toLocaleString() || "2000"}
+            type="number"
+            {...transferAmount.bindings}
+            inlineLabel={props.ticker}
+            fullWidth
+          />
+          <Spacer y={2.8} />
+          <Button
+            onClick={transfer}
+            style={{ margin: "0 auto" }}
+            loading={loadingTransfer}
+          >
+            Transfer
+          </Button>
+        </Modal.Content>
+      </Modal>
     </>
   );
 };

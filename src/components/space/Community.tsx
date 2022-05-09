@@ -163,7 +163,22 @@ const Community = (props: PropTypes) => {
         type: "success",
         duration: 2600,
       });
-    } catch {
+    } catch (e) {
+      console.error(
+        "Error transferring token: \n",
+        "Message: ",
+        e,
+        "\n",
+        "Stack: \n",
+        "Token: \n",
+        props.id,
+        "\n",
+        "Target: \n",
+        target.state,
+        "\n",
+        "Amount: \n",
+        amount.state
+      );
       setToast({
         description: `Could not transfer ${props.ticker}`,
         type: "success",
