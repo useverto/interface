@@ -29,11 +29,8 @@ import { gateway, isAddress, verto as client } from "../../utils/arweave";
 import { useMediaPredicate } from "react-media-hook";
 import { getVerification, Threshold } from "arverify";
 import { resetNavTheme, updateNavTheme } from "../../store/actions";
-import {
-  fetchBalancesForAddress,
-  fetchUserCreations,
-  fetchBalancesByUsername,
-} from "verto-cache-interface";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
+import { fetchUserCreations } from "verto-cache-interface";
 import FastAverageColor from "fast-average-color";
 import SetupModal from "../../components/SetupModal";
 import Head from "next/head";
@@ -47,7 +44,7 @@ import Facebook from "../../components/icons/Facebook";
 import marked from "marked";
 import styles from "../../styles/views/user.module.sass";
 
-const User = (props: { user: UserInterface | null; input: string }) => {
+const User = (props: Props) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
@@ -498,25 +495,17 @@ const SocialIcon = ({ identifier, value }) => (
   </a>
 );
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { input } }) {
+export async function getServerSideProps({
+  params: { input },
+}: GetServerSidePropsContext<{ input: string }>): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const user = (await client.user.getUser(input)) ?? null;
 
   // redirect if the user cannot be found and if it is not and address either
-  if (!isAddress(input) && !user)
-    return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
-    };
+  if (!isAddress(input) && !user) return { notFound: true };
 
+  // redirect if there is an user for the address
   if (user && input !== user.username)
     return {
       redirect: {
@@ -525,7 +514,14 @@ export async function getStaticProps({ params: { input } }) {
       },
     };
 
-  return { props: { user, input }, revalidate: 1 };
+  return {
+    props: { user, input },
+  };
 }
 
 export default User;
+
+interface Props {
+  user: UserInterface | null;
+  input: string;
+}

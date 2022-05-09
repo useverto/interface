@@ -1,5 +1,6 @@
 import { Card, Page, Spacer, Loading } from "@verto/ui";
 import { UserInterface } from "@verto/js/dist/common/faces";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { useRouter } from "next/router";
 import {
   arPrice,
@@ -17,12 +18,7 @@ import Metas from "../../../components/Metas";
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
-const Owns = (props: {
-  user: UserInterface | null;
-  input: string;
-  owned: Art[];
-  balances: UserBalance[];
-}) => {
+const Owns = (props: Props) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
@@ -131,24 +127,15 @@ const Owns = (props: {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { input } }) {
+export async function getServerSideProps({
+  params: { input },
+}: GetServerSidePropsContext<{ input: string }>): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const user = (await client.user.getUser(input)) ?? null;
 
   // redirect if the user cannot be found and if it is not and address either
-  if (!isAddress(input) && !user)
-    return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
-    };
+  if (!isAddress(input) && !user) return { notFound: true };
 
   // load balances for all addresses and
   // filter them to sort out repeating owned
@@ -187,7 +174,16 @@ export async function getStaticProps({ params: { input } }) {
     });
   }
 
-  return { props: { owned, balances, user, input }, revalidate: 1 };
+  return {
+    props: { owned, balances, user, input },
+  };
 }
 
 export default Owns;
+
+interface Props {
+  user: UserInterface | null;
+  input: string;
+  owned: Art[];
+  balances: UserBalance[];
+}

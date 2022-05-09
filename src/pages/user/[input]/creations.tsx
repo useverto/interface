@@ -9,6 +9,7 @@ import {
 } from "../../../utils/arweave";
 import { cardAnimation } from "../../../utils/animations";
 import { AnimatePresence, motion } from "framer-motion";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import {
   fetchArtworkMetadata,
   fetchUserCreations,
@@ -20,12 +21,7 @@ import Metas from "../../../components/Metas";
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
-const Creations = (props: {
-  user: UserInterface | null;
-  input: string;
-  creations: Art[];
-  ids: string[];
-}) => {
+const Creations = (props: Props) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
@@ -131,25 +127,16 @@ const Creations = (props: {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { input } }) {
+export async function getServerSideProps({
+  params: { input },
+}: GetServerSidePropsContext<{ input: string }>): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const user = (await client.user.getUser(input)) ?? null;
   const creations: Art[] = [];
 
   // redirect if the user cannot be found and if it is not and address either
-  if (!isAddress(input) && !user)
-    return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
-    };
+  if (!isAddress(input) && !user) return { notFound: true };
 
   const ids = await fetchUserCreations(input);
 
@@ -166,7 +153,16 @@ export async function getStaticProps({ params: { input } }) {
     });
   }
 
-  return { props: { creations, user, input, ids }, revalidate: 1 };
+  return {
+    props: { creations, user, input, ids },
+  };
 }
 
 export default Creations;
+
+interface Props {
+  creations: Art[];
+  user: UserInterface | null;
+  input: string;
+  ids: string[];
+}

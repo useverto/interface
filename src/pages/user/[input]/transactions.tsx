@@ -1,4 +1,5 @@
 import { Loading, Page, Select, Spacer, Tooltip, useSelect } from "@verto/ui";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import {
   TransactionInterface,
   UserInterface,
@@ -15,11 +16,7 @@ import Metas from "../../../components/Metas";
 import InfiniteScroll from "react-infinite-scroll-component";
 import styles from "../../../styles/views/user.module.sass";
 
-const Transactions = (props: {
-  user: UserInterface | null;
-  input: string;
-  txs: TransactionInterface[];
-}) => {
+const Transactions = (props: Props) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
@@ -172,25 +169,16 @@ const Transactions = (props: {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { input } }) {
+export async function getServerSideProps({
+  params: { input },
+}: GetServerSidePropsContext<{ input: string }>): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const user = (await client.user.getUser(input)) ?? null;
   let txs = [];
 
   // redirect if the user cannot be found and if it is not and address either
-  if (!isAddress(input) && !user)
-    return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
-    };
+  if (!isAddress(input) && !user) return { notFound: true };
 
   if (user && input !== user.username)
     return {
@@ -205,7 +193,15 @@ export async function getStaticProps({ params: { input } }) {
       txs.push(...(await client.user.getTransactions(address)));
   } else txs.push(...(await client.user.getTransactions(input)));
 
-  return { props: { user, input, txs }, revalidate: 1 };
+  return {
+    props: { user, input, txs },
+  };
 }
 
 export default Transactions;
+
+interface Props {
+  user: UserInterface | null;
+  input: string;
+  txs: TransactionInterface[];
+}

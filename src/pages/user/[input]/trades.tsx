@@ -18,11 +18,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../store/reducers";
 import { addToCancel, getCancelledOrders } from "../../../utils/order";
 import { useRouter } from "next/router";
+import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { gateway, isAddress, verto as client } from "../../../utils/arweave";
 import Head from "next/head";
 import Metas from "../../../components/Metas";
 
-const Trades = (props: { user: UserInterface | null; input: string }) => {
+const Trades = (props: Props) => {
   const router = useRouter();
   if (router.isFallback) return <></>;
 
@@ -165,24 +166,15 @@ const Trades = (props: { user: UserInterface | null; input: string }) => {
   );
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    fallback: "blocking",
-  };
-}
-
-export async function getStaticProps({ params: { input } }) {
+export async function getServerSideProps({
+  params: { input },
+}: GetServerSidePropsContext<{ input: string }>): Promise<
+  GetServerSidePropsResult<Props>
+> {
   const user = (await client.user.getUser(input)) ?? null;
 
   // redirect if the user cannot be found and if it is not and address either
-  if (!isAddress(input) && !user)
-    return {
-      redirect: {
-        destination: "/404",
-        permanent: false,
-      },
-    };
+  if (!isAddress(input) && !user) return { notFound: true };
 
   if (user && input !== user.username)
     return {
@@ -192,7 +184,14 @@ export async function getStaticProps({ params: { input } }) {
       },
     };
 
-  return { props: { user, input }, revalidate: 1 };
+  return {
+    props: { user, input },
+  };
 }
 
 export default Trades;
+
+interface Props {
+  user: UserInterface | null;
+  input: string;
+}
