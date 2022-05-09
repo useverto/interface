@@ -32,21 +32,21 @@ export const gql = new ArDB(client);
 export const ROOT_URL = "https://verto.exchange";
 
 /** Community contract id */
-export const COMMUNITY_CONTRACT = "ZabIbneNSOr7U6zv96slxtTlQgpId3cmyOHMf4BEjLI";
+export const COMMUNITY_CONTRACT = "DPfCGDfo1_hzDjdVFQt97dkIylYXlZGrBUnBNnyKVo8";
 
 /** Clob contract id */
-export const CLOB_CONTRACT = "U6Kgs7Xy7MvaMr-h--VOb3T5bnrtJ1tKRD7bzBs_b84";
+export const CLOB_CONTRACT = "EfmXSfl1wROwAKwFdQoeUYK09yM-6JXYCGi4eEJHLpI";
 
 /** Collection contract src tx id */
 export const COLLECTION_CONTRACT_SRC =
-  "KlL_JTNBKyAbcAlOR4zE9hxltfR_0RAbuGMwIQx59BA";
+  "ZHclOfbFP0x0ydMt7fkWppjaePLG9MhbV3UMyUQbAF4";
 
 /** Collectible contract src tx id */
 export const COLLECTIBLE_CONTRACT_SRC =
-  "_P5_-rvjUgmEodjPgqATeepJkSf3iT2_rUi8hX_qbhY";
+  "SDdk7sxaeEgzsuTRIGmnhTKjBUWRkoD8msQETp-a3Co";
 
 /** Verto PST contract id */
-export const VERTO_CONTRACT_PST = "E_thW3lmhwfUmgPpTa6Up-uSRrr_ff4I2ZyssaVar94";
+export const VERTO_CONTRACT_PST = "dmxxf7KcAvMnHozZesdpfAmhZl7gtU9SaM8KdW8y4LA";
 
 /**
  * Cache interface configuration

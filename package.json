@@ -14,7 +14,7 @@
   "dependencies": {
     "@iconicicons/react": "^1.5.0",
     "@primer/octicons-react": "^17.0.0",
-    "@verto/js": "^1.0.0-beta-21",
+    "@verto/js": "^1.0.0-beta-22",
     "@verto/ui": "^3.6.4-beta",
     "ar-gql": "^0.0.6",
     "arconnect": "^0.4.2",

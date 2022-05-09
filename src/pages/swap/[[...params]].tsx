@@ -640,17 +640,19 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       // if the price is undefined for limit orders, set it to 0
       if (orderType === "limit" && isNaN(price)) price = 0;
 
-      // fetch estimate
-      const res = await verto.exchange.estimateSwap(
-        {
-          from: pair.from.id,
-          to: pair.to.id,
-        },
-        Number(amountInput.state),
-        price
-      );
+      try {
+        // fetch estimate
+        const res = await verto.exchange.estimateSwap(
+          {
+            from: pair.from.id,
+            to: pair.to.id,
+          },
+          Number(amountInput.state),
+          price
+        );
 
-      setEstimate(res);
+        setEstimate(res);
+      } catch {}
     })();
   }, [pair, orderType, amountInput.state, priceInput.state]);
 
