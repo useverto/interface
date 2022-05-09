@@ -65,16 +65,17 @@ $titleSize: 3.8em
           width: 48%
 
 .Card
+  $sidePadding: 20px
   display: flex
   flex-direction: column
   align-items: flex-start
-  gap: 2em
+  gap: $sidePadding
   padding: 20px
   border-radius: 20px
   background-color: variables.$background-color
 
   @media screen and (max-width: variables.$mobile-screen)
-    width: 100% !important
+    width: calc(100% - #{$sidePadding * 2}) !important
 
   h2
     margin: 0
