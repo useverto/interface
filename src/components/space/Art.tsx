@@ -404,6 +404,13 @@ const Art = (props: PropTypes) => {
         type: "success",
         duration: 2600,
       });
+
+      transferModal.setState(false);
+      transferTarget.setState("");
+      transferAmount.setState(0);
+
+      transferTarget.setStatus(undefined);
+      transferAmount.setStatus(undefined);
     } catch (e) {
       console.error(
         "Error transferring token: \n",
