@@ -32,7 +32,7 @@ export const gql = new ArDB(client);
 export const ROOT_URL = "https://verto.exchange";
 
 /** Community contract id */
-export const COMMUNITY_CONTRACT = "ZabIbneNSOr7U6zv96slxtTlQgpId3cmyOHMf4BEjLI";
+export const COMMUNITY_CONTRACT = "U6Kgs7Xy7MvaMr-h--VOb3T5bnrtJ1tKRD7bzBs_b84";
 
 /** Clob contract id */
 export const CLOB_CONTRACT = "X_8nM4tZUu3EGaL7wxiU3Sme5pe21Ei9iQJHK605P8M";
