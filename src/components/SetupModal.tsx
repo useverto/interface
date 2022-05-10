@@ -177,7 +177,8 @@ export default function SetupModal(props: Props) {
         duration: 4500,
       });
       props.onClose();
-    } catch {
+    } catch (e) {
+      console.error("Error setting Verto ID: \n", "Message: ", e);
       setToast({
         description: "Could not update Verto ID",
         type: "error",
