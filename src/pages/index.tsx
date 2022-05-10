@@ -240,7 +240,13 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
               If you have any questions about integration or would like to
               discuss Verto's architecture, feel free to join our community.
             </p>
-            <Button>Read Docs</Button>
+            <a
+              href="httpS://github.com/useverto/js"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button>Read Docs</Button>
+            </a>
           </div>
         </Page>
       </div>
