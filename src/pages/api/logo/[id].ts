@@ -46,7 +46,9 @@ export default async function logo(req: NextApiRequest, res: NextApiResponse) {
 
     // try getting the logo from the state
     if (logo) {
-      const logoInState = await axios.get(`${gateway()}/${logo}`);
+      const logoInState = await axios.get(`${gateway()}/${logo}`, {
+        responseType: "arraybuffer",
+      });
 
       return sendLogo(logoInState);
     } else {

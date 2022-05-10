@@ -351,7 +351,7 @@ const Space = ({ featured, arts }: Props) => {
                   name={token.name}
                   // @ts-ignore
                   price={token.price ?? " ??"}
-                  image={token.logo}
+                  image={`/api/logo/${token.id}`}
                   ticker={token.ticker}
                   onClick={() => router.push(`/space/${token.id}`)}
                 />

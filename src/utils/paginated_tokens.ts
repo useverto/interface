@@ -55,19 +55,6 @@ export default function usePaginatedTokens() {
             token.price = 1 / priceData.vwap;
           }
         } catch {}
-
-        // cryptometa logo api
-        if (token.type !== "community") continue;
-
-        let logo = verto.token.getLogo(token.id, "dark");
-
-        const { status } = await axios.get(logo);
-
-        if (status !== 200 && token.logo && token.logo !== token.id) {
-          logo = `${gateway()}/${token.logo}`;
-        }
-
-        token.logo = logo;
       }
 
       setTokens((val) => [...val, ...fetchedTokens.items]);

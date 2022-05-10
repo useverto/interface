@@ -836,18 +836,10 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                         {tokens
                           .filter(({ type }) => type !== "collection")
                           .map((token, i) => {
-                            let image = token.logo;
+                            let image = `${gateway()}/${token.id}`;
 
                             if (token.type === "community") {
-                              // overwrite crytometa logo url with theme
-                              if (image.includes("viewblock") || !image) {
-                                image = verto.token.getLogo(
-                                  token.id,
-                                  theme.toLowerCase() as "light" | "dark"
-                                );
-                              }
-                            } else {
-                              image = `${gateway()}/${token.id}`;
+                              image = `/api/logo/${token.id}`;
                             }
 
                             return (
