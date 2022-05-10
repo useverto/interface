@@ -21,7 +21,7 @@ export default function HeroTokens({ images, ...props }: Props) {
             pauseOnHover
             style={{ minWidth: "max-content" }}
           >
-            {images.slice(s * 8, (s + 1) * 8).map((img, i) => (
+            {images.slice(s * 7, (s + 1) * 7).map((img, i) => (
               <div key={i} className={styles.Token}>
                 <Image
                   className={styles.Logo}
@@ -49,7 +49,7 @@ export async function fetchTokenLogos(): Promise<string[]> {
   return [
     "arverify.svg",
     "ardrive.svg",
-    "verto.svg",
+    "verto.png",
     "pianity.png",
     "decentland.png",
     "glass.png",
@@ -57,12 +57,10 @@ export async function fetchTokenLogos(): Promise<string[]> {
     "checkmynft.png",
     "weve.png",
     "argo.png",
-    "everfinance.png",
     "communityxyz.png",
     "argora.png",
     "redstone.svg",
     "arwiki.png",
-    "koii.svg",
     "pocketnetwork.png",
     "permabot.png",
     "wisdomwizards.png",
