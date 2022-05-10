@@ -21,11 +21,11 @@ export default function HeroTokens({ images, ...props }: Props) {
             pauseOnHover
             style={{ minWidth: "max-content" }}
           >
-            {images.slice(s * 6, (s + 1) * 6).map((img, i) => (
+            {images.slice(s * 8, (s + 1) * 8).map((img, i) => (
               <div key={i} className={styles.Token}>
                 <Image
                   className={styles.Logo}
-                  src={`${gateway()}/${img}`}
+                  src={`/communities/${img}`}
                   width={64}
                   height={64}
                   alt={`AR.${img}`}
@@ -40,11 +40,42 @@ export default function HeroTokens({ images, ...props }: Props) {
 }
 
 export async function fetchTokenLogos(): Promise<string[]> {
-  return await fetch(`${CACHE_CONFIG.CONTRACT_CDN}/tokens/skeletons.json`)
-    .then((res) => res.json() as Promise<{ type: string; logo: string }[]>)
-    .then((tokens) => tokens.filter((token) => token.type == "community"))
-    .then((tokens) =>
-      tokens.filter((token) => /[a-zA-Z0-9-_]{43}/.test(token.logo))
-    ) // filter out invalid logos
-    .then((tokens) => tokens.map((token) => token.logo));
+  // return await fetch(`${CACHE_CONFIG.CONTRACT_CDN}/tokens/skeletons.json`)
+  //   .then((res) => res.json() as Promise<{ type: string; logo: string }[]>)
+  //   .then((tokens) => tokens.filter((token) => token.type == 'community'))
+  //   .then((tokens) => tokens.filter((token) => /[a-zA-Z0-9-_]{43}/.test(token.logo))) // filter out invalid logos
+  //   .then((tokens) => tokens.map((token) => token.logo));
+
+  return [
+    "arverify.svg",
+    "ardrive.svg",
+    "verto.svg",
+    "pianity.png",
+    "decentland.png",
+    "glass.png",
+    "sarcophagus.png",
+    "checkmynft.png",
+    "weve.png",
+    "argo.png",
+    "everfinance.png",
+    "communityxyz.png",
+    "argora.png",
+    "redstone.svg",
+    "arwiki.png",
+    "koii.svg",
+    "pocketnetwork.png",
+    "permabot.png",
+    "wisdomwizards.png",
+    "viewblock.png",
+    "mirror.jpeg",
+    "amplify.png",
+    "aftrmarket.png",
+    "gitcoin.svg",
+    "arconnect.png",
+    "ecclesia.jpeg",
+    "arweavenews.jpeg",
+    "kyve.svg",
+    "nestland.jpeg",
+    "evermore.png",
+  ].sort(() => Math.random() - 0.5); // shuffle
 }
