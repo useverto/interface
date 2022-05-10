@@ -37,6 +37,7 @@ import { useMediaPredicate } from "react-media-hook";
 import {
   fetchBalancesForAddress,
   fetchContract,
+  fetchPriceHistory,
   fetchTokenStateMetadata,
   fetchTopCommunities,
   PaginatedToken,
@@ -634,6 +635,32 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
     })();
   }, [pair, orderType, amountInput.state, priceInput.state]);
 
+  // price history
+  const [priceHistory, setPriceHistory] = useState<
+    { block: number; price: number }[]
+  >([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const history = await fetchPriceHistory([pair.from.id, pair.to.id]);
+
+        setPriceHistory(
+          history.map(({ vwap, block, dominantToken }) => {
+            let price = vwap;
+
+            // if the dominant token is the "to" token, flip the price
+            if (dominantToken === pair.to.id) price = 1 / price;
+
+            return { block, price };
+          })
+        );
+      } catch {
+        setPriceHistory([]);
+      }
+    })();
+  }, [pair.from.id, pair.to.id]);
+
   return (
     <Page>
       <Head>
@@ -645,23 +672,15 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       <Spacer y={4} />
       <div className={styles.SwapContent}>
         <div className={styles.Graph}>
+          {priceHistory.length === 0 && (
+            <p className={styles.NoPriceData}>No price history available</p>
+          )}
           <Line
             data={{
-              // TODO: filterGraphData()
-              labels: [
-                "2021-12-01",
-                "2021-12-02",
-                "2021-12-03",
-                "2021-12-04",
-                "2021-12-05",
-                "2021-12-06",
-                "2021-12-07",
-              ],
+              labels: priceHistory.map(({ block }) => "Block: " + block),
               datasets: [
                 {
-                  // TODO: filterGraphData()
-                  // show price of "to" token in "from" tokens
-                  data: [0, 1, 2, 2, 4, 3, 2, 4],
+                  data: priceHistory.map(({ price }) => price),
                   ...GraphDataConfig,
                   borderColor: theme === "Light" ? "#000000" : "#ffffff",
                 },
