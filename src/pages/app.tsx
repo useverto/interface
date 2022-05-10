@@ -55,14 +55,6 @@ const App = () => {
   // load balances for user
   const [balances, setBalances] = useState<UserBalance[]>();
 
-  useEffect(() => {
-    if (!address) return;
-
-    client.user
-      .getBalances(user?.username ?? address, "community")
-      .then((res) => setBalances(res));
-  }, [user, address]);
-
   // load owned arts for user
   const [owned, setOwned] = useState<OwnedInterface[]>();
 
@@ -76,10 +68,14 @@ const App = () => {
       if (!address) return;
 
       // get owned art tokens
-      const ownedArts = await client.user.getBalances(
-        user?.username || address,
-        "art"
+      const allBalances = await client.user.getBalances(
+        user?.username || address
       );
+
+      // set community balances
+      setBalances(allBalances.filter(({ type }) => type === "community"));
+
+      const ownedArts = allBalances.filter(({ type }) => type === "art");
 
       // loop through owned art tokens and load
       // metadata and price for the art token

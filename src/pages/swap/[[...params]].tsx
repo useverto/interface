@@ -35,6 +35,7 @@ import {
 } from "../../utils/animations";
 import { useMediaPredicate } from "react-media-hook";
 import {
+  fetchBalancesForAddress,
   fetchContract,
   fetchTokenStateMetadata,
   fetchTopCommunities,
@@ -220,13 +221,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
   }, []);
 
   // load balances
-  const [balances, setBalances] = useState<BalanceType[]>([]);
+  const [balances, setBalances] = useState<UserBalance[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(true);
   const address = useSelector((state: RootState) => state.addressReducer);
-
-  type BalanceType = UserBalance & {
-    useContractLogo: boolean;
-  };
 
   useEffect(() => {
     (async () => {
@@ -235,26 +232,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       setLoadingBalances(true);
 
       try {
-        const fetchedBalances = await verto.user.getBalances(address);
-
-        // load logos
-        for (const balance of fetchedBalances) {
-          const { status } = await axios.get(
-            verto.token.getLogo(balance.contractId)
-          );
-
-          setBalances((val) => [
-            ...val,
-            {
-              ...balance,
-              useContractLogo:
-                balance.type === "community" &&
-                status !== 200 &&
-                balance.logo &&
-                balance.logo !== balance.contractId,
-            },
-          ]);
-        }
+        setBalances(await fetchBalancesForAddress(address));
       } catch {}
 
       setLoadingBalances(false);
@@ -272,7 +250,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
    * Filter tokens by their name, ticker and finally their ID
    * @param token Token to filter
    */
-  function filterTokens(token: BalanceType | PaginatedToken) {
+  function filterTokens(token: UserBalance | PaginatedToken) {
     const query = tokenSearchInput.state.toLowerCase();
 
     // return true for all if there is no query
@@ -297,7 +275,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
    * @param type Type of the token ("from" or "to")
    */
   async function setPairItem(
-    token: BalanceType | PaginatedToken,
+    token: UserBalance | PaginatedToken,
     type: "from" | "to"
   ) {
     if (tokens.length === 0) await fetchMore();
@@ -640,17 +618,19 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       // if the price is undefined for limit orders, set it to 0
       if (orderType === "limit" && isNaN(price)) price = 0;
 
-      // fetch estimate
-      const res = await verto.exchange.estimateSwap(
-        {
-          from: pair.from.id,
-          to: pair.to.id,
-        },
-        Number(amountInput.state),
-        price
-      );
+      try {
+        // fetch estimate
+        const res = await verto.exchange.estimateSwap(
+          {
+            from: pair.from.id,
+            to: pair.to.id,
+          },
+          Number(amountInput.state),
+          price
+        );
 
-      setEstimate(res);
+        setEstimate(res);
+      } catch {}
     })();
   }, [pair, orderType, amountInput.state, priceInput.state]);
 
@@ -767,17 +747,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
 
                             // for communities
                             if (balance.type === "community") {
-                              if (balance.useContractLogo) {
-                                image = `${gateway()}/${balance.logo}`;
-                              } else {
-                                image = verto.token.getLogo(
-                                  balance.contractId,
-                                  theme.toLowerCase() as "light" | "dark"
-                                );
-                              }
-                            } else {
-                              // for other tokens
-                              image = `${gateway()}/${balance.contractId}`;
+                              image = `/api/logo/${balance.contractId}`;
                             }
 
                             return (
