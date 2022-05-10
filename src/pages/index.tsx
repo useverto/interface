@@ -25,9 +25,9 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
 
   useEffect(() => {
     const options = {
-      strings: ["PSTs", "PSCs", "NFTs", "collectibles", "anything"],
+      strings: ["tokens", "communities", "NFTs", "collectibles", "anything"],
       loop: true,
-      loopCount: 2,
+      loopCount: 1,
 
       typeSpeed: 100,
       backSpeed: 50,
@@ -69,7 +69,7 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
         <Page className={styles.Landing}>
           <div className={styles.Hero}>
             <h1>
-              Exchange <span id="typed" className={styles.Cursor} />
+              Swap <span id="typed" className={styles.Cursor} />
               <br />
               on Arweave
             </h1>
@@ -104,15 +104,15 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
                   else router.push("/swap");
                 }}
               >
-                Trade now
+                Swap now
               </Button>
             </div>
           </div>
           <HeroTokens images={heroTokens} />
         </Page>
-        <Page className={styles.InfoSection}>
+        {/* <Page className={styles.InfoSection}>
           <div className={[styles.Card, styles.Primary].join(" ")}>
-            <h2>PSTs are the xxx xxx xxx of Arweave</h2>
+            <h2>The 🏠 of Arweave assets</h2>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
               tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
@@ -126,7 +126,7 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
               tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
               suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
             </p>
-            {/* TODO(@martonlederer): add link */}
+            {//TODO(@martonlederer): add link}
             <Button>Explore the Permaweb</Button>
           </div>
         </Page>
@@ -154,7 +154,7 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
         </h3>
 
         <Page className={styles.Assets}>
-          {/* table>tr*4>td*3 */}
+          {//table>tr*4>td*3}
           <table className={styles.AssetsTable}>
             {[1, 2, 3, 4].map((_, i) => (
               <tr key={i} className={styles.AssetRow}>
@@ -179,16 +179,20 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
               </tr>
             ))}
           </table>
-        </Page>
+        </Page> */}
 
         <Page className={styles.CTA}>
           <div className={styles.Left}>
             <div className={[styles.Card, styles.DAO].join(" ")}>
-              <h2>The Verto DAO</h2>
+              <h2>Verto Testnet</h2>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
-                tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
-                suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+                Verto has been completely redesigned from the ground up to
+                function trustlessly. We're excited to finally release this into
+                the wild, but before we do, we want to bring in the community to
+                test this new technology.
+              </p>
+              <p>
+                Please try to break the system and let us know your feedback!
               </p>
               <Button type="secondary">Learn More</Button>
             </div>
@@ -202,7 +206,7 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
                 <Twitter fill />
               </a>
               <a
-                href="https://twitter.com/vertoexchange"
+                href="https://github.com/useverto"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -215,25 +219,26 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
               >
                 <Discord />
               </a>
-              <a
+              {/* <a
                 href="https://www.linkedin.com/company/th8ta/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <Linkedin />
-              </a>
+              </a> */}
             </div>
           </div>
           <div className={[styles.Card, styles.Right].join(" ")}>
             <h2>For Developers</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
-              tellus quam facilisi lacus et, et tincidunt et. Nisl aenean
-              suscipit est ipsum fermentum faucibus malesuada venenatis morbi.
+              The new Verto is powered by a SmartWeave contract. Interacting
+              with this contract is incredibly simple, and you can use our new
+              JavaScript Library to add swapping support in only three lines of
+              code.
             </p>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quam id
-              tellus quam facilisi lacus et, et tincidunt et.
+              If you have any questions about integration or would like to
+              discuss Verto's architecture, feel free to join our community.
             </p>
             <Button>Read Docs</Button>
           </div>
