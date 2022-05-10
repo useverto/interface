@@ -24,8 +24,17 @@ import {
   ChevronDownIcon,
   ArrowRightIcon,
 } from "@iconicicons/react";
-import { arPrice, gateway, verto as client } from "../utils/arweave";
-import { fetchArtworkMetadata, UserBalance } from "verto-cache-interface";
+import {
+  arPrice,
+  gateway,
+  USD_STABLECOIN_ID,
+  verto as client,
+} from "../utils/arweave";
+import {
+  fetchArtworkMetadata,
+  fetchLatestPrice,
+  UserBalance,
+} from "verto-cache-interface";
 import { useRouter } from "next/router";
 import Balance from "../components/Balance";
 import Head from "next/head";
@@ -83,13 +92,28 @@ const App = () => {
         const artData = await fetchArtworkMetadata(art.contractId);
 
         if (!artData) continue;
+        let price: number = undefined;
+
+        // load price based on the dominant token
+        try {
+          const priceData = await fetchLatestPrice([
+            art.contractId,
+            USD_STABLECOIN_ID,
+          ]);
+
+          if (priceData?.dominantToken === art.contractId) {
+            price = priceData.vwap;
+          } else if (priceData?.dominantToken === USD_STABLECOIN_ID) {
+            price = 1 / priceData.vwap;
+          }
+        } catch {}
 
         setOwned((val) => [
           ...(val ?? []),
           {
             ...art,
             lister: artData.lister,
-            price: 0, // TODO
+            price,
           },
         ]);
       }

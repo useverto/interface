@@ -34,6 +34,7 @@ import {
 import {
   fetchArtworkMetadata,
   fetchContract,
+  fetchLatestPrice,
   fetchTokenStateMetadata,
   fetchUserCreations,
 } from "verto-cache-interface";
@@ -46,7 +47,14 @@ import {
 import { RootState } from "../../store/reducers";
 import { MuteIcon, UnmuteIcon, VerifiedIcon } from "@primer/octicons-react";
 import { TokenPair, UserInterface } from "@verto/js/dist/common/faces";
-import { arPrice, gateway, gql, supportsFCP, verto } from "../../utils/arweave";
+import {
+  arPrice,
+  gateway,
+  gql,
+  supportsFCP,
+  USD_STABLECOIN_ID,
+  verto,
+} from "../../utils/arweave";
 import { formatAddress, shuffleArray } from "../../utils/format";
 import { useRouter } from "next/router";
 import { getVerification, Threshold } from "arverify";
@@ -353,7 +361,21 @@ const Art = (props: PropTypes) => {
         await Promise.all(
           orders.map(async (order) => {
             const ticker = (await fetchTokenStateMetadata(order.token)).ticker;
-            const usd = undefined;
+            let usd: number = undefined;
+
+            // load price based on the dominant token
+            try {
+              const priceData = await fetchLatestPrice([
+                props.id,
+                USD_STABLECOIN_ID,
+              ]);
+
+              if (priceData?.dominantToken === props.id) {
+                usd = priceData.vwap;
+              } else if (priceData?.dominantToken === USD_STABLECOIN_ID) {
+                usd = 1 / priceData.vwap;
+              }
+            } catch {}
 
             return {
               ...order,

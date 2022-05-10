@@ -48,6 +48,9 @@ export const COLLECTIBLE_CONTRACT_SRC =
 /** Verto PST contract id */
 export const VERTO_CONTRACT_PST = "dmxxf7KcAvMnHozZesdpfAmhZl7gtU9SaM8KdW8y4LA";
 
+/** USD stablecoin id for prices */
+export const USD_STABLECOIN_ID = "n3VIyRZQhBJT7Y-Dtfk_CklbTyUkMkhYl_9H3LxVN8U";
+
 /**
  * Cache interface configuration
  * (The COMMUNITY_CONTRACT is not included in this, import it from this file)

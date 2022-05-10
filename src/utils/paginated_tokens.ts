@@ -1,6 +1,10 @@
 import { useState } from "react";
-import { fetchPaginated, PaginatedToken } from "verto-cache-interface";
-import { gateway, verto } from "./arweave";
+import {
+  fetchLatestPrice,
+  fetchPaginated,
+  PaginatedToken,
+} from "verto-cache-interface";
+import { gateway, USD_STABLECOIN_ID, verto } from "./arweave";
 import axios from "axios";
 
 /**
@@ -8,7 +12,7 @@ import axios from "axios";
  */
 export default function usePaginatedTokens() {
   // all tokens
-  const [tokens, setTokens] = useState<PaginatedToken[]>([]);
+  const [tokens, setTokens] = useState<PaginatedTokenWithPrice[]>([]);
   const [currentTokensPage, setCurrentTokensPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -22,7 +26,7 @@ export default function usePaginatedTokens() {
 
     setAnimationCounter(tokens.length);
 
-    const fetchedTokens = await fetchPaginated<PaginatedToken>(
+    const fetchedTokens = await fetchPaginated<PaginatedTokenWithPrice>(
       "tokens",
       8,
       currentTokensPage,
@@ -37,8 +41,22 @@ export default function usePaginatedTokens() {
 
       setHasMore(hasNextPage);
 
-      // cryptometa logo api
       for (const token of fetchedTokens.items) {
+        // load price based on the dominant token
+        try {
+          const priceData = await fetchLatestPrice([
+            token.id,
+            USD_STABLECOIN_ID,
+          ]);
+
+          if (priceData?.dominantToken === token.id) {
+            token.price = priceData.vwap;
+          } else if (priceData?.dominantToken === USD_STABLECOIN_ID) {
+            token.price = 1 / priceData.vwap;
+          }
+        } catch {}
+
+        // cryptometa logo api
         if (token.type !== "community") continue;
 
         let logo = verto.token.getLogo(token.id, "dark");
@@ -65,4 +83,8 @@ export default function usePaginatedTokens() {
     hasMore,
     animationCounter,
   };
+}
+
+interface PaginatedTokenWithPrice extends PaginatedToken {
+  price?: number;
 }

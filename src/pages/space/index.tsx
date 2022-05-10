@@ -14,12 +14,18 @@ import { AnimatePresence, motion } from "framer-motion";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { Line } from "react-chartjs-2";
 import { useRouter } from "next/router";
-import { arPrice, gateway, verto as client } from "../../utils/arweave";
+import {
+  arPrice,
+  gateway,
+  USD_STABLECOIN_ID,
+  verto as client,
+} from "../../utils/arweave";
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
 import { SearchIcon } from "@iconicicons/react";
 import {
+  fetchLatestPrice,
   fetchRandomArtworkWithUser,
   fetchRandomCommunitiesWithMetadata,
   RandomCommunities,
@@ -70,16 +76,25 @@ const Space = ({ featured, arts }: Props) => {
   // fetch price for freatured tokens & arts
   useEffect(() => {
     (async () => {
-      const arweavePrice = await arPrice();
-
       for (const { id } of [...featured, ...arts]) {
-        // TODO
-        //const res = await client.getPrice(id);
-        /*if (res.price)
+        let price: number = undefined;
+
+        // load price based on the dominant token
+        try {
+          const priceData = await fetchLatestPrice([id, USD_STABLECOIN_ID]);
+
+          if (priceData?.dominantToken === id) {
+            price = priceData.vwap;
+          } else if (priceData?.dominantToken === USD_STABLECOIN_ID) {
+            price = 1 / priceData.vwap;
+          }
+        } catch {}
+
+        if (price)
           setPrices((val) => ({
             ...val,
-            [id]: (res.price * arweavePrice).toFixed(2),
-          }));*/
+            [id]: price,
+          }));
       }
     })();
   }, []);

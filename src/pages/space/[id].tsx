@@ -1,11 +1,15 @@
-import { isAddress, verto as client } from "../../utils/arweave";
+import {
+  isAddress,
+  USD_STABLECOIN_ID,
+  verto as client,
+} from "../../utils/arweave";
 import {
   fetchCollectionById,
   fetchContract,
+  fetchLatestPrice,
   fetchUserByUsername,
 } from "verto-cache-interface";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import axios from "axios";
 import Community, {
   PropTypes as TokenProps,
 } from "../../components/space/Community";
@@ -65,13 +69,15 @@ export async function getServerSideProps({
       let price: number | "--" = "--";
 
       try {
-        // TODO: price
-        //const res = await client.getPrice(id);
-        const { data: gecko } = await axios.get(
-          "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
-        );
+        const priceData = await fetchLatestPrice([id, USD_STABLECOIN_ID]);
 
-        // price = res ? res.price * gecko.arweave.usd : "--",
+        // determinate price based on the dominant token
+        // TODO: update this
+        if (priceData?.dominantToken === id) {
+          price = priceData.vwap;
+        } else if (priceData?.dominantToken === USD_STABLECOIN_ID) {
+          price = 1 / priceData.vwap;
+        }
       } catch {}
 
       return {

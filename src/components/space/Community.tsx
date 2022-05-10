@@ -109,7 +109,8 @@ const Community = (props: PropTypes) => {
         .sort(
           (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
-      setHistory(prices);
+      // TODO: price history
+      // setHistory(prices);
     })();
   }, [selectedPeriod]);
 
@@ -279,6 +280,7 @@ const Community = (props: PropTypes) => {
           </h1>
           {(props.price !== "--" && (
             <>
+              <Spacer y={0.5} />
               <h1 className={styles.Price}>
                 $
                 {props.price.toLocaleString(undefined, {
@@ -287,53 +289,57 @@ const Community = (props: PropTypes) => {
                 })}
               </h1>
               <Spacer y={3.75} />
-              <div
-                className={
-                  styles.PeriodMenu +
-                  " " +
-                  (theme === "Dark" ? styles.DarkPeriodMenu : "")
-                }
-              >
-                <AnimatePresence>
-                  {periods.map((per, i) => (
-                    <motion.span
-                      key={i}
-                      className={selectedPeriod === per ? styles.Selected : ""}
-                      onClick={() => setSelectedPeriod(per)}
-                      {...cardListAnimation(i)}
-                    >
-                      {per}
-                    </motion.span>
-                  ))}
-                </AnimatePresence>
-              </div>
-              <Spacer y={1.5} />
-              <div className={styles.Graph}>
-                {history && (
-                  <Line
-                    data={{
-                      labels: history.map(({ date }) => date),
-                      datasets: [
-                        {
-                          data: history.map(({ price }) => price),
-                          ...GraphDataConfig,
-                          borderColor:
-                            theme === "Light" ? "#000000" : "#ffffff",
-                        },
-                      ],
-                    }}
-                    options={GraphOptions({
-                      theme,
-                      tooltipText: ({ value }) =>
-                        `${Number(value).toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
-                          minimumFractionDigits: 2,
-                        })} AR`,
-                    })}
-                  />
-                )}
-              </div>
-              <Spacer y={1.5} />
+              {history && (
+                <>
+                  <div
+                    className={
+                      styles.PeriodMenu +
+                      " " +
+                      (theme === "Dark" ? styles.DarkPeriodMenu : "")
+                    }
+                  >
+                    <AnimatePresence>
+                      {periods.map((per, i) => (
+                        <motion.span
+                          key={i}
+                          className={
+                            selectedPeriod === per ? styles.Selected : ""
+                          }
+                          onClick={() => setSelectedPeriod(per)}
+                          {...cardListAnimation(i)}
+                        >
+                          {per}
+                        </motion.span>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                  <Spacer y={1.5} />
+                  <div className={styles.Graph}>
+                    <Line
+                      data={{
+                        labels: history.map(({ date }) => date),
+                        datasets: [
+                          {
+                            data: history.map(({ price }) => price),
+                            ...GraphDataConfig,
+                            borderColor:
+                              theme === "Light" ? "#000000" : "#ffffff",
+                          },
+                        ],
+                      }}
+                      options={GraphOptions({
+                        theme,
+                        tooltipText: ({ value }) =>
+                          `${Number(value).toLocaleString(undefined, {
+                            maximumFractionDigits: 2,
+                            minimumFractionDigits: 2,
+                          })} AR`,
+                      })}
+                    />
+                  </div>
+                  <Spacer y={1.5} />
+                </>
+              )}
             </>
           )) || <Spacer y={3.75} />}
           <h1 className="Title">About</h1>
