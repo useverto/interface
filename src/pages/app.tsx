@@ -220,7 +220,7 @@ const App = () => {
         <div className={styles.OwnedList}>
           <AnimatePresence>
             {owned &&
-              owned.map((collectible, i) => (
+              owned.slice(0, 4).map((collectible, i) => (
                 <motion.div {...cardAnimation(i)} key={i}>
                   <Card.Asset
                     name={collectible.name}

@@ -89,7 +89,7 @@ const Balance = () => {
           </Tooltip>
         </p>
       </div>
-      <AnimatePresence>
+      {/**<AnimatePresence>
         {history && (
           <motion.div
             className={styles.Graph}
@@ -134,7 +134,7 @@ const Balance = () => {
             />
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence>}*/}
     </div>
   );
 };
