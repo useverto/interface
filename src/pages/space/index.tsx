@@ -40,7 +40,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import usePaginatedTokens from "../../utils/paginated_tokens";
 import styles from "../../styles/views/space.module.sass";
 
-const Space = ({ featured, arts }: Props) => {
+const Space = ({ featured }: Props) => {
   const [prices, setPrices] = useState<{ [id: string]: number }>({});
   const [history, setHistory] = useState<{
     [id: string]: { [date: string]: number };
@@ -50,6 +50,24 @@ const Space = ({ featured, arts }: Props) => {
   const router = useRouter();
   const theme = useTheme();
   const listModal = useModal();
+
+  // featured artworks
+  const [arts, setArts] =
+    useState<Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>>();
+
+  useEffect(() => {
+    (async () => {
+      let randomArts = await fetchRandomArtworkWithUser(4);
+
+      for (let i = 0; i < randomArts.length; i++)
+        if (randomArts[i].owner.image)
+          randomArts[i].owner.image = `${gateway()}/${
+            randomArts[i].owner.image
+          }`;
+
+      setArts(randomArts);
+    })();
+  }, []);
 
   // switch featured token page
   useEffect(() => {
@@ -76,6 +94,8 @@ const Space = ({ featured, arts }: Props) => {
   // fetch price for freatured tokens & arts
   useEffect(() => {
     (async () => {
+      if (!arts || !featured) return;
+
       for (const { id } of [...featured, ...arts]) {
         let price: number = undefined;
 
@@ -97,7 +117,7 @@ const Space = ({ featured, arts }: Props) => {
           }));
       }
     })();
-  }, []);
+  }, [featured, arts]);
 
   // fetch price history for featured tokens
   useEffect(() => {
@@ -279,35 +299,36 @@ const Space = ({ featured, arts }: Props) => {
       </h1>
       <Spacer y={2} />
       <div className={styles.Cards}>
-        {arts.map((art, i) => (
-          <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
-            {(art.type === "collection" && (
-              <Card.Collection
-                name={art.name}
-                userData={{
-                  avatar: art.owner.image,
-                  name: art.owner.name,
-                  usertag: art.owner.username,
-                }}
-                images={art.images.map((txID) => `${gateway()}/${txID}`)}
-                onClick={() => router.push(`/space/${art.id}`)}
-              />
-            )) || (
-              <Card.Asset
-                name={art.name}
-                userData={{
-                  avatar: art.owner.image,
-                  name: art.owner.name,
-                  usertag: art.owner.username,
-                }}
-                // @ts-ignore
-                price={prices[art.id] ?? " ??"}
-                image={`${gateway()}/${art.id}`}
-                onClick={() => router.push(`/space/${art.id}`)}
-              />
-            )}
-          </motion.div>
-        ))}
+        {(arts &&
+          arts.map((art, i) => (
+            <motion.div key={i} {...cardAnimation(i)} className={styles.Card}>
+              {(art.type === "collection" && (
+                <Card.Collection
+                  name={art.name}
+                  userData={{
+                    avatar: art.owner.image,
+                    name: art.owner.name,
+                    usertag: art.owner.username,
+                  }}
+                  images={art.images.map((txID) => `${gateway()}/${txID}`)}
+                  onClick={() => router.push(`/space/${art.id}`)}
+                />
+              )) || (
+                <Card.Asset
+                  name={art.name}
+                  userData={{
+                    avatar: art.owner.image,
+                    name: art.owner.name,
+                    usertag: art.owner.username,
+                  }}
+                  // @ts-ignore
+                  price={prices[art.id] ?? " ??"}
+                  image={`${gateway()}/${art.id}`}
+                  onClick={() => router.push(`/space/${art.id}`)}
+                />
+              )}
+            </motion.div>
+          ))) || <Loading.Spinner className={styles.Loading} />}
       </div>
       <Spacer y={4} />
       <h1 className="Title">
@@ -412,18 +433,12 @@ export async function getServerSideProps(): Promise<
   GetServerSidePropsResult<Props>
 > {
   const featured = await fetchRandomCommunitiesWithMetadata();
-  let arts = await fetchRandomArtworkWithUser(4);
 
-  for (let i = 0; i < arts.length; i++)
-    if (arts[i].owner.image)
-      arts[i].owner.image = `${gateway()}/${arts[i].owner.image}`;
-
-  return { props: { featured, arts } };
+  return { props: { featured } };
 }
 
 export default Space;
 
 interface Props {
   featured: RandomCommunities[];
-  arts: Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>;
 }

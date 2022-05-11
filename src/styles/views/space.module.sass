@@ -128,6 +128,7 @@
 
 .Cards
   display: grid
+  position: relative
   justify-content: space-between
   grid-template-columns: auto auto auto auto
 
@@ -147,6 +148,11 @@
 
       div[class~=VertoAssetCard]
         height: 100%
+
+  .Loading
+    position: absolute
+    left: 50%
+    transfor: translateX(-50%)
 
 .Search
   color: variables.$light-text
