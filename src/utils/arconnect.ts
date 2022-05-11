@@ -4,4 +4,5 @@ export const permissions: PermissionType[] = [
   "ACCESS_ADDRESS",
   "ACCESS_ALL_ADDRESSES",
   "SIGN_TRANSACTION",
+  "ACCESS_ARWEAVE_CONFIG",
 ];

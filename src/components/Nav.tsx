@@ -223,6 +223,33 @@ const Nav = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [mobile]);
 
+  // check gateway, ensure it is TESTNET
+  useEffect(() => {
+    (async () => {
+      if (!address) return;
+
+      try {
+        // user's arconnect gateway config
+        const arconnectConfig = await window.arweaveWallet.getArweaveConfig();
+
+        // check the config data
+        if (
+          arconnectConfig.host !== gatewayConfig.host ||
+          arconnectConfig.protocol !== gatewayConfig.protocol ||
+          arconnectConfig.port !== gatewayConfig.port
+        ) {
+          console.warn("Logged out for invalid gateway config (NOT TESTNET)");
+          await signOut();
+        }
+      } catch (e) {
+        // sign out
+        console.warn("Logged out, could not get gateway config");
+        console.error(e);
+        await signOut();
+      }
+    })();
+  }, [address]);
+
   return (
     <>
       <motion.div
