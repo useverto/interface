@@ -76,6 +76,9 @@ const App = () => {
     (async () => {
       if (!address) return;
 
+      setOwned(undefined);
+      setBalances(undefined);
+
       // get owned art tokens
       const allBalances = await client.user.getBalances(
         user?.username || address
@@ -86,9 +89,9 @@ const App = () => {
 
       const ownedArts = allBalances.filter(({ type }) => type === "art");
 
-      // loop through owned art tokens and load
-      // metadata and price for the art token
-      for (const art of ownedArts) {
+      if (ownedArts.length === 0) return setOwned([]);
+
+      for (const art of ownedArts.slice(0, 4)) {
         const artData = await fetchArtworkMetadata(art.contractId);
 
         if (!artData) continue;
@@ -201,7 +204,7 @@ const App = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      {balances?.length === 0 && (
+      {balances && balances?.length === 0 && (
         <p className="NoItemsText">Nothing in wallet</p>
       )}
       <Spacer y={4} />
@@ -217,7 +220,7 @@ const App = () => {
         <div className={styles.OwnedList}>
           <AnimatePresence>
             {owned &&
-              owned.slice(0, 4).map((collectible, i) => (
+              owned.map((collectible, i) => (
                 <motion.div {...cardAnimation(i)} key={i}>
                   <Card.Asset
                     name={collectible.name}
