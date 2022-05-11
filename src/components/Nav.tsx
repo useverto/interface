@@ -29,7 +29,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
 import { ArrowSwitchIcon } from "@primer/octicons-react";
-import { gateway, verto as client, gatewayConfig } from "../utils/arweave";
+import {
+  gateway,
+  verto as client,
+  gatewayConfig,
+  client as arweave,
+} from "../utils/arweave";
 import {
   navDesktopAnimation,
   navMobileAnimation,
@@ -143,9 +148,12 @@ const Nav = () => {
     );
     await syncAddress();
 
-    const user = await client.user.getUser(
-      await window.arweaveWallet.getActiveAddress()
-    );
+    const addr = await window.arweaveWallet.getActiveAddress();
+    const user = await client.user.getUser(addr);
+
+    // automint AR
+    await arweave.api.get(`mint/${addr}/${arweave.ar.arToWinston("100")}`);
+
     if (!user) setupModal.setState(true);
   }
 
