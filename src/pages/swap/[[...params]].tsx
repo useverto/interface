@@ -551,7 +551,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       );
       setToast({
         type: "error",
-        description: "Could not create order",
+        description: e?.message || "Could not create order",
         duration: 3400,
       });
     }
