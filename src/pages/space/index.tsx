@@ -23,7 +23,7 @@ import {
 import { UserInterface } from "@verto/js/dist/common/faces";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/reducers";
-import { SearchIcon } from "@iconicicons/react";
+import { PlusIcon, SearchIcon } from "@iconicicons/react";
 import {
   fetchLatestPrice,
   fetchRandomArtworkWithUser,
@@ -31,6 +31,7 @@ import {
   RandomCommunities,
 } from "verto-cache-interface";
 import { GetServerSidePropsResult } from "next";
+import { useMediaPredicate } from "react-media-hook";
 import Search, { useSearch } from "../../components/Search";
 import axios from "axios";
 import Head from "next/head";
@@ -198,6 +199,26 @@ const Space = ({ featured }: Props) => {
   // all tokens (infinite loading)
   const { tokens, hasMore, fetchMore, animationCounter } = usePaginatedTokens();
 
+  // mobile repsonsive display
+  const mobile = useMediaPredicate("(max-width: 720px)");
+
+  // mint button style change on scroll
+  const [mintButtonStyle, setMintButtonStyle] = useState<"default" | "rounded">(
+    "default"
+  );
+
+  useEffect(() => {
+    if (mobile || !window) return;
+    const scrollEventHandler = () =>
+      setMintButtonStyle(
+        window.scrollY > window.innerHeight ? "rounded" : "default"
+      );
+
+    window.addEventListener("scroll", scrollEventHandler);
+
+    return () => window.removeEventListener("scroll", scrollEventHandler);
+  }, [mobile]);
+
   return (
     <Page>
       <Head>
@@ -205,6 +226,39 @@ const Space = ({ featured }: Props) => {
         <Metas title="Space" />
       </Head>
       <Spacer y={3} />
+      <Button
+        className={
+          styles.MintButton +
+          " " +
+          (mintButtonStyle === "rounded" ? styles.RoundStyle : "")
+        }
+        onClick={() => {
+          if (!userData)
+            return setToast({
+              description: "Please setup your Verto ID first",
+              type: "error",
+              duration: 5300,
+            });
+          listModal.setState(true);
+        }}
+      >
+        <PlusIcon />
+        <AnimatePresence>
+          {!mobile && mintButtonStyle === "default" && (
+            <motion.span
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "max-content", opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{
+                opacity: { duration: 0.1, ease: "easeInOut" },
+                width: { duration: 0.23, ease: "easeInOut" },
+              }}
+            >
+              Mint
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </Button>
       <div
         className={
           styles.Featured + " " + (theme === "Dark" ? styles.DarkFeatured : "")

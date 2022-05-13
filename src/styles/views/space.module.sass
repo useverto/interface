@@ -165,3 +165,50 @@
 
   &:active
     transform: scale(.9)
+
+.MintButton
+  $sidePadding: 1.2em
+  $topPadding: .7em
+  position: fixed
+  right: 0
+  bottom: 1em
+  z-index: 100
+  font-weight: 400 !important
+  right: 19vw
+  font-size: 1.6em !important
+  overflow: hidden
+  line-height: 1em
+  border-radius: calc($topPadding * 2.5) !important
+  padding: $topPadding $sidePadding !important
+    right: $sidePadding + .25em !important
+
+  =roundStyle
+    align-items: center
+    justify-content: center
+    padding: $topPadding !important
+
+  @media screen and (max-width: 1650px)
+    right: 12vw
+
+  @media screen and (max-width: variables.$smaller-screen)
+    right: 10vw
+
+  @media screen and (max-width: variables.$mobile-screen)
+    right: 7.4vw
+    +roundStyle
+    bottom: 12vh
+
+  svg
+    font-size: 1.2em
+    width: 1em
+    height: 1em
+    margin-right: .4em
+
+    @media screen and (max-width: variables.$mobile-screen)
+      margin-right: 0
+
+  &.RoundStyle
+    +roundStyle
+
+    svg
+      margin-right: 0
