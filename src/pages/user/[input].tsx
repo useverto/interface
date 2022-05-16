@@ -49,7 +49,7 @@ const User = (props: Props) => {
   if (router.isFallback) return <></>;
 
   const [orders, setOrders] = useState<OrderInterfaceWithPair[]>([]);
-  const [transactions, setTransactions] = useState<TransactionInterface[]>([]);
+  const [transactions, setTransactions] = useState<TransactionInterface[]>();
   const currentAddress = useSelector(
     (state: RootState) => state.addressReducer
   );
@@ -393,44 +393,50 @@ const User = (props: Props) => {
       <h1 className="Title">Transactions</h1>
       <Spacer y={1} />
       <table className={styles.Transactions}>
-        {transactions.map((transaction, i) => (
-          <motion.tr key={i} {...cardListAnimation(i)}>
-            <td className={styles.TxType}>{transaction.type}</td>
-            <td className={styles.TxID}>
-              <a
-                href={`https://viewblock.io/arweave/tx/${transaction.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {shortOnMobile(transaction.id)}
-              </a>
-              <Tooltip
-                text={transaction.status}
-                position="right"
-                className={styles.StatusTooltip}
-              >
-                <span
-                  className={
-                    styles.Status + " " + styles[`Status_${transaction.status}`]
-                  }
-                />
-              </Tooltip>
-            </td>
-            <td className={styles.TxAmount}>{transaction.amount}</td>
-          </motion.tr>
-        ))}
+        {transactions &&
+          transactions.map((transaction, i) => (
+            <motion.tr key={i} {...cardListAnimation(i)}>
+              <td className={styles.TxType}>{transaction.type}</td>
+              <td className={styles.TxID}>
+                <a
+                  href={`https://viewblock.io/arweave/tx/${transaction.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {shortOnMobile(transaction.id)}
+                </a>
+                <Tooltip
+                  text={transaction.status}
+                  position="right"
+                  className={styles.StatusTooltip}
+                >
+                  <span
+                    className={
+                      styles.Status +
+                      " " +
+                      styles[`Status_${transaction.status}`]
+                    }
+                  />
+                </Tooltip>
+              </td>
+              <td className={styles.TxAmount}>{transaction.amount}</td>
+            </motion.tr>
+          ))}
       </table>
-      {(transactions.length > 0 && (
-        <>
-          <Spacer y={1} />
-          <Link href={`/@${props.input}/transactions`}>
-            <a className="ShowMore">
-              View all
-              <ArrowRightIcon />
-            </a>
-          </Link>
-        </>
-      )) || <span className="NoItemsText">No transactions...</span>}
+      {(!transactions && (
+        <Loading.Spinner className={styles.LoadingSection} />
+      )) ||
+        (transactions.length > 0 && (
+          <>
+            <Spacer y={1} />
+            <Link href={`/@${props.input}/transactions`}>
+              <a className="ShowMore">
+                View all
+                <ArrowRightIcon />
+              </a>
+            </Link>
+          </>
+        )) || <span className="NoItemsText">No transactions...</span>}
       <Spacer y={1} />
       <Modal {...cancelModal.bindings}>
         <Modal.Title>Cancel order</Modal.Title>
