@@ -751,6 +751,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                   className={styles.SearchToken}
                   {...tokenSearchInput.bindings}
                   placeholder="Search for token or contract address"
+                  disabled={tokenSelector === "to"}
                 />
                 <Spacer y={2} />
                 {(tokenSelector === "from" && (
@@ -759,10 +760,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                       {!loadingBalances &&
                         balances
                           .filter(filterTokens)
-                          // TODO: sort by balance
                           .sort((a, b) => b.balance - a.balance)
                           .map((balance, i) => {
-                            let image = balance.contractId;
+                            let image = `${gateway()}/${balance.contractId}`;
 
                             // for communities
                             if (balance.type === "community") {

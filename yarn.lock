@@ -641,10 +641,10 @@
   dependencies:
     "@types/node" "*"
 
-"@verto/js@^1.0.0-beta-22":
-  version "1.0.0-beta-22"
-  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-22.tgz#a5a0ba20f244b266daa799618690e2884674c831"
-  integrity sha512-9/Xdg7bp+ukuVXzWUTWUQcq8MIK2RFJMv9Yic3XQfMtLNlC6v0lIc2dXZ0WLZEe3lSGAHRW9uJyTOE2rlUASXA==
+"@verto/js@^1.0.0-beta-24":
+  version "1.0.0-beta-24"
+  resolved "https://registry.yarnpkg.com/@verto/js/-/js-1.0.0-beta-24.tgz#e3224ed814fb4690d4c0816849fe3a026a276785"
+  integrity sha512-U8crI7QD9kOWO97AyXey8fZ6pgFLk+IIruKh1xoHv09RxE/uI1e9ZNADYql3ZWN01g6qwOXaJ3MV3zHQ3Hsdnw==
   dependencies:
     "@three-em/js" "^0.2.8"
     "@three-em/node" "^0.2.10"
@@ -652,7 +652,7 @@
     arweave "^1.10.23"
     axios "^0.24.0"
     smartweave "^0.4.46"
-    verto-cache-interface "^1.2.3"
+    verto-cache-interface "^1.2.6"
     verto-internals "^0.9.1"
 
 "@verto/ui@^3.0.0-alpha":
@@ -3447,18 +3447,10 @@ uuid@8.3.2, uuid@^8.0.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
-verto-cache-interface@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.3.tgz#178d6d6780501e2b69a8ee63182c96713c5e6d0d"
-  integrity sha512-+T5flkTwB6bZJpeWAGFgaqd+SrixlOurtwnQg5MpNw0LnOdpq7AZoJlmhNzg91MJbkgMQx8VOv5+SMutzDXDUQ==
-  dependencies:
-    axios "^0.23.0"
-    verto-internals "^0.7.0"
-
-verto-cache-interface@^1.2.5:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.5.tgz#8bd4fd2279dce7cecf030739d59cd47c3db5901b"
-  integrity sha512-DOyjIUPYtjh9UaQ9Wma60/Oj3Aafcgchd2eTUw2AjHFkcirGumRp1Xp97QdDQyPQzsCK9xNoUUQNRx4z8gBW9g==
+verto-cache-interface@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/verto-cache-interface/-/verto-cache-interface-1.2.6.tgz#233c88de5f9bded6b52f91eac71175c894c2d02c"
+  integrity sha512-g8Yf6RWD4zpI6FOsYK+C2j0+8tywzo7b1fqM5x+KvuQti35gphOGulozbWH5MtFhwweAjz+rP1LwrPNqF+SguQ==
   dependencies:
     axios "^0.23.0"
     verto-internals "^0.7.0"
