@@ -1116,7 +1116,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
           <table>
             <thead>
               <th>Side</th>
-              <th>Price ({pair.to.ticker})</th>
+              <th>
+                Price ({pair.to.ticker} / {pair.from.ticker})
+              </th>
               <th>Amount</th>
               <th className={styles.TotalColumn}>Total</th>
               <th className={styles.CancelColumn} />
@@ -1179,7 +1181,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
           <table>
             <thead>
               <th>Side</th>
-              <th>Price ({pair.from.ticker})</th>
+              <th>
+                Price ({pair.from.ticker} / {pair.to.ticker})
+              </th>
               <th>Amount</th>
               <th className={styles.TotalColumn}>Total</th>
               <th className={styles.CancelColumn} />
