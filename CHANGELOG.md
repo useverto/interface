@@ -44,7 +44,6 @@
 ## `2.0.0 Beta`
 
 - Inteface
-
   - Refactored
     - Exchange
       - CLOB infrastructures
@@ -75,11 +74,12 @@
     - Testnet
     - ArConnect integration improvements
     - NextJS server side functions
-  - Removed: - Orbit - Balance history (bugged, will be added back later)
-    <br />
+  - Removed:
+    - Orbit
+    - Balance history (bugged, will be added back later)
+<br />
 
 - Verto JS library
-
   - Complete refactor
     - Implemented CLOB Contract based exchange
     - Implemented new cache interface
@@ -97,8 +97,11 @@
       - Token type fetching
       - Listing tokens
       - Flexible logo API using Cryptometa
-  - Updated to use the new CLOB infrastructure - Swap function - Cancel function - Order functionalities
-    <br />
+  - Updated to use the new CLOB infrastructure
+    - Swap function
+    - Cancel function
+    - Order functionalities
+<br />
 
 - Contracts
   - CLOB
@@ -107,3 +110,4 @@
     - FCP support
   - Collectible
     - FCP support
+  
