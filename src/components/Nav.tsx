@@ -45,6 +45,7 @@ import useArConnect from "use-arconnect";
 import Link from "next/link";
 import SetupModal from "./SetupModal";
 import styles from "../styles/components/Nav.module.sass";
+import axios from "axios";
 
 const Nav = () => {
   const address = useSelector((state: RootState) => state.addressReducer);
@@ -151,10 +152,13 @@ const Nav = () => {
     const addr = await window.arweaveWallet.getActiveAddress();
     const user = await client.user.getUser(addr);
 
+    if (!user) setupModal.setState(true);
+
     // automint AR
     await arweave.api.get(`mint/${addr}/${arweave.ar.arToWinston("100")}`);
 
-    if (!user) setupModal.setState(true);
+    // automint USDC
+    await axios.get(`/api/faucet/${addr}`);
   }
 
   async function signOut() {
