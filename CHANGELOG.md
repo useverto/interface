@@ -41,7 +41,7 @@
 - Fix 404 errors incorrectly displayed on Orbit
 - Custom 500 error page
 
-## `1.5.0 Beta`
+## `2.0.0 Beta`
 
 - Inteface
 
