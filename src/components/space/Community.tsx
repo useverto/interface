@@ -157,6 +157,9 @@ const Community = (props: PropTypes) => {
 
     try {
       await client.token.transfer(amount.state, props.id, target.state);
+
+      amount.reset();
+      target.reset();
       setToast({
         description: `Transferring ${amount.state.toLocaleString()} ${
           props.ticker
