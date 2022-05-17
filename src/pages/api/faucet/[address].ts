@@ -63,6 +63,9 @@ export default async function faucet(
       },
     ]);
 
+    // mine
+    await client.api.get("mine");
+
     res.status(200).send("Sent tokens");
   } catch (e) {
     res.status(400).json({ error: "Could not send USDC", message: e.message });
