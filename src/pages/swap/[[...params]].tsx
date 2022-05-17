@@ -295,18 +295,8 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
 
       // update "to" token if it is the same as "from" token
       // and do the same for the "from" token
-      if (type === "from" && id === pair.to.id) {
-        updatedPair.to = {
-          id: tokens[0].id,
-          name: tokens[0].name,
-          ticker: tokens[0].ticker,
-        };
-      } else if (type === "to" && id === pair.from.id) {
-        updatedPair.from = {
-          id: balances[0].contractId,
-          name: balances[0].name,
-          ticker: balances[0].ticker,
-        };
+      if (updatedPair.from.id === updatedPair.to.id) {
+        updatedPair[type === "from" ? "to" : "from"] = pair[type];
       }
 
       return updatedPair;
