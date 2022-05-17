@@ -156,7 +156,7 @@ const Community = (props: PropTypes) => {
     setTransferring(true);
 
     try {
-      await client.token.transfer(amount.state, props.id, target.state);
+      await client.token.transfer(Number(amount.state), props.id, target.state);
 
       amount.reset();
       target.reset();
