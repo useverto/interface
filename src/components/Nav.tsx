@@ -154,11 +154,15 @@ const Nav = () => {
 
     if (!user) setupModal.setState(true);
 
-    // automint AR
-    await arweave.api.get(`mint/${addr}/${arweave.ar.arToWinston("100")}`);
+    try {
+      // automint AR
+      await arweave.api.get(`mint/${addr}/${arweave.ar.arToWinston("100")}`);
 
-    // automint USDC
-    await axios.get(`/api/faucet/${addr}`);
+      // automint USDC
+      await axios.get(`/api/faucet/${addr}`);
+    } catch (e) {
+      console.warn("Wasn't able to automint AR or USDC: \n", e.messsage);
+    }
   }
 
   async function signOut() {
