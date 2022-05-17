@@ -319,9 +319,16 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
     useState<ClobContractStateInterface>();
 
   useEffect(() => {
-    fetchContract(CLOB_CONTRACT)
-      .then((res) => setClobContractState(res.state))
-      .catch();
+    const clobUpdater = () =>
+      fetchContract(CLOB_CONTRACT)
+        .then((res) => setClobContractState(res.state))
+        .catch();
+
+    clobUpdater();
+    // fetch the clob contract every minute
+    const intervalID = setInterval(clobUpdater, 1000 * 60);
+
+    return () => clearInterval(intervalID);
   }, []);
 
   // wether the pair is tradable or not
