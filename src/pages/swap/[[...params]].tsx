@@ -16,6 +16,7 @@ import {
   useInput,
   Loading,
   useToasts,
+  Tooltip,
 } from "@verto/ui";
 import { useEffect, useState } from "react";
 import { permissions as requiredPermissions } from "../../utils/arconnect";
@@ -56,6 +57,7 @@ import { RootState } from "../../store/reducers";
 import { formatAddress, isNanNull } from "../../utils/format";
 import { swapItems } from "../../utils/storage_names";
 import { pairAddPending } from "../../utils/pending_pair";
+import { ArrowSwitchIcon } from "@primer/octicons-react";
 import SwapInput from "../../components/SwapInput";
 import Balance from "../../components/Balance";
 import Head from "next/head";
@@ -276,7 +278,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
    * @param type Type of the token ("from" or "to")
    */
   async function setPairItem(
-    token: UserBalance | PaginatedToken,
+    token: UserBalance | PaginatedToken | SimpleTokenInterface,
     type: "from" | "to"
   ) {
     if (tokens.length === 0) await fetchMore();
@@ -1093,6 +1095,12 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
           Orderbook
           <span className={styles.PairTitle}>
             {pair.from.ticker} / {pair.to.ticker}
+          </span>
+          <span
+            className={styles.SwitchTokens}
+            onClick={() => setPairItem(pair.to, "from")}
+          >
+            <ArrowSwitchIcon />
           </span>
         </h1>
         {/*<Select label="DEPTH" small className={styles.DepthSelect}>

@@ -419,6 +419,23 @@
       @media screen and (max-width: variables.$mobile-screen)
         margin-left: 0
 
+    .SwitchTokens
+      display: inline-flex
+      align-items: center
+      font-size: .35em
+      margin-left: .5em
+      cursor: pointer
+      transition: all .23s ease-in-out
+
+      &:active
+        transform: scale(.9)
+
+      svg
+        font-size: 1em
+        width: 1em
+        height: 1em
+        color: variables.$light-text
+
 .OrderBook
   display: flex
   align-items: stretch
