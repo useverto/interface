@@ -32,24 +32,24 @@ export const gql = new ArDB(client);
 export const ROOT_URL = "https://verto.exchange";
 
 /** Community contract id */
-export const COMMUNITY_CONTRACT = "DPfCGDfo1_hzDjdVFQt97dkIylYXlZGrBUnBNnyKVo8";
+export const COMMUNITY_CONTRACT = "ppk1GzzOU2hwjEUMqVkqyAvsj-BPakNzuEKEzhJtyJE";
 
 /** Clob contract id */
-export const CLOB_CONTRACT = "EfmXSfl1wROwAKwFdQoeUYK09yM-6JXYCGi4eEJHLpI";
+export const CLOB_CONTRACT = "ySwuiyQGm-jDDa2OD1ub6QLWTCklOxkPesnaJnmoFUc";
 
 /** Collection contract src tx id */
 export const COLLECTION_CONTRACT_SRC =
-  "ZHclOfbFP0x0ydMt7fkWppjaePLG9MhbV3UMyUQbAF4";
+  "te-J2d4IF6GRVzVxGdn8Dedlk7V8FYlXTdrXgobzsJk";
 
 /** Collectible contract src tx id */
 export const COLLECTIBLE_CONTRACT_SRC =
-  "SDdk7sxaeEgzsuTRIGmnhTKjBUWRkoD8msQETp-a3Co";
+  "aKN8Q4LkdPX61s14zK6GytgtA8zqpBV9n2z9-hGizVk";
 
 /** Verto PST contract id */
-export const VERTO_CONTRACT_PST = "dmxxf7KcAvMnHozZesdpfAmhZl7gtU9SaM8KdW8y4LA";
+export const VERTO_CONTRACT_PST = "krW6M5Y1zqcWorlWjSURE-C7s0UsLO5whuOBLDecNlg";
 
 /** USD stablecoin id for prices */
-export const USD_STABLECOIN_ID = "n3VIyRZQhBJT7Y-Dtfk_CklbTyUkMkhYl_9H3LxVN8U";
+export const USD_STABLECOIN_ID = "hvdtx1k3-m7XA_8VE9pa8parkEMIh8dHBhABABQdMjI";
 
 /**
  * Cache interface configuration
