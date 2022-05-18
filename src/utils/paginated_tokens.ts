@@ -4,8 +4,7 @@ import {
   fetchPaginated,
   PaginatedToken,
 } from "verto-cache-interface";
-import { gateway, USD_STABLECOIN_ID, verto } from "./arweave";
-import axios from "axios";
+import { USD_STABLECOIN_ID } from "./arweave";
 
 /**
  * Paginated tokens hook to use with infinite scrolling

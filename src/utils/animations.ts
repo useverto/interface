@@ -75,12 +75,13 @@ export const expandAnimation = (i = 0) => ({
   },
 });
 
-export const infiniteScrollAnimation = {
+export const infiniteScrollAnimation = (i: number = 0) => ({
   initial: {
     opacity: 0,
     y: 50,
     transition: {
       ease: [0.78, 0.14, 0.15, 0.86],
+      delay: i * 0.023,
     },
   },
   animate: {
@@ -88,9 +89,10 @@ export const infiniteScrollAnimation = {
     y: 0,
     transition: {
       ease: [0.78, 0.14, 0.15, 0.86],
+      delay: i * 0.023,
     },
   },
-};
+});
 
 const mobileBaseAnimationState = {
   left: "50%",

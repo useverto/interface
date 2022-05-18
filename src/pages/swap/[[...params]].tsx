@@ -18,7 +18,7 @@ import {
   useToasts,
   Tooltip,
 } from "@verto/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { permissions as requiredPermissions } from "../../utils/arconnect";
 import { GraphDataConfig, GraphOptions } from "../../utils/graph";
 import { AnimatePresence, motion } from "framer-motion";
@@ -753,128 +753,132 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                   disabled={tokenSelector === "to"}
                 />
                 <Spacer y={2} />
-                {(tokenSelector === "from" && (
-                  <div className={styles.TokenSelectList}>
-                    <AnimatePresence>
-                      {!loadingBalances &&
-                        balances
-                          .filter(filterTokens)
-                          .sort((a, b) => b.balance - a.balance)
-                          .map((balance, i) => {
-                            let image = `${gateway()}/${balance.contractId}`;
-
-                            // for communities
-                            if (balance.type === "community") {
-                              image = `/api/logo/${balance.contractId}`;
-                            }
-
-                            return (
-                              <motion.div {...cardListAnimation(i)} key={i}>
-                                <div
-                                  className={
-                                    styles.TokenItem +
-                                    " " +
-                                    (pair.from?.id === balance.contractId
-                                      ? styles.SelectedToken
-                                      : "")
-                                  }
-                                  onClick={() => setPairItem(balance, "from")}
-                                  title={
-                                    balance?.balance
-                                      ? balance?.balance?.toLocaleString(
-                                          undefined,
-                                          { maximumFractionDigits: 2 }
-                                        ) +
-                                        " " +
-                                        balance.ticker
-                                      : undefined
-                                  }
-                                >
-                                  <img
-                                    src={image}
-                                    alt="token-icon"
-                                    className={
-                                      balance.type === "art"
-                                        ? styles.ArtPreview
-                                        : ""
-                                    }
-                                  />
-                                  <Spacer x={1.25} />
-                                  <div>
-                                    <h1>{balance.name}</h1>
-                                    <p>
-                                      <span>{balance.ticker}</span>
-                                      {" · "}
-                                      {formatAddress(balance.contractId, 16)}
-                                    </p>
-                                  </div>
-                                </div>
-                                <Spacer y={0.75} />
-                              </motion.div>
-                            );
-                          })}
-                    </AnimatePresence>
-                    {loadingBalances && (
-                      <Loading.Spinner className={styles.LoadingTokenList} />
-                    )}
-                  </div>
-                )) ||
-                  (tokenSelector === "to" && (
-                    <InfiniteScroll
-                      className={styles.TokenSelectList}
-                      dataLength={tokens.length}
-                      next={fetchMore}
-                      hasMore={hasMore}
-                      loader={
-                        <Loading.Spinner className={styles.LoadingTokenList} />
-                      }
-                      style={{ overflow: "unset !important" }}
-                      height={300}
-                    >
+                <div id="TokenList" className={styles.TokenListWrapper}>
+                  {(tokenSelector === "from" && (
+                    <div className={styles.TokenSelectList}>
                       <AnimatePresence>
-                        {tokens
-                          .filter(({ type }) => type !== "collection")
-                          .map((token, i) => {
-                            let image = `${gateway()}/${token.id}`;
+                        {!loadingBalances &&
+                          balances
+                            .filter(filterTokens)
+                            .sort((a, b) => b.balance - a.balance)
+                            .map((balance, i) => {
+                              let image = `${gateway()}/${balance.contractId}`;
 
-                            if (token.type === "community") {
-                              image = `/api/logo/${token.id}`;
-                            }
+                              // for communities
+                              if (balance.type === "community") {
+                                image = `/api/logo/${balance.contractId}`;
+                              }
 
-                            return (
-                              <motion.div
-                                {...cardListAnimation(i - animationCounter)}
-                                key={i}
-                              >
-                                <div
-                                  className={
-                                    styles.TokenItem +
-                                    " " +
-                                    (pair.to?.id === token.id
-                                      ? styles.SelectedToken
-                                      : "")
-                                  }
-                                  // set the active pair "to" token
-                                  onClick={() => setPairItem(token, "to")}
-                                >
-                                  <img src={image} alt="token-icon" />
-                                  <Spacer x={1.45} />
-                                  <div>
-                                    <h1>{token.name}</h1>
-                                    <p>
-                                      <span>{token.ticker}</span>
-                                      {" · "}
-                                      {formatAddress(token.id, 16)}
-                                    </p>
+                              return (
+                                <motion.div {...cardListAnimation(i)} key={i}>
+                                  <div
+                                    className={
+                                      styles.TokenItem +
+                                      " " +
+                                      (pair.from?.id === balance.contractId
+                                        ? styles.SelectedToken
+                                        : "")
+                                    }
+                                    onClick={() => setPairItem(balance, "from")}
+                                    title={
+                                      balance?.balance
+                                        ? balance?.balance?.toLocaleString(
+                                            undefined,
+                                            { maximumFractionDigits: 2 }
+                                          ) +
+                                          " " +
+                                          balance.ticker
+                                        : undefined
+                                    }
+                                  >
+                                    <img
+                                      src={image}
+                                      alt="token-icon"
+                                      className={
+                                        balance.type === "art"
+                                          ? styles.ArtPreview
+                                          : ""
+                                      }
+                                    />
+                                    <Spacer x={1.25} />
+                                    <div>
+                                      <h1>{balance.name}</h1>
+                                      <p>
+                                        <span>{balance.ticker}</span>
+                                        {" · "}
+                                        {formatAddress(balance.contractId, 16)}
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
-                                <Spacer y={0.75} />
-                              </motion.div>
-                            );
-                          })}
+                                  <Spacer y={0.75} />
+                                </motion.div>
+                              );
+                            })}
                       </AnimatePresence>
-                    </InfiniteScroll>
-                  ))}
+                      {loadingBalances && (
+                        <Loading.Spinner className={styles.LoadingTokenList} />
+                      )}
+                    </div>
+                  )) ||
+                    (tokenSelector === "to" && (
+                      <InfiniteScroll
+                        className={styles.TokenSelectList}
+                        dataLength={tokens.length}
+                        next={fetchMore}
+                        hasMore={hasMore}
+                        loader={
+                          <Loading.Spinner
+                            className={styles.LoadingTokenList}
+                          />
+                        }
+                        style={{ overflow: "unset !important" }}
+                        scrollableTarget="TokenList"
+                      >
+                        <AnimatePresence>
+                          {tokens
+                            .filter(({ type }) => type !== "collection")
+                            .map((token, i) => {
+                              let image = `${gateway()}/${token.id}`;
+
+                              if (token.type === "community") {
+                                image = `/api/logo/${token.id}`;
+                              }
+
+                              return (
+                                <motion.div
+                                  {...cardListAnimation(i - animationCounter)}
+                                  key={i}
+                                >
+                                  <div
+                                    className={
+                                      styles.TokenItem +
+                                      " " +
+                                      (pair.to?.id === token.id
+                                        ? styles.SelectedToken
+                                        : "")
+                                    }
+                                    // set the active pair "to" token
+                                    onClick={() => setPairItem(token, "to")}
+                                  >
+                                    <img src={image} alt="token-icon" />
+                                    <Spacer x={1.45} />
+                                    <div>
+                                      <h1>{token.name}</h1>
+                                      <p>
+                                        <span>{token.ticker}</span>
+                                        {" · "}
+                                        {formatAddress(token.id, 16)}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <Spacer y={0.75} />
+                                </motion.div>
+                              );
+                            })}
+                        </AnimatePresence>
+                      </InfiniteScroll>
+                    ))}
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

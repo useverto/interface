@@ -1,9 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  cardListAnimation,
-  infiniteScrollAnimation,
-  opacityAnimation,
-} from "../utils/animations";
+import { cardListAnimation, opacityAnimation } from "../utils/animations";
 import { CloseIcon, MenuIcon, SearchIcon, ShareIcon } from "@iconicicons/react";
 import { useState, useEffect } from "react";
 import { Avatar, useTheme } from "@verto/ui";
@@ -53,9 +49,15 @@ export default function Search({ open, setOpen }) {
   const [results, setResults] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(0);
+  const [animationCounter, setAnimationCounter] = useState(0);
 
   async function loadMore() {
-    if (query === "") return setResults([]);
+    if (query === "") {
+      setAnimationCounter(0);
+      return setResults([]);
+    }
+
+    setAnimationCounter(results.length);
 
     let { data } = await axios.get(
       `${__CACHE_URL_V2__}/site/search/${query}/${page}`
@@ -125,103 +127,111 @@ export default function Search({ open, setOpen }) {
                 autoFocus
               />
             </div>
-            <InfiniteScroll
-              dataLength={results.length}
-              next={loadMore}
-              hasMore={hasMore}
-              loader={<></>}
-              style={{ overflow: "unset !important" }}
-              className={
-                styles.Results +
-                " " +
-                (theme === "Dark" ? styles.DarkResults : "")
-              }
-              endMessage={<p>You have reached the end :)</p>}
-              height={(results.length > 0 && results.length * 85) || 90}
-            >
-              <AnimatePresence>
-                {query === "" && (
-                  <div className={styles.Featured}>
-                    {featuredTags.map((tag, i) => (
-                      <motion.div
-                        className={styles.FeaturedTag}
-                        onClick={() => setQuery(tag)}
-                        {...cardListAnimation(i)}
+            <div id="SearchResults" className={styles.ResultsWrapper}>
+              <InfiniteScroll
+                dataLength={results.length}
+                next={loadMore}
+                hasMore={hasMore}
+                loader={<></>}
+                style={{ overflow: "unset !important" }}
+                className={
+                  styles.Results +
+                  " " +
+                  (theme === "Dark" ? styles.DarkResults : "")
+                }
+                endMessage={<p>You have reached the end :)</p>}
+                scrollableTarget="SearchResults"
+              >
+                <AnimatePresence>
+                  {query === "" && (
+                    <div className={styles.Featured}>
+                      {featuredTags.map((tag, i) => (
+                        <motion.div
+                          className={styles.FeaturedTag}
+                          onClick={() => setQuery(tag)}
+                          {...cardListAnimation(i)}
+                          key={i}
+                        >
+                          {tag}
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </AnimatePresence>
+                <AnimatePresence>
+                  {query !== "" &&
+                    results.map((item, i) => (
+                      <Link
+                        href={
+                          item.type === "user"
+                            ? `/@${item.username}`
+                            : `/space/${item.id}`
+                        }
                         key={i}
                       >
-                        {tag}
-                      </motion.div>
+                        <motion.a
+                          className={styles.ResultItem}
+                          {...opacityAnimation(i - animationCounter)}
+                          href={
+                            item.type === "user"
+                              ? `/@${item.username}`
+                              : `/space/${item.id}`
+                          }
+                          onClick={() => setOpen(false)}
+                          key={i}
+                        >
+                          <div className={styles.TokenData}>
+                            {(item.type !== "collection" &&
+                              (item.image || item.type !== "user") && (
+                                <img
+                                  src={
+                                    (item.type === "community" &&
+                                      `/api/logo/${
+                                        item.id
+                                      }?theme=${theme.toLowerCase()}`) ||
+                                    `${gateway()}/${item.image}`
+                                  }
+                                  alt={item.name}
+                                  draggable={false}
+                                  className={
+                                    (item.type === "user" &&
+                                      styles.UserAvatar) ||
+                                    (item.type === "art" &&
+                                      styles.ArtPreview) ||
+                                    ""
+                                  }
+                                  key={i}
+                                />
+                              )) ||
+                              (item.type === "user" && !item.image && (
+                                <Avatar
+                                  usertag={item.username}
+                                  onlyProfilePicture
+                                  className={styles.UserAvatar}
+                                />
+                              )) || (
+                                <MenuIcon className={styles.CollectionIcon} />
+                              )}
+                            <div>
+                              <h1>{item.name}</h1>
+                              <h2
+                                className={
+                                  item.type === "user" ? styles.UserTag : ""
+                                }
+                              >
+                                {item.type === "user"
+                                  ? `@${item.username}`
+                                  : item.ticker ?? "Collection"}
+                              </h2>
+                            </div>
+                          </div>
+                          <ShareIcon />
+                        </motion.a>
+                      </Link>
                     ))}
-                  </div>
-                )}
-              </AnimatePresence>
-              <AnimatePresence>
-                {results.map((item, i) => (
-                  <Link
-                    href={
-                      item.type === "user"
-                        ? `/@${item.username}`
-                        : `/space/${item.id}`
-                    }
-                    key={i}
-                  >
-                    <motion.a
-                      className={styles.ResultItem}
-                      {...infiniteScrollAnimation}
-                      href={
-                        item.type === "user"
-                          ? `/@${item.username}`
-                          : `/space/${item.id}`
-                      }
-                      onClick={() => setOpen(false)}
-                    >
-                      <div className={styles.TokenData}>
-                        {(item.type !== "collection" &&
-                          (item.image || item.type !== "user") && (
-                            <img
-                              src={
-                                (item.type === "community" &&
-                                  `/api/logo/${
-                                    item.id
-                                  }?theme=${theme.toLowerCase()}`) ||
-                                `${gateway()}/${item.image}`
-                              }
-                              alt={item.name}
-                              draggable={false}
-                              className={
-                                (item.type === "user" && styles.UserAvatar) ||
-                                (item.type === "art" && styles.ArtPreview) ||
-                                ""
-                              }
-                              key={i}
-                            />
-                          )) ||
-                          (item.type === "user" && !item.image && (
-                            <Avatar
-                              usertag={item.username}
-                              onlyProfilePicture
-                              className={styles.UserAvatar}
-                            />
-                          )) || <MenuIcon className={styles.CollectionIcon} />}
-                        <div>
-                          <h1>{item.name}</h1>
-                          <h2
-                            className={
-                              item.type === "user" ? styles.UserTag : ""
-                            }
-                          >
-                            {item.type === "user"
-                              ? `@${item.username}`
-                              : item.ticker ?? "Collection"}
-                          </h2>
-                        </div>
-                      </div>
-                      <ShareIcon />
-                    </motion.a>
-                  </Link>
-                ))}
-              </AnimatePresence>
-            </InfiniteScroll>
+                </AnimatePresence>
+              </InfiniteScroll>
+            </div>
           </div>
         </motion.div>
       )}
