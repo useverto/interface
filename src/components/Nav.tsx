@@ -6,6 +6,7 @@ import {
   Spacer,
   useModal,
   useTheme,
+  useToasts,
 } from "@verto/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { permissions } from "../utils/arconnect";
@@ -133,6 +134,7 @@ const Nav = () => {
   }, [address]);
 
   const setupModal = useModal();
+  const { setToast } = useToasts();
 
   async function login() {
     await window.arweaveWallet.connect(
@@ -153,6 +155,12 @@ const Nav = () => {
 
       // automint USDC
       await axios.get(`/api/faucet/${addr}`);
+
+      setToast({
+        description: "You have been autominted AR and USDC",
+        type: "info",
+        duration: 3600,
+      });
     } catch (e) {
       console.warn("Wasn't able to automint AR or USDC: \n", e.messsage);
     }
