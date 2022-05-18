@@ -193,37 +193,6 @@ const Community = (props: PropTypes) => {
     setTransferring(false);
   };
 
-  // load logo
-  const [logo, setLogo] = useState(
-    // @ts-expect-error
-    client.token.getLogo(props.id, theme.toLowerCase())
-  );
-
-  useEffect(() => {
-    (async () => {
-      if (!state)
-        return setLogo(
-          // @ts-expect-error
-          client.token.getLogo(props.id, theme.toLowerCase())
-        );
-      else {
-        const cryptometaURI = client.token.getLogo(
-          props.id,
-          // @ts-expect-error
-          theme.toLowerCase()
-        );
-        const res = await axios.get(cryptometaURI);
-        const logoInState = state.settings?.communityLogo;
-
-        if (res.status !== 200 && logoInState) {
-          setLogo(`${gateway()}/${logoInState}`);
-        } else {
-          setLogo(cryptometaURI);
-        }
-      }
-    })();
-  }, [theme, state]);
-
   // get if added to the watchlist
   const [favorite, setFavorite] = useState(false);
 
@@ -258,7 +227,7 @@ const Community = (props: PropTypes) => {
           <h1 className={styles.Name}>
             <img
               className={styles.Logo}
-              src={logo}
+              src={`/api/logo/${props.id}`}
               alt="logo"
               draggable={false}
             />

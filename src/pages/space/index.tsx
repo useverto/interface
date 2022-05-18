@@ -146,41 +146,6 @@ const Space = ({ featured }: Props) => {
     }[]
   >([]);
 
-  useEffect(() => {
-    (async () => {
-      for (const psc of featured) {
-        // we use dark theme, because the background is always dark
-        const cryptometaURI = client.token.getLogo(psc.id, "dark");
-        const res = await axios.get(cryptometaURI);
-
-        // if status code is not "200" then cryptometa
-        // doesn't have the logo saved
-        // in this case we try to use the logo from the
-        // the contract
-        // if not even the contract has the logo, we use
-        // the placeholder logo returned by cryptometa
-        if (res.status !== 200 && psc.logo && psc.logo !== psc.id) {
-          setFeaturedLogos((val) => [
-            ...val,
-            {
-              id: psc.id,
-              uri: psc.logo ? `${gateway()}/${psc.logo}` : cryptometaURI,
-            },
-          ]);
-        } else {
-          // use cryptometa URI
-          setFeaturedLogos((val) => [
-            ...val,
-            {
-              id: psc.id,
-              uri: cryptometaURI,
-            },
-          ]);
-        }
-      }
-    })();
-  }, [featured]);
-
   // load Verto ID for the user
   const [userData, setUserData] = useState<UserInterface>();
   const address = useSelector((state: RootState) => state.addressReducer);
@@ -280,8 +245,7 @@ const Space = ({ featured }: Props) => {
             <div className={styles.TokenInfo}>
               <img
                 src={
-                  featuredLogos.find(({ id }) => id === currentTokenData?.id)
-                    ?.uri
+                  `/api/logo/${currentTokenData?.id}` || currentTokenData?.logo
                 }
                 alt="token-logo"
                 draggable={false}
