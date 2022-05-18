@@ -302,14 +302,16 @@ const Theme = ({ children }) => {
 const Changelog = () => {
   const changelogModal = useModal();
   const address = useSelector((state: RootState) => state.addressReducer);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!window || !address) return;
+    if (!window || !address || !["/app", "/swap"].includes(router.asPath))
+      return;
     const storedVersion = localStorage.getItem(lastViewedChangelog);
 
     if (!valid(storedVersion) || gt(pkg.version, storedVersion))
       changelogModal.setState(true);
-  }, [address]);
+  }, [address, router.asPath]);
 
   return <ChangelogModal {...changelogModal.bindings} />;
 };

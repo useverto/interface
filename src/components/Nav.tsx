@@ -17,8 +17,6 @@ import {
   SunIcon,
   UserIcon,
   SearchIcon,
-  HomeIcon,
-  MapIcon,
 } from "@iconicicons/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -28,18 +26,13 @@ import { RootState } from "../store/reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAddress, updateTheme } from "../store/actions";
 import { useMediaPredicate } from "react-media-hook";
-import { ArrowSwitchIcon } from "@primer/octicons-react";
 import {
   gateway,
   verto as client,
   gatewayConfig,
   client as arweave,
 } from "../utils/arweave";
-import {
-  navDesktopAnimation,
-  navMobileAnimation,
-  opacityAnimation,
-} from "../utils/animations";
+import { navDesktopAnimation, navMobileAnimation } from "../utils/animations";
 import Search, { useSearch } from "./Search";
 import useArConnect from "use-arconnect";
 import Link from "next/link";
