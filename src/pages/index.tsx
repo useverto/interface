@@ -286,6 +286,13 @@ const Home = ({ artwork }: { artwork: any }) => {
 };
 
 export async function getServerSideProps() {
+  return {
+    redirect: {
+      destination: "https://testnet.verto.exchange",
+      permanent: false,
+    },
+  };
+
   const { data } = await axios.get(`${CACHE_URL}/site/artwork`);
 
   return { props: { artwork: data } };
