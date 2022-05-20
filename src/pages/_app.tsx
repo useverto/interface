@@ -18,11 +18,7 @@ import { RootState } from "../store/reducers";
 import { updateTheme } from "../store/actions";
 import { DisplayTheme } from "@verto/ui/dist/types";
 import { permissions } from "../utils/arconnect";
-import { AnimatePresence, motion } from "framer-motion";
-import { opacityAnimation } from "../utils/animations";
-import { CloseIcon } from "@iconicicons/react";
 import {
-  betaAlertShown,
   ignorePermissionWarning,
   lastViewedChangelog,
   theme as themeStorageName,
@@ -38,7 +34,6 @@ import Head from "next/head";
 import ChangelogModal from "../components/ChangelogModal";
 import axios from "axios";
 import * as Fathom from "fathom-client";
-import betaAlertStyles from "../styles/components/BetaAlert.module.sass";
 import "../styles/global.sass";
 import "../styles/progress.sass";
 
@@ -151,7 +146,6 @@ export default function App({ Component, pageProps }) {
           <Nav />
           <Component {...pageProps} />
           <Footer />
-          <BetaAlert />
           <Modal {...permissionsModal.bindings}>
             <Modal.Title>Missing permissions</Modal.Title>
             <Modal.Content style={{ textAlign: "justify" }}>
@@ -285,48 +279,6 @@ const StatusChecker = ({ children }) => {
   }, []);
 
   return <>{children}</>;
-};
-
-const BetaAlert = () => {
-  const [show, setShow] = useState(false);
-  const theme = useTheme();
-  const currentAddress = useSelector(
-    (state: RootState) => state.addressReducer
-  );
-
-  useEffect(() => {
-    const stored = localStorage.getItem(betaAlertShown);
-
-    if (stored === "true") return;
-    setShow(true);
-  }, []);
-
-  return (
-    <AnimatePresence>
-      {show && (
-        <motion.div
-          className={
-            betaAlertStyles.Alert +
-            " " +
-            (theme === "Dark" ? betaAlertStyles.Dark : "")
-          }
-          {...opacityAnimation()}
-        >
-          <p>
-            This is Verto's new Beta UI. Click{" "}
-            <a href="https://alpha.verto.exchange">here</a> to visit the old UI.
-          </p>
-          <CloseIcon
-            className={betaAlertStyles.Close}
-            onClick={() => {
-              setShow(false);
-              if (currentAddress) localStorage.setItem(betaAlertShown, "true");
-            }}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
 };
 
 const Changelog = () => {

@@ -151,27 +151,25 @@ const Art = (props: PropTypes) => {
       for (const post of tradingPosts) {
         const orders = await client.getOrderBook(post.address, props.id);
         const history = await Promise.all(
-          orders.map(
-            async (order): Promise<HistoryItem> => {
-              const userData = await client.getUser(order.addr);
+          orders.map(async (order): Promise<HistoryItem> => {
+            const userData = await client.getUser(order.addr);
 
-              return {
-                ...order,
-                user: userData
-                  ? {
-                      name: userData.name,
-                      usertag: userData.username,
-                      avatar: userData.image,
-                    }
-                  : {
-                      name: undefined,
-                      usertag: order.addr,
-                      displaytag: formatAddress(order.addr, 10),
-                      avatar: undefined,
-                    },
-              };
-            }
-          )
+            return {
+              ...order,
+              user: userData
+                ? {
+                    name: userData.name,
+                    usertag: userData.username,
+                    avatar: userData.image,
+                  }
+                : {
+                    name: undefined,
+                    usertag: order.addr,
+                    displaytag: formatAddress(order.addr, 10),
+                    avatar: undefined,
+                  },
+            };
+          })
         );
 
         setOrderBook((val) => [...val, ...history]);
