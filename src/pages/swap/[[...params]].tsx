@@ -140,8 +140,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       // return if nothing is stored
       if (!pairStorageVal) return;
 
-      const parsedPair: { from: string; to: string } =
-        JSON.parse(pairStorageVal);
+      const parsedPair: { from: string; to: string } = JSON.parse(
+        pairStorageVal
+      );
 
       // return if the parsed pair is invalid
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
@@ -307,8 +308,10 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
   }
 
   // load clob contract
-  const [clobContractState, setClobContractState] =
-    useState<ClobContractStateInterface>();
+  const [
+    clobContractState,
+    setClobContractState,
+  ] = useState<ClobContractStateInterface>();
 
   useEffect(() => {
     const clobUpdater = () =>

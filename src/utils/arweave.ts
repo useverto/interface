@@ -109,8 +109,9 @@ export const balanceHistory = async (
       balance -= parseFloat(tx.quantity.ar);
     }
 
-    res[moment(tx.block.timestamp * 1000).format("MMM DD, YYYY - HH:mm")] =
-      balance;
+    res[
+      moment(tx.block.timestamp * 1000).format("MMM DD, YYYY - HH:mm")
+    ] = balance;
   }
 
   return res;

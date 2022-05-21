@@ -191,6 +191,8 @@ const MintCollectible = (props) => {
           balances: JSON.parse(balancesObj),
           contentType: file.type,
           createdAt: Math.floor(Date.now() / 1000).toString(),
+          invocations: [],
+          foreignCalls: [],
         })
       );
 

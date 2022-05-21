@@ -53,8 +53,9 @@ const Space = ({ featured }: Props) => {
   const listModal = useModal();
 
   // featured artworks
-  const [arts, setArts] =
-    useState<Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>>();
+  const [arts, setArts] = useState<
+    Awaited<ReturnType<typeof fetchRandomArtworkWithUser>>
+  >();
 
   useEffect(() => {
     (async () => {
