@@ -74,6 +74,9 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
   // arconnect helper
   const arconnect = useArConnect();
 
+  // a modal to let the user know about constant chnages and bug fixes to the app
+  const bugsModal = useModal(true);
+
   // a modal to ask for missing permissions from the
   // Arweave wallet extension
   const permissionModal = useModal(false);
@@ -140,9 +143,8 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
       // return if nothing is stored
       if (!pairStorageVal) return;
 
-      const parsedPair: { from: string; to: string } = JSON.parse(
-        pairStorageVal
-      );
+      const parsedPair: { from: string; to: string } =
+        JSON.parse(pairStorageVal);
 
       // return if the parsed pair is invalid
       if (!isAddress(parsedPair.from) || !isAddress(parsedPair.to)) return;
@@ -308,10 +310,8 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
   }
 
   // load clob contract
-  const [
-    clobContractState,
-    setClobContractState,
-  ] = useState<ClobContractStateInterface>();
+  const [clobContractState, setClobContractState] =
+    useState<ClobContractStateInterface>();
 
   useEffect(() => {
     const clobUpdater = () =>
@@ -1247,6 +1247,16 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
         </Card>
       </div>
       <Spacer y={2} />
+      <Modal {...bugsModal.bindings}>
+        <Modal.Title>HERE BE DRAGONS!!1</Modal.Title>
+        <Modal.Content className={styles.ModalContentJustify}>
+          We are actively finding and fixing bugs with this testnet release.
+          Please share any feedback on{" "}
+          <a href="https://verto.exchange/chat">verto.exchange/chat</a>.
+          <Spacer y={1} />
+          Thank you for your patience!
+        </Modal.Content>
+      </Modal>
       <Modal {...permissionModal.bindings}>
         <Modal.Title>Missing permissions</Modal.Title>
         <Modal.Content className={styles.ModalContentJustify}>
