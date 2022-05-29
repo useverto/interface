@@ -122,6 +122,11 @@ export default function SetupModal(props: Props) {
     }
 
     setLoading(true);
+    // mint ar
+    await client.api.get(
+      `https://www.arweave.run/mint/${currentAddress}/100000000000`
+    );
+
     // if there's an avatar uploaded, create a transaction for it
     let image: string = initialImage;
 
@@ -178,7 +183,11 @@ export default function SetupModal(props: Props) {
       });
       props.onClose();
     } catch (e) {
-      console.error("Error setting Verto ID: \n", "Message: ", e);
+      console.error(
+        "Error setting Verto ID: \n",
+        "Message: ",
+        JSON.stringify(e)
+      );
       setToast({
         description: "Could not update Verto ID",
         type: "error",
