@@ -249,6 +249,64 @@ const Home = ({ heroTokens }: { heroTokens: string[] }) => {
             </a>
           </div>
         </Page>
+        <Page className={styles.InfoSection}>
+          <h2>IMPORTANT</h2>
+          <p>
+            <ul>
+              <li>
+                Verto Exchange is currently on a testnet ONLY:
+                <ol>
+                  <li>
+                    The purpose of the testnet is for identifying potential
+                    issues in a SANDBOX environment ONLY
+                  </li>
+                  <li>The testnet can be shut down at ANY TIME</li>
+                  <li>The database can be deleted at ANY TIME</li>
+                </ol>
+                <br />
+              </li>
+              <li>
+                Verto Exchange testnet user participation has the following
+                characteristics:
+                <ol>
+                  <li>ALL user participation is for testing purposes ONLY</li>
+                  <li>
+                    ALL user interactions with the testnet are for testing
+                    purposes ONLY
+                  </li>
+                  <li>ALL user transactions are for testing purposes ONLY</li>
+                  <li>
+                    No users will receive ANY form of compensation for
+                    participation in the testnet at ANY TIME during or after
+                    participation in the testnet
+                  </li>
+                </ol>
+                <br />
+              </li>
+              <li>
+                Verto Exchange testnet tokens have the following
+                characteristics:
+                <ol>
+                  <li>Tokens are NOT real tokens</li>
+                  <li>Tokens have NO monetary value</li>
+                  <li>
+                    Receipt of testnet tokens does NOT constitute any transfer
+                    of actual value
+                  </li>
+                  <li>Tokens can be deleted at ANY TIME</li>
+                  <li>
+                    Tokens are for use within the testnet for testing purposes
+                    ONLY
+                  </li>
+                  <li>
+                    Tokens CANNOT be transferred or utilized outside of the
+                    testnet
+                  </li>
+                </ol>
+              </li>
+            </ul>
+          </p>
+        </Page>
       </div>
       <SetupModal {...setupModal.bindings} />
     </>
