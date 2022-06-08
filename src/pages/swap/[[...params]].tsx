@@ -704,8 +704,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
         <Card className={styles.SwapForm}>
           {/** If the country is blocked, we display an overlay */}
           <AnimatePresence>
-            {/** TODO: re-enable this on MAINNET release */}
-            {/*blockedCountry && (
+            {blockedCountry && (
               <motion.div
                 className={
                   styles.SwapOverlay +
@@ -726,7 +725,7 @@ const Swap = ({ defaultPair, overwrite }: Props) => {
                   </p>
                 </div>
               </motion.div>
-            )*/}
+            )}
           </AnimatePresence>
           <AnimatePresence>
             {tokenSelector && (
