@@ -71,10 +71,8 @@ const Home = ({ artwork }: { artwork: any }) => {
   const setupModal = useModal();
 
   async function login() {
-    // @ts-expect-error
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
 
-    // @ts-expect-error
     const activeAddress = await window.arweaveWallet.getActiveAddress();
     dispatch(updateAddress(activeAddress));
 

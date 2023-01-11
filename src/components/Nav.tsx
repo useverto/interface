@@ -97,7 +97,6 @@ const Nav = () => {
     }));
 
     (async () => {
-      // @ts-expect-error
       const walletNames = await window.arweaveWallet.getWalletNames();
 
       setNoIDUser((val) => ({
@@ -140,19 +139,16 @@ const Nav = () => {
   const setupModal = useModal();
 
   async function login() {
-    // @ts-expect-error
     await window.arweaveWallet.connect(permissions, { name: "Verto" });
     await syncAddress();
 
     const user = await client.getUser(
-      // @ts-expect-error
       await window.arweaveWallet.getActiveAddress()
     );
     if (!user) setupModal.setState(true);
   }
 
   async function signOut() {
-    // @ts-expect-error
     await window.arweaveWallet.disconnect();
     dispatch(updateAddress(null));
     signOutModal.setState(false);
@@ -163,7 +159,6 @@ const Nav = () => {
     if (e && e?.detail?.address)
       return dispatch(updateAddress(e.detail.address));
     try {
-      // @ts-expect-error
       dispatch(updateAddress(await window.arweaveWallet.getActiveAddress()));
     } catch {
       dispatch(updateAddress(null));

@@ -125,7 +125,6 @@ export default function App({ Component, pageProps }) {
 
     if (existingPerms.length === 0) return;
     for (const perm of permissions) {
-      // @ts-expect-error
       if (!existingPerms.includes(perm)) {
         permissionsModal.setState(true);
         break;
@@ -165,7 +164,6 @@ export default function App({ Component, pageProps }) {
                 <Button
                   onClick={async () => {
                     try {
-                      // @ts-expect-error
                       await window.arweaveWallet.connect(permissions, {
                         name: "Verto",
                       });
