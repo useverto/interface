@@ -4,6 +4,7 @@ import chrome from "chrome-aws-lambda";
 
 export default async function OG(req: NextApiRequest, res: NextApiResponse) {
   const { title, subtitle } = req.query;
+  return res.status(503).send("Disabled");
 
   if (!title) return res.status(400).send("Missing title");
 

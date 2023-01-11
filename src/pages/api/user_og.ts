@@ -81,6 +81,7 @@ export default async function UserOG(
       </body>
     </html>
   `;
+  return res.status(503).send("Disabled");
   const dev = process.env.NODE_ENV === "development";
   const data = await captureWebsite.buffer(OGImage, {
     inputType: "html",

@@ -19,6 +19,7 @@ export default async function TokenOG(
   const client = new Verto();
 
   const priceHistory = await client.getPriceHistory(id);
+  return res.status(503).send("Disabled");
   const { data: gecko } = await axios.get(
     "https://api.coingecko.com/api/v3/simple/price?ids=arweave&vs_currencies=usd"
   );
