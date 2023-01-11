@@ -288,7 +288,7 @@ const Home = ({ artwork }: { artwork: any }) => {
 export async function getServerSideProps() {
   return {
     redirect: {
-      destination: "https://testnet.verto.exchange",
+      destination: "https://github.com/useverto/flex",
       permanent: false,
     },
   };

@@ -149,10 +149,8 @@ const Space = (props: { tokens: any[]; featured: any[]; arts: any[] }) => {
   }, []);
 
   // all tokens
-  const {
-    loading: loadingAllTokens,
-    data: allTokens,
-  } = useInfiniteScroll<UnifiedTokenInterface>(loadMore);
+  const { loading: loadingAllTokens, data: allTokens } =
+    useInfiniteScroll<UnifiedTokenInterface>(loadMore);
 
   async function loadMore() {
     const items: UnifiedTokenInterface[] = [];
