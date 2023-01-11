@@ -256,12 +256,14 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
        */
       const allowedPermissions = await window.arweaveWallet.getPermissions();
 
-      for (const perm of permissions)
+      for (const perm of permissions) {
+        // @ts-expect-error
         if (!allowedPermissions.includes(perm)) {
           setCreatingSwap(false);
           permissionModal.setState(true);
           return;
         }
+      }
 
       /**
        * Create the swap
@@ -723,6 +725,7 @@ const Swap = (props: { tokens: TokenInterface[] }) => {
           <Button
             onClick={async () => {
               try {
+                // @ts-expect-error
                 await window.arweaveWallet.connect(permissions, {
                   name: "Verto",
                 });

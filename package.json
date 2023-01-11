@@ -18,7 +18,7 @@
     "@verto/js": "^0.0.0-alpha.19",
     "@verto/ui": "^2.1.24-alpha",
     "ar-gql": "^0.0.6",
-    "arconnect": "^0.2.9",
+    "arconnect": "^0.4.2",
     "ardb": "^1.0.8",
     "arverify": "^0.0.11",
     "arweave": "^1.10.13",
