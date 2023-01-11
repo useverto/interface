@@ -1,5 +1,8 @@
 {
   "github": {
     "silent": true
-  }
+  },
+  "rewrites": [
+    { "source": "/", "destination": "https://github.com/useverto/flex" },
+  ]
 }
